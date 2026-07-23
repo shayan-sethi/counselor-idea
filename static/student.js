@@ -6,12 +6,39 @@ let targets = {};
 let createdStudentId = null;
 let selectedTargetIds = [];
 
-const SUBJECTS = [
-  "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
-  "English", "Economics", "History", "Political Science", "Sociology",
-  "Physical Education", "Fine Arts", "Business Studies", "Accountancy",
-  "Applied Mathematics", "Hindi", "Geography"
-];
+const BOARD_SUBJECTS = {
+  "CBSE": [
+    "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
+    "Informatics Practices", "English Core", "Hindi Core", "Economics",
+    "Accountancy", "Business Studies", "Entrepreneurship", "History",
+    "Political Science", "Geography", "Sociology", "Psychology",
+    "Physical Education", "Fine Arts"
+  ],
+  "ICSE": [
+    "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
+    "Elective English", "Accounts", "Commerce", "Economics", "Business Studies",
+    "History & Civics", "Political Science", "Geography", "Sociology",
+    "Psychology", "Art", "Physical Education"
+  ],
+  "IB": [
+    "Mathematics Analysis & Approaches (HL/SL)",
+    "Mathematics Applications & Interpretation (HL/SL)",
+    "Physics (HL/SL)", "Chemistry (HL/SL)", "Biology (HL/SL)",
+    "Computer Science (HL/SL)", "English A Literature (HL/SL)",
+    "Economics (HL/SL)", "Business Management (HL/SL)", "History (HL/SL)",
+    "Geography (HL/SL)", "Psychology (HL/SL)", "Visual Arts (HL/SL)"
+  ],
+  "A-Levels": [
+    "Mathematics", "Further Mathematics", "Physics", "Chemistry", "Biology",
+    "Computer Science", "English Language", "English Literature", "Economics",
+    "Accounting", "Business", "History", "Geography", "Psychology", "Art & Design"
+  ],
+  "State Board": [
+    "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
+    "English", "Regional Language", "Economics", "Accountancy",
+    "Organization of Commerce", "History", "Political Science", "Geography"
+  ]
+};
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -20,6 +47,11 @@ async function init() {
     const tRes = await fetch('/api/targets');
     targets = await tRes.json();
     populateForm();
+
+    const boardSelect = document.getElementById('sf-board');
+    if (boardSelect) {
+      boardSelect.addEventListener('change', updateSubjectsGrid);
+    }
   } catch (e) {
     console.error('Init error:', e);
   }
@@ -27,11 +59,14 @@ async function init() {
 
 let selectedUniversity = "";
 
-function populateForm() {
-  // Subject checkboxes
+function updateSubjectsGrid() {
+  const board = document.getElementById('sf-board').value;
+  const subjects = BOARD_SUBJECTS[board] || BOARD_SUBJECTS["CBSE"];
+  
+  // Student subjects checkboxes
   const subEl = document.getElementById('sf-subjects');
   subEl.innerHTML = '';
-  SUBJECTS.forEach(sub => {
+  subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
     lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
@@ -40,10 +75,10 @@ function populateForm() {
     subEl.appendChild(lbl);
   });
 
-  // Populate Compulsory subjects check-grid for the target creation form
+  // Compulsory subjects check-grid for custom targets
   const compEl = document.getElementById('sf-target-compulsory');
   compEl.innerHTML = '';
-  SUBJECTS.forEach(sub => {
+  subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
     lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
@@ -51,6 +86,10 @@ function populateForm() {
     cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
     compEl.appendChild(lbl);
   });
+}
+
+function populateForm() {
+  updateSubjectsGrid();
 
   // Render initial targets list
   renderSelectedTargets();

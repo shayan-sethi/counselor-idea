@@ -10,12 +10,39 @@ let currentStudent = null;
 let simSubjects = [];
 let editingId = null;
 
-const SUBJECTS = [
-  "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
-  "English", "Economics", "History", "Political Science", "Sociology",
-  "Physical Education", "Fine Arts", "Business Studies", "Accountancy",
-  "Applied Mathematics", "Hindi", "Geography"
-];
+const BOARD_SUBJECTS = {
+  "CBSE": [
+    "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
+    "Informatics Practices", "English Core", "Hindi Core", "Economics",
+    "Accountancy", "Business Studies", "Entrepreneurship", "History",
+    "Political Science", "Geography", "Sociology", "Psychology",
+    "Physical Education", "Fine Arts"
+  ],
+  "ICSE": [
+    "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
+    "Elective English", "Accounts", "Commerce", "Economics", "Business Studies",
+    "History & Civics", "Political Science", "Geography", "Sociology",
+    "Psychology", "Art", "Physical Education"
+  ],
+  "IB": [
+    "Mathematics Analysis & Approaches (HL/SL)",
+    "Mathematics Applications & Interpretation (HL/SL)",
+    "Physics (HL/SL)", "Chemistry (HL/SL)", "Biology (HL/SL)",
+    "Computer Science (HL/SL)", "English A Literature (HL/SL)",
+    "Economics (HL/SL)", "Business Management (HL/SL)", "History (HL/SL)",
+    "Geography (HL/SL)", "Psychology (HL/SL)", "Visual Arts (HL/SL)"
+  ],
+  "A-Levels": [
+    "Mathematics", "Further Mathematics", "Physics", "Chemistry", "Biology",
+    "Computer Science", "English Language", "English Literature", "Economics",
+    "Accounting", "Business", "History", "Geography", "Psychology", "Art & Design"
+  ],
+  "State Board": [
+    "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
+    "English", "Regional Language", "Economics", "Accountancy",
+    "Organization of Commerce", "History", "Political Science", "Geography"
+  ]
+};
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -31,6 +58,11 @@ async function init() {
     targets = await tRes.json();
     renderDashboard();
     initManageForm();
+
+    const boardSelect = document.getElementById('mf-board');
+    if (boardSelect) {
+      boardSelect.addEventListener('change', updateManageSubjectsGrid);
+    }
   } catch (e) {
     document.getElementById('student-rows').innerHTML =
       '<div class="loading-row" style="color:var(--red)">✕ failed to connect to engine</div>';
@@ -146,11 +178,14 @@ function animateNum(id, to) {
 //  MANAGE — CRUD
 // ══════════════════════════════════════════════
 
-function initManageForm() {
-  // Populate subject checkboxes (student form)
+function updateManageSubjectsGrid() {
+  const board = document.getElementById('mf-board').value;
+  const subjects = BOARD_SUBJECTS[board] || BOARD_SUBJECTS["CBSE"];
+  
+  // Student subjects checkboxes (student form)
   const subEl = document.getElementById('mf-subjects');
   subEl.innerHTML = '';
-  SUBJECTS.forEach(sub => {
+  subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
     lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
@@ -159,10 +194,10 @@ function initManageForm() {
     subEl.appendChild(lbl);
   });
 
-  // Populate compulsory subject checkboxes (target form)
+  // Compulsory subject checkboxes (target form)
   const compEl = document.getElementById('mt-compulsory');
   compEl.innerHTML = '';
-  SUBJECTS.forEach(sub => {
+  subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
     lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
@@ -170,6 +205,10 @@ function initManageForm() {
     cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
     compEl.appendChild(lbl);
   });
+}
+
+function initManageForm() {
+  updateManageSubjectsGrid();
 
   // Populate target checkboxes (student form)
   refreshStudentTargetCheckboxes();
@@ -407,6 +446,7 @@ function editStudent(sid) {
   document.getElementById('mf-id').value = sid;
   document.getElementById('mf-name').value = s.name;
   document.getElementById('mf-board').value = s.board;
+  updateManageSubjectsGrid();
   document.getElementById('mf-class').value = s.class_level;
 
   // Check subjects
@@ -444,6 +484,7 @@ function resetManageForm() {
   document.getElementById('mf-submit').textContent = 'add student →';
   document.getElementById('mf-cancel').style.display = 'none';
   document.getElementById('manage-form').reset();
+  updateManageSubjectsGrid();
   document.getElementById('mf-portfolio-list').innerHTML = '';
   document.querySelectorAll('#mf-subjects input, #mf-targets input').forEach(cb => {
     cb.checked = false;
