@@ -38,16 +38,21 @@ function populateForm() {
     subEl.appendChild(lbl);
   });
 
+  console.log("Fetched targets:", targets);
+
   // Populate Target dropdown select
   const selectEl = document.getElementById('sf-targets-select');
   selectEl.innerHTML = '<option value="" disabled selected>Select a target pathway...</option>';
+  let count = 0;
   for (const tid in targets) {
     const t = targets[tid];
     const opt = document.createElement('option');
     opt.value = tid;
     opt.textContent = t.name;
     selectEl.appendChild(opt);
+    count++;
   }
+  console.log(`Populated ${count} targets into select dropdown`);
 
   // Bind Add Button click handler dynamically
   const addBtn = document.getElementById('btn-add-target');
