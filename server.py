@@ -15,10 +15,12 @@ STUDENTS_PATH = os.path.join(BASE_DIR, "data", "students_db.json")
 from prism_agent.knowledge_graph import KnowledgeGraph
 from prism_agent.reasoner import Reasoner
 from prism_agent.planner import Planner
+from prism_agent.agent import PRISMAgent
 
 kg = KnowledgeGraph()
 reasoner = Reasoner(kg)
 planner = Planner()
+agent = PRISMAgent(kg, reasoner, planner)
 
 # ── Load students ──
 def load_students():
@@ -249,16 +251,28 @@ def api_create_student():
     STUDENTS.append(student)
     save_students(STUDENTS)
 
-    # Run compliance check immediately
-    result = reasoner.evaluate_student(student)
-    for tid, tres in result["targets"].items():
-        if not tres["compliant"]:
-            rems = planner.get_remediations(result)
-            tres["remediations"] = rems.get(tid, [])
-        else:
-            tres["remediations"] = []
+    # Run compliance check using agent
+    result = {
+        "student_id": student["id"],
+        "student_name": student["name"],
+        "class_level": student["class_level"],
+        "targets": {}
+    }
+    traces = {}
+    for tid in targets:
+        agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
+        if agent_res:
+            result["targets"][tid] = {
+                "target_name": agent_res.get("target_name", "Target"),
+                "track": agent_res.get("track", "UK"),
+                "compliant": agent_res.get("compliant", False),
+                "urgency_score": agent_res.get("urgency_score", 0),
+                "gaps": agent_res.get("gaps", []),
+                "remediations": agent_res.get("remediations", [])
+            }
+            traces[tid] = agent_res.get("trace", [])
 
-    return jsonify({"student": student, "audit": result}), 201
+    return jsonify({"student": student, "audit": result, "traces": traces}), 201
 
 # ── Update student ──
 
@@ -312,27 +326,51 @@ def api_evaluate():
     if not student:
         return jsonify({"error": "Student not found"}), 404
 
-    result = reasoner.evaluate_student(student, simulated_subjects=simulated_subjects)
-    for tid, tres in result["targets"].items():
-        if not tres["compliant"]:
-            rems = planner.get_remediations(result)
-            tres["remediations"] = rems.get(tid, [])
-        else:
-            tres["remediations"] = []
+    # Run compliance check using agent
+    result = {
+        "student_id": student["id"],
+        "student_name": student["name"],
+        "class_level": student["class_level"],
+        "targets": {}
+    }
+    traces = {}
+    for tid in student.get("targets", []):
+        agent_res = agent.solve_goal(student["id"], tid, STUDENTS, simulated_subjects=simulated_subjects, silent=True)
+        if agent_res:
+            result["targets"][tid] = {
+                "target_name": agent_res.get("target_name", "Target"),
+                "track": agent_res.get("track", "UK"),
+                "compliant": agent_res.get("compliant", False),
+                "urgency_score": agent_res.get("urgency_score", 0),
+                "gaps": agent_res.get("gaps", []),
+                "remediations": agent_res.get("remediations", [])
+            }
+            traces[tid] = agent_res.get("trace", [])
 
+    result["traces"] = traces
     return jsonify(result)
 
 @app.route("/api/evaluate_cohort")
 def api_evaluate_cohort():
     results = {}
     for student in STUDENTS:
-        result = reasoner.evaluate_student(student)
-        for tid, tres in result["targets"].items():
-            if not tres["compliant"]:
-                rems = planner.get_remediations(result)
-                tres["remediations"] = rems.get(tid, [])
-            else:
-                tres["remediations"] = []
+        result = {
+            "student_id": student["id"],
+            "student_name": student["name"],
+            "class_level": student["class_level"],
+            "targets": {}
+        }
+        for tid in student.get("targets", []):
+            agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
+            if agent_res:
+                result["targets"][tid] = {
+                    "target_name": agent_res.get("target_name", "Target"),
+                    "track": agent_res.get("track", "UK"),
+                    "compliant": agent_res.get("compliant", False),
+                    "urgency_score": agent_res.get("urgency_score", 0),
+                    "gaps": agent_res.get("gaps", []),
+                    "remediations": agent_res.get("remediations", [])
+                }
         results[student["id"]] = result
     return jsonify(results)
 

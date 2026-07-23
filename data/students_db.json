@@ -303,5 +303,148 @@
       "tmua_registered": false,
       "sat_score": null
     }
+  },
+  {
+    "id": "STU_009",
+    "name": "Saiansh Tapuriah",
+    "class_level": 11,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics Analysis & Approaches (HL/SL)",
+      "Physics (HL/SL)",
+      "Chemistry (HL/SL)",
+      "English A Literature (HL/SL)"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "90",
+      "class_11_aggregate": "95",
+      "current_expected_board": "98"
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_ENGINEERING"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_010",
+    "name": "Saiansh Tapuriah",
+    "class_level": 11,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics Analysis & Approaches (HL/SL)",
+      "Physics (HL/SL)",
+      "Chemistry (HL/SL)",
+      "English A Literature (HL/SL)"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "90",
+      "class_11_aggregate": "95",
+      "current_expected_board": "98"
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_ENGINEERING"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_011",
+    "name": "Saiansh Tapuriah",
+    "class_level": 11,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics Analysis & Approaches (HL/SL)",
+      "Physics (HL/SL)",
+      "Chemistry (HL/SL)",
+      "English A Literature (HL/SL)"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "90",
+      "class_11_aggregate": "95",
+      "current_expected_board": "98"
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_ENGINEERING"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_012",
+    "name": "Saiansh Tapuriah",
+    "class_level": 12,
+    "board": "ICSE",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "92",
+      "class_11_aggregate": "95",
+      "current_expected_board": "97"
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_ENGINEERING_1"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_013",
+    "name": "Test Student",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry"
+    ],
+    "cuet_subjects": [],
+    "grades": {},
+    "standardized_tests": {},
+    "portfolio": [],
+    "targets": [
+      "JEE_MAIN"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
   }
 ]

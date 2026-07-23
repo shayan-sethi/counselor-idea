@@ -492,5 +492,86 @@
     "grade_prerequisites": [],
     "portfolio_tier": 2,
     "citations": []
+  },
+  "CUSTOM_ENGINEERING": {
+    "id": "CUSTOM_ENGINEERING",
+    "name": "Engineering",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Oxford",
+    "deadlines": [],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics Analysis & Approaches (HL/SL)",
+        "level": "compulsory",
+        "notes": "Must study Mathematics Analysis & Approaches (HL/SL)"
+      },
+      {
+        "subject": "Physics (HL/SL)",
+        "level": "compulsory",
+        "notes": "Must study Physics (HL/SL)"
+      },
+      {
+        "subject": "Chemistry (HL/SL)",
+        "level": "compulsory",
+        "notes": "Must study Chemistry (HL/SL)"
+      },
+      {
+        "subject": "English A Literature (HL/SL)",
+        "level": "compulsory",
+        "notes": "Must study English A Literature (HL/SL)"
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 3,
+    "citations": []
+  },
+  "CUSTOM_ENGINEERING_1": {
+    "id": "CUSTOM_ENGINEERING_1",
+    "name": "Engineering",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Oxford",
+    "deadlines": [],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must study Mathematics"
+      },
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must study Physics"
+      },
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "Must study Chemistry"
+      },
+      {
+        "subject": "Computer Science",
+        "level": "compulsory",
+        "notes": "Must study Computer Science"
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 1,
+    "citations": []
+  },
+  "CUSTOM_COMPUTER_SCIENCE": {
+    "id": "CUSTOM_COMPUTER_SCIENCE",
+    "name": "Computer Science",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "Oxford",
+    "deadlines": [],
+    "subject_prerequisites": [],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 3,
+    "citations": []
   }
 }

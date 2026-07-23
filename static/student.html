@@ -195,11 +195,27 @@
       <p class="subtitle" id="res-subtitle">—</p>
     </div>
 
+    <!-- PRISM AI Agent Console -->
+    <div id="agent-console-card" class="form-card hidden" style="margin-bottom: 24px;">
+      <div class="form-section-title">prism autonomous agent trace</div>
+      <div class="terminal-container" style="background: #0f111a; border: 1px solid #1f2335; border-radius: 6px; padding: 16px; font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; height: 320px; overflow-y: auto; color: #a9b1d6; position: relative;">
+        <div class="terminal-header" style="position: sticky; top: -16px; left: -16px; right: -16px; background: #1a1b26; border-bottom: 1px solid #24283b; padding: 6px 16px; margin: -16px -16px 12px -16px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #f7768e; display: inline-block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #e0af68; display: inline-block;"></span>
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #9ece6a; display: inline-block;"></span>
+          </div>
+          <span style="font-size: 0.7rem; color: #565f89; text-transform: uppercase;">prism_agent_react_loop.sh</span>
+        </div>
+        <div id="terminal-content"></div>
+      </div>
+    </div>
+
     <div id="res-body">
       <div class="loading-row"><span class="blink">▌</span> submit your profile first</div>
     </div>
   </main>
 
-  <script src="/static/student.js?v=8"></script>
+  <script src="/static/student.js?v=9"></script>
 </body>
 </html>

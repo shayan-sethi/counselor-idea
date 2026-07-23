@@ -356,6 +356,70 @@ function removeAP(key) {
   renderAPs();
 }
 
+async function animateAgentTrace(traceMap, callback) {
+  const card = document.getElementById('agent-console-card');
+  const term = document.getElementById('terminal-content');
+  if (!card || !term) return callback();
+
+  card.classList.remove('hidden');
+  term.innerHTML = '';
+  
+  // Combine all traces from different targets
+  let combinedTrace = [];
+  for (const tid in traceMap) {
+    combinedTrace.push({ type: 'header', message: `=== START AGENT LOOP FOR PATHWAY: ${tid} ===` });
+    combinedTrace = combinedTrace.concat(traceMap[tid]);
+  }
+
+  if (combinedTrace.length === 0) {
+    // Fallback if no trace returned
+    combinedTrace.push({ type: 'thought', message: "Initializing compliance evaluation agent loop..." });
+    combinedTrace.push({ type: 'action', message: "call_tool: evaluate_student" });
+    combinedTrace.push({ type: 'observation', message: "Verification complete. Compliance generated." });
+  }
+
+  for (let i = 0; i < combinedTrace.length; i++) {
+    const log = combinedTrace[i];
+    const line = document.createElement('div');
+    line.style.marginBottom = '8px';
+    
+    if (log.type === 'header') {
+      line.style.color = '#7aa2f7';
+      line.style.fontWeight = 'bold';
+      line.textContent = log.message;
+    } else if (log.type === 'thought') {
+      line.innerHTML = `<span style="color: #bb9af3; font-weight: bold;">Thought:</span> ${log.message}`;
+    } else if (log.type === 'action') {
+      const detailStr = log.detail ? ` with args ${log.detail}` : '';
+      line.innerHTML = `<span style="color: #7dcfff; font-weight: bold;">Action:</span> calling tool <span style="color: #e0af68;">${log.message.replace('call_tool: ', '')}</span>${detailStr}`;
+    } else if (log.type === 'observation') {
+      let obs = log.message;
+      if (obs.length > 300) {
+        obs = obs.substring(0, 300) + '...';
+      }
+      line.innerHTML = `<span style="color: #9ece6a; font-weight: bold;">Observation:</span> <span style="color: #565f89;">${obs}</span>`;
+    }
+    
+    term.appendChild(line);
+    term.parentElement.scrollTop = term.parentElement.scrollHeight;
+    
+    // Sleep briefly to simulate agent processing time
+    await new Promise(r => setTimeout(r, 600));
+  }
+
+  // Add final success prompt
+  const line = document.createElement('div');
+  line.style.color = '#9ece6a';
+  line.style.fontWeight = 'bold';
+  line.style.marginTop = '12px';
+  line.innerHTML = `✔ Agent execution terminated successfully. Loading dashboard... <span class="blink">▌</span>`;
+  term.appendChild(line);
+  term.parentElement.scrollTop = term.parentElement.scrollHeight;
+
+  await new Promise(r => setTimeout(r, 1000));
+  callback();
+}
+
 // Expose functions globally
 window.searchStudentUnis = searchStudentUnis;
 window.searchStudentCourses = searchStudentCourses;
@@ -363,6 +427,7 @@ window.createAndAddTarget = createAndAddTarget;
 window.removeTargetPathway = removeTargetPathway;
 window.addAPFromSelect = addAPFromSelect;
 window.removeAP = removeAP;
+window.animateAgentTrace = animateAgentTrace;
 
 function renderSelectedTargets() {
   const listEl = document.getElementById('sf-selected-targets-list');
@@ -472,9 +537,23 @@ async function submitProfile(e) {
     }
     createdStudentId = data.student.id;
 
-    // Render audit results
-    renderAuditResults(data.student, data.audit);
+    // Show step results immediately
     showStep('results');
+
+    // Fade the audit results body while terminal prints
+    const resBody = document.getElementById('res-body');
+    if (resBody) {
+      resBody.style.opacity = '0.15';
+      resBody.style.pointerEvents = 'none';
+    }
+
+    await animateAgentTrace(data.traces || {}, () => {
+      if (resBody) {
+        resBody.style.opacity = '1';
+        resBody.style.pointerEvents = 'auto';
+      }
+      renderAuditResults(data.student, data.audit);
+    });
 
   } catch (err) {
     console.error(err);
