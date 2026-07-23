@@ -25,6 +25,8 @@ async function init() {
   }
 }
 
+let selectedUniversity = "";
+
 function populateForm() {
   // Subject checkboxes
   const subEl = document.getElementById('sf-subjects');
@@ -38,76 +40,175 @@ function populateForm() {
     subEl.appendChild(lbl);
   });
 
-  console.log("Fetched targets:", targets);
-
-  // Populate Target dropdown select
-  const selectEl = document.getElementById('sf-targets-select');
-  selectEl.innerHTML = '<option value="" disabled selected>Select a target pathway...</option>';
-  let count = 0;
-  for (const tid in targets) {
-    const t = targets[tid];
-    const opt = document.createElement('option');
-    opt.value = tid;
-    opt.textContent = t.name;
-    selectEl.appendChild(opt);
-    count++;
-  }
-  console.log(`Populated ${count} targets into select dropdown`);
-
-  // Bind Add Button click handler dynamically
-  const addBtn = document.getElementById('btn-add-target');
-  if (addBtn) {
-    addBtn.onclick = addTargetFromSelect;
-  }
+  // Populate Compulsory subjects check-grid for the target creation form
+  const compEl = document.getElementById('sf-target-compulsory');
+  compEl.innerHTML = '';
+  SUBJECTS.forEach(sub => {
+    const lbl = document.createElement('label');
+    lbl.className = 'sc-label';
+    lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
+    const cb = lbl.querySelector('input');
+    cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
+    compEl.appendChild(lbl);
+  });
 
   // Render initial targets list
   renderSelectedTargets();
 }
 
-function addTargetFromSelect() {
-  console.log("addTargetFromSelect called");
-  const selectEl = document.getElementById('sf-targets-select');
-  if (!selectEl) {
-    console.error("selectEl not found in DOM");
+async function searchStudentUnis(val) {
+  const container = document.getElementById("sf-uni-results");
+  if (!val.trim()) {
+    container.classList.add("hidden");
     return;
   }
-  console.log("Select element:", selectEl);
-  console.log("Select options count:", selectEl.options.length);
-  console.log("Selected index:", selectEl.selectedIndex);
-  if (selectEl.selectedIndex >= 0) {
-    const opt = selectEl.options[selectEl.selectedIndex];
-    console.log("Selected option HTML:", opt.outerHTML);
-    console.log("Selected option value:", opt.value);
-    console.log("Selected option text:", opt.text);
+
+  try {
+    const res = await fetch(`/api/search_unis?q=${encodeURIComponent(val)}`);
+    const list = await res.json();
+    if (list.length === 0) {
+      container.classList.add("hidden");
+      return;
+    }
+
+    container.innerHTML = "";
+    container.classList.remove("hidden");
+    list.forEach(uni => {
+      const div = document.createElement("div");
+      div.className = "autocomplete-suggestion";
+      div.textContent = uni;
+      div.onclick = () => {
+        document.getElementById("sf-target-uni").value = uni;
+        selectedUniversity = uni;
+        container.classList.add("hidden");
+        document.getElementById("sf-target-name").value = "";
+        document.getElementById("sf-target-track").value = "UK";
+      };
+      container.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
   }
-  const tid = selectEl.value;
-  console.log("Selected target ID (via selectEl.value):", tid);
-  if (!tid) {
-    console.warn("No target ID selected");
+}
+
+async function searchStudentCourses(val) {
+  const container = document.getElementById("sf-course-results");
+  if (!selectedUniversity) {
+    alert("Please select a university first");
+    document.getElementById("sf-target-name").value = "";
     return;
   }
-  if (!selectedTargetIds.includes(tid)) {
-    selectedTargetIds.push(tid);
-    console.log("Current selectedTargetIds:", selectedTargetIds);
-    renderSelectedTargets();
-  } else {
-    console.log("Target already selected");
+  if (!val.trim()) {
+    container.classList.add("hidden");
+    return;
   }
-  selectEl.value = ""; // Reset select
+
+  try {
+    const res = await fetch(`/api/search_courses?uni=${encodeURIComponent(selectedUniversity)}&q=${encodeURIComponent(val)}`);
+    const list = await res.json();
+    if (list.length === 0) {
+      container.classList.add("hidden");
+      return;
+    }
+
+    container.innerHTML = "";
+    container.classList.remove("hidden");
+    list.forEach(course => {
+      const div = document.createElement("div");
+      div.className = "autocomplete-suggestion";
+      div.textContent = `${course.title} (${course.subject_group || 'N/A'})`;
+      div.onclick = () => {
+        document.getElementById("sf-target-name").value = course.title;
+        container.classList.add("hidden");
+      };
+      container.appendChild(div);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+async function createAndAddTarget() {
+  const name = document.getElementById('sf-target-name').value.trim();
+  const university = document.getElementById('sf-target-uni').value.trim();
+  const track = document.getElementById('sf-target-track').value;
+  const portfolio_tier = parseInt(document.getElementById('sf-target-portfolio').value);
+
+  if (!name || !university) {
+    alert("Please fill in both University and Course Name");
+    return;
+  }
+
+  const checkedComp = document.querySelectorAll('#sf-target-compulsory input:checked');
+  const compSubjects = [...checkedComp].map(cb => cb.value);
+
+  const subject_prerequisites = compSubjects.map(sub => ({
+    subject: sub,
+    level: "compulsory",
+    notes: `Must study ${sub}`
+  }));
+
+  const payload = {
+    name,
+    university,
+    track,
+    portfolio_tier,
+    subject_prerequisites
+  };
+
+  const btn = document.getElementById('btn-create-add-target');
+  btn.disabled = true;
+  btn.textContent = 'adding…';
+
+  try {
+    const res = await fetch('/api/targets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      const tData = await res.json();
+      targets[tData.id] = tData;
+      
+      if (!selectedTargetIds.includes(tData.id)) {
+        selectedTargetIds.push(tData.id);
+      }
+      renderSelectedTargets();
+
+      // Reset the target form inputs
+      document.getElementById('sf-target-name').value = "";
+      document.getElementById('sf-target-uni').value = "";
+      document.getElementById('sf-target-track').value = "UK";
+      document.getElementById('sf-target-portfolio').value = "3";
+      document.querySelectorAll('#sf-target-compulsory input').forEach(cb => {
+        cb.checked = false;
+        cb.parentElement.classList.remove('checked');
+      });
+      selectedUniversity = "";
+    } else {
+      alert('Failed to save pathway to backend');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Network error when adding pathway');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '+ add pathway';
+  }
 }
 
 function removeTargetPathway(tid) {
-  console.log("Removing target ID:", tid);
   selectedTargetIds = selectedTargetIds.filter(id => id !== tid);
   renderSelectedTargets();
 }
 
-// Expose to window for global access
-window.addTargetFromSelect = addTargetFromSelect;
+// Expose functions globally
+window.searchStudentUnis = searchStudentUnis;
+window.searchStudentCourses = searchStudentCourses;
+window.createAndAddTarget = createAndAddTarget;
 window.removeTargetPathway = removeTargetPathway;
 
 function renderSelectedTargets() {
-  console.log("renderSelectedTargets called, count:", selectedTargetIds.length);
   const listEl = document.getElementById('sf-selected-targets-list');
   listEl.innerHTML = '';
   if (selectedTargetIds.length === 0) {
@@ -116,7 +217,6 @@ function renderSelectedTargets() {
   }
   selectedTargetIds.forEach(tid => {
     const t = targets[tid];
-    console.log("Rendering target:", tid, t);
     if (!t) return;
     const row = document.createElement('div');
     row.className = 'selected-target-item';

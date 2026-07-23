@@ -76,14 +76,57 @@
       <!-- Step 3: Targets -->
       <div class="form-card">
         <div class="form-section-title">03 — target pathways</div>
-        <p class="field-hint">Which exams or universities are you aiming for?</p>
-        <div class="target-picker-row">
-          <select id="sf-targets-select">
-            <option value="" disabled selected>Select a target pathway...</option>
-          </select>
-          <button type="button" class="btn-ghost-sm" id="btn-add-target" onclick="addTargetFromSelect()">+ add</button>
+        <p class="field-hint">Add target pathways you are aiming for (enter what you want to study at what university).</p>
+
+        <!-- Selected targets list -->
+        <div class="selected-targets-container" id="sf-selected-targets-list" style="margin-bottom: 20px;"></div>
+
+        <!-- Add custom target form fields -->
+        <div class="add-target-box" style="border: 1px dashed var(--border); padding: 16px; margin-top: 12px;">
+          <div class="form-section-title" style="font-size: 0.75rem; margin-bottom: 12px;">add target pathway</div>
+          
+          <div class="form-row">
+            <div class="field field-wide" style="position:relative">
+              <label>University / Provider *</label>
+              <input type="text" id="sf-target-uni" placeholder="e.g. University of Cambridge" oninput="searchStudentUnis(this.value)" autocomplete="off" />
+              <div id="sf-uni-results" class="autocomplete-results hidden"></div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field field-wide" style="position:relative">
+              <label>Course Name *</label>
+              <input type="text" id="sf-target-name" placeholder="e.g. Computer Science" oninput="searchStudentCourses(this.value)" autocomplete="off" />
+              <div id="sf-course-results" class="autocomplete-results hidden"></div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>Track *</label>
+              <select id="sf-target-track">
+                <option value="UK">United Kingdom</option>
+                <option value="US">United States</option>
+                <option value="India">India</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Min Portfolio Tier</label>
+              <select id="sf-target-portfolio">
+                <option value="3">Tier 3 (School)</option>
+                <option value="2">Tier 2 (National)</option>
+                <option value="1">Tier 1 (International)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom:14px; margin-top:14px;">
+            <label>Compulsory Board Subjects (check all that apply)</label>
+            <div class="check-grid" id="sf-target-compulsory"></div>
+          </div>
+
+          <button type="button" class="btn-ghost-sm" id="btn-create-add-target" onclick="createAndAddTarget()">+ add pathway</button>
         </div>
-        <div class="selected-targets-container" id="sf-selected-targets-list"></div>
       </div>
 
       <!-- Step 4: Grades -->
@@ -144,6 +187,6 @@
     </div>
   </main>
 
-  <script src="/static/student.js?v=5"></script>
+  <script src="/static/student.js?v=6"></script>
 </body>
 </html>
