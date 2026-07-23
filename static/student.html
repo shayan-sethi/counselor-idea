@@ -152,8 +152,21 @@
             <input type="number" id="sf-sat" placeholder="e.g. 1480" min="400" max="1600" />
           </div>
           <div class="field">
-            <label>AP Calculus BC (if taken)</label>
-            <input type="number" id="sf-ap" placeholder="1-5" min="1" max="5" />
+            <label>AP Exams Taken</label>
+            <div id="sf-ap-list" style="margin-bottom: 8px;"></div>
+            <div class="ap-picker-row" style="display: flex; gap: 6px;">
+              <select id="sf-ap-subject" style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
+                <option value="" disabled selected>Select AP Subject...</option>
+              </select>
+              <select id="sf-ap-score" style="width: 70px; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+              </select>
+              <button type="button" class="btn-ghost-sm" onclick="addAPFromSelect()">+ add</button>
+            </div>
           </div>
         </div>
 
@@ -187,6 +200,6 @@
     </div>
   </main>
 
-  <script src="/static/student.js?v=6"></script>
+  <script src="/static/student.js?v=7"></script>
 </body>
 </html>

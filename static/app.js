@@ -44,6 +44,49 @@ const BOARD_SUBJECTS = {
   ]
 };
 
+const AP_SUBJECTS = {
+  "AP_RESEARCH": "AP Research",
+  "AP_SEMINAR": "AP Seminar",
+  "AP_ART_HISTORY": "AP Art History",
+  "AP_MUSIC_THEORY": "AP Music Theory",
+  "AP_STUDIO_ART_2D": "AP Studio Art 2-D Design",
+  "AP_STUDIO_ART_3D": "AP Studio Art 3-D Design",
+  "AP_STUDIO_ART_DRAWING": "AP Studio Art Drawing",
+  "AP_ENGLISH_LANG": "AP English Language & Composition",
+  "AP_ENGLISH_LIT": "AP English Literature & Composition",
+  "AP_COMPARATIVE_GOV": "AP Comparative Government & Politics",
+  "AP_EUROPEAN_HISTORY": "AP European History",
+  "AP_HUMAN_GEOGRAPHY": "AP Human Geography",
+  "AP_MACROECONOMICS": "AP Macroeconomics",
+  "AP_MICROECONOMICS": "AP Microeconomics",
+  "AP_PSYCHOLOGY": "AP Psychology",
+  "AP_US_GOV": "AP U.S. Government & Politics",
+  "AP_US_HISTORY": "AP U.S. History",
+  "AP_WORLD_HISTORY": "AP World History: Modern",
+  "AP_CALCULUS_AB": "AP Calculus AB",
+  "AP_CALCULUS_BC": "AP Calculus BC",
+  "AP_COMPUTER_SCIENCE_A": "AP Computer Science A",
+  "AP_COMPUTER_SCIENCE_PRINCIPLES": "AP Computer Science Principles",
+  "AP_PRECALCULUS": "AP Precalculus",
+  "AP_STATISTICS": "AP Statistics",
+  "AP_BIOLOGY": "AP Biology",
+  "AP_CHEMISTRY": "AP Chemistry",
+  "AP_ENVIRONMENTAL_SCIENCE": "AP Environmental Science",
+  "AP_PHYSICS_1": "AP Physics 1: Algebra-Based",
+  "AP_PHYSICS_2": "AP Physics 2: Algebra-Based",
+  "AP_PHYSICS_C_EM": "AP Physics C: Electricity & Magnetism",
+  "AP_PHYSICS_C_MECH": "AP Physics C: Mechanics",
+  "AP_AFRICAN_AMERICAN_STUDIES": "AP African American Studies",
+  "AP_CHINESE_LANG": "AP Chinese Language & Culture",
+  "AP_FRENCH_LANG": "AP French Language & Culture",
+  "AP_GERMAN_LANG": "AP German Language & Culture",
+  "AP_ITALIAN_LANG": "AP Italian Language & Culture",
+  "AP_JAPANESE_LANG": "AP Japanese Language & Culture",
+  "AP_LATIN": "AP Latin",
+  "AP_SPANISH_LANG": "AP Spanish Language & Culture",
+  "AP_SPANISH_LIT": "AP Spanish Literature & Culture"
+};
+
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
@@ -207,8 +250,72 @@ function updateManageSubjectsGrid() {
   });
 }
 
+let manageSelectedAPs = {};
+
+function addManageAPRow(key, score) {
+  const container = document.getElementById('mf-ap-list');
+  const row = document.createElement('div');
+  row.className = 'portfolio-row';
+  row.style.gridTemplateColumns = '2fr 1fr auto';
+  row.style.marginBottom = '4px';
+  row.style.alignItems = 'center';
+  
+  row.innerHTML = `
+    <span style="font-family:var(--sans); font-size:0.8rem; color:var(--text-1);">${AP_SUBJECTS[key] || key}</span>
+    <span style="font-family:var(--mono); font-size:0.8rem; color:var(--accent); font-weight:600;">Score: ${score}</span>
+    <button type="button" class="btn-delete-sm" onclick="removeManageAP('${key}')">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function renderManageAPs() {
+  const container = document.getElementById('mf-ap-list');
+  container.innerHTML = '';
+  for (const key in manageSelectedAPs) {
+    addManageAPRow(key, manageSelectedAPs[key]);
+  }
+}
+
+function addManageAPFromSelect() {
+  const subEl = document.getElementById('mf-ap-subject');
+  const scoreEl = document.getElementById('mf-ap-score');
+  const key = subEl.value;
+  const score = parseInt(scoreEl.value);
+
+  if (!key) {
+    alert("Please select an AP subject first");
+    return;
+  }
+
+  manageSelectedAPs[key] = score;
+  renderManageAPs();
+
+  // Reset select
+  subEl.value = "";
+}
+
+function removeManageAP(key) {
+  delete manageSelectedAPs[key];
+  renderManageAPs();
+}
+
+window.addManageAPFromSelect = addManageAPFromSelect;
+window.removeManageAP = removeManageAP;
+
 function initManageForm() {
   updateManageSubjectsGrid();
+
+  // Populate AP subject select
+  const apSelect = document.getElementById('mf-ap-subject');
+  if (apSelect) {
+    apSelect.innerHTML = '<option value="" disabled selected>Select AP Subject...</option>';
+    for (const key in AP_SUBJECTS) {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = AP_SUBJECTS[key];
+      apSelect.appendChild(opt);
+    }
+  }
 
   // Populate target checkboxes (student form)
   refreshStudentTargetCheckboxes();
@@ -376,12 +483,13 @@ function getFormData() {
 
   const tests = {};
   const sat = document.getElementById('mf-sat').value;
-  const ap = document.getElementById('mf-ap').value;
   if (sat) tests.SAT = parseInt(sat);
-  if (ap) tests.AP_CALCULUS_BC = parseInt(ap);
+  for (const apKey in manageSelectedAPs) {
+    tests[apKey] = manageSelectedAPs[apKey];
+  }
 
   const portfolio = [];
-  document.querySelectorAll('.portfolio-row').forEach(row => {
+  document.querySelectorAll('#mf-portfolio-list .portfolio-row').forEach(row => {
     const act = row.querySelector('.pf-activity').value.trim();
     const d = row.querySelector('.pf-desc').value.trim();
     const t = parseInt(row.querySelector('.pf-tier').value);
@@ -468,7 +576,15 @@ function editStudent(sid) {
   document.getElementById('mf-g11').value = s.grades?.class_11_aggregate || '';
   document.getElementById('mf-gexp').value = s.grades?.current_expected_board || '';
   document.getElementById('mf-sat').value = s.standardized_tests?.SAT || '';
-  document.getElementById('mf-ap').value = s.standardized_tests?.AP_CALCULUS_BC || '';
+
+  // Populate APs
+  manageSelectedAPs = {};
+  for (const apKey in AP_SUBJECTS) {
+    if (s.standardized_tests && s.standardized_tests[apKey] !== undefined) {
+      manageSelectedAPs[apKey] = s.standardized_tests[apKey];
+    }
+  }
+  renderManageAPs();
 
   // Portfolio
   document.getElementById('mf-portfolio-list').innerHTML = '';
@@ -485,6 +601,11 @@ function resetManageForm() {
   document.getElementById('mf-cancel').style.display = 'none';
   document.getElementById('manage-form').reset();
   updateManageSubjectsGrid();
+
+  // Reset APs
+  manageSelectedAPs = {};
+  renderManageAPs();
+
   document.getElementById('mf-portfolio-list').innerHTML = '';
   document.querySelectorAll('#mf-subjects input, #mf-targets input').forEach(cb => {
     cb.checked = false;

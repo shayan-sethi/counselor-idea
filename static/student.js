@@ -40,6 +40,49 @@ const BOARD_SUBJECTS = {
   ]
 };
 
+const AP_SUBJECTS = {
+  "AP_RESEARCH": "AP Research",
+  "AP_SEMINAR": "AP Seminar",
+  "AP_ART_HISTORY": "AP Art History",
+  "AP_MUSIC_THEORY": "AP Music Theory",
+  "AP_STUDIO_ART_2D": "AP Studio Art 2-D Design",
+  "AP_STUDIO_ART_3D": "AP Studio Art 3-D Design",
+  "AP_STUDIO_ART_DRAWING": "AP Studio Art Drawing",
+  "AP_ENGLISH_LANG": "AP English Language & Composition",
+  "AP_ENGLISH_LIT": "AP English Literature & Composition",
+  "AP_COMPARATIVE_GOV": "AP Comparative Government & Politics",
+  "AP_EUROPEAN_HISTORY": "AP European History",
+  "AP_HUMAN_GEOGRAPHY": "AP Human Geography",
+  "AP_MACROECONOMICS": "AP Macroeconomics",
+  "AP_MICROECONOMICS": "AP Microeconomics",
+  "AP_PSYCHOLOGY": "AP Psychology",
+  "AP_US_GOV": "AP U.S. Government & Politics",
+  "AP_US_HISTORY": "AP U.S. History",
+  "AP_WORLD_HISTORY": "AP World History: Modern",
+  "AP_CALCULUS_AB": "AP Calculus AB",
+  "AP_CALCULUS_BC": "AP Calculus BC",
+  "AP_COMPUTER_SCIENCE_A": "AP Computer Science A",
+  "AP_COMPUTER_SCIENCE_PRINCIPLES": "AP Computer Science Principles",
+  "AP_PRECALCULUS": "AP Precalculus",
+  "AP_STATISTICS": "AP Statistics",
+  "AP_BIOLOGY": "AP Biology",
+  "AP_CHEMISTRY": "AP Chemistry",
+  "AP_ENVIRONMENTAL_SCIENCE": "AP Environmental Science",
+  "AP_PHYSICS_1": "AP Physics 1: Algebra-Based",
+  "AP_PHYSICS_2": "AP Physics 2: Algebra-Based",
+  "AP_PHYSICS_C_EM": "AP Physics C: Electricity & Magnetism",
+  "AP_PHYSICS_C_MECH": "AP Physics C: Mechanics",
+  "AP_AFRICAN_AMERICAN_STUDIES": "AP African American Studies",
+  "AP_CHINESE_LANG": "AP Chinese Language & Culture",
+  "AP_FRENCH_LANG": "AP French Language & Culture",
+  "AP_GERMAN_LANG": "AP German Language & Culture",
+  "AP_ITALIAN_LANG": "AP Italian Language & Culture",
+  "AP_JAPANESE_LANG": "AP Japanese Language & Culture",
+  "AP_LATIN": "AP Latin",
+  "AP_SPANISH_LANG": "AP Spanish Language & Culture",
+  "AP_SPANISH_LIT": "AP Spanish Literature & Culture"
+};
+
 document.addEventListener('DOMContentLoaded', init);
 
 async function init() {
@@ -90,6 +133,18 @@ function updateSubjectsGrid() {
 
 function populateForm() {
   updateSubjectsGrid();
+
+  // Populate AP subjects select
+  const apSelect = document.getElementById('sf-ap-subject');
+  if (apSelect) {
+    apSelect.innerHTML = '<option value="" disabled selected>Select AP Subject...</option>';
+    for (const key in AP_SUBJECTS) {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = AP_SUBJECTS[key];
+      apSelect.appendChild(opt);
+    }
+  }
 
   // Render initial targets list
   renderSelectedTargets();
@@ -241,11 +296,73 @@ function removeTargetPathway(tid) {
   renderSelectedTargets();
 }
 
+let selectedAPs = {};
+
+function addAPRow(key, score) {
+  const container = document.getElementById('sf-ap-list');
+  const row = document.createElement('div');
+  row.className = 'portfolio-row';
+  row.style.gridTemplateColumns = '2fr 1fr auto';
+  row.style.marginBottom = '4px';
+  row.style.alignItems = 'center';
+  
+  const subjectsMap = {
+    "AP_CALCULUS_BC": "AP Calculus BC",
+    "AP_CALCULUS_AB": "AP Calculus AB",
+    "AP_PHYSICS_C_MECH": "AP Physics C: Mechanics",
+    "AP_PHYSICS_C_EM": "AP Physics C: Elec & Mag",
+    "AP_CHEMISTRY": "AP Chemistry",
+    "AP_COMPUTER_SCIENCE_A": "AP Computer Science A",
+    "AP_ENGLISH_LANG": "AP English Language",
+    "AP_ENGLISH_LIT": "AP English Literature"
+  };
+
+  row.innerHTML = `
+    <span style="font-family:var(--sans); font-size:0.8rem; color:var(--text-1);">${subjectsMap[key] || key}</span>
+    <span style="font-family:var(--mono); font-size:0.8rem; color:var(--accent); font-weight:600;">Score: ${score}</span>
+    <button type="button" class="btn-delete-sm" onclick="removeAP('${key}')">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function renderAPs() {
+  const container = document.getElementById('sf-ap-list');
+  container.innerHTML = '';
+  for (const key in selectedAPs) {
+    addAPRow(key, selectedAPs[key]);
+  }
+}
+
+function addAPFromSelect() {
+  const subEl = document.getElementById('sf-ap-subject');
+  const scoreEl = document.getElementById('sf-ap-score');
+  const key = subEl.value;
+  const score = parseInt(scoreEl.value);
+
+  if (!key) {
+    alert("Please select an AP subject first");
+    return;
+  }
+
+  selectedAPs[key] = score;
+  renderAPs();
+
+  // Reset dropdown
+  subEl.value = "";
+}
+
+function removeAP(key) {
+  delete selectedAPs[key];
+  renderAPs();
+}
+
 // Expose functions globally
 window.searchStudentUnis = searchStudentUnis;
 window.searchStudentCourses = searchStudentCourses;
 window.createAndAddTarget = createAndAddTarget;
 window.removeTargetPathway = removeTargetPathway;
+window.addAPFromSelect = addAPFromSelect;
+window.removeAP = removeAP;
 
 function renderSelectedTargets() {
   const listEl = document.getElementById('sf-selected-targets-list');
@@ -319,9 +436,10 @@ async function submitProfile(e) {
 
   const tests = {};
   const sat = document.getElementById('sf-sat').value;
-  const ap = document.getElementById('sf-ap').value;
   if (sat) tests.SAT = parseInt(sat);
-  if (ap) tests.AP_CALCULUS_BC = parseInt(ap);
+  for (const apKey in selectedAPs) {
+    tests[apKey] = selectedAPs[apKey];
+  }
 
   const portfolio = [];
   document.querySelectorAll('#sf-portfolio-list .portfolio-row').forEach(row => {
