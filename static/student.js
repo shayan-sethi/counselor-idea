@@ -4,6 +4,7 @@
 
 let targets = {};
 let createdStudentId = null;
+let selectedTargetIds = [];
 
 const SUBJECTS = [
   "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
@@ -37,18 +38,55 @@ function populateForm() {
     subEl.appendChild(lbl);
   });
 
-  // Target checkboxes
-  const trgEl = document.getElementById('sf-targets');
-  trgEl.innerHTML = '';
+  // Populate Target dropdown select
+  const selectEl = document.getElementById('sf-targets-select');
+  selectEl.innerHTML = '<option value="" disabled selected>Select a target pathway...</option>';
   for (const tid in targets) {
     const t = targets[tid];
-    const lbl = document.createElement('label');
-    lbl.className = 'sc-label';
-    lbl.innerHTML = `<input type="checkbox" value="${tid}" /><span>${t.name}</span>`;
-    const cb = lbl.querySelector('input');
-    cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
-    trgEl.appendChild(lbl);
+    const opt = document.createElement('option');
+    opt.value = tid;
+    opt.textContent = t.name;
+    selectEl.appendChild(opt);
   }
+
+  // Render initial targets list
+  renderSelectedTargets();
+}
+
+function addTargetFromSelect() {
+  const selectEl = document.getElementById('sf-targets-select');
+  const tid = selectEl.value;
+  if (!tid) return;
+  if (!selectedTargetIds.includes(tid)) {
+    selectedTargetIds.push(tid);
+    renderSelectedTargets();
+  }
+  selectEl.value = ""; // Reset select
+}
+
+function removeTargetPathway(tid) {
+  selectedTargetIds = selectedTargetIds.filter(id => id !== tid);
+  renderSelectedTargets();
+}
+
+function renderSelectedTargets() {
+  const listEl = document.getElementById('sf-selected-targets-list');
+  listEl.innerHTML = '';
+  if (selectedTargetIds.length === 0) {
+    listEl.innerHTML = '<div style="color:var(--text-3); font-family:var(--mono); font-size:0.75rem; padding:8px 0;">No target pathways added yet.</div>';
+    return;
+  }
+  selectedTargetIds.forEach(tid => {
+    const t = targets[tid];
+    if (!t) return;
+    const row = document.createElement('div');
+    row.className = 'selected-target-item';
+    row.innerHTML = `
+      <span>${t.name}</span>
+      <button type="button" class="btn-delete-sm" onclick="removeTargetPathway('${tid}')">✕</button>
+    `;
+    listEl.appendChild(row);
+  });
 }
 
 function showStep(step) {
@@ -83,9 +121,8 @@ async function submitProfile(e) {
   const classLevel = parseInt(document.getElementById('sf-class').value);
 
   const subjectCbs = document.querySelectorAll('#sf-subjects input:checked');
-  const targetCbs = document.querySelectorAll('#sf-targets input:checked');
   const boardSubjects = [...subjectCbs].map(cb => cb.value);
-  const tgts = [...targetCbs].map(cb => cb.value);
+  const tgts = selectedTargetIds;
 
   if (!name) return alert('Please enter your name');
   if (boardSubjects.length === 0) return alert('Please select at least one subject');

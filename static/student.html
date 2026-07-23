@@ -77,7 +77,13 @@
       <div class="form-card">
         <div class="form-section-title">03 — target pathways</div>
         <p class="field-hint">Which exams or universities are you aiming for?</p>
-        <div class="check-grid" id="sf-targets"></div>
+        <div class="target-picker-row">
+          <select id="sf-targets-select">
+            <option value="" disabled selected>Select a target pathway...</option>
+          </select>
+          <button type="button" class="btn-ghost-sm" id="btn-add-target" onclick="addTargetFromSelect()">+ add</button>
+        </div>
+        <div class="selected-targets-container" id="sf-selected-targets-list"></div>
       </div>
 
       <!-- Step 4: Grades -->
