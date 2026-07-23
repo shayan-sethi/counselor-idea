@@ -102,6 +102,41 @@ async function init() {
 
 let selectedUniversity = "";
 
+function updateSubjectGradesUI() {
+  const container = document.getElementById('sf-subject-grades-container');
+  const section = document.getElementById('sf-subject-grades-section');
+  if (!container || !section) return;
+
+  const checkedCbs = document.querySelectorAll('#sf-subjects input:checked');
+  const checkedSubjects = [...checkedCbs].map(cb => cb.value);
+
+  if (checkedSubjects.length === 0) {
+    section.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  const existingValues = {};
+  container.querySelectorAll('input').forEach(input => {
+    existingValues[input.dataset.subject] = input.value;
+  });
+
+  section.style.display = 'block';
+  container.innerHTML = '';
+
+  checkedSubjects.forEach(sub => {
+    const field = document.createElement('div');
+    field.className = 'field';
+    field.style.marginBottom = '8px';
+    const val = existingValues[sub] !== undefined ? existingValues[sub] : '';
+    field.innerHTML = `
+      <label style="font-size: 0.72rem; color: var(--text-2); margin-bottom: 4px; display: block;">${sub}</label>
+      <input type="number" class="sf-subj-mark" data-subject="${sub}" min="0" max="100" placeholder="e.g. 95" value="${val}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+    `;
+    container.appendChild(field);
+  });
+}
+
 function updateSubjectsGrid() {
   const board = document.getElementById('sf-board').value;
   const subjects = BOARD_SUBJECTS[board] || BOARD_SUBJECTS["CBSE"];
@@ -114,7 +149,10 @@ function updateSubjectsGrid() {
     lbl.className = 'sc-label';
     lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
     const cb = lbl.querySelector('input');
-    cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
+    cb.addEventListener('change', () => {
+      lbl.classList.toggle('checked', cb.checked);
+      updateSubjectGradesUI();
+    });
     subEl.appendChild(lbl);
   });
 
@@ -129,10 +167,76 @@ function updateSubjectsGrid() {
     cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
     compEl.appendChild(lbl);
   });
+
+  // Reset/update subject grades UI when board/subjects change
+  updateSubjectGradesUI();
+}
+
+const DEFAULT_G10_SUBJECTS = ["Mathematics", "Science", "Social Science", "English", "Hindi / Second Language"];
+
+function initG10Subjects() {
+  const container = document.getElementById('sf-g10-subject-grades-container');
+  if (!container) return;
+  if (container.children.length > 0) return;
+
+  DEFAULT_G10_SUBJECTS.forEach(sub => {
+    addG10SubjectRow(sub);
+  });
+}
+
+function addG10SubjectRow(subjectName = '') {
+  const inputEl = document.getElementById('sf-g10-custom-subj');
+  const sub = subjectName || (inputEl ? inputEl.value.trim() : '');
+  if (!sub) return;
+
+  const container = document.getElementById('sf-g10-subject-grades-container');
+  if (!container) return;
+
+  if (container.querySelector(`[data-g10-subject="${sub}"]`)) {
+    if (inputEl) inputEl.value = '';
+    return;
+  }
+
+  const field = document.createElement('div');
+  field.className = 'field';
+  field.style.marginBottom = '8px';
+  field.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+      <label style="font-size: 0.72rem; color: var(--text-2); display: block;">${sub}</label>
+      <button type="button" class="btn-delete-sm" onclick="this.closest('.field').remove()" style="font-size:0.65rem; padding: 0 4px;">✕</button>
+    </div>
+    <input type="number" class="sf-g10-subj-mark" data-g10-subject="${sub}" min="0" max="100" placeholder="e.g. 90" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+  `;
+  container.appendChild(field);
+  if (inputEl && !subjectName) inputEl.value = '';
+}
+
+function addCustomBoardSubject() {
+  const input = document.getElementById('sf-custom-subject-input');
+  if (!input) return;
+  const sub = input.value.trim();
+  if (!sub) return;
+
+  const subEl = document.getElementById('sf-subjects');
+  if (!subEl) return;
+
+  const lbl = document.createElement('label');
+  lbl.className = 'sc-label checked';
+  lbl.innerHTML = `<input type="checkbox" value="${sub}" checked />${sub}`;
+  const cb = lbl.querySelector('input');
+  cb.addEventListener('change', () => {
+    lbl.classList.toggle('checked', cb.checked);
+    updateSubjectGradesUI();
+  });
+  subEl.appendChild(lbl);
+
+  input.value = '';
+  updateSubjectGradesUI();
 }
 
 function populateForm() {
   updateSubjectsGrid();
+  initG10Subjects();
 
   // Populate AP subjects select
   const apSelect = document.getElementById('sf-ap-subject');
@@ -364,59 +468,81 @@ async function animateAgentTrace(traceMap, callback) {
   card.classList.remove('hidden');
   term.innerHTML = '';
   
+  // Tool name to human-readable description mapping
+  const TOOL_LABELS = {
+    'fetch_student': '📋 Loading your profile...',
+    'fetch_requirements': '🎯 Analyzing target requirements...',
+    'check_subjects': '📚 Checking subject prerequisites...',
+    'check_grades': '📊 Verifying academic scores...',
+    'check_timeline': '📅 Checking application deadlines...',
+    'check_portfolio': '🏆 Evaluating your extracurriculars...',
+    'draft_remediations': '💡 Generating improvement suggestions...'
+  };
+
+  function humanizeObservation(obs) {
+    try {
+      const parsed = JSON.parse(obs);
+      if (Array.isArray(parsed)) {
+        if (parsed.length === 0) return '✓ No issues found.';
+        return `Found ${parsed.length} item${parsed.length > 1 ? 's' : ''} to review.`;
+      }
+      if (parsed.name) return `Profile loaded: ${parsed.name}`;
+      if (parsed.id) return `Requirements loaded for ${parsed.name || parsed.id}`;
+      return obs.substring(0, 120) + (obs.length > 120 ? '...' : '');
+    } catch {
+      return obs.substring(0, 120) + (obs.length > 120 ? '...' : '');
+    }
+  }
+
   // Combine all traces from different targets
   let combinedTrace = [];
   for (const tid in traceMap) {
-    combinedTrace.push({ type: 'header', message: `=== START AGENT LOOP FOR PATHWAY: ${tid} ===` });
+    combinedTrace.push({ type: 'header', message: `Evaluating pathway: ${tid.replace(/_/g, ' ')}` });
     combinedTrace = combinedTrace.concat(traceMap[tid]);
   }
 
   if (combinedTrace.length === 0) {
-    // Fallback if no trace returned
-    combinedTrace.push({ type: 'thought', message: "Initializing compliance evaluation agent loop..." });
-    combinedTrace.push({ type: 'action', message: "call_tool: evaluate_student" });
-    combinedTrace.push({ type: 'observation', message: "Verification complete. Compliance generated." });
+    combinedTrace.push({ type: 'thought', message: 'Initializing compliance evaluation...' });
+    combinedTrace.push({ type: 'action', message: 'call_tool: check_subjects' });
+    combinedTrace.push({ type: 'observation', message: '[]' });
   }
 
   for (let i = 0; i < combinedTrace.length; i++) {
     const log = combinedTrace[i];
     const line = document.createElement('div');
-    line.style.marginBottom = '8px';
+    line.style.marginBottom = '6px';
     
     if (log.type === 'header') {
       line.style.color = '#7aa2f7';
       line.style.fontWeight = 'bold';
+      line.style.marginTop = '8px';
       line.textContent = log.message;
     } else if (log.type === 'thought') {
-      line.innerHTML = `<span style="color: #bb9af3; font-weight: bold;">Thought:</span> ${log.message}`;
+      // Skip raw thoughts — they're mostly redundant with humanized actions
+      continue;
     } else if (log.type === 'action') {
-      const detailStr = log.detail ? ` with args ${log.detail}` : '';
-      line.innerHTML = `<span style="color: #7dcfff; font-weight: bold;">Action:</span> calling tool <span style="color: #e0af68;">${log.message.replace('call_tool: ', '')}</span>${detailStr}`;
+      const toolName = log.message.replace('call_tool: ', '');
+      const humanLabel = TOOL_LABELS[toolName] || `Running ${toolName}...`;
+      line.innerHTML = `<span style="color: #7dcfff;">${humanLabel}</span>`;
     } else if (log.type === 'observation') {
-      let obs = log.message;
-      if (obs.length > 300) {
-        obs = obs.substring(0, 300) + '...';
-      }
-      line.innerHTML = `<span style="color: #9ece6a; font-weight: bold;">Observation:</span> <span style="color: #565f89;">${obs}</span>`;
+      const summary = humanizeObservation(log.message);
+      line.innerHTML = `<span style="color: #565f89; padding-left: 16px;">→ ${summary}</span>`;
     }
     
     term.appendChild(line);
     term.parentElement.scrollTop = term.parentElement.scrollHeight;
-    
-    // Sleep briefly to simulate agent processing time
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r => setTimeout(r, 450));
   }
 
-  // Add final success prompt
   const line = document.createElement('div');
   line.style.color = '#9ece6a';
   line.style.fontWeight = 'bold';
   line.style.marginTop = '12px';
-  line.innerHTML = `✔ Agent execution terminated successfully. Loading dashboard... <span class="blink">▌</span>`;
+  line.innerHTML = `✔ Analysis complete. Loading your results...`;
   term.appendChild(line);
   term.parentElement.scrollTop = term.parentElement.scrollHeight;
 
-  await new Promise(r => setTimeout(r, 1000));
+  await new Promise(r => setTimeout(r, 800));
   callback();
 }
 
@@ -460,14 +586,10 @@ function addStudentPortfolioRow(activity = '', desc = '', tier = 3) {
   const list = document.getElementById('sf-portfolio-list');
   const row = document.createElement('div');
   row.className = 'portfolio-row';
+  row.style.gridTemplateColumns = '1fr 2fr auto';
   row.innerHTML = `
     <input type="text" placeholder="activity name" class="pf-activity" value="${activity}" />
-    <input type="text" placeholder="description" class="pf-desc" value="${desc}" />
-    <select class="pf-tier">
-      <option value="1" ${tier === 1 ? 'selected' : ''}>Tier 1</option>
-      <option value="2" ${tier === 2 ? 'selected' : ''}>Tier 2</option>
-      <option value="3" ${tier === 3 ? 'selected' : ''}>Tier 3</option>
-    </select>
+    <input type="text" placeholder="describe what you did, awards won, level reached" class="pf-desc" value="${desc}" />
     <button type="button" class="btn-delete-sm" onclick="this.parentElement.remove()">✕</button>
   `;
   list.appendChild(row);
@@ -499,6 +621,24 @@ async function submitProfile(e) {
   if (g11) grades.class_11_aggregate = g11;
   if (gexp) grades.current_expected_board = gexp;
 
+  const g10SubjectsGrades = {};
+  document.querySelectorAll('.sf-g10-subj-mark').forEach(input => {
+    const mark = parseInt(input.value);
+    if (!isNaN(mark)) {
+      g10SubjectsGrades[input.dataset.g10Subject] = mark;
+    }
+  });
+  grades.class_10_subjects = g10SubjectsGrades;
+
+  const subjectsGrades = {};
+  document.querySelectorAll('.sf-subj-mark').forEach(input => {
+    const mark = parseInt(input.value);
+    if (!isNaN(mark)) {
+      subjectsGrades[input.dataset.subject] = mark;
+    }
+  });
+  grades.subjects = subjectsGrades;
+
   const tests = {};
   const sat = document.getElementById('sf-sat').value;
   if (sat) tests.SAT = parseInt(sat);
@@ -510,8 +650,7 @@ async function submitProfile(e) {
   document.querySelectorAll('#sf-portfolio-list .portfolio-row').forEach(row => {
     const act = row.querySelector('.pf-activity').value.trim();
     const d = row.querySelector('.pf-desc').value.trim();
-    const t = parseInt(row.querySelector('.pf-tier').value);
-    if (act) portfolio.push({ activity: act, description: d, tier: t });
+    if (act) portfolio.push({ activity: act, description: d });
   });
 
   const btn = document.getElementById('sf-submit');
@@ -573,21 +712,25 @@ function renderAuditResults(student, audit) {
   body.innerHTML = '';
 
   // Summary strip
-  let totalGaps = 0, compliantCount = 0, maxUrg = 0;
+  let totalGaps = 0, avgMatch = 0, targetCount = 0, maxUrg = 0;
   for (const tid in audit.targets) {
     const t = audit.targets[tid];
-    if (t.compliant) compliantCount++;
-    else totalGaps += t.gaps.length;
-    maxUrg = Math.max(maxUrg, t.urgency_score);
+    totalGaps += (t.gaps || []).length;
+    avgMatch += (t.match_score || 100);
+    maxUrg = Math.max(maxUrg, t.urgency_score || 0);
+    targetCount++;
   }
+  avgMatch = targetCount > 0 ? Math.round(avgMatch / targetCount) : 100;
+
+  const matchColor = avgMatch >= 90 ? 'accent-g' : avgMatch >= 70 ? 'accent-y' : 'accent-r';
 
   const summaryEl = document.createElement('div');
   summaryEl.className = 'metrics-strip';
   summaryEl.style.marginBottom = '28px';
   summaryEl.innerHTML = `
-    <div class="metric"><span class="metric-num">${Object.keys(audit.targets).length}</span><span class="metric-lbl">targets</span></div>
+    <div class="metric"><span class="metric-num">${targetCount}</span><span class="metric-lbl">targets</span></div>
     <div class="metric-div"></div>
-    <div class="metric"><span class="metric-num accent-g">${compliantCount}</span><span class="metric-lbl">compliant</span></div>
+    <div class="metric"><span class="metric-num ${matchColor}">${avgMatch}%</span><span class="metric-lbl">avg match</span></div>
     <div class="metric-div"></div>
     <div class="metric"><span class="metric-num accent-y">${totalGaps}</span><span class="metric-lbl">gaps found</span></div>
     <div class="metric-div"></div>
@@ -598,6 +741,9 @@ function renderAuditResults(student, audit) {
   // Per-target results
   for (const tid in audit.targets) {
     const t = audit.targets[tid];
+    const ms = t.match_score || 100;
+    const rl = t.risk_level || 'Strong Match';
+    const badgeColor = ms >= 90 ? 'tb-pass' : ms >= 70 ? 'tb-warn' : 'tb-fail';
 
     const block = document.createElement('div');
     block.className = 'target-block';
@@ -606,7 +752,7 @@ function renderAuditResults(student, audit) {
     block.innerHTML = `
       <div class="tb-header">
         <span class="tb-name">${t.target_name}</span>
-        <span class="tb-badge ${t.compliant ? 'tb-pass' : 'tb-fail'}">${t.compliant ? 'pass' : t.gaps.length + ' gap' + (t.gaps.length > 1 ? 's' : '')}</span>
+        <span class="tb-badge ${badgeColor}">${ms}% Match · ${rl}</span>
       </div>
     `;
 
@@ -614,7 +760,7 @@ function renderAuditResults(student, audit) {
     bdy.className = 'tb-body';
 
     if (t.compliant) {
-      bdy.innerHTML = '<div class="tb-ok">✔ all requirements verified — you\'re on track!</div>';
+      bdy.innerHTML = '<div class="tb-ok">✔ All requirements verified — you\'re on track!</div>';
     } else {
       // Gaps
       t.gaps.forEach(g => {
@@ -654,6 +800,16 @@ function renderAuditResults(student, audit) {
       }
     }
 
+    // Data freshness footer
+    const verified = (t.gaps && t.gaps.length > 0 && t.gaps[0].last_verified)
+      ? t.gaps[0].last_verified : null;
+    if (verified) {
+      const freshness = document.createElement('div');
+      freshness.style.cssText = 'font-size: 0.7rem; color: var(--text-3); margin-top: 10px; font-style: italic;';
+      freshness.textContent = `⚠️ Requirements data last verified: ${verified}`;
+      bdy.appendChild(freshness);
+    }
+
     block.appendChild(bdy);
     body.appendChild(block);
   }
@@ -666,3 +822,4 @@ function renderAuditResults(student, audit) {
   editBtn.onclick = () => showStep('profile');
   body.appendChild(editBtn);
 }
+

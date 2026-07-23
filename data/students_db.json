@@ -446,5 +446,114 @@
       "tmua_registered": false,
       "sat_score": null
     }
+  },
+  {
+    "id": "STU_014",
+    "name": "Shayan sethi",
+    "class_level": 12,
+    "board": "ICSE",
+    "board_subjects": [
+      "Mathematics",
+      "Computer Science",
+      "Economics",
+      "Psychology"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "90",
+      "class_11_aggregate": "92",
+      "current_expected_board": "95"
+    },
+    "standardized_tests": {
+      "AP_CALCULUS_BC": 5,
+      "AP_COMPUTER_SCIENCE_A": 5
+    },
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_015",
+    "name": "Shayan sethi",
+    "class_level": 12,
+    "board": "ICSE",
+    "board_subjects": [
+      "Mathematics",
+      "Computer Science",
+      "Economics",
+      "Psychology"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "90",
+      "class_11_aggregate": "92",
+      "current_expected_board": "97"
+    },
+    "standardized_tests": {
+      "AP_CALCULUS_BC": 5,
+      "AP_COMPUTER_SCIENCE_A": 5
+    },
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE__3_OR_4_YEARS_"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_016",
+    "name": "S",
+    "class_level": 12,
+    "board": "ICSE",
+    "board_subjects": [
+      "Mathematics",
+      "Computer Science",
+      "Economics",
+      "Psychology",
+      "english"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "90",
+      "class_11_aggregate": "97",
+      "current_expected_board": "97",
+      "class_10_subjects": {
+        "Mathematics": 85,
+        "Science": 87,
+        "Social Science": 91,
+        "English": 93,
+        "Hindi / Second Language": 88,
+        "Computer science": 97
+      },
+      "subjects": {
+        "Mathematics": 98,
+        "Computer Science": 100,
+        "Economics": 92,
+        "Psychology": 100,
+        "english": 87
+      }
+    },
+    "standardized_tests": {
+      "AP_CALCULUS_BC": 5,
+      "AP_COMPUTER_SCIENCE_A": 5
+    },
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_COMPUTING"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
   }
 ]

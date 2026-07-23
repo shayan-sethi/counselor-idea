@@ -319,7 +319,7 @@ Write a sentence explaining your thought before calling each tool.
         student = next((s for s in students_list if s["id"] == student_id), None)
         target = self.kg.get_course_or_exam(target_id)
         if not student or not target:
-            return {"compliant": True, "urgency_score": 0, "gaps": [], "remediations": []}
+            return {"compliant": True, "match_score": 100, "risk_level": "Strong Match", "urgency_score": 0, "gaps": [], "remediations": []}
         
         gaps = []
         subjects = simulated_subjects if simulated_subjects is not None else student.get("board_subjects", [])
@@ -348,8 +348,12 @@ Write a sentence explaining your thought before calling each tool.
             }
         }
         remediations = self.planner.get_remediations(temp_analysis).get(target_id, [])
+        match_score = self.reasoner._calculate_match_score(gaps)
+        risk_level = self.reasoner._risk_level_label(match_score)
         return {
             "compliant": len(gaps) == 0,
+            "match_score": match_score,
+            "risk_level": risk_level,
             "urgency_score": temp_analysis["targets"][target_id]["urgency_score"],
             "gaps": gaps,
             "remediations": remediations
@@ -361,7 +365,7 @@ Write a sentence explaining your thought before calling each tool.
         target = self.kg.get_course_or_exam(target_id)
 
         if not student or not target:
-            return {"compliant": True, "urgency_score": 0, "gaps": [], "remediations": [], "trace": []}
+            return {"compliant": True, "match_score": 100, "risk_level": "Strong Match", "urgency_score": 0, "gaps": [], "remediations": [], "trace": []}
 
         # Step 1: fetch_student
         trace.append({"type": "thought", "message": "I need to retrieve the student's profile to inspect subjects and grades."})
@@ -431,8 +435,12 @@ Write a sentence explaining your thought before calling each tool.
             remediations = self.planner.get_remediations(temp_analysis).get(target_id, [])
             trace.append({"type": "observation", "message": json.dumps(remediations)})
 
+        match_score = self.reasoner._calculate_match_score(gaps)
+        risk_level = self.reasoner._risk_level_label(match_score)
         return {
             "compliant": len(gaps) == 0,
+            "match_score": match_score,
+            "risk_level": risk_level,
             "urgency_score": self.reasoner._calculate_urgency(gaps),
             "gaps": gaps,
             "remediations": remediations,

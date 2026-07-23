@@ -179,6 +179,28 @@ def run_tests():
             print(f"[❌] Flagged false gaps for Meera. Stanford compliant: {stanford_compliant}, Eco compliant: {eco_compliant}")
             failures += 1
 
+    # Test Case 7: Subject-Specific grade check (Rohan Verma low Math score simulation)
+    print("\n--- Test Case 7: Rohan Verma simulated low Math score (92% vs 95% cutoff for Cambridge) ---")
+    rohan_profile = student_map.get("STU_003")
+    if not rohan_profile:
+        print("[❌] Rohan Verma profile not found for simulation.")
+        failures += 1
+    else:
+        # Create a copy with modified Math grade
+        sim_student = json.loads(json.dumps(rohan_profile))
+        sim_student["grades"]["subjects"]["Mathematics"] = 92
+        
+        sim_res = reasoner.evaluate_student(sim_student)
+        cam_res = sim_res["targets"].get("CAMBRIDGE_CS")
+        gaps = cam_res["gaps"]
+        
+        has_math_grade_gap = any(g["type"] == "grade_cutoff_violation" and g["subject"] == "Mathematics" for g in gaps)
+        if has_math_grade_gap:
+            print("[✔] Correctly flagged Rohan's Mathematics grade (92% vs required 95%).")
+        else:
+            print(f"[❌] Failed to flag subject-specific grade cutoff violation. Gaps found: {[g['type'] for g in gaps]}")
+            failures += 1
+
     print("\n====================================================")
     if failures == 0:
         print("[✔] ALL TESTS PASSED SUCCESSFULLY! Compliance engine is 100% correct.")

@@ -73,11 +73,15 @@ class Reasoner:
 
             # Calculate overall target urgency score (risk priority)
             urgency_score = self._calculate_urgency(gaps)
+            match_score = self._calculate_match_score(gaps)
+            risk_level = self._risk_level_label(match_score)
 
             student_results["targets"][target_id] = {
                 "target_name": target["name"],
                 "track": target["track"],
                 "compliant": len(gaps) == 0,
+                "match_score": match_score,
+                "risk_level": risk_level,
                 "urgency_score": urgency_score,
                 "gaps": gaps
             }
@@ -244,6 +248,35 @@ class Reasoner:
                                 "citation": self._get_citation(target, req.get("clause", "")),
                                 "last_verified": self._get_last_verified(target)
                             })
+                    
+                    # Check individual subject grades if present in student's profile
+                    student_subjects_grades = grades_data.get("subjects", {})
+                    if student_subjects_grades:
+                        import re
+                        # Find all patterns like "95% in Mathematics"
+                        matches = re.findall(r'(\d+(?:\.\d+)?)\%\s+in\s+([A-Za-z\s&,]+)', notes)
+                        for pct_str, subj_name in matches:
+                            clean_subj = re.sub(r'[^\w\s]', '', subj_name).strip().lower()
+                            # Ignore patterns matching overall aggregate phrases
+                            if any(ignored in clean_subj for ignored in ["top 5", "board", "class", "aggregate"]):
+                                continue
+                            required_mark = float(pct_str)
+                            for s_name, s_grade in student_subjects_grades.items():
+                                if clean_subj in s_name.lower() or s_name.lower() in clean_subj:
+                                    try:
+                                        grade_val = float(s_grade)
+                                        # Only warn if the grade is valid (> 0)
+                                        if grade_val > 0 and grade_val < required_mark:
+                                            gaps.append({
+                                                "type": "grade_cutoff_violation",
+                                                "severity": "CRITICAL" if target["track"] == "India" else "WARNING",
+                                                "subject": s_name,
+                                                "description": f"Expected {s_name} score ({grade_val}%) is below the required subject cutoff of {pct_str}%. {notes}",
+                                                "citation": self._get_citation(target, req.get("clause", "")),
+                                                "last_verified": self._get_last_verified(target)
+                                            })
+                                    except ValueError:
+                                        pass
                 except ValueError:
                     # Non-numeric board requirement (e.g. A*A*A under A-Level which doesn't apply directly to CBSE float grades)
                     pass
@@ -360,3 +393,38 @@ class Reasoner:
                 score += 15
         
         return min(score, 100)
+
+    def _calculate_match_score(self, gaps):
+        """Calculates a 0-100 match/confidence percentage. 100 = perfect fit, 0 = no chance."""
+        if not gaps:
+            return 100
+
+        deduction = 0
+        for gap in gaps:
+            gtype = gap["type"]
+            gsev = gap["severity"]
+
+            if gtype == "portfolio_gap":
+                # Portfolio is soft/holistic — small deduction
+                deduction += 6
+            elif gsev == "CRITICAL":
+                if "deadline" in gtype or "expired" in gtype:
+                    deduction += 30  # Missed deadlines are very serious
+                else:
+                    deduction += 22  # Missing hard prerequisites
+            elif gsev == "WARNING":
+                deduction += 10
+
+        return max(0, 100 - deduction)
+
+    @staticmethod
+    def _risk_level_label(match_score):
+        """Maps a match score to a human-readable risk label."""
+        if match_score >= 90:
+            return "Strong Match"
+        elif match_score >= 70:
+            return "Moderate Risk"
+        elif match_score >= 45:
+            return "High Risk"
+        else:
+            return "Critical"

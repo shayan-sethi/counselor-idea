@@ -22,6 +22,28 @@ reasoner = Reasoner(kg)
 planner = Planner()
 agent = PRISMAgent(kg, reasoner, planner)
 
+# ── Portfolio auto-classifier ──
+TIER_1_KEYWORDS = ["international", "olympiad", "patent", "published", "national award",
+                   "research paper", "imo", "ioi", "usamo", "intel isef", "google science fair",
+                   "national winner", "world", "global", "ieee", "arxiv"]
+TIER_2_KEYWORDS = ["state", "regional", "founder", "president", "hackathon winner",
+                   "mun best delegate", "national qualifier", "captain", "head boy",
+                   "head girl", "ted talk", "startup", "state winner", "gold medal"]
+
+def auto_classify_portfolio(portfolio):
+    """Auto-classify portfolio activity tiers from descriptions using keyword rules."""
+    classified = []
+    for item in portfolio:
+        text = (item.get("activity", "") + " " + item.get("description", "")).lower()
+        if any(kw in text for kw in TIER_1_KEYWORDS):
+            tier = 1
+        elif any(kw in text for kw in TIER_2_KEYWORDS):
+            tier = 2
+        else:
+            tier = item.get("tier", 3)  # Keep explicit tier if provided, else default 3
+        classified.append({**item, "tier": tier})
+    return classified
+
 # ── Load students ──
 def load_students():
     with open(STUDENTS_PATH, "r") as f:
@@ -235,7 +257,7 @@ def api_create_student():
         "cuet_subjects": data.get("cuet_subjects", []),
         "grades": data.get("grades", {}),
         "standardized_tests": data.get("standardized_tests", {}),
-        "portfolio": data.get("portfolio", []),
+        "portfolio": auto_classify_portfolio(data.get("portfolio", [])),
         "targets": targets,
         "status": data.get("status", {
             "cuet_form_submitted": False,
@@ -266,6 +288,8 @@ def api_create_student():
                 "target_name": agent_res.get("target_name", "Target"),
                 "track": agent_res.get("track", "UK"),
                 "compliant": agent_res.get("compliant", False),
+                "match_score": agent_res.get("match_score", 100),
+                "risk_level": agent_res.get("risk_level", "Strong Match"),
                 "urgency_score": agent_res.get("urgency_score", 0),
                 "gaps": agent_res.get("gaps", []),
                 "remediations": agent_res.get("remediations", [])
@@ -341,6 +365,8 @@ def api_evaluate():
                 "target_name": agent_res.get("target_name", "Target"),
                 "track": agent_res.get("track", "UK"),
                 "compliant": agent_res.get("compliant", False),
+                "match_score": agent_res.get("match_score", 100),
+                "risk_level": agent_res.get("risk_level", "Strong Match"),
                 "urgency_score": agent_res.get("urgency_score", 0),
                 "gaps": agent_res.get("gaps", []),
                 "remediations": agent_res.get("remediations", [])
@@ -367,6 +393,8 @@ def api_evaluate_cohort():
                     "target_name": agent_res.get("target_name", "Target"),
                     "track": agent_res.get("track", "UK"),
                     "compliant": agent_res.get("compliant", False),
+                    "match_score": agent_res.get("match_score", 100),
+                    "risk_level": agent_res.get("risk_level", "Strong Match"),
                     "urgency_score": agent_res.get("urgency_score", 0),
                     "gaps": agent_res.get("gaps", []),
                     "remediations": agent_res.get("remediations", [])

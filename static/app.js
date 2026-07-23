@@ -137,53 +137,135 @@ function switchView(v) {
 // ══════════════════════════════════════════════
 
 function renderDashboard() {
-  let pass = 0, crit = 0, gaps = 0;
+  let strongMatch = 0, highRisk = 0, gaps = 0;
   students.forEach(s => {
     const a = cohortAudit[s.id]; if (!a) return;
-    let ok = true;
+    let minMatch = 100;
     for (const t in a.targets) {
       const r = a.targets[t];
-      if (!r.compliant) { ok = false; gaps += r.gaps.length; }
-      if (r.urgency_score >= 35) crit++;
+      const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50);
+      minMatch = Math.min(minMatch, ms);
+      if (!r.compliant) gaps += r.gaps.length;
     }
-    if (ok) pass++;
+    if (minMatch >= 90) strongMatch++;
+    else if (minMatch < 70) highRisk++;
   });
 
   animateNum('m-cohort', students.length);
-  animateNum('m-pass', pass);
-  animateNum('m-risk', crit);
+  animateNum('m-pass', strongMatch);
+  animateNum('m-risk', highRisk);
   animateNum('m-gaps', gaps);
 
   document.getElementById('dash-subtitle').textContent =
     `${students.length} students · ${Object.keys(targets).length} target pathways · real-time audit`;
 
-  const rows = document.getElementById('student-rows');
-  rows.innerHTML = '';
+  renderCohortInsights();
+  filterDashboard();
+}
 
-  if (students.length === 0) {
-    rows.innerHTML = '<div class="loading-row">no students yet — go to manage tab to add</div>';
+function renderCohortInsights() {
+  const body = document.getElementById('insights-body');
+  if (!body) return;
+  body.innerHTML = '';
+
+  // Aggregate gap types
+  const gapCounts = {};
+  students.forEach(s => {
+    const a = cohortAudit[s.id]; if (!a) return;
+    for (const t in a.targets) {
+      (a.targets[t].gaps || []).forEach(g => {
+        const key = g.subject || g.type;
+        gapCounts[key] = (gapCounts[key] || 0) + 1;
+      });
+    }
+  });
+
+  const sorted = Object.entries(gapCounts).sort((a, b) => b[1] - a[1]).slice(0, 4);
+  if (sorted.length === 0) {
+    body.innerHTML = '<span style="color: var(--green);">✔ No common gaps across cohort.</span>';
     return;
   }
 
-  students.forEach(s => {
-    const a = cohortAudit[s.id]; if (!a) return;
-    let maxUrg = 0, names = [], hasGap = false;
-    for (const t in a.targets) {
-      const r = a.targets[t];
-      names.push(r.target_name);
-      maxUrg = Math.max(maxUrg, r.urgency_score);
-      if (!r.compliant) hasGap = true;
-    }
+  sorted.forEach(([key, count]) => {
+    const chip = document.createElement('div');
+    chip.style.cssText = 'background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 8px 14px;';
+    chip.innerHTML = `<strong style="color:var(--amber);">${count}</strong> <span>students: ${key}</span>`;
+    body.appendChild(chip);
+  });
+}
 
-    const filled = Math.round((Math.min(maxUrg, 100) / 100) * 8);
+function getStudentMatchInfo(sid) {
+  const a = cohortAudit[sid];
+  if (!a) return { minMatch: 100, maxUrg: 0, hasGap: false, names: [], riskLevel: 'Strong Match' };
+  let minMatch = 100, maxUrg = 0, hasGap = false;
+  const names = [];
+  for (const t in a.targets) {
+    const r = a.targets[t];
+    const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50);
+    minMatch = Math.min(minMatch, ms);
+    maxUrg = Math.max(maxUrg, r.urgency_score || 0);
+    names.push(r.target_name);
+    if (!r.compliant) hasGap = true;
+  }
+  let riskLevel = 'Strong Match';
+  if (minMatch < 45) riskLevel = 'Critical';
+  else if (minMatch < 70) riskLevel = 'High Risk';
+  else if (minMatch < 90) riskLevel = 'Moderate Risk';
+  return { minMatch, maxUrg, hasGap, names, riskLevel };
+}
+
+function filterDashboard() {
+  const searchVal = (document.getElementById('dash-search')?.value || '').toLowerCase();
+  const filterVal = document.getElementById('dash-filter')?.value || 'all';
+  const sortVal = document.getElementById('dash-sort')?.value || 'name-asc';
+
+  let filtered = students.filter(s => {
+    if (searchVal && !s.name.toLowerCase().includes(searchVal)) return false;
+    if (filterVal === 'all') return true;
+    const info = getStudentMatchInfo(s.id);
+    if (filterVal === 'strong') return info.minMatch >= 90;
+    if (filterVal === 'moderate') return info.minMatch >= 70 && info.minMatch < 90;
+    if (filterVal === 'high') return info.minMatch >= 45 && info.minMatch < 70;
+    if (filterVal === 'critical') return info.minMatch < 45;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    const infoA = getStudentMatchInfo(a.id);
+    const infoB = getStudentMatchInfo(b.id);
+    if (sortVal === 'name-asc') return a.name.localeCompare(b.name);
+    if (sortVal === 'name-desc') return b.name.localeCompare(a.name);
+    if (sortVal === 'match-asc') return infoA.minMatch - infoB.minMatch;
+    if (sortVal === 'match-desc') return infoB.minMatch - infoA.minMatch;
+    if (sortVal === 'risk-desc') return infoB.maxUrg - infoA.maxUrg;
+    return 0;
+  });
+
+  renderStudentRows(filtered);
+}
+
+function renderStudentRows(list) {
+  const rows = document.getElementById('student-rows');
+  rows.innerHTML = '';
+
+  if (list.length === 0) {
+    rows.innerHTML = '<div class="loading-row">no students match your filters</div>';
+    return;
+  }
+
+  list.forEach(s => {
+    const info = getStudentMatchInfo(s.id);
+    const { minMatch, maxUrg, hasGap, names, riskLevel } = info;
+
+    const filled = Math.round((Math.min(minMatch, 100) / 100) * 8);
     const empty = 8 - filled;
     let riskColor, markerClass, statusText, statusClass;
-    if (!hasGap) {
-      riskColor = 'var(--green)'; markerClass = 'nm-pass'; statusText = 'pass'; statusClass = 'st-pass';
-    } else if (maxUrg >= 35) {
-      riskColor = 'var(--red)'; markerClass = 'nm-crit'; statusText = 'critical'; statusClass = 'st-crit';
+    if (minMatch >= 90) {
+      riskColor = 'var(--green)'; markerClass = 'nm-pass'; statusText = riskLevel; statusClass = 'st-pass';
+    } else if (minMatch >= 70) {
+      riskColor = 'var(--amber)'; markerClass = 'nm-warn'; statusText = riskLevel; statusClass = 'st-warn';
     } else {
-      riskColor = 'var(--amber)'; markerClass = 'nm-warn'; statusText = 'warning'; statusClass = 'st-warn';
+      riskColor = 'var(--red)'; markerClass = 'nm-crit'; statusText = riskLevel; statusClass = 'st-crit';
     }
     const blocks = `<span style="color:${riskColor}">${'█'.repeat(filled)}</span><span style="color:var(--border)">${'░'.repeat(empty)}</span>`;
 
@@ -199,7 +281,7 @@ function renderDashboard() {
       <div class="col-targets">${names.join(' · ')}</div>
       <div class="col-risk">
         <div class="risk-blocks">${blocks}</div>
-        <div class="risk-pct" style="color:${riskColor}">${maxUrg}%</div>
+        <div class="risk-pct" style="color:${riskColor}">${minMatch}%</div>
       </div>
       <div class="status-tag ${statusClass}">${statusText}</div>
     `;
@@ -221,6 +303,41 @@ function animateNum(id, to) {
 //  MANAGE — CRUD
 // ══════════════════════════════════════════════
 
+function updateManageSubjectGradesUI() {
+  const container = document.getElementById('mf-subject-grades-container');
+  const section = document.getElementById('mf-subject-grades-section');
+  if (!container || !section) return;
+
+  const checkedCbs = document.querySelectorAll('#mf-subjects input:checked');
+  const checkedSubjects = [...checkedCbs].map(cb => cb.value);
+
+  if (checkedSubjects.length === 0) {
+    section.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  const existingValues = {};
+  container.querySelectorAll('input').forEach(input => {
+    existingValues[input.dataset.subject] = input.value;
+  });
+
+  section.style.display = 'block';
+  container.innerHTML = '';
+
+  checkedSubjects.forEach(sub => {
+    const field = document.createElement('div');
+    field.className = 'field';
+    field.style.marginBottom = '8px';
+    const val = existingValues[sub] !== undefined ? existingValues[sub] : '';
+    field.innerHTML = `
+      <label style="font-size: 0.72rem; color: var(--text-2); margin-bottom: 4px; display: block;">${sub}</label>
+      <input type="number" class="mf-subj-mark" data-subject="${sub}" min="0" max="100" placeholder="e.g. 95" value="${val}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+    `;
+    container.appendChild(field);
+  });
+}
+
 function updateManageSubjectsGrid() {
   const board = document.getElementById('mf-board').value;
   const subjects = BOARD_SUBJECTS[board] || BOARD_SUBJECTS["CBSE"];
@@ -233,7 +350,10 @@ function updateManageSubjectsGrid() {
     lbl.className = 'sc-label';
     lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
     const cb = lbl.querySelector('input');
-    cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
+    cb.addEventListener('change', () => {
+      lbl.classList.toggle('checked', cb.checked);
+      updateManageSubjectGradesUI();
+    });
     subEl.appendChild(lbl);
   });
 
@@ -248,6 +368,9 @@ function updateManageSubjectsGrid() {
     cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
     compEl.appendChild(lbl);
   });
+
+  // Reset/update subject grades UI when board/subjects change
+  updateManageSubjectGradesUI();
 }
 
 let manageSelectedAPs = {};
@@ -302,8 +425,71 @@ function removeManageAP(key) {
 window.addManageAPFromSelect = addManageAPFromSelect;
 window.removeManageAP = removeManageAP;
 
+const DEFAULT_MANAGE_G10_SUBJECTS = ["Mathematics", "Science", "Social Science", "English", "Hindi / Second Language"];
+
+function initManageG10Subjects() {
+  const container = document.getElementById('mf-g10-subject-grades-container');
+  if (!container) return;
+  if (container.children.length > 0) return;
+
+  DEFAULT_MANAGE_G10_SUBJECTS.forEach(sub => {
+    addManageG10SubjectRow(sub);
+  });
+}
+
+function addManageG10SubjectRow(subjectName = '') {
+  const inputEl = document.getElementById('mf-g10-custom-subj');
+  const sub = subjectName || (inputEl ? inputEl.value.trim() : '');
+  if (!sub) return;
+
+  const container = document.getElementById('mf-g10-subject-grades-container');
+  if (!container) return;
+
+  if (container.querySelector(`[data-g10-subject="${sub}"]`)) {
+    if (inputEl) inputEl.value = '';
+    return;
+  }
+
+  const field = document.createElement('div');
+  field.className = 'field';
+  field.style.marginBottom = '8px';
+  field.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+      <label style="font-size: 0.72rem; color: var(--text-2); display: block;">${sub}</label>
+      <button type="button" class="btn-delete-sm" onclick="this.closest('.field').remove()" style="font-size:0.65rem; padding: 0 4px;">✕</button>
+    </div>
+    <input type="number" class="mf-g10-subj-mark" data-g10-subject="${sub}" min="0" max="100" placeholder="e.g. 90" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+  `;
+  container.appendChild(field);
+  if (inputEl && !subjectName) inputEl.value = '';
+}
+
+function addManageCustomBoardSubject() {
+  const input = document.getElementById('mf-custom-subject-input');
+  if (!input) return;
+  const sub = input.value.trim();
+  if (!sub) return;
+
+  const subEl = document.getElementById('mf-subjects');
+  if (!subEl) return;
+
+  const lbl = document.createElement('label');
+  lbl.className = 'sc-label checked';
+  lbl.innerHTML = `<input type="checkbox" value="${sub}" checked />${sub}`;
+  const cb = lbl.querySelector('input');
+  cb.addEventListener('change', () => {
+    lbl.classList.toggle('checked', cb.checked);
+    updateManageSubjectGradesUI();
+  });
+  subEl.appendChild(lbl);
+
+  input.value = '';
+  updateManageSubjectGradesUI();
+}
+
 function initManageForm() {
   updateManageSubjectsGrid();
+  initManageG10Subjects();
 
   // Populate AP subject select
   const apSelect = document.getElementById('mf-ap-subject');
@@ -451,14 +637,13 @@ async function deleteTarget(tid, name) {
   }
 }
 
-function addPortfolioRow(activity = '', desc = '', tier = 3) {
+function addPortfolioRow(activity = '', desc = '') {
   const list = document.getElementById('mf-portfolio-list');
   const row = document.createElement('div');
   row.className = 'portfolio-row';
   row.innerHTML = `
     <input type="text" placeholder="activity name" class="pf-activity" value="${activity}" />
     <input type="text" placeholder="description" class="pf-desc" value="${desc}" />
-    <select class="pf-tier"><option value="1" ${tier === 1 ? 'selected' : ''}>Tier 1</option><option value="2" ${tier === 2 ? 'selected' : ''}>Tier 2</option><option value="3" ${tier === 3 ? 'selected' : ''}>Tier 3</option></select>
     <button type="button" class="btn-delete-sm" onclick="this.parentElement.remove()">✕</button>
   `;
   list.appendChild(row);
@@ -481,6 +666,24 @@ function getFormData() {
   if (g11) grades.class_11_aggregate = g11;
   if (gexp) grades.current_expected_board = gexp;
 
+  const g10SubjectsGrades = {};
+  document.querySelectorAll('.mf-g10-subj-mark').forEach(input => {
+    const mark = parseInt(input.value);
+    if (!isNaN(mark)) {
+      g10SubjectsGrades[input.dataset.g10Subject] = mark;
+    }
+  });
+  grades.class_10_subjects = g10SubjectsGrades;
+
+  const subjectsGrades = {};
+  document.querySelectorAll('.mf-subj-mark').forEach(input => {
+    const mark = parseInt(input.value);
+    if (!isNaN(mark)) {
+      subjectsGrades[input.dataset.subject] = mark;
+    }
+  });
+  grades.subjects = subjectsGrades;
+
   const tests = {};
   const sat = document.getElementById('mf-sat').value;
   if (sat) tests.SAT = parseInt(sat);
@@ -492,8 +695,7 @@ function getFormData() {
   document.querySelectorAll('#mf-portfolio-list .portfolio-row').forEach(row => {
     const act = row.querySelector('.pf-activity').value.trim();
     const d = row.querySelector('.pf-desc').value.trim();
-    const t = parseInt(row.querySelector('.pf-tier').value);
-    if (act) portfolio.push({ activity: act, description: d, tier: t });
+    if (act) portfolio.push({ activity: act, description: d });
   });
 
   return {
@@ -564,6 +766,18 @@ function editStudent(sid) {
     cb.parentElement.classList.toggle('checked', checked);
   });
 
+  // Dynamically build subject grade inputs
+  updateManageSubjectGradesUI();
+
+  // Populate actual subject grades
+  const subjectsGrades = s.grades?.subjects || {};
+  document.querySelectorAll('.mf-subj-mark').forEach(input => {
+    const sub = input.dataset.subject;
+    if (subjectsGrades[sub] !== undefined) {
+      input.value = subjectsGrades[sub];
+    }
+  });
+
   // Check targets
   document.querySelectorAll('#mf-targets input').forEach(cb => {
     const checked = (s.targets || []).includes(cb.value);
@@ -577,6 +791,23 @@ function editStudent(sid) {
   document.getElementById('mf-gexp').value = s.grades?.current_expected_board || '';
   document.getElementById('mf-sat').value = s.standardized_tests?.SAT || '';
 
+  // Populate Grade 10 subject marks
+  const g10Container = document.getElementById('mf-g10-subject-grades-container');
+  if (g10Container) {
+    g10Container.innerHTML = '';
+    const g10Subjs = s.grades?.class_10_subjects || {};
+    const keys = Object.keys(g10Subjs).length > 0 ? Object.keys(g10Subjs) : DEFAULT_MANAGE_G10_SUBJECTS;
+    keys.forEach(sub => {
+      addManageG10SubjectRow(sub);
+    });
+    document.querySelectorAll('.mf-g10-subj-mark').forEach(input => {
+      const sub = input.dataset.g10Subject;
+      if (g10Subjs[sub] !== undefined) {
+        input.value = g10Subjs[sub];
+      }
+    });
+  }
+
   // Populate APs
   manageSelectedAPs = {};
   for (const apKey in AP_SUBJECTS) {
@@ -588,7 +819,7 @@ function editStudent(sid) {
 
   // Portfolio
   document.getElementById('mf-portfolio-list').innerHTML = '';
-  (s.portfolio || []).forEach(p => addPortfolioRow(p.activity, p.description, p.tier));
+  (s.portfolio || []).forEach(p => addPortfolioRow(p.activity, p.description));
 
   // Scroll to form
   document.getElementById('manage-form').scrollIntoView({ behavior: 'smooth' });
@@ -601,6 +832,12 @@ function resetManageForm() {
   document.getElementById('mf-cancel').style.display = 'none';
   document.getElementById('manage-form').reset();
   updateManageSubjectsGrid();
+
+  const g10Container = document.getElementById('mf-g10-subject-grades-container');
+  if (g10Container) {
+    g10Container.innerHTML = '';
+    initManageG10Subjects();
+  }
 
   // Reset APs
   manageSelectedAPs = {};
@@ -668,10 +905,13 @@ async function renderCompliance(sid, subs = null) {
 
   for (const tid in audit.targets) {
     const t = audit.targets[tid];
+    const ms = t.match_score !== undefined ? t.match_score : (t.compliant ? 100 : 50);
+    const rl = t.risk_level || (ms >= 90 ? 'Strong Match' : ms >= 70 ? 'Moderate Risk' : ms >= 45 ? 'High Risk' : 'Critical');
+    const badgeColor = ms >= 90 ? 'tb-pass' : ms >= 70 ? 'tb-warn' : 'tb-fail';
 
     // Gaps
     const gb = document.createElement('div'); gb.className = 'target-block';
-    gb.innerHTML = `<div class="tb-header"><span class="tb-name">${t.target_name}</span><span class="tb-badge ${t.compliant ? 'tb-pass' : 'tb-fail'}">${t.compliant ? 'pass' : t.gaps.length + ' gap' + (t.gaps.length > 1 ? 's' : '')}</span></div>`;
+    gb.innerHTML = `<div class="tb-header"><span class="tb-name">${t.target_name}</span><span class="tb-badge ${badgeColor}">${ms}% Match · ${rl}</span></div>`;
     const gbody = document.createElement('div'); gbody.className = 'tb-body';
     if (t.compliant) {
       gbody.innerHTML = '<div class="tb-ok">✔ all requirements verified</div>';
@@ -682,6 +922,16 @@ async function renderCompliance(sid, subs = null) {
         gbody.appendChild(ge);
       });
     }
+
+    // Data freshness warning in drawer
+    const verified = (t.gaps && t.gaps.length > 0 && t.gaps[0].last_verified) ? t.gaps[0].last_verified : null;
+    if (verified) {
+      const freshness = document.createElement('div');
+      freshness.style.cssText = 'font-size: 0.7rem; color: var(--text-3); margin-top: 10px; font-style: italic;';
+      freshness.textContent = `⚠️ Requirements data last verified: ${verified}`;
+      gbody.appendChild(freshness);
+    }
+
     gb.appendChild(gbody); gEl.appendChild(gb);
 
     // Remediations
@@ -707,7 +957,8 @@ async function renderCompliance(sid, subs = null) {
 // ── Simulator ──
 function renderSimChecks() {
   const c = document.getElementById('sim-checks'); c.innerHTML = '';
-  SUBJECTS.forEach(sub => {
+  const subjects = currentStudent ? (BOARD_SUBJECTS[currentStudent.board] || BOARD_SUBJECTS["CBSE"]) : BOARD_SUBJECTS["CBSE"];
+  subjects.forEach(sub => {
     const on = simSubjects.includes(sub);
     const lbl = document.createElement('label');
     lbl.className = `sc-label${on ? ' checked' : ''}`;

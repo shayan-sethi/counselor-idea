@@ -573,5 +573,94 @@
     "grade_prerequisites": [],
     "portfolio_tier": 3,
     "citations": []
+  },
+  "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE": {
+    "id": "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE",
+    "name": "Mathematics and Computer Science",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "Imperial College of Science, Technology and Medicine",
+    "deadlines": [],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must study Mathematics"
+      },
+      {
+        "subject": "Computer Science",
+        "level": "compulsory",
+        "notes": "Must study Computer Science"
+      },
+      {
+        "subject": "Economics",
+        "level": "compulsory",
+        "notes": "Must study Economics"
+      },
+      {
+        "subject": "Psychology",
+        "level": "compulsory",
+        "notes": "Must study Psychology"
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 1,
+    "citations": []
+  },
+  "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE__3_OR_4_YEARS_": {
+    "id": "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE__3_OR_4_YEARS_",
+    "name": "Mathematics and Computer Science (3 or 4 years)",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Oxford",
+    "deadlines": [],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must study Mathematics"
+      },
+      {
+        "subject": "Computer Science",
+        "level": "compulsory",
+        "notes": "Must study Computer Science"
+      },
+      {
+        "subject": "Economics",
+        "level": "compulsory",
+        "notes": "Must study Economics"
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 1,
+    "citations": []
+  },
+  "CUSTOM_COMPUTING": {
+    "id": "CUSTOM_COMPUTING",
+    "name": "Computing",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "Imperial College of Science, Technology and Medicine",
+    "deadlines": [],
+    "subject_prerequisites": [],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 3,
+    "citations": []
+  },
+  "CUSTOM_COMPUTING_1": {
+    "id": "CUSTOM_COMPUTING_1",
+    "name": "Computing",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "Imperial College of Science, Technology and Medicine",
+    "deadlines": [],
+    "subject_prerequisites": [],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 3,
+    "citations": []
   }
 }
