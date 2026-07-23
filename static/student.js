@@ -60,17 +60,26 @@ function populateForm() {
 }
 
 function addTargetFromSelect() {
+  console.log("addTargetFromSelect called");
   const selectEl = document.getElementById('sf-targets-select');
   const tid = selectEl.value;
-  if (!tid) return;
+  console.log("Selected target ID:", tid);
+  if (!tid) {
+    console.warn("No target ID selected");
+    return;
+  }
   if (!selectedTargetIds.includes(tid)) {
     selectedTargetIds.push(tid);
+    console.log("Current selectedTargetIds:", selectedTargetIds);
     renderSelectedTargets();
+  } else {
+    console.log("Target already selected");
   }
   selectEl.value = ""; // Reset select
 }
 
 function removeTargetPathway(tid) {
+  console.log("Removing target ID:", tid);
   selectedTargetIds = selectedTargetIds.filter(id => id !== tid);
   renderSelectedTargets();
 }
@@ -80,6 +89,7 @@ window.addTargetFromSelect = addTargetFromSelect;
 window.removeTargetPathway = removeTargetPathway;
 
 function renderSelectedTargets() {
+  console.log("renderSelectedTargets called, count:", selectedTargetIds.length);
   const listEl = document.getElementById('sf-selected-targets-list');
   listEl.innerHTML = '';
   if (selectedTargetIds.length === 0) {
@@ -88,6 +98,7 @@ function renderSelectedTargets() {
   }
   selectedTargetIds.forEach(tid => {
     const t = targets[tid];
+    console.log("Rendering target:", tid, t);
     if (!t) return;
     const row = document.createElement('div');
     row.className = 'selected-target-item';
