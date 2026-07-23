@@ -6,6 +6,18 @@ class Reasoner:
         self.kg = knowledge_graph
         self.current_date = datetime.datetime.strptime(current_date_str, "%Y-%m-%d").date()
 
+    def _get_citation(self, target, default_clause=""):
+        if target.get("citations") and len(target["citations"]) > 0:
+            citation = target["citations"][0]
+            clause = f" ({citation['clause']})" if citation.get("clause") else f" ({default_clause})" if default_clause else ""
+            return citation["source"] + clause
+        return "Custom Target Profile Guidelines"
+
+    def _get_last_verified(self, target):
+        if target.get("citations") and len(target["citations"]) > 0:
+            return target["citations"][0].get("last_verified", "2026-07-23")
+        return "2026-07-23"
+
     def evaluate_cohort(self, students):
         """Evaluates compliance for a cohort of students."""
         cohort_results = {}
@@ -98,8 +110,8 @@ class Reasoner:
                         "severity": "CRITICAL" if req_level == "compulsory" else "WARNING",
                         "subject": req_subject,
                         "description": f"Missing {req_subject} in board {subjects_label}. {notes}",
-                        "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                        "last_verified": target["citations"][0]["last_verified"]
+                        "citation": self._get_citation(target, req.get("clause", "")),
+                        "last_verified": self._get_last_verified(target)
                     })
             elif req_subject.lower() == "further mathematics":
                 # Special rule for foreign/UK programs
@@ -113,8 +125,8 @@ class Reasoner:
                         "severity": severity,
                         "subject": req_subject,
                         "description": f"Missing Further Mathematics or equivalent AP Calculus BC (Score >= 4) for CBSE student. {notes}",
-                        "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                        "last_verified": target["citations"][0]["last_verified"]
+                        "citation": self._get_citation(target, req.get("clause", "")),
+                        "last_verified": self._get_last_verified(target)
                     })
             elif req_subject.lower() not in ["cuet_language", "cuet_domain_subjects"]:
                 # Normal subjects like Physics, Chemistry, Biology, English
@@ -136,8 +148,8 @@ class Reasoner:
                                 "severity": "CRITICAL",
                                 "subject": req_subject,
                                 "description": f"Missing optional group subject. Must have studied Chemistry, Biotechnology, Biology, or a Vocational Subject. {notes}",
-                                "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                                "last_verified": target["citations"][0]["last_verified"]
+                                "citation": self._get_citation(target, req.get("clause", "")),
+                                "last_verified": self._get_last_verified(target)
                             })
                     else:
                         gaps.append({
@@ -145,8 +157,8 @@ class Reasoner:
                             "severity": "CRITICAL" if req_level == "compulsory" else "WARNING",
                             "subject": req_subject,
                             "description": f"Missing compulsory subject '{req_subject}' in high school curriculum. {notes}",
-                            "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                            "last_verified": target["citations"][0]["last_verified"]
+                            "citation": self._get_citation(target, req.get("clause", "")),
+                            "last_verified": self._get_last_verified(target)
                         })
 
     def _check_cuet_domain_alignment(self, target, norm_board_subjects, student, gaps):
@@ -174,8 +186,8 @@ class Reasoner:
                     "severity": "CRITICAL",
                     "subject": "Mathematics",
                     "description": "Mathematics is not selected in CUET, which is a compulsory test paper for DU B.Sc CS / B.A Economics.",
-                    "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                    "last_verified": target["citations"][0]["last_verified"]
+                    "citation": self._get_citation(target, "Section 1(a)"),
+                    "last_verified": self._get_last_verified(target)
                 })
 
         # Check for alignment: any domain exam in CUET must be in board subjects
@@ -200,8 +212,8 @@ class Reasoner:
                     "severity": "CRITICAL",
                     "subject": cuet_sub,
                     "description": f"CUET test paper '{cuet_sub}' does not match any studied Class 12 Board subject. Delhi University rules state you can only take CUET domain exams in subjects you studied and passed in Class 12 Boards.",
-                    "citation": target["citations"][0]["source"] + f" (Undergraduate Common Eligibility Guidelines)",
-                    "last_verified": target["citations"][0]["last_verified"]
+                    "citation": self._get_citation(target, "Undergraduate Common Eligibility Guidelines"),
+                    "last_verified": self._get_last_verified(target)
                 })
 
     def _check_grade_prerequisites(self, target, student, gaps):
@@ -229,8 +241,8 @@ class Reasoner:
                                 "severity": "CRITICAL" if target["track"] == "India" else "WARNING", # UK/US is warning because board exams haven't happened yet
                                 "subject": f"{student_board} Boards Aggregate",
                                 "description": f"Expected Class 12 Boards aggregate ({exp_grade_str}) is below the required cutoff of {min_grade_str}. {notes}",
-                                "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                                "last_verified": target["citations"][0]["last_verified"]
+                                "citation": self._get_citation(target, req.get("clause", "")),
+                                "last_verified": self._get_last_verified(target)
                             })
                 except ValueError:
                     # Non-numeric board requirement (e.g. A*A*A under A-Level which doesn't apply directly to CBSE float grades)
@@ -246,8 +258,8 @@ class Reasoner:
                                 "severity": "WARNING",
                                 "subject": "SAT Score",
                                 "description": f"SAT score ({sat_score}) is below the target score of {min_val}. {notes}",
-                                "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                                "last_verified": target["citations"][0]["last_verified"]
+                                "citation": self._get_citation(target, req.get("clause", "")),
+                                "last_verified": self._get_last_verified(target)
                             })
                     elif target["track"] == "US":
                         # MIT requires SAT. Stanford requires SAT.
@@ -256,8 +268,8 @@ class Reasoner:
                             "severity": "CRITICAL",
                             "subject": "SAT Exam",
                             "description": f"SAT is compulsory but student profile has no registered SAT score. {notes}",
-                            "citation": target["citations"][0]["source"] + f" ({target['citations'][0]['clause']})",
-                            "last_verified": target["citations"][0]["last_verified"]
+                            "citation": self._get_citation(target, req.get("clause", "")),
+                            "last_verified": self._get_last_verified(target)
                         })
                 except ValueError:
                     pass
@@ -279,8 +291,8 @@ class Reasoner:
                     "severity": "CRITICAL" if dl.get("is_correction_window") else "WARNING",
                     "subject": label,
                     "description": f"The deadline for '{label}' has passed ({abs(days_remaining)} days ago on {dl['date']}). {desc}",
-                    "citation": target["citations"][0]["source"] + f" (Timeline announcements)",
-                    "last_verified": target["citations"][0]["last_verified"]
+                    "citation": self._get_citation(target, "Timeline announcements"),
+                    "last_verified": self._get_last_verified(target)
                 })
             elif days_remaining <= 2: # 48 hours
                 gaps.append({
@@ -288,8 +300,8 @@ class Reasoner:
                     "severity": "CRITICAL",
                     "subject": label,
                     "description": f"CRITICAL: '{label}' closes in {days_remaining} days (on {dl['date']})! Urgent action required.",
-                    "citation": target["citations"][0]["source"] + f" (Timeline announcements)",
-                    "last_verified": target["citations"][0]["last_verified"]
+                    "citation": self._get_citation(target, "Timeline announcements"),
+                    "last_verified": self._get_last_verified(target)
                 })
             elif days_remaining <= 14: # 2 weeks warning
                 gaps.append({
@@ -297,8 +309,8 @@ class Reasoner:
                     "severity": "WARNING",
                     "subject": label,
                     "description": f"WARNING: '{label}' is approaching in {days_remaining} days ({dl['date']}).",
-                    "citation": target["citations"][0]["source"] + f" (Timeline announcements)",
-                    "last_verified": target["citations"][0]["last_verified"]
+                    "citation": self._get_citation(target, "Timeline announcements"),
+                    "last_verified": self._get_last_verified(target)
                 })
 
     def _check_portfolio_tier(self, target, student, gaps):
@@ -325,8 +337,8 @@ class Reasoner:
                 "severity": severity,
                 "subject": "Extracurricular Portfolio",
                 "description": desc,
-                "citation": target["citations"][0]["source"] + " (Holistic Review Process / Portfolio Guidelines)",
-                "last_verified": target["citations"][0]["last_verified"]
+                "citation": self._get_citation(target, "Holistic Review Process / Portfolio Guidelines"),
+                "last_verified": self._get_last_verified(target)
             })
 
     def _calculate_urgency(self, gaps):
