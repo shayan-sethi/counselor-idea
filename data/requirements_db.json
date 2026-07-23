@@ -1,0 +1,496 @@
+{
+  "JEE_MAIN": {
+    "id": "JEE_MAIN",
+    "name": "JEE Main (Joint Entrance Examination)",
+    "track": "India",
+    "type": "Exam",
+    "university": null,
+    "deadlines": [
+      {
+        "label": "Registration Window Close",
+        "date": "2026-11-22",
+        "is_correction_window": false,
+        "description": "Last date to register and submit fees for JEE Main January Session."
+      },
+      {
+        "label": "Correction Window Close",
+        "date": "2026-11-27",
+        "is_correction_window": true,
+        "description": "Correction window closes at 11:50 PM. No further corrections allowed."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must have studied Physics in Class 12."
+      },
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must have studied Mathematics in Class 12."
+      },
+      {
+        "subject": "Chemistry",
+        "level": "optional_group",
+        "notes": "Must have studied one of Chemistry, Biotechnology, Biology, or a Technical Vocational subject."
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "75.0%",
+        "notes": "Must score at least 75% aggregate marks in Class 12 boards, or be in the top 20 percentile of their respective board."
+      }
+    ],
+    "portfolio_tier": 3,
+    "citations": [
+      {
+        "source": "NTA JEE Main 2026 Information Bulletin",
+        "clause": "Section 3.2: Eligibility Criteria & Chapter 4: Reservations & Conditions",
+        "last_verified": "2026-06-10"
+      }
+    ]
+  },
+  "NEET_UG": {
+    "id": "NEET_UG",
+    "name": "NEET UG (National Eligibility cum Entrance Test)",
+    "track": "India",
+    "type": "Exam",
+    "university": null,
+    "deadlines": [
+      {
+        "label": "Registration Close",
+        "date": "2027-03-09",
+        "is_correction_window": false,
+        "description": "Last date for submitting online application form."
+      },
+      {
+        "label": "Correction Window Close",
+        "date": "2027-03-15",
+        "is_correction_window": true,
+        "description": "Final date to edit application details."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must have passed Physics individually."
+      },
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "Must have passed Chemistry individually."
+      },
+      {
+        "subject": "Biology",
+        "level": "compulsory",
+        "notes": "Must have passed Biology/Biotechnology individually in Class 12."
+      },
+      {
+        "subject": "English",
+        "level": "compulsory",
+        "notes": "Must have passed English individually."
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "50.0%",
+        "notes": "For general category, minimum aggregate in PCB subjects in Class 12 is 50%."
+      }
+    ],
+    "portfolio_tier": 3,
+    "citations": [
+      {
+        "source": "NMC NEET UG Regulations 2026",
+        "clause": "Regulation 4: Minimum Eligibility for Admission",
+        "last_verified": "2026-05-18"
+      }
+    ]
+  },
+  "CUET_DU_CS": {
+    "id": "CUET_DU_CS",
+    "name": "Delhi University - B.Sc (Hons) Computer Science",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "Delhi University",
+    "deadlines": [
+      {
+        "label": "CUET Registration Close",
+        "date": "2027-03-26",
+        "is_correction_window": false,
+        "description": "Last date to fill CUET UG application form."
+      },
+      {
+        "label": "CUET Correction Window Close",
+        "date": "2027-03-30",
+        "is_correction_window": true,
+        "description": "CUET correction window closes. Subject options must be finalized."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must have passed Mathematics/Applied Mathematics in CBSE Class 12."
+      },
+      {
+        "subject": "CUET_Language",
+        "level": "compulsory",
+        "notes": "Must select at least one Language from Section IA of CUET."
+      },
+      {
+        "subject": "CUET_Domain_Subjects",
+        "level": "compulsory",
+        "notes": "Must select Mathematics + 2 domain subjects from List B1/B2 in CUET. At least one domain must be from List B1. Selected subjects in CUET must match what the student studied in Class 12 boards."
+      }
+    ],
+    "admission_tests": [
+      "CUET_UG"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "50.0%",
+        "notes": "Aggregate pass in CBSE Class 12."
+      }
+    ],
+    "portfolio_tier": 3,
+    "citations": [
+      {
+        "source": "Delhi University UG Admissions Bulletin 2026-27",
+        "clause": "Page 45, Eligibility Criteria for B.Sc (Hons) Computer Science",
+        "last_verified": "2026-06-15"
+      }
+    ]
+  },
+  "CUET_DU_ECO": {
+    "id": "CUET_DU_ECO",
+    "name": "Delhi University - B.A (Hons) Economics",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "Delhi University",
+    "deadlines": [
+      {
+        "label": "CUET Registration Close",
+        "date": "2027-03-26",
+        "is_correction_window": false,
+        "description": "Last date to fill CUET UG application."
+      },
+      {
+        "label": "CUET Correction Window Close",
+        "date": "2027-03-30",
+        "is_correction_window": true,
+        "description": "CUET correction window closes. Subject options must be finalized."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must have passed Mathematics/Applied Mathematics in CBSE Class 12."
+      },
+      {
+        "subject": "CUET_Language",
+        "level": "compulsory",
+        "notes": "Must select any Language from Section IA in CUET."
+      },
+      {
+        "subject": "CUET_Domain_Subjects",
+        "level": "compulsory",
+        "notes": "Must select Mathematics + 2 domains from List B1/B2 in CUET (at least one from B1). Domain exams must match Board subjects."
+      }
+    ],
+    "admission_tests": [
+      "CUET_UG"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "50.0%",
+        "notes": "Class 12 board pass certificate."
+      }
+    ],
+    "portfolio_tier": 3,
+    "citations": [
+      {
+        "source": "Delhi University UG Admissions Bulletin 2026-27",
+        "clause": "Page 32, Eligibility Criteria for B.A (Hons) Economics",
+        "last_verified": "2026-06-15"
+      }
+    ]
+  },
+  "CAMBRIDGE_CS": {
+    "id": "CAMBRIDGE_CS",
+    "name": "University of Cambridge - B.A (Hons) Computer Science",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Cambridge",
+    "deadlines": [
+      {
+        "label": "TMUA Registration Deadline",
+        "date": "2026-09-16",
+        "is_correction_window": false,
+        "description": "Last date to register for TMUA (compulsory admissions test)."
+      },
+      {
+        "label": "UCAS Application Deadline",
+        "date": "2026-10-15",
+        "is_correction_window": false,
+        "description": "UCAS application submission deadline for Oxford and Cambridge."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "For CBSE, 95% or higher in Mathematics. For A-Levels, A* in Mathematics."
+      },
+      {
+        "subject": "Further Mathematics",
+        "level": "compulsory",
+        "notes": "Extremely strongly recommended/essential. For CBSE students who cannot take Further Maths, taking AP Calculus BC or additional advanced college math, or scoring high in TMUA is required."
+      },
+      {
+        "subject": "Physics",
+        "level": "recommended",
+        "notes": "Recommended science subject."
+      }
+    ],
+    "admission_tests": [
+      "TMUA"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "95.0%",
+        "notes": "Overall aggregate of 95% in top 5 Class 12 board subjects, with individual subject scores of 95% in Mathematics and Physics."
+      },
+      {
+        "system": "A-Level",
+        "min_grade": "A*A*A",
+        "notes": "Requires A* in Mathematics and A* in Further Mathematics."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "University of Cambridge Undergraduate Admissions Website 2026",
+        "clause": "Computer Science Entry Requirements & International Qualification Guidelines (India)",
+        "last_verified": "2026-07-01"
+      }
+    ]
+  },
+  "IMPERIAL_CS": {
+    "id": "IMPERIAL_CS",
+    "name": "Imperial College London - MEng Computing",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "Imperial College London",
+    "deadlines": [
+      {
+        "label": "TMUA Registration Deadline",
+        "date": "2026-09-16",
+        "is_correction_window": false,
+        "description": "Last date to register for TMUA."
+      },
+      {
+        "label": "UCAS Equal Consideration Deadline",
+        "date": "2027-01-26",
+        "is_correction_window": false,
+        "description": "UCAS general deadline for equal consideration."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "95% in CBSE Class 12 Mathematics. A* in A-Level Mathematics."
+      },
+      {
+        "subject": "Further Mathematics",
+        "level": "recommended",
+        "notes": "Highly recommended for Computing candidates."
+      }
+    ],
+    "admission_tests": [
+      "TMUA"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "92.0%",
+        "notes": "Overall aggregate of 92% with 95% in Mathematics."
+      },
+      {
+        "system": "A-Level",
+        "min_grade": "A*A*A",
+        "notes": "With A* in Mathematics."
+      }
+    ],
+    "portfolio_tier": 2,
+    "citations": [
+      {
+        "source": "Imperial College London Admissions Prospectus 2026",
+        "clause": "Department of Computing UG Course requirements (CBSE Equivalent)",
+        "last_verified": "2026-07-05"
+      }
+    ]
+  },
+  "MIT_STEM": {
+    "id": "MIT_STEM",
+    "name": "MIT (Massachusetts Institute of Technology) - Undergrad STEM",
+    "track": "US",
+    "type": "UniversityCourse",
+    "university": "MIT",
+    "deadlines": [
+      {
+        "label": "Early Action Deadline",
+        "date": "2026-11-01",
+        "is_correction_window": false,
+        "description": "MIT Early Action application deadline."
+      },
+      {
+        "label": "Regular Decision Deadline",
+        "date": "2027-01-05",
+        "is_correction_window": false,
+        "description": "MIT Regular Decision application deadline."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "4 years of High School Mathematics. Expects Calculus (equivalent to AP Calculus BC)."
+      },
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "1 year of Physics."
+      },
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "1 year of Chemistry."
+      },
+      {
+        "subject": "Biology",
+        "level": "compulsory",
+        "notes": "1 year of Biology."
+      }
+    ],
+    "admission_tests": [
+      "SAT",
+      "AP_CALCULUS_BC"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "SAT",
+        "min_grade": "1530",
+        "notes": "SAT is required. Math 25th-75th percentile is 780-800, Evidence-based Reading & Writing is 740-780."
+      },
+      {
+        "system": "CBSE",
+        "min_grade": "95.0%",
+        "notes": "Consistently strong grades throughout high school classes 9-12."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "MIT Admissions 2026-2027",
+        "clause": "First-year Admissions: Requirements & Academic Preparation",
+        "last_verified": "2026-06-20"
+      }
+    ]
+  },
+  "STANFORD_CS": {
+    "id": "STANFORD_CS",
+    "name": "Stanford University - Undergrad Computer Science",
+    "track": "US",
+    "type": "UniversityCourse",
+    "university": "Stanford University",
+    "deadlines": [
+      {
+        "label": "Restrictive Early Action Deadline",
+        "date": "2026-11-01",
+        "is_correction_window": false,
+        "description": "Stanford REA application deadline."
+      },
+      {
+        "label": "Regular Decision Deadline",
+        "date": "2027-01-02",
+        "is_correction_window": false,
+        "description": "Stanford RD application deadline."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "4 years of Mathematics (pre-calculus/calculus highly recommended)."
+      },
+      {
+        "subject": "English",
+        "level": "compulsory",
+        "notes": "4 years of English."
+      },
+      {
+        "subject": "Science",
+        "level": "compulsory",
+        "notes": "3 or more years of laboratory science (Physics, Chemistry, Biology)."
+      }
+    ],
+    "admission_tests": [
+      "SAT"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "SAT",
+        "min_grade": "1500",
+        "notes": "SAT/ACT is required starting 2025/2026 cycle."
+      },
+      {
+        "system": "CBSE",
+        "min_grade": "95.0%",
+        "notes": "Excellent performance across CBSE Grades 9-12."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "Stanford Academic Preparation Portal 2026",
+        "clause": "Recommended High School Curriculum & Testing Policies",
+        "last_verified": "2026-06-28"
+      }
+    ]
+  },
+  "CUSTOM_IMPERIAL_COLLEGE___BSC_COMPUTING": {
+    "id": "CUSTOM_IMPERIAL_COLLEGE___BSC_COMPUTING",
+    "name": "Imperial College - BSc Computing",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "Imperial College London",
+    "deadlines": [],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must study Mathematics"
+      },
+      {
+        "subject": "Computer Science",
+        "level": "compulsory",
+        "notes": "Must study Computer Science"
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 2,
+    "citations": []
+  }
+}

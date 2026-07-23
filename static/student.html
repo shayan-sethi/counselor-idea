@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISM — Student Portal</title>
+  <meta name="description" content="PRISM Student Portal: Enter your academic profile and get instant compliance analysis." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ═══ TOPBAR ═══ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="logo">PRISM<span class="logo-dot">.</span></span>
+      <span class="logo-label">student portal</span>
+    </div>
+    <nav class="topbar-nav">
+      <button class="tab active" id="tab-profile" onclick="showStep('profile')">your profile</button>
+      <button class="tab" id="tab-results" onclick="showStep('results')">audit results</button>
+    </nav>
+    <div class="topbar-right">
+      <a href="/" class="student-link">← counselor view</a>
+    </div>
+  </header>
+
+  <!-- ═══ PROFILE FORM ═══ -->
+  <main id="step-profile">
+    <div class="page-title-row">
+      <h1>Your Academic Profile</h1>
+      <p class="subtitle">enter your details · get instant compliance analysis against your target pathways</p>
+    </div>
+
+    <form id="student-form" class="student-form" onsubmit="submitProfile(event)">
+
+      <!-- Step 1: Basics -->
+      <div class="form-card">
+        <div class="form-section-title">01 — basics</div>
+        <div class="form-row">
+          <div class="field field-wide">
+            <label>Your Full Name *</label>
+            <input type="text" id="sf-name" required placeholder="e.g. Aarav Sharma" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Board *</label>
+            <select id="sf-board">
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE">ICSE</option>
+              <option value="State Board">State Board</option>
+              <option value="IB">IB</option>
+              <option value="A-Levels">A-Levels</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Class Level *</label>
+            <select id="sf-class">
+              <option value="10">Class 10</option>
+              <option value="11">Class 11</option>
+              <option value="12" selected>Class 12</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Subjects -->
+      <div class="form-card">
+        <div class="form-section-title">02 — your subjects</div>
+        <p class="field-hint">Select all subjects you are currently studying (or plan to study).</p>
+        <div class="check-grid" id="sf-subjects"></div>
+      </div>
+
+      <!-- Step 3: Targets -->
+      <div class="form-card">
+        <div class="form-section-title">03 — target pathways</div>
+        <p class="field-hint">Which exams or universities are you aiming for?</p>
+        <div class="check-grid" id="sf-targets"></div>
+      </div>
+
+      <!-- Step 4: Grades -->
+      <div class="form-card">
+        <div class="form-section-title">04 — grades & test scores</div>
+        <div class="form-row">
+          <div class="field">
+            <label>Class 10 Aggregate</label>
+            <input type="text" id="sf-g10" placeholder="e.g. 88%" />
+          </div>
+          <div class="field">
+            <label>Class 11 Aggregate</label>
+            <input type="text" id="sf-g11" placeholder="e.g. 85%" />
+          </div>
+          <div class="field">
+            <label>Expected Board %</label>
+            <input type="text" id="sf-gexp" placeholder="e.g. 90%" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>SAT Score (if taken)</label>
+            <input type="number" id="sf-sat" placeholder="e.g. 1480" min="400" max="1600" />
+          </div>
+          <div class="field">
+            <label>AP Calculus BC (if taken)</label>
+            <input type="number" id="sf-ap" placeholder="1-5" min="1" max="5" />
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label>CUET Domain Subjects (if applicable)</label>
+          <input type="text" id="sf-cuet" placeholder="comma-separated, e.g. Physics, Mathematics, English" />
+        </div>
+      </div>
+
+      <!-- Step 5: Portfolio -->
+      <div class="form-card">
+        <div class="form-section-title">05 — extracurriculars & portfolio</div>
+        <p class="field-hint">Add your activities, achievements, projects. Tier 1 = national/international level, Tier 3 = school level.</p>
+        <div id="sf-portfolio-list"></div>
+        <button type="button" class="btn-ghost-sm" onclick="addStudentPortfolioRow()">+ add activity</button>
+      </div>
+
+      <button type="submit" class="btn-run btn-wide" id="sf-submit">submit & get audit results →</button>
+    </form>
+  </main>
+
+  <!-- ═══ RESULTS ═══ -->
+  <main id="step-results" class="hidden">
+    <div class="page-title-row">
+      <h1 id="res-title">Compliance Audit</h1>
+      <p class="subtitle" id="res-subtitle">—</p>
+    </div>
+
+    <div id="res-body">
+      <div class="loading-row"><span class="blink">▌</span> submit your profile first</div>
+    </div>
+  </main>
+
+  <script src="/static/student.js"></script>
+</body>
+</html>

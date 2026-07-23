@@ -1,0 +1,307 @@
+[
+  {
+    "id": "STU_001",
+    "name": "Aarav Sharma",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Physical Education",
+      "English",
+      "Computer Science"
+    ],
+    "cuet_subjects": [
+      "Physics",
+      "Computer Science",
+      "English",
+      "Mathematics"
+    ],
+    "grades": {
+      "class_10_aggregate": "88%",
+      "class_11_aggregate": "85%",
+      "current_expected_board": "90%",
+      "subjects": {
+        "Physics": 88,
+        "Chemistry": 86,
+        "Mathematics": 0,
+        "Computer Science": 92,
+        "English": 90
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "Robotics Club Member",
+        "description": "Participated in local school robotics exhibition",
+        "tier": 3
+      }
+    ],
+    "targets": [
+      "CUET_DU_CS"
+    ],
+    "status": {
+      "cuet_form_submitted": true,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_002",
+    "name": "Dia Mehta",
+    "class_level": 10,
+    "board": "CBSE",
+    "board_subjects": [
+      "Science",
+      "Mathematics Standard",
+      "Social Science",
+      "English",
+      "Hindi"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "92%"
+    },
+    "planned_class_11_subjects": [
+      "History",
+      "Political Science",
+      "Sociology",
+      "English",
+      "Physical Education"
+    ],
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "Debating Society Lead",
+        "description": "Won school level debate competition",
+        "tier": 3
+      }
+    ],
+    "targets": [
+      "CUET_DU_ECO"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_003",
+    "name": "Rohan Verma",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Computer Science"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "96%",
+      "class_11_aggregate": "95%",
+      "current_expected_board": "96%",
+      "subjects": {
+        "Physics": 97,
+        "Chemistry": 94,
+        "Mathematics": 98,
+        "Computer Science": 96,
+        "English": 92
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "School Website Developer",
+        "description": "Maintained the high school website homepage.",
+        "tier": 3
+      }
+    ],
+    "targets": [
+      "CAMBRIDGE_CS",
+      "IMPERIAL_CS"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_004",
+    "name": "Ananya Iyer",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Economics"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "94%",
+      "class_11_aggregate": "93%",
+      "current_expected_board": "95%",
+      "subjects": {
+        "Physics": 96,
+        "Chemistry": 92,
+        "Mathematics": 95,
+        "English": 94,
+        "Economics": 95
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1480,
+      "AP_CALCULUS_BC": 4
+    },
+    "portfolio": [
+      {
+        "activity": "National Science Olympiad Rank 12",
+        "description": "Ranked 12th nationally in the Olympiad.",
+        "tier": 2
+      },
+      {
+        "activity": "Solar Water Filter Patent",
+        "description": "Filed a provisional patent for a solar-powered community water filtration system.",
+        "tier": 1
+      }
+    ],
+    "targets": [
+      "MIT_STEM"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": 1480
+    }
+  },
+  {
+    "id": "STU_005",
+    "name": "Kabir Singh",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Fine Arts"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "72%",
+      "class_11_aggregate": "68%",
+      "current_expected_board": "71%",
+      "subjects": {
+        "Physics": 70,
+        "Chemistry": 68,
+        "Mathematics": 72,
+        "English": 74,
+        "Fine Arts": 80
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": [],
+    "targets": [
+      "JEE_MAIN"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_006",
+    "name": "Meera Patel",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Economics",
+      "Biology"
+    ],
+    "cuet_subjects": [
+      "Physics",
+      "Mathematics",
+      "Chemistry",
+      "English"
+    ],
+    "grades": {
+      "class_10_aggregate": "97%",
+      "class_11_aggregate": "96%",
+      "current_expected_board": "97%",
+      "subjects": {
+        "Physics": 98,
+        "Chemistry": 96,
+        "Mathematics": 99,
+        "English": 95,
+        "Economics": 97,
+        "Biology": 96
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1560,
+      "AP_CALCULUS_BC": 5
+    },
+    "portfolio": [
+      {
+        "activity": "Founded girls education NGO",
+        "description": "Taught code to 200+ underprivileged girls in the city.",
+        "tier": 2
+      },
+      {
+        "activity": "Open-Source Data Compiler",
+        "description": "Developed dynamic data compiler used officially by municipal council.",
+        "tier": 1
+      }
+    ],
+    "targets": [
+      "CUET_DU_ECO",
+      "STANFORD_CS"
+    ],
+    "status": {
+      "cuet_form_submitted": true,
+      "tmua_registered": false,
+      "sat_score": 1560
+    }
+  },
+  {
+    "id": "STU_007",
+    "name": "Shayan sethi",
+    "class_level": 12,
+    "board": "ICSE",
+    "board_subjects": [
+      "Mathematics",
+      "Computer Science",
+      "English",
+      "Economics",
+      "History"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "89%",
+      "class_11_aggregate": "91%",
+      "current_expected_board": "97%"
+    },
+    "standardized_tests": {
+      "AP_CALCULUS_BC": 5
+    },
+    "portfolio": [],
+    "targets": [
+      "IMPERIAL_CS"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  }
+]
