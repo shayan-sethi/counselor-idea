@@ -49,6 +49,12 @@ function populateForm() {
     selectEl.appendChild(opt);
   }
 
+  // Bind Add Button click handler dynamically
+  const addBtn = document.getElementById('btn-add-target');
+  if (addBtn) {
+    addBtn.onclick = addTargetFromSelect;
+  }
+
   // Render initial targets list
   renderSelectedTargets();
 }
@@ -68,6 +74,10 @@ function removeTargetPathway(tid) {
   selectedTargetIds = selectedTargetIds.filter(id => id !== tid);
   renderSelectedTargets();
 }
+
+// Expose to window for global access
+window.addTargetFromSelect = addTargetFromSelect;
+window.removeTargetPathway = removeTargetPathway;
 
 function renderSelectedTargets() {
   const listEl = document.getElementById('sf-selected-targets-list');
