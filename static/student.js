@@ -466,6 +466,10 @@ async function submitProfile(e) {
       })
     });
     const data = await res.json();
+    if (!res.ok) {
+      alert(`Error from server: ${data.error || JSON.stringify(data)}`);
+      return;
+    }
     createdStudentId = data.student.id;
 
     // Render audit results
