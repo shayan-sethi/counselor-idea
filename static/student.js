@@ -67,8 +67,21 @@ function populateForm() {
 function addTargetFromSelect() {
   console.log("addTargetFromSelect called");
   const selectEl = document.getElementById('sf-targets-select');
+  if (!selectEl) {
+    console.error("selectEl not found in DOM");
+    return;
+  }
+  console.log("Select element:", selectEl);
+  console.log("Select options count:", selectEl.options.length);
+  console.log("Selected index:", selectEl.selectedIndex);
+  if (selectEl.selectedIndex >= 0) {
+    const opt = selectEl.options[selectEl.selectedIndex];
+    console.log("Selected option HTML:", opt.outerHTML);
+    console.log("Selected option value:", opt.value);
+    console.log("Selected option text:", opt.text);
+  }
   const tid = selectEl.value;
-  console.log("Selected target ID:", tid);
+  console.log("Selected target ID (via selectEl.value):", tid);
   if (!tid) {
     console.warn("No target ID selected");
     return;
