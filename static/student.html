@@ -236,6 +236,23 @@
     <div id="res-body">
       <div class="loading-row"><span class="blink">▌</span> submit your profile first</div>
     </div>
+
+    <!-- PRISM AI Pathway Advisor Chat -->
+    <div id="ai-advisor-card" class="form-card hidden" style="margin-top: 24px; border: 1px solid var(--border); padding: 16px; background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border-radius: 8px;">
+      <div class="form-section-title" style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 1.1rem;">🤖</span> prism ai pathway advisor
+      </div>
+      <p class="field-hint" style="margin-bottom: 12px;">Get agentic advice on how to improve your match score or address critical gaps.</p>
+      
+      <div id="ai-advisor-chat" style="max-height: 240px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; padding: 10px; background: rgba(15, 23, 42, 0.4); margin-bottom: 12px; font-size: 0.8rem; line-height: 1.5; color: var(--text-2); min-height: 80px;">
+        <div style="margin-bottom: 8px; color: var(--text-3); font-style: italic;">Ask me about "TMUA preparation", "Math requirements", or "extracurricular projects"!</div>
+      </div>
+      
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="sf-chat-input" placeholder="Type your question to the advisor..." onkeydown="if(event.key==='Enter') sendStudentAdvisorMessage()" style="flex: 1; font-family: var(--mono); font-size: 0.78rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
+        <button type="button" class="btn-run" onclick="sendStudentAdvisorMessage()" style="padding: 8px 16px; font-size: 0.78rem;">ask advisor</button>
+      </div>
+    </div>
   </main>
 
   <script src="/static/student.js?v=9"></script>

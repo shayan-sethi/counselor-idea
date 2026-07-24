@@ -662,5 +662,18 @@
     "grade_prerequisites": [],
     "portfolio_tier": 3,
     "citations": []
+  },
+  "CUSTOM_COMPUTER_GAMES_ART": {
+    "id": "CUSTOM_COMPUTER_GAMES_ART",
+    "name": "Computer Games Art",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "Anglia Ruskin University",
+    "deadlines": [],
+    "subject_prerequisites": [],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 3,
+    "citations": []
   }
 }

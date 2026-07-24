@@ -1119,3 +1119,41 @@ document.addEventListener("click", (e) => {
     document.getElementById("mt-course-results").classList.add("hidden");
   }
 });
+
+async function runCounselorAgentCommand() {
+  const input = document.getElementById('cc-command-input');
+  if (!input) return;
+  const command = input.value.trim();
+  if (!command) return;
+
+  const responseContainer = document.getElementById('cc-agent-response');
+  if (!responseContainer) return;
+
+  responseContainer.style.display = 'block';
+  responseContainer.style.borderColor = 'var(--border)';
+  responseContainer.innerHTML = '<span style="color:var(--text-3); font-style:italic;">Agent is executing command...</span>';
+  input.value = '';
+
+  try {
+    const res = await fetch('/api/counselor_agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ command })
+    });
+    const data = await res.json();
+
+    // Render markdown to HTML
+    let html = data.response
+      .replace(/\#\#\# (.*?)\n/g, '<h4 style="margin: 8px 0 4px; color: var(--amber); font-family: var(--sans);">$1</h4>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/\- (.*?)\n/g, '<li style="margin-left: 12px; margin-bottom: 4px; font-family: var(--sans);">$1</li>')
+      .replace(/\n/g, '<br>');
+
+    responseContainer.innerHTML = html;
+  } catch (err) {
+    responseContainer.innerHTML = '<span style="color:var(--red);">Failed to execute agent command.</span>';
+  }
+}
+
+window.runCounselorAgentCommand = runCounselorAgentCommand;

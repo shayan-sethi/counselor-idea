@@ -69,6 +69,21 @@
       </select>
     </div>
 
+    <!-- AI Agent Command Center -->
+    <div class="form-card" style="margin-bottom: 20px; padding: 16px; border: 1px solid var(--border); background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border-radius: 8px;">
+      <div class="form-section-title" style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 1.1rem;">⚡</span> prism ai agent command center
+      </div>
+      <p class="field-hint" style="margin-bottom: 12px;">Type counselor instructions (e.g. "draft warning emails", "recommend pathways for STU_001", or "risk summary").</p>
+      
+      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <input type="text" id="cc-command-input" placeholder="Enter counselor agent command..." onkeydown="if(event.key==='Enter') runCounselorAgentCommand()" style="flex: 1; font-family: var(--mono); font-size: 0.78rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
+        <button type="button" class="btn-run" onclick="runCounselorAgentCommand()" style="padding: 8px 16px; font-size: 0.78rem;">execute command</button>
+      </div>
+
+      <div id="cc-agent-response" style="display: none; border: 1px solid var(--border); border-radius: 4px; padding: 12px; background: rgba(15, 23, 42, 0.4); font-size: 0.8rem; line-height: 1.5; color: var(--text-2); max-height: 280px; overflow-y: auto;"></div>
+    </div>
+
     <section class="student-list">
       <div class="list-header">
         <span class="lh-col lh-name">Student</span>

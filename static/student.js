@@ -580,6 +580,11 @@ function showStep(step) {
   document.getElementById('step-results').classList.toggle('hidden', step !== 'results');
   document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
+
+  const advisorCard = document.getElementById('ai-advisor-card');
+  if (advisorCard && step !== 'results') {
+    advisorCard.classList.add('hidden');
+  }
 }
 
 function addStudentPortfolioRow(activity = '', desc = '', tier = 3) {
@@ -821,5 +826,68 @@ function renderAuditResults(student, audit) {
   editBtn.style.marginTop = '16px';
   editBtn.onclick = () => showStep('profile');
   body.appendChild(editBtn);
+
+  // Set advisor state and show chat card
+  currentAdvisorStudentId = student.id;
+  const advisorCard = document.getElementById('ai-advisor-card');
+  if (advisorCard) {
+    advisorCard.classList.remove('hidden');
+  }
 }
+
+let currentAdvisorStudentId = null;
+
+async function sendStudentAdvisorMessage() {
+  const input = document.getElementById('sf-chat-input');
+  if (!input) return;
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  const chatContainer = document.getElementById('ai-advisor-chat');
+  if (!chatContainer) return;
+
+  // Append user message
+  const userMsg = document.createElement('div');
+  userMsg.style.cssText = 'margin-bottom: 8px; text-align: right;';
+  userMsg.innerHTML = `<span style="background: var(--border); padding: 6px 12px; border-radius: 4px; display: inline-block; max-width: 80%; text-align: left; color: var(--text-1); font-family: var(--sans);">You: ${msg}</span>`;
+  chatContainer.appendChild(userMsg);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  input.value = '';
+
+  // Show thinking status
+  const loadingMsg = document.createElement('div');
+  loadingMsg.style.cssText = 'margin-bottom: 8px; font-style: italic; color: var(--text-3); font-size: 0.75rem;';
+  loadingMsg.textContent = 'Advisor Agent is thinking...';
+  chatContainer.appendChild(loadingMsg);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  try {
+    const res = await fetch('/api/student_advisor', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        student_id: currentAdvisorStudentId,
+        message: msg
+      })
+    });
+    const data = await res.json();
+    loadingMsg.remove();
+
+    // Render markdown format
+    const agentMsg = document.createElement('div');
+    agentMsg.style.cssText = 'margin-bottom: 12px; border-left: 2px solid var(--amber); padding-left: 8px; font-family: var(--sans);';
+    
+    let html = data.reply
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+      
+    agentMsg.innerHTML = `<strong style="color:var(--amber);">PRISM Copilot:</strong><br>${html}`;
+    chatContainer.appendChild(agentMsg);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } catch (err) {
+    loadingMsg.textContent = 'Error contacting advisor agent.';
+  }
+}
+
+window.sendStudentAdvisorMessage = sendStudentAdvisorMessage;
 

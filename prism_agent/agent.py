@@ -246,52 +246,58 @@ Write a sentence explaining your thought before calling each tool.
         response = chat.send_message(prompt)
 
         for _ in range(15):
-            part = response.candidates[0].content.parts[0]
-            
-            # Record thought if text is generated
-            if part.text:
-                trace.append({
-                    "type": "thought",
-                    "message": part.text.strip()
-                })
-                if not silent:
-                    self.console.print(f"\n[bold magenta]Thought:[/bold magenta] {part.text.strip()}")
+            parts = response.candidates[0].content.parts
+            has_function_calls = False
+            function_responses = []
 
-            if part.function_call:
-                fc = part.function_call
-                args_dict = dict(fc.args)
-                trace.append({
-                    "type": "action",
-                    "message": f"call_tool: {fc.name}",
-                    "detail": json.dumps(args_dict)
-                })
-                if not silent:
-                    self.console.print(f"[bold cyan]Action:[/bold cyan] call_tool [yellow]{fc.name}[/yellow] with ({json.dumps(args_dict)})")
+            for part in parts:
+                # Record thought if text is generated
+                if part.text:
+                    trace.append({
+                        "type": "thought",
+                        "message": part.text.strip()
+                    })
+                    if not silent:
+                        self.console.print(f"\n[bold magenta]Thought:[/bold magenta] {part.text.strip()}")
 
-                # Execute tool
-                tool_func = getattr(self, fc.name, None)
-                if tool_func:
-                    try:
-                        observation = tool_func(**args_dict)
-                    except Exception as e:
-                        observation = f"Error: {e}"
-                else:
-                    observation = f"Error: Tool {fc.name} not found."
+                if part.function_call:
+                    has_function_calls = True
+                    fc = part.function_call
+                    args_dict = dict(fc.args)
+                    trace.append({
+                        "type": "action",
+                        "message": f"call_tool: {fc.name}",
+                        "detail": json.dumps(args_dict)
+                    })
+                    if not silent:
+                        self.console.print(f"[bold cyan]Action:[/bold cyan] call_tool [yellow]{fc.name}[/yellow] with ({json.dumps(args_dict)})")
 
-                trace.append({
-                    "type": "observation",
-                    "message": observation
-                })
-                if not silent:
-                    self.console.print(f"[dim green]Observation: {observation[:200]}...[/dim green]")
+                    # Execute tool
+                    tool_func = getattr(self, fc.name, None)
+                    if tool_func:
+                        try:
+                            observation = tool_func(**args_dict)
+                        except Exception as e:
+                            observation = f"Error: {e}"
+                    else:
+                        observation = f"Error: Tool {fc.name} not found."
 
-                # Return response
-                response = chat.send_message(
-                    genai.types.Part.from_function_response(
-                        name=fc.name,
-                        response={"result": observation}
+                    trace.append({
+                        "type": "observation",
+                        "message": observation
+                    })
+                    if not silent:
+                        self.console.print(f"[dim green]Observation: {observation[:200]}...[/dim green]")
+
+                    function_responses.append(
+                        genai.types.Part.from_function_response(
+                            name=fc.name,
+                            response={"result": observation}
+                        )
                     )
-                )
+
+            if has_function_calls:
+                response = chat.send_message(function_responses)
             else:
                 break
 
@@ -368,30 +374,37 @@ Write a sentence explaining your thought before calling each tool.
             return {"compliant": True, "match_score": 100, "risk_level": "Strong Match", "urgency_score": 0, "gaps": [], "remediations": [], "trace": []}
 
         # Step 1: fetch_student
-        trace.append({"type": "thought", "message": "I need to retrieve the student's profile to inspect subjects and grades."})
+        student_name = student.get("name", "Student")
+        board = student.get("board", "CBSE")
+        class_level = student.get("class_level", 12)
+        trace.append({"type": "thought", "message": f"I need to retrieve the profile of student '{student_name}' to inspect their high school system ({board}, Class {class_level}) and studied subjects."})
         trace.append({"type": "action", "message": "call_tool: fetch_student", "detail": json.dumps({"student_id": student_id})})
         trace.append({"type": "observation", "message": json.dumps(student)})
 
         # Step 2: fetch_requirements
-        trace.append({"type": "thought", "message": f"Now I must query target requirements for '{target_id}'."})
+        target_name = target.get("name", "Target")
+        track = target.get("track", "UK")
+        trace.append({"type": "thought", "message": f"Next, I must query the target requirements database for '{target_name}' (Track: {track}) to identify compliance rules."})
         trace.append({"type": "action", "message": "call_tool: fetch_requirements", "detail": json.dumps({"target_id": target_id})})
         trace.append({"type": "observation", "message": json.dumps(target)})
 
         # Step 3: check_subjects
-        trace.append({"type": "thought", "message": "Checking subject selection compliance against target requirements."})
-        trace.append({"type": "action", "message": "call_tool: check_subjects", "detail": json.dumps({"target_id": target_id, "student_id": student_id})})
-        gaps = []
         subjects = simulated_subjects if simulated_subjects is not None else student.get("board_subjects", [])
         if isinstance(subjects, str):
             subjects = [s.strip() for s in subjects.split(",") if s.strip()]
         norm_subjects = [s.lower().strip() for s in subjects]
+        
+        trace.append({"type": "thought", "message": f"Checking subject selection compliance. Comparing studied subjects {subjects} against mandatory pathway prerequisites."})
+        trace.append({"type": "action", "message": "call_tool: check_subjects", "detail": json.dumps({"target_id": target_id, "student_id": student_id})})
+        gaps = []
         self.reasoner._check_subject_prerequisites(target, norm_subjects, student, gaps)
         if target.get("track") == "India" and "CUET_UG" in target.get("admission_tests", []):
             self.reasoner._check_cuet_domain_alignment(target, norm_subjects, student, gaps)
         trace.append({"type": "observation", "message": json.dumps(gaps)})
 
         # Step 4: check_grades
-        trace.append({"type": "thought", "message": "Checking academic aggregate cutoff requirements."})
+        expected_pct = student.get("grades", {}).get("current_expected_board", "0%")
+        trace.append({"type": "thought", "message": f"Evaluating academic cutoffs. Expected Class 12 aggregate is {expected_pct}. Verifying individual subject scores if present."})
         trace.append({"type": "action", "message": "call_tool: check_grades", "detail": json.dumps({"target_id": target_id, "student_id": student_id})})
         grade_gaps = []
         self.reasoner._check_grade_prerequisites(target, student, grade_gaps)
@@ -399,7 +412,8 @@ Write a sentence explaining your thought before calling each tool.
         trace.append({"type": "observation", "message": json.dumps(grade_gaps)})
 
         # Step 5: check_timeline
-        trace.append({"type": "thought", "message": "Verifying timeline deadlines and target application milestones."})
+        deadlines = [d.get("label", "Deadline") for d in target.get("deadlines", [])]
+        trace.append({"type": "thought", "message": f"Verifying timeline constraints and milestones: {', '.join(deadlines) if deadlines else 'None'}. Checking register actions."})
         trace.append({"type": "action", "message": "call_tool: check_timeline", "detail": json.dumps({"target_id": target_id})})
         timeline_gaps = []
         self.reasoner._check_deadlines(target, timeline_gaps)
@@ -407,7 +421,8 @@ Write a sentence explaining your thought before calling each tool.
         trace.append({"type": "observation", "message": json.dumps(timeline_gaps)})
 
         # Step 6: check_portfolio
-        trace.append({"type": "thought", "message": "Evaluating extracurricular portfolio tier compatibility."})
+        activities = [p.get("activity", "Activity") for p in student.get("portfolio", [])]
+        trace.append({"type": "thought", "message": f"Checking extracurricular portfolio compatibility. Classifying student achievements: {', '.join(activities) if activities else 'None'}."})
         trace.append({"type": "action", "message": "call_tool: check_portfolio", "detail": json.dumps({"target_id": target_id, "student_id": student_id})})
         portfolio_gaps = []
         self.reasoner._check_portfolio_tier(target, student, portfolio_gaps)
@@ -417,7 +432,7 @@ Write a sentence explaining your thought before calling each tool.
         # Step 7: draft_remediations
         remediations = []
         if gaps:
-            trace.append({"type": "thought", "message": "Discovered target compliance gaps. Designing remediation actions."})
+            trace.append({"type": "thought", "message": f"Discovered {len(gaps)} compliance gap(s). Querying Planner Engine to formulate and rank remediation paths."})
             trace.append({"type": "action", "message": "call_tool: draft_remediations", "detail": json.dumps({"target_id": target_id, "student_id": student_id, "gaps_json": json.dumps(gaps)})})
             temp_analysis = {
                 "student_id": student_id,
@@ -434,6 +449,8 @@ Write a sentence explaining your thought before calling each tool.
             }
             remediations = self.planner.get_remediations(temp_analysis).get(target_id, [])
             trace.append({"type": "observation", "message": json.dumps(remediations)})
+        else:
+            trace.append({"type": "thought", "message": "No compliance gaps discovered. Candidate is 100% on track for this target pathway."})
 
         match_score = self.reasoner._calculate_match_score(gaps)
         risk_level = self.reasoner._risk_level_label(match_score)

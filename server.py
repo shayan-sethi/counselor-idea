@@ -431,5 +431,168 @@ def api_predict():
             predictions[tn] = None
     return jsonify({"predictions": predictions})
 
+# ── Student Portal AI Copilot Advisor ──
+
+@app.route("/api/student_advisor", methods=["POST"])
+def api_student_advisor():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    message = data.get("message", "").lower()
+    
+    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    if not student:
+        return jsonify({"reply": "I couldn't find your profile. Please complete Step 1 first."})
+
+    # Evaluate current targets
+    student_gaps = []
+    has_math_gap = False
+    for tid in student.get("targets", []):
+        agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
+        if agent_res and not agent_res.get("compliant", False):
+            for gap in agent_res.get("gaps", []):
+                student_gaps.append(gap)
+                if "math" in gap.get("subject", "").lower() or "mathematics" in gap.get("description", "").lower():
+                    has_math_gap = True
+
+    # Agentic reasoning response
+    if "tmua" in message or "test" in message or "exam" in message:
+        reply = (
+            "🎯 **TMUA (Test of Mathematics for University Admission) Insights:**\n\n"
+            "The TMUA is mandatory for Cambridge CS and Imperial Computing. It consists of two papers: \n"
+            "1. **Mathematical Reasoning** (20 multiple choice questions, 75 mins)\n"
+            "2. **Mathematical Speculation** (20 multiple choice questions, 75 mins)\n\n"
+            "**Advisors Recommended Actions:**\n"
+            "- Start preparing with past papers from the official Cambridge Admissions website.\n"
+            "- Solve UKMT Senior Mathematical Challenge papers to build speed and logical analysis.\n"
+            "- Double check the registration deadline: **September 16, 2026**."
+        )
+    elif "math" in message or "subject" in message:
+        if has_math_gap:
+            reply = (
+                "⚠️ **Mathematics Requirement Alert:**\n\n"
+                "Your profile currently shows a critical Mathematics prerequisite gap for your targets. "
+                "Because CBSE/ICSE doesn't easily permit late subject additions in Class 12, here is your agentic action plan:\n\n"
+                "1. **AP Calculus BC Override:** Register for AP Calculus BC in May to satisfy Cambridge CS/Imperial Math prerequisites.\n"
+                "2. **Target List Pivoting:** Consider applying to courses like BA Business Administration or BCA, or private universities (e.g. Ashoka University) where Class 12 Math is not mandatory.\n"
+                "3. **Board Registration Check:** Verify with your school counselor if it's still possible to register for Mathematics as a 6th subject."
+            )
+        else:
+            reply = (
+                "📚 **Subject Strategy advice:**\n\n"
+                "Your current board subject registration matches your target pathways. Ensure you maintain at least **95% in Mathematics and Physics** if you are targeting elite UK pathways like Cambridge CS."
+            )
+    elif "portfolio" in message or "extracurricular" in message or "activity" in message:
+        reply = (
+            "🏆 **Extracurricular Portfolio Roadmap:**\n\n"
+            "Our AI auto-classifier assesses the impact tier of your activities based on global reach. \n"
+            "- **Tier 1 (elite):** Research papers (IEEE, arXiv), national olympiads (IMO, IOI), patent filings, or global startup launch.\n"
+            "- **Tier 2 (strong):** State championships, regional hackathon winners, founding clubs, head boy/girl status.\n\n"
+            "**Action Item:** If targeting US universities (Stanford, MIT), aim to convert one of your Tier 3 school activities into a Tier 1 or Tier 2 regional/national project."
+        )
+    else:
+        gaps_summary = f"Currently, you have {len(student_gaps)} active gap(s) across your target pathways." if student_gaps else "Awesome! You are fully on track with no gaps."
+        reply = (
+            f"Hello {student.get('name')}! I am your PRISM Pathway Copilot. {gaps_summary}\n\n"
+            "Ask me anything about:\n"
+            "- **'TMUA preparation'** or registration timelines\n"
+            "- **'Math requirements'** or board subject mismatch remediations\n"
+            "- **'Portfolio projects'** to level up your extracurricular tier"
+        )
+
+    return jsonify({"reply": reply})
+
+# ── Counselor Portal AI Cohort Command Center Agent ──
+
+@app.route("/api/counselor_agent", methods=["POST"])
+def api_counselor_agent():
+    data = request.get_json()
+    command = data.get("command", "").strip().lower()
+
+    if "email" in command or "draft" in command:
+        # Find students with critical gaps (Aarav, Dia, Rohan, etc.)
+        flagged_students = []
+        for s in STUDENTS:
+            for tid in s.get("targets", []):
+                res = agent.solve_goal(s["id"], tid, STUDENTS, silent=True)
+                if res and not res.get("compliant", False):
+                    flagged_students.append((s, res.get("gaps")[0]))
+                    break # just need one gap to flag
+        
+        if not flagged_students:
+            return jsonify({"response": "No students currently require warning emails."})
+
+        # Draft email for the first flagged student as an example
+        s, gap = flagged_students[0]
+        draft = (
+            f"### 📧 Draft Email for {s['name']} ({s['id']})\n\n"
+            f"**To:** {s['name'].lower().replace(' ', '.')}@school.edu\n"
+            f"**Subject:** Action Required: Urgent Correction on Pathway Target Prerequisite Mismatch\n\n"
+            f"Dear {s['name']},\n\n"
+            f"We reviewed your academic profile and targets using the PRISM Compliance Agent. We noticed a **CRITICAL** gap:\n"
+            f"👉 *{gap.get('description')}*\n\n"
+            f"Please schedule a meeting with the counselor office this week to discuss target remediation (e.g. correcting your registration or adjusting target universities).\n\n"
+            f"Best regards,\n"
+            f"School College Counseling Center"
+        )
+        return jsonify({"response": draft})
+
+    elif "recommend" in command or "suggest" in command or "stu_" in command:
+        # Extract student ID or name
+        student_match = re.search(r'(stu_\d+)', command)
+        student_id = student_match.group(1).upper() if student_match else "STU_001"
+        s = next((st for st in STUDENTS if st["id"] == student_id), None)
+        
+        if not s:
+            return jsonify({"response": f"Student with ID '{student_id}' not found."})
+
+        # Run compliance check against all pathways in database to find recommendations
+        all_targets = kg.get_all_targets()
+        recs = []
+        for target in all_targets:
+            # Skip targets student is already aiming for
+            if target["id"] in s.get("targets", []):
+                continue
+            res = agent.solve_goal(s["id"], target["id"], STUDENTS, silent=True)
+            recs.append((target, res.get("match_score", 100)))
+        
+        recs.sort(key=lambda x: x[1], reverse=True)
+        top_recs = recs[:3]
+        
+        resp = f"### 🎯 Target Recommendations for {s['name']} ({s['id']})\n\n"
+        for t, score in top_recs:
+            resp += f"- **{t['name']}** (Match Score: **{score}%**)\n  *Reasoning:* Prerequisite compliance aligns well with {s['board']} curriculum.\n"
+        return jsonify({"response": resp})
+
+    else:
+        # Default Cohort Risk Summary Report
+        high_risk_count = 0
+        total_students = len(STUDENTS)
+        common_gaps = {}
+        
+        for s in STUDENTS:
+            min_match = 100
+            for tid in s.get("targets", []):
+                res = agent.solve_goal(s["id"], tid, STUDENTS, silent=True)
+                if res:
+                    min_match = min(min_match, res.get("match_score", 100))
+                    for gap in res.get("gaps", []):
+                        common_gaps[gap.get("subject", "General")] = common_gaps.get(gap.get("subject", "General"), 0) + 1
+            if min_match < 70:
+                high_risk_count += 1
+
+        common_gaps_sorted = sorted(common_gaps.items(), key=lambda x: x[1], reverse=True)[:3]
+        gaps_list = ", ".join([f"{k} ({v} students)" for k, v in common_gaps_sorted])
+
+        resp = (
+            "### 📊 PRISM Cohort Risk Analysis Report\n\n"
+            f"- **Cohort Size:** {total_students} active students\n"
+            f"- **High-Risk Students:** **{high_risk_count}** students with match scores < 70%\n"
+            f"- **Most Common Prerequisite Gaps:** {gaps_list if gaps_list else 'None'}\n\n"
+            "**Suggested Counselor Interventions:**\n"
+            "1. Hold a group workshop for students missing Mathematics.\n"
+            "2. Send bulk warning email drafts to high-risk students."
+        )
+        return jsonify({"response": resp})
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)
