@@ -589,13 +589,19 @@ function showStep(step) {
 
 function addStudentPortfolioRow(activity = '', desc = '', tier = 3) {
   const list = document.getElementById('sf-portfolio-list');
+  if (!list) return;
   const row = document.createElement('div');
   row.className = 'portfolio-row';
-  row.style.gridTemplateColumns = '1fr 2fr auto';
+  row.style.display = 'grid';
+  row.style.gridTemplateColumns = '1fr 2.5fr auto';
+  row.style.gap = '8px';
+  row.style.marginBottom = '8px';
+  const safeAct = (activity || '').replace(/"/g, '&quot;');
+  const safeDesc = (desc || '').replace(/"/g, '&quot;');
   row.innerHTML = `
-    <input type="text" placeholder="activity name" class="pf-activity" value="${activity}" />
-    <input type="text" placeholder="describe what you did, awards won, level reached" class="pf-desc" value="${desc}" />
-    <button type="button" class="btn-delete-sm" onclick="this.parentElement.remove()">✕</button>
+    <input type="text" placeholder="activity name" class="pf-activity" value="${safeAct}" style="font-size:0.8rem; padding:6px; background:var(--surface); border:1px solid var(--border); color:var(--text-1); border-radius:4px;" />
+    <input type="text" placeholder="describe what you did, awards won, level reached" class="pf-desc" value="${safeDesc}" style="font-size:0.8rem; padding:6px; background:var(--surface); border:1px solid var(--border); color:var(--text-1); border-radius:4px;" />
+    <button type="button" class="btn-delete-sm" onclick="this.parentElement.remove()" style="padding:4px 8px;">✕</button>
   `;
   list.appendChild(row);
 }
@@ -890,4 +896,142 @@ async function sendStudentAdvisorMessage() {
 }
 
 window.sendStudentAdvisorMessage = sendStudentAdvisorMessage;
+
+/* ═══════════════════════════════════════════════════
+   AUTOMATED AGENTIC DATA INGESTION HANDLERS
+   ═══════════════════════════════════════════════════ */
+
+let selectedIngestFiles = [];
+
+function handleFileSelect(event) {
+  const files = Array.from(event.target.files);
+  selectedIngestFiles = files;
+  const listEl = document.getElementById('file-list-preview');
+  if (listEl) {
+    if (files.length === 0) {
+      listEl.innerHTML = '';
+    } else {
+      listEl.innerHTML = '📁 Selected Files: ' + files.map(f => `<strong>${f.name}</strong> (${(f.size/1024).toFixed(1)} KB)`).join(', ');
+    }
+  }
+}
+window.handleFileSelect = handleFileSelect;
+
+async function uploadAndIngestDocuments() {
+  const fileInput = document.getElementById('ingest-file-input');
+  const files = fileInput ? fileInput.files : [];
+  const statusEl = document.getElementById('ingest-status');
+  const btnEl = document.getElementById('btn-auto-ingest');
+
+  if (!files || files.length === 0) {
+    alert('Please select at least one transcript or resume file to ingest.');
+    return;
+  }
+
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--amber)';
+    statusEl.innerHTML = 'Parsing documents... Extracting academic grades, board subjects, test scores, and extracurricular activities via PRISM AI.';
+  }
+
+  if (btnEl) btnEl.disabled = true;
+
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+  formData.append('auto_save', 'true');
+
+  try {
+    const response = await fetch('/api/ingest_documents', {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to parse documents.');
+    }
+
+    const s = data.student;
+
+    // Auto-populate Name, Board, Class
+    if (s.name) document.getElementById('sf-name').value = s.name;
+    if (s.board) document.getElementById('sf-board').value = s.board;
+    if (s.class_level) {
+      document.getElementById('sf-class').value = s.class_level;
+      if (typeof onClassChange === 'function') onClassChange();
+    }
+
+    // Auto-populate Expected Grade
+    if (s.grades && s.grades.current_expected_board) {
+      const expInput = document.getElementById('sf-expected-board');
+      if (expInput) expInput.value = s.grades.current_expected_board.replace('%', '');
+    }
+
+    // Auto-populate SAT score
+    if (s.standardized_tests && s.standardized_tests.SAT) {
+      const satInput = document.getElementById('sf-sat');
+      if (satInput) satInput.value = s.standardized_tests.SAT;
+    }
+
+    // Check detected subjects
+    const allDetectedSubs = [...(s.board_subjects || []), ...(s.planned_class_11_subjects || [])];
+    if (allDetectedSubs.length > 0) {
+      const checkboxes = document.querySelectorAll('#sf-subjects input[type="checkbox"], #sf-planned-subjects input[type="checkbox"]');
+      checkboxes.forEach(cb => {
+        const valLower = cb.value.toLowerCase();
+        if (allDetectedSubs.some(sub => valLower.includes(sub.toLowerCase()) || sub.toLowerCase().includes(valLower))) {
+          cb.checked = true;
+        }
+      });
+    }
+
+    // Auto-populate Grade 10 Subject Scores with converted percentages
+    const g10Subs = s.grades ? (s.grades.g10_subjects || s.grades.grade_10_subjects || s.grades.subjects) : null;
+    if (g10Subs) {
+      for (const [subName, subMark] of Object.entries(g10Subs)) {
+        if (typeof addG10SubjectRow === 'function') addG10SubjectRow(subName);
+        const subInput = document.querySelector(`.sf-g10-subj-mark[data-g10-subject="${subName}"]`);
+        if (subInput && subMark) {
+          subInput.value = typeof subMark === 'number' ? subMark : parseFloat(subMark) || 95;
+        }
+      }
+    }
+
+    // Populate Portfolio Activities into #sf-portfolio-list
+    if (s.portfolio && s.portfolio.length > 0) {
+      const listContainer = document.getElementById('sf-portfolio-list');
+      if (listContainer) listContainer.innerHTML = '';
+      s.portfolio.forEach(item => {
+        if (typeof addStudentPortfolioRow === 'function') {
+          addStudentPortfolioRow(item.activity, item.description, item.tier || 1);
+        }
+      });
+    }
+
+    if (statusEl) {
+      statusEl.style.color = 'var(--green)';
+      statusEl.innerHTML = `Ingestion Successful: Auto-populated profile for <strong>${s.name || 'Student'}</strong> from ${data.extracted_from.join(', ')}.`;
+    }
+
+    createdStudentId = s.id;
+
+    // If targets were evaluated, show audit results automatically
+    if (data.evaluation && data.evaluation.targets && Object.keys(data.evaluation.targets).length > 0) {
+      renderAuditResults(data.student, data.evaluation);
+    }
+
+  } catch (err) {
+    if (statusEl) {
+      statusEl.style.color = 'var(--red)';
+      statusEl.innerHTML = `Ingestion Failed: ${err.message}`;
+    }
+  } finally {
+    if (btnEl) btnEl.disabled = false;
+  }
+}
+window.uploadAndIngestDocuments = uploadAndIngestDocuments;
+
 

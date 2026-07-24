@@ -1,1 +1,1410 @@
-[]
+[
+  {
+    "id": "STU_001",
+    "name": "Aarav Sharma",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "English"
+    ],
+    "cuet_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English"
+    ],
+    "targets": [
+      "CUET_DU_CS"
+    ],
+    "grades": {
+      "current_expected_board": "88.0%",
+      "subjects": {
+        "Physics": 85.0,
+        "Chemistry": 86.0,
+        "Computer Science": 92.0,
+        "English": 90.0
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": []
+  },
+  {
+    "id": "STU_002",
+    "name": "Dia Mehta",
+    "class_level": 10,
+    "board": "CBSE",
+    "planned_class_11_subjects": [
+      "Economics",
+      "Commerce",
+      "Accountancy",
+      "English"
+    ],
+    "targets": [
+      "CUET_DU_ECO"
+    ],
+    "grades": {
+      "current_expected_board": "90.0%"
+    },
+    "standardized_tests": {},
+    "portfolio": []
+  },
+  {
+    "id": "STU_003",
+    "name": "Rohan Verma",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English"
+    ],
+    "targets": [
+      "CAMBRIDGE_CS"
+    ],
+    "grades": {
+      "current_expected_board": "95.0%",
+      "subjects": {
+        "Mathematics": 95.0,
+        "Physics": 96.0,
+        "Chemistry": 94.0,
+        "English": 92.0
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": []
+  },
+  {
+    "id": "STU_004",
+    "name": "Ananya Iyer",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English"
+    ],
+    "targets": [
+      "MIT_STEM"
+    ],
+    "grades": {
+      "current_expected_board": "96.0%",
+      "subjects": {
+        "Mathematics": 98.0,
+        "Physics": 97.0,
+        "Chemistry": 96.0,
+        "English": 93.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1480
+    },
+    "portfolio": [
+      {
+        "activity": "State Hackathon Winner",
+        "description": "Built AI assistant",
+        "tier": 2
+      }
+    ]
+  },
+  {
+    "id": "STU_005",
+    "name": "Kabir Singh",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English"
+    ],
+    "targets": [
+      "JEE_MAIN"
+    ],
+    "grades": {
+      "current_expected_board": "72.0%",
+      "subjects": {
+        "Mathematics": 70.0,
+        "Physics": 73.0,
+        "Chemistry": 73.0,
+        "English": 72.0
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": []
+  },
+  {
+    "id": "STU_006",
+    "name": "Meera Patel",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Economics"
+    ],
+    "cuet_subjects": [
+      "Mathematics",
+      "Economics",
+      "English"
+    ],
+    "targets": [
+      "STANFORD_CS",
+      "CUET_DU_ECO"
+    ],
+    "grades": {
+      "current_expected_board": "98.0%",
+      "subjects": {
+        "Mathematics": 99.0,
+        "Physics": 98.0,
+        "Chemistry": 97.0,
+        "English": 95.0,
+        "Economics": 98.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "IMO Gold Medal",
+        "description": "International Mathematical Olympiad Winner",
+        "tier": 1
+      }
+    ]
+  },
+  {
+    "name": "Extracted Student",
+    "class_level": 10,
+    "board": "IB",
+    "board_subjects": [],
+    "planned_class_11_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Economics",
+      "English"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "202.0%",
+      "subjects": {
+        "English": 202.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "device (with a published patent applicat",
+        "description": "device (with a published patent application) recognized nationally. Award-winning",
+        "tier": 1
+      },
+      {
+        "activity": "INITIATIVES/PROJECTS",
+        "description": "INITIATIVES/PROJECTS",
+        "tier": 3
+      },
+      {
+        "activity": "Award and the Best Prototype award at Pl",
+        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
+        "tier": 3
+      },
+      {
+        "activity": "apj-abdul-kalam-ignited-minds-children-c",
+        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
+        "tier": 3
+      },
+      {
+        "activity": "\u2022 Sports: Swimmer with medals at the nat",
+        "description": "\u2022 Sports: Swimmer with medals at the national level, represented the country at",
+        "tier": 1
+      },
+      {
+        "activity": "\u2022 Maths: UKMT Senior Mathematics Competi",
+        "description": "\u2022 Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
+        "tier": 3
+      },
+      {
+        "activity": "Competition Gold Award",
+        "description": "Competition Gold Award",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_007",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "Extracted Student",
+    "class_level": 10,
+    "board": "IB",
+    "board_subjects": [],
+    "planned_class_11_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Economics",
+      "English"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "202.0%",
+      "subjects": {
+        "English": 202.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "device (with a published patent applicat",
+        "description": "device (with a published patent application) recognized nationally. Award-winning",
+        "tier": 1
+      },
+      {
+        "activity": "INITIATIVES/PROJECTS",
+        "description": "INITIATIVES/PROJECTS",
+        "tier": 3
+      },
+      {
+        "activity": "Award and the Best Prototype award at Pl",
+        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
+        "tier": 3
+      },
+      {
+        "activity": "apj-abdul-kalam-ignited-minds-children-c",
+        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
+        "tier": 3
+      },
+      {
+        "activity": "\u2022 Sports: Swimmer with medals at the nat",
+        "description": "\u2022 Sports: Swimmer with medals at the national level, represented the country at",
+        "tier": 1
+      },
+      {
+        "activity": "\u2022 Maths: UKMT Senior Mathematics Competi",
+        "description": "\u2022 Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
+        "tier": 3
+      },
+      {
+        "activity": "Competition Gold Award",
+        "description": "Competition Gold Award",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_008",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "Extracted Student",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "Economics",
+      "English"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "202.0%",
+      "subjects": {
+        "English": 202.0
+      },
+      "g10_subjects": {}
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "device (with a published patent applicat",
+        "description": "device (with a published patent application) recognized nationally. Award-winning",
+        "tier": 1
+      },
+      {
+        "activity": "INITIATIVES/PROJECTS",
+        "description": "INITIATIVES/PROJECTS",
+        "tier": 3
+      },
+      {
+        "activity": "Award and the Best Prototype award at Pl",
+        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
+        "tier": 3
+      },
+      {
+        "activity": "apj-abdul-kalam-ignited-minds-children-c",
+        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
+        "tier": 3
+      },
+      {
+        "activity": "\u2022 Sports: Swimmer with medals at the nat",
+        "description": "\u2022 Sports: Swimmer with medals at the national level, represented the country at",
+        "tier": 1
+      },
+      {
+        "activity": "\u2022 Maths: UKMT Senior Mathematics Competi",
+        "description": "\u2022 Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
+        "tier": 3
+      },
+      {
+        "activity": "Competition Gold Award",
+        "description": "Competition Gold Award",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_009",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "SAIANSH TAPURIAH",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "Economics",
+      "English",
+      "Spanish",
+      "Geography",
+      "Environmental Management",
+      "Literature"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {},
+      "g10_subjects": {
+        "Mathematics": 95.0,
+        "Physics": 95.0,
+        "Chemistry": 95.0,
+        "Computer Science": 95.0,
+        "English": 95.0,
+        "Spanish": 95.0,
+        "Geography": 95.0,
+        "Environmental Management": 95.0,
+        "Literature": 95.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "device (with a published patent application) ",
+        "description": "device (with a published patent application) recognized nationally. Award-winning",
+        "tier": 1
+      },
+      {
+        "activity": "EpiAlert is an innovative device developed by",
+        "description": "EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic",
+        "tier": 3
+      },
+      {
+        "activity": "Award and the Best Prototype award at Plaksha",
+        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
+        "tier": 3
+      },
+      {
+        "activity": "apj-abdul-kalam-ignited-minds-children-creati",
+        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
+        "tier": 3
+      },
+      {
+        "activity": "To reduce the widespread air pollution in the",
+        "description": "To reduce the widespread air pollution in the city, Saiansh developed a mobile",
+        "tier": 3
+      },
+      {
+        "activity": "Sports: Swimmer with medals at the national l",
+        "description": "Sports: Swimmer with medals at the national level, represented the country at",
+        "tier": 1
+      },
+      {
+        "activity": "Science: Interested in Physics advancements a",
+        "description": "Science: Interested in Physics advancements and research, worked as part of",
+        "tier": 3
+      },
+      {
+        "activity": "Maths: UKMT Senior Mathematics Competition Go",
+        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
+        "tier": 1
+      },
+      {
+        "activity": "Competition Gold Award",
+        "description": "Competition Gold Award",
+        "tier": 1
+      }
+    ],
+    "targets": [],
+    "id": "STU_010",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "SAIANSH TAPURIAH",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "Economics",
+      "English",
+      "Spanish",
+      "Geography",
+      "Environmental Management",
+      "Literature"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {},
+      "g10_subjects": {
+        "Mathematics": 95.0,
+        "Physics": 95.0,
+        "Chemistry": 95.0,
+        "Computer Science": 95.0,
+        "English": 95.0,
+        "Spanish": 95.0,
+        "Geography": 95.0,
+        "Environmental Management": 95.0,
+        "Literature": 95.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "IBDP Grade 11 student at The Shri Ram Sc",
+        "description": "IBDP Grade 11 student at The Shri Ram School, Moulsari, with a strong interest for engineering, innovation, AI, and sustainability. Creator of EpiAlert, a seizure detection device (with a published patent application) recognized nationally. Award-winning innovator and international-level swimmer representing India. Passionate about leveraging technology for social impact and real-world problem solving. EDUCATION The Shri Ram School, Moulsari",
+        "tier": 1
+      },
+      {
+        "activity": "IB Diploma Programme (Currently Pursuing",
+        "description": "IB Diploma Programme (Currently Pursuing), Grade 11",
+        "tier": 3
+      },
+      {
+        "activity": "Higher Level (HL)",
+        "description": "Higher Level (HL): Physics, Chemistry, Economics, Mathematics AA",
+        "tier": 3
+      },
+      {
+        "activity": "Standard Level (SL)",
+        "description": "Standard Level (SL): English, Spanish",
+        "tier": 3
+      },
+      {
+        "activity": "Previously completed IGCSE (Grades 6\u201310)",
+        "description": "Previously completed IGCSE (Grades 6\u201310)",
+        "tier": 3
+      },
+      {
+        "activity": "Consistent Grade Topper across all acade",
+        "description": "Consistent Grade Topper across all academic years",
+        "tier": 3
+      },
+      {
+        "activity": "Achieved 9A* in IGCSE Board Examinations (Feb",
+        "description": "Achieved 9A* in IGCSE Board Examinations (Feb-March 2026) in:",
+        "tier": 3
+      },
+      {
+        "activity": "First Language English",
+        "description": "First Language English",
+        "tier": 3
+      },
+      {
+        "activity": "Literature in English",
+        "description": "Literature in English",
+        "tier": 3
+      },
+      {
+        "activity": "Computer Science",
+        "description": "Computer Science",
+        "tier": 3
+      },
+      {
+        "activity": "Mathematics International",
+        "description": "Mathematics International",
+        "tier": 1
+      },
+      {
+        "activity": "Environmental Management",
+        "description": "Environmental Management",
+        "tier": 3
+      },
+      {
+        "activity": "Standardised Testing",
+        "description": "Standardised Testing:",
+        "tier": 3
+      },
+      {
+        "activity": "SAT",
+        "description": "SAT: 1570 (790 Maths, 780 English RW) \u2013 May 2026 EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
+        "tier": 1
+      },
+      {
+        "activity": "Device has been recognized nationally, with t",
+        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
+        "tier": 1
+      },
+      {
+        "activity": "Pollution Alert To reduce the widespread",
+        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
+        "tier": 1
+      },
+      {
+        "activity": "Technology",
+        "description": "Technology: Python programming, ML development, avid tech quizzer",
+        "tier": 3
+      },
+      {
+        "activity": "Sports",
+        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
+        "tier": 1
+      },
+      {
+        "activity": "Science",
+        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
+        "tier": 1
+      },
+      {
+        "activity": "Maths",
+        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
+        "tier": 1
+      },
+      {
+        "activity": "Scuba Diving",
+        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_011",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "Aarav Mehta",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "English",
+      "Geography",
+      "Literature",
+      "History"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {
+        "Mathematics": 96.0,
+        "Physics": 93.0,
+        "Chemistry": 95.0,
+        "Biology": 92.0,
+        "English": 91.0,
+        "Geography": 90.0,
+        "Literature": 94.0,
+        "History": 89.0
+      },
+      "g10_subjects": {}
+    },
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "Coding Club",
+        "description": "Coding Club",
+        "tier": 3
+      },
+      {
+        "activity": "Active member of the school Coding Club",
+        "description": "Active member of the school Coding Club",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in two inter-school hackath",
+        "description": "Participated in two inter-school hackathons",
+        "tier": 3
+      },
+      {
+        "activity": "Developed small Python and Java projects",
+        "description": "Developed small Python and Java projects Robotics",
+        "tier": 3
+      },
+      {
+        "activity": "Member of the Robotics Society",
+        "description": "Member of the Robotics Society",
+        "tier": 3
+      },
+      {
+        "activity": "Assisted in designing and programming li",
+        "description": "Assisted in designing and programming line-following robots",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in district-level robotics ",
+        "description": "Participated in district-level robotics competition Debate",
+        "tier": 3
+      },
+      {
+        "activity": "Represented school in two inter-school d",
+        "description": "Represented school in two inter-school debate competitions",
+        "tier": 3
+      },
+      {
+        "activity": "Finalist in one regional debate event Co",
+        "description": "Finalist in one regional debate event Community Service",
+        "tier": 2
+      },
+      {
+        "activity": "Volunteered at a local NGO teaching basi",
+        "description": "Volunteered at a local NGO teaching basic computer literacy",
+        "tier": 3
+      },
+      {
+        "activity": "Contributed over 35 volunteer hours Scho",
+        "description": "Contributed over 35 volunteer hours School Magazine",
+        "tier": 3
+      },
+      {
+        "activity": "Student contributor for the Technology s",
+        "description": "Student contributor for the Technology section",
+        "tier": 3
+      },
+      {
+        "activity": "Published three articles on AI and emerg",
+        "description": "Published three articles on AI and emerging technologies",
+        "tier": 3
+      },
+      {
+        "activity": "Member of the school badminton team",
+        "description": "Member of the school badminton team",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in annual inter-house tourn",
+        "description": "Participated in annual inter-house tournaments",
+        "tier": 3
+      },
+      {
+        "activity": "Class Representative (Grade 10)",
+        "description": "Class Representative (Grade 10)",
+        "tier": 3
+      },
+      {
+        "activity": "Organizing committee member for the scho",
+        "description": "Organizing committee member for the school's annual Technology Fest",
+        "tier": 3
+      },
+      {
+        "activity": "ONLINE COURSES",
+        "description": "ONLINE COURSES",
+        "tier": 3
+      },
+      {
+        "activity": "Introduction to Python Programming",
+        "description": "Introduction to Python Programming",
+        "tier": 3
+      },
+      {
+        "activity": "Foundations of Data Science",
+        "description": "Foundations of Data Science",
+        "tier": 3
+      },
+      {
+        "activity": "CS50",
+        "description": "CS50: Introduction to Computer Science (Completed selected modules)",
+        "tier": 3
+      },
+      {
+        "activity": "Microsoft Excel",
+        "description": "Microsoft Excel",
+        "tier": 3
+      },
+      {
+        "activity": "GitHub (Basic)",
+        "description": "GitHub (Basic)",
+        "tier": 3
+      },
+      {
+        "activity": "Public Speaking",
+        "description": "Public Speaking",
+        "tier": 3
+      },
+      {
+        "activity": "Top 10% in school academic ranking (Grad",
+        "description": "Top 10% in school academic ranking (Grade 10)",
+        "tier": 3
+      },
+      {
+        "activity": "Qualified for district-level Robotics Co",
+        "description": "Qualified for district-level Robotics Competition",
+        "tier": 3
+      },
+      {
+        "activity": "Merit Certificate in School Mathematics ",
+        "description": "Merit Certificate in School Mathematics Olympiad",
+        "tier": 1
+      },
+      {
+        "activity": "Best Delegate (Honourable Mention) \u2013 Sch",
+        "description": "Best Delegate (Honourable Mention) \u2013 School Model United Nations",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_012",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "Aarav Mehta",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "English",
+      "Geography",
+      "Literature",
+      "History"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {
+        "Mathematics": 96.0,
+        "Physics": 93.0,
+        "Chemistry": 95.0,
+        "Biology": 92.0,
+        "English": 91.0,
+        "Geography": 90.0,
+        "Literature": 94.0,
+        "History": 89.0
+      },
+      "g10_subjects": {}
+    },
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "Coding Club",
+        "description": "Coding Club",
+        "tier": 3
+      },
+      {
+        "activity": "Active member of the school Coding Club",
+        "description": "Active member of the school Coding Club",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in two inter-school hackath",
+        "description": "Participated in two inter-school hackathons",
+        "tier": 3
+      },
+      {
+        "activity": "Developed small Python and Java projects",
+        "description": "Developed small Python and Java projects Robotics",
+        "tier": 3
+      },
+      {
+        "activity": "Member of the Robotics Society",
+        "description": "Member of the Robotics Society",
+        "tier": 3
+      },
+      {
+        "activity": "Assisted in designing and programming li",
+        "description": "Assisted in designing and programming line-following robots",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in district-level robotics ",
+        "description": "Participated in district-level robotics competition Debate",
+        "tier": 3
+      },
+      {
+        "activity": "Represented school in two inter-school d",
+        "description": "Represented school in two inter-school debate competitions",
+        "tier": 3
+      },
+      {
+        "activity": "Finalist in one regional debate event Co",
+        "description": "Finalist in one regional debate event Community Service",
+        "tier": 2
+      },
+      {
+        "activity": "Volunteered at a local NGO teaching basi",
+        "description": "Volunteered at a local NGO teaching basic computer literacy",
+        "tier": 3
+      },
+      {
+        "activity": "Contributed over 35 volunteer hours Scho",
+        "description": "Contributed over 35 volunteer hours School Magazine",
+        "tier": 3
+      },
+      {
+        "activity": "Student contributor for the Technology s",
+        "description": "Student contributor for the Technology section",
+        "tier": 3
+      },
+      {
+        "activity": "Published three articles on AI and emerg",
+        "description": "Published three articles on AI and emerging technologies",
+        "tier": 3
+      },
+      {
+        "activity": "Member of the school badminton team",
+        "description": "Member of the school badminton team",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in annual inter-house tourn",
+        "description": "Participated in annual inter-house tournaments",
+        "tier": 3
+      },
+      {
+        "activity": "Class Representative (Grade 10)",
+        "description": "Class Representative (Grade 10)",
+        "tier": 3
+      },
+      {
+        "activity": "Organizing committee member for the scho",
+        "description": "Organizing committee member for the school's annual Technology Fest",
+        "tier": 3
+      },
+      {
+        "activity": "ONLINE COURSES",
+        "description": "ONLINE COURSES",
+        "tier": 3
+      },
+      {
+        "activity": "Introduction to Python Programming",
+        "description": "Introduction to Python Programming",
+        "tier": 3
+      },
+      {
+        "activity": "Foundations of Data Science",
+        "description": "Foundations of Data Science",
+        "tier": 3
+      },
+      {
+        "activity": "CS50",
+        "description": "CS50: Introduction to Computer Science (Completed selected modules)",
+        "tier": 3
+      },
+      {
+        "activity": "Microsoft Excel",
+        "description": "Microsoft Excel",
+        "tier": 3
+      },
+      {
+        "activity": "GitHub (Basic)",
+        "description": "GitHub (Basic)",
+        "tier": 3
+      },
+      {
+        "activity": "Public Speaking",
+        "description": "Public Speaking",
+        "tier": 3
+      },
+      {
+        "activity": "Top 10% in school academic ranking (Grad",
+        "description": "Top 10% in school academic ranking (Grade 10)",
+        "tier": 3
+      },
+      {
+        "activity": "Qualified for district-level Robotics Co",
+        "description": "Qualified for district-level Robotics Competition",
+        "tier": 3
+      },
+      {
+        "activity": "Merit Certificate in School Mathematics ",
+        "description": "Merit Certificate in School Mathematics Olympiad",
+        "tier": 1
+      },
+      {
+        "activity": "Best Delegate (Honourable Mention) \u2013 Sch",
+        "description": "Best Delegate (Honourable Mention) \u2013 School Model United Nations",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_013",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "SAIANSH TAPURIAH",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "Economics",
+      "English",
+      "Spanish",
+      "Geography",
+      "Environmental Management",
+      "Literature"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {},
+      "g10_subjects": {
+        "Mathematics": 95.0,
+        "Physics": 95.0,
+        "Chemistry": 95.0,
+        "Computer Science": 95.0,
+        "English": 95.0,
+        "Spanish": 95.0,
+        "Geography": 95.0,
+        "Environmental Management": 95.0,
+        "Literature": 95.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "IBDP Grade 11 student at The Shri Ram Sc",
+        "description": "IBDP Grade 11 student at The Shri Ram School, Moulsari, with a strong interest for engineering, innovation, AI, and sustainability. Creator of EpiAlert, a seizure detection device (with a published patent application) recognized nationally. Award-winning innovator and international-level swimmer representing India. Passionate about leveraging technology for social impact and real-world problem solving. EDUCATION The Shri Ram School, Moulsari",
+        "tier": 1
+      },
+      {
+        "activity": "IB Diploma Programme (Currently Pursuing",
+        "description": "IB Diploma Programme (Currently Pursuing), Grade 11",
+        "tier": 3
+      },
+      {
+        "activity": "Higher Level (HL)",
+        "description": "Higher Level (HL): Physics, Chemistry, Economics, Mathematics AA",
+        "tier": 3
+      },
+      {
+        "activity": "Standard Level (SL)",
+        "description": "Standard Level (SL): English, Spanish",
+        "tier": 3
+      },
+      {
+        "activity": "Previously completed IGCSE (Grades 6\u201310)",
+        "description": "Previously completed IGCSE (Grades 6\u201310)",
+        "tier": 3
+      },
+      {
+        "activity": "Consistent Grade Topper across all acade",
+        "description": "Consistent Grade Topper across all academic years",
+        "tier": 3
+      },
+      {
+        "activity": "Achieved 9A* in IGCSE Board Examinations (Feb",
+        "description": "Achieved 9A* in IGCSE Board Examinations (Feb-March 2026) in:",
+        "tier": 3
+      },
+      {
+        "activity": "First Language English",
+        "description": "First Language English",
+        "tier": 3
+      },
+      {
+        "activity": "Literature in English",
+        "description": "Literature in English",
+        "tier": 3
+      },
+      {
+        "activity": "Computer Science",
+        "description": "Computer Science",
+        "tier": 3
+      },
+      {
+        "activity": "Mathematics International",
+        "description": "Mathematics International",
+        "tier": 1
+      },
+      {
+        "activity": "Environmental Management",
+        "description": "Environmental Management",
+        "tier": 3
+      },
+      {
+        "activity": "Standardised Testing",
+        "description": "Standardised Testing:",
+        "tier": 3
+      },
+      {
+        "activity": "SAT",
+        "description": "SAT: 1570 (790 Maths, 780 English RW) \u2013 May 2026 EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
+        "tier": 1
+      },
+      {
+        "activity": "Device has been recognized nationally, with t",
+        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
+        "tier": 1
+      },
+      {
+        "activity": "Pollution Alert To reduce the widespread",
+        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
+        "tier": 1
+      },
+      {
+        "activity": "Technology",
+        "description": "Technology: Python programming, ML development, avid tech quizzer",
+        "tier": 3
+      },
+      {
+        "activity": "Sports",
+        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
+        "tier": 1
+      },
+      {
+        "activity": "Science",
+        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
+        "tier": 1
+      },
+      {
+        "activity": "Maths",
+        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
+        "tier": 1
+      },
+      {
+        "activity": "Scuba Diving",
+        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_014",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "SAIANSH TAPURIAH",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "Economics",
+      "English",
+      "Spanish",
+      "Geography",
+      "Environmental Management",
+      "Literature"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {},
+      "g10_subjects": {
+        "Mathematics": 95.0,
+        "Physics": 95.0,
+        "Chemistry": 95.0,
+        "Computer Science": 95.0,
+        "English": 95.0,
+        "Spanish": 95.0,
+        "Geography": 95.0,
+        "Environmental Management": 95.0,
+        "Literature": 95.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "EpiAlert EpiAlert is an innovative devic",
+        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
+        "tier": 1
+      },
+      {
+        "activity": "Device has been recognized nationally, with t",
+        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
+        "tier": 1
+      },
+      {
+        "activity": "Pollution Alert To reduce the widespread",
+        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
+        "tier": 1
+      },
+      {
+        "activity": "Technology",
+        "description": "Technology: Python programming, ML development, avid tech quizzer",
+        "tier": 3
+      },
+      {
+        "activity": "Sports",
+        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
+        "tier": 1
+      },
+      {
+        "activity": "Science",
+        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
+        "tier": 1
+      },
+      {
+        "activity": "Maths",
+        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
+        "tier": 1
+      },
+      {
+        "activity": "Scuba Diving",
+        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_015",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "Aarav Mehta",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "English",
+      "Geography",
+      "Literature",
+      "History"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {
+        "Mathematics": 96.0,
+        "Physics": 93.0,
+        "Chemistry": 95.0,
+        "Biology": 92.0,
+        "English": 91.0,
+        "Geography": 90.0,
+        "Literature": 94.0,
+        "History": 89.0
+      },
+      "g10_subjects": {}
+    },
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "Coding Club",
+        "description": "Coding Club",
+        "tier": 3
+      },
+      {
+        "activity": "Active member of the school Coding Club",
+        "description": "Active member of the school Coding Club",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in two inter-school hackath",
+        "description": "Participated in two inter-school hackathons",
+        "tier": 3
+      },
+      {
+        "activity": "Developed small Python and Java projects",
+        "description": "Developed small Python and Java projects Robotics",
+        "tier": 3
+      },
+      {
+        "activity": "Member of the Robotics Society",
+        "description": "Member of the Robotics Society",
+        "tier": 3
+      },
+      {
+        "activity": "Assisted in designing and programming li",
+        "description": "Assisted in designing and programming line-following robots",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in district-level robotics ",
+        "description": "Participated in district-level robotics competition Debate",
+        "tier": 3
+      },
+      {
+        "activity": "Represented school in two inter-school d",
+        "description": "Represented school in two inter-school debate competitions",
+        "tier": 3
+      },
+      {
+        "activity": "Finalist in one regional debate event Co",
+        "description": "Finalist in one regional debate event Community Service",
+        "tier": 2
+      },
+      {
+        "activity": "Volunteered at a local NGO teaching basi",
+        "description": "Volunteered at a local NGO teaching basic computer literacy",
+        "tier": 3
+      },
+      {
+        "activity": "Contributed over 35 volunteer hours Scho",
+        "description": "Contributed over 35 volunteer hours School Magazine",
+        "tier": 3
+      },
+      {
+        "activity": "Student contributor for the Technology s",
+        "description": "Student contributor for the Technology section",
+        "tier": 3
+      },
+      {
+        "activity": "Published three articles on AI and emerg",
+        "description": "Published three articles on AI and emerging technologies",
+        "tier": 3
+      },
+      {
+        "activity": "Member of the school badminton team",
+        "description": "Member of the school badminton team",
+        "tier": 3
+      },
+      {
+        "activity": "Participated in annual inter-house tourn",
+        "description": "Participated in annual inter-house tournaments",
+        "tier": 3
+      },
+      {
+        "activity": "Class Representative (Grade 10)",
+        "description": "Class Representative (Grade 10)",
+        "tier": 3
+      },
+      {
+        "activity": "Organizing committee member for the scho",
+        "description": "Organizing committee member for the school's annual Technology Fest",
+        "tier": 3
+      },
+      {
+        "activity": "ONLINE COURSES",
+        "description": "ONLINE COURSES",
+        "tier": 3
+      },
+      {
+        "activity": "Introduction to Python Programming",
+        "description": "Introduction to Python Programming",
+        "tier": 3
+      },
+      {
+        "activity": "Foundations of Data Science",
+        "description": "Foundations of Data Science",
+        "tier": 3
+      },
+      {
+        "activity": "CS50",
+        "description": "CS50: Introduction to Computer Science (Completed selected modules)",
+        "tier": 3
+      },
+      {
+        "activity": "Microsoft Excel",
+        "description": "Microsoft Excel",
+        "tier": 3
+      },
+      {
+        "activity": "GitHub (Basic)",
+        "description": "GitHub (Basic)",
+        "tier": 3
+      },
+      {
+        "activity": "Public Speaking",
+        "description": "Public Speaking",
+        "tier": 3
+      },
+      {
+        "activity": "Top 10% in school academic ranking (Grad",
+        "description": "Top 10% in school academic ranking (Grade 10)",
+        "tier": 3
+      },
+      {
+        "activity": "Qualified for district-level Robotics Co",
+        "description": "Qualified for district-level Robotics Competition",
+        "tier": 3
+      },
+      {
+        "activity": "Merit Certificate in School Mathematics ",
+        "description": "Merit Certificate in School Mathematics Olympiad",
+        "tier": 1
+      },
+      {
+        "activity": "Best Delegate (Honourable Mention) \u2013 Sch",
+        "description": "Best Delegate (Honourable Mention) \u2013 School Model United Nations",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_016",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  }
+]

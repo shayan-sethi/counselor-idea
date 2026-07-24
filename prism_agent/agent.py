@@ -2,6 +2,11 @@ import time
 import re
 import os
 import json
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 from rich.console import Console
 from rich.panel import Panel
 from .knowledge_graph import KnowledgeGraph
@@ -236,14 +241,19 @@ Write a sentence explaining your thought before calling each tool.
 
         trace = []
 
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            tools=tools,
-            generation_config={"temperature": 0.0}
-        )
+        try:
+            model = genai.GenerativeModel(
+                model_name="gemini-2.0-flash",
+                tools=tools,
+                generation_config={"temperature": 0.0}
+            )
 
-        chat = model.start_chat()
-        response = chat.send_message(prompt)
+            chat = model.start_chat()
+            response = chat.send_message(prompt)
+        except Exception as api_err:
+            if not silent:
+                print(f"[Agent Warning] Gemini API call failed: {api_err}. Falling back to rule engine.")
+            return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
 
         for _ in range(15):
             parts = response.candidates[0].content.parts

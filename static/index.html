@@ -109,7 +109,17 @@
       <!-- Student form -->
       <div class="manage-form-wrap">
         <div class="form-section-title" id="manage-form-title">add new student</div>
-        <form id="manage-form" onsubmit="submitStudentForm(event)">
+        <form id="manage-student-form" onsubmit="submitManageStudent(event)">
+          <!-- AI Ingestion Dropzone for Counselor -->
+          <div style="border: 1px dashed var(--border); background: var(--surface); padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+            <div style="font-size: 0.72rem; font-weight: 600; color: var(--amber); margin-bottom: 4px;">AUTOMATED AGENTIC DATA INGESTION</div>
+            <div style="font-size: 0.7rem; color: var(--text-3); margin-bottom: 8px;">Upload transcript, marks card, or resume to auto-fill student details:</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="file" id="counselor-ingest-file" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-2);" />
+              <button type="button" class="btn-ghost-sm" onclick="ingestCounselorDocument()" style="padding: 6px 12px; font-weight: 600;">auto-fill form →</button>
+            </div>
+            <div id="counselor-ingest-status" style="font-size: 0.72rem; font-family: var(--mono); margin-top: 6px; display: none;"></div>
+          </div>
           <input type="hidden" id="mf-id" value="" />
 
           <div class="form-row">

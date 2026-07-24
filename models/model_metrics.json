@@ -1,145 +1,145 @@
 {
   "salary": {
-    "r2": 0.640015547540732,
-    "mae": 1427.5227484678542,
-    "rmse": 2607.653565832575,
+    "r2": 0.6411348984506089,
+    "mae": 1427.2387335285448,
+    "rmse": 2603.596235122895,
     "samples": 23374,
     "top_features": [
       {
         "feature": "nss_average_satisfaction",
-        "importance": 0.25609521957546466
+        "importance": 0.25623436749454603
       },
       {
         "feature": "sbj_group_CAH10",
-        "importance": 0.09074807458917623
+        "importance": 0.09074684668998974
       },
       {
         "feature": "TARAGG",
-        "importance": 0.05914050559157227
+        "importance": 0.05906357942769223
       },
       {
         "feature": "sbj_group_CAH25",
-        "importance": 0.05350989462313951
+        "importance": 0.05351573002710587
       },
       {
         "feature": "tef_outcomes",
-        "importance": 0.05070775917157686
+        "importance": 0.051461799433881725
       },
       {
         "feature": "tef_experience",
-        "importance": 0.0468253354869127
+        "importance": 0.045126907102723594
       },
       {
         "feature": "KISAIMLABEL_BA",
-        "importance": 0.03792047544371893
+        "importance": 0.03792443057811315
       },
       {
         "feature": "tef_overall",
-        "importance": 0.03513202734428492
+        "importance": 0.03595486087875167
       },
       {
         "feature": "YEARABROAD",
-        "importance": 0.03363858449722847
+        "importance": 0.033563718041188455
       },
       {
         "feature": "SANDWICH",
-        "importance": 0.03037067239835291
+        "importance": 0.030551448797614792
       }
     ]
   },
   "continuation": {
-    "r2": 0.48078612369681284,
-    "mae": 7.289966127258531,
-    "rmse": 11.402491929864683,
+    "r2": 0.4795758492114577,
+    "mae": 7.29730694490999,
+    "rmse": 11.415773655462806,
     "samples": 28252,
     "top_features": [
       {
         "feature": "nss_average_satisfaction",
-        "importance": 0.3241109473049362
+        "importance": 0.32420457814551756
       },
       {
         "feature": "TARAGG",
-        "importance": 0.07421559875539484
+        "importance": 0.07434533448527184
       },
       {
         "feature": "tef_outcomes",
-        "importance": 0.0632909314030363
+        "importance": 0.06285776336467055
       },
       {
         "feature": "KISLEVEL",
-        "importance": 0.05938236177682605
+        "importance": 0.05938236177682608
       },
       {
         "feature": "tef_experience",
-        "importance": 0.04518886741070328
+        "importance": 0.04497236183932986
       },
       {
         "feature": "sbj_group_CAH17",
-        "importance": 0.03977974393176825
+        "importance": 0.03970662032246795
       },
       {
         "feature": "COUNTRY_XF",
-        "importance": 0.03636569295999811
+        "importance": 0.03648874857283714
       },
       {
         "feature": "YEARABROAD",
-        "importance": 0.03522705704572599
+        "importance": 0.03518999925519436
       },
       {
         "feature": "SANDWICH",
-        "importance": 0.030325119832722448
+        "importance": 0.030406392013682892
       },
       {
         "feature": "FOUNDATION",
-        "importance": 0.029329087622615817
+        "importance": 0.029427159905305447
       }
     ]
   },
   "employment": {
-    "r2": 0.40559310163152884,
-    "mae": 3.999365788142747,
-    "rmse": 5.9924536829737045,
+    "r2": 0.4061207218953372,
+    "mae": 3.99770032378779,
+    "rmse": 5.9897935170702885,
     "samples": 25491,
     "top_features": [
       {
         "feature": "nss_average_satisfaction",
-        "importance": 0.4229887356686665
+        "importance": 0.4229695005561714
       },
       {
         "feature": "TARAGG",
-        "importance": 0.08085735297705934
+        "importance": 0.08090619358091038
       },
       {
         "feature": "tef_experience",
-        "importance": 0.037586725274077915
+        "importance": 0.03764152823115308
       },
       {
         "feature": "tef_outcomes",
-        "importance": 0.03594585513771588
+        "importance": 0.035861117844638093
       },
       {
         "feature": "SANDWICH",
-        "importance": 0.03573553866715647
+        "importance": 0.03570142043343395
       },
       {
         "feature": "YEARABROAD",
-        "importance": 0.03571062497539701
+        "importance": 0.03561508781103891
       },
       {
         "feature": "FOUNDATION",
-        "importance": 0.02986980272146609
+        "importance": 0.029888148604067407
       },
       {
         "feature": "tef_overall",
-        "importance": 0.029477698499587
-      },
-      {
-        "feature": "KISAIMLABEL_BSc",
-        "importance": 0.016037540073539355
+        "importance": 0.029461250508036104
       },
       {
         "feature": "KISAIMLABEL_BA",
-        "importance": 0.015834304271668185
+        "importance": 0.015897827626654305
+      },
+      {
+        "feature": "KISAIMLABEL_BSc",
+        "importance": 0.015895838294413468
       }
     ]
   }

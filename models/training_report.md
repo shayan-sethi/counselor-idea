@@ -7,23 +7,23 @@ Predicting median salary 3 years post-graduation.
 
 ### Performance Metrics
 - **Samples Used**: 23,374
-- **R² Score**: 0.6400
-- **Mean Absolute Error (MAE)**: 1427.52
-- **Root Mean Squared Error (RMSE)**: 2607.65
+- **R² Score**: 0.6411
+- **Mean Absolute Error (MAE)**: 1427.24
+- **Root Mean Squared Error (RMSE)**: 2603.60
 
 ### Top 10 Feature Importances
 | Feature | Importance |
 | --- | --- |
-| `nss_average_satisfaction` | 0.2561 |
+| `nss_average_satisfaction` | 0.2562 |
 | `sbj_group_CAH10` | 0.0907 |
 | `TARAGG` | 0.0591 |
 | `sbj_group_CAH25` | 0.0535 |
-| `tef_outcomes` | 0.0507 |
-| `tef_experience` | 0.0468 |
+| `tef_outcomes` | 0.0515 |
+| `tef_experience` | 0.0451 |
 | `KISAIMLABEL_BA` | 0.0379 |
-| `tef_overall` | 0.0351 |
+| `tef_overall` | 0.0360 |
 | `YEARABROAD` | 0.0336 |
-| `SANDWICH` | 0.0304 |
+| `SANDWICH` | 0.0306 |
 
 ---
 
@@ -32,23 +32,23 @@ Predicting percentage of students continuing after year 1.
 
 ### Performance Metrics
 - **Samples Used**: 28,252
-- **R² Score**: 0.4808
-- **Mean Absolute Error (MAE)**: 7.29
-- **Root Mean Squared Error (RMSE)**: 11.40
+- **R² Score**: 0.4796
+- **Mean Absolute Error (MAE)**: 7.30
+- **Root Mean Squared Error (RMSE)**: 11.42
 
 ### Top 10 Feature Importances
 | Feature | Importance |
 | --- | --- |
-| `nss_average_satisfaction` | 0.3241 |
-| `TARAGG` | 0.0742 |
-| `tef_outcomes` | 0.0633 |
+| `nss_average_satisfaction` | 0.3242 |
+| `TARAGG` | 0.0743 |
+| `tef_outcomes` | 0.0629 |
 | `KISLEVEL` | 0.0594 |
-| `tef_experience` | 0.0452 |
-| `sbj_group_CAH17` | 0.0398 |
-| `COUNTRY_XF` | 0.0364 |
+| `tef_experience` | 0.0450 |
+| `sbj_group_CAH17` | 0.0397 |
+| `COUNTRY_XF` | 0.0365 |
 | `YEARABROAD` | 0.0352 |
-| `SANDWICH` | 0.0303 |
-| `FOUNDATION` | 0.0293 |
+| `SANDWICH` | 0.0304 |
+| `FOUNDATION` | 0.0294 |
 
 ---
 
@@ -57,7 +57,7 @@ Predicting percentage of graduates entering professional work/study.
 
 ### Performance Metrics
 - **Samples Used**: 25,491
-- **R² Score**: 0.4056
+- **R² Score**: 0.4061
 - **Mean Absolute Error (MAE)**: 4.00
 - **Root Mean Squared Error (RMSE)**: 5.99
 
@@ -69,11 +69,11 @@ Predicting percentage of graduates entering professional work/study.
 | `tef_experience` | 0.0376 |
 | `tef_outcomes` | 0.0359 |
 | `SANDWICH` | 0.0357 |
-| `YEARABROAD` | 0.0357 |
+| `YEARABROAD` | 0.0356 |
 | `FOUNDATION` | 0.0299 |
 | `tef_overall` | 0.0295 |
-| `KISAIMLABEL_BSc` | 0.0160 |
-| `KISAIMLABEL_BA` | 0.0158 |
+| `KISAIMLABEL_BA` | 0.0159 |
+| `KISAIMLABEL_BSc` | 0.0159 |
 
 ---
 

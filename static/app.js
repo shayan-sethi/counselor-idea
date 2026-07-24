@@ -1157,3 +1157,77 @@ async function runCounselorAgentCommand() {
 }
 
 window.runCounselorAgentCommand = runCounselorAgentCommand;
+
+/* ═══════════════════════════════════════════════════
+   COUNSELOR MODAL AUTOMATED INGESTION
+   ═══════════════════════════════════════════════════ */
+
+async function ingestCounselorDocument() {
+  const fileInput = document.getElementById('counselor-ingest-file');
+  const files = fileInput ? fileInput.files : [];
+  const statusEl = document.getElementById('counselor-ingest-status');
+
+  if (!files || files.length === 0) {
+    alert('Please select at least one document to ingest.');
+    return;
+  }
+
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--amber)';
+    statusEl.innerHTML = 'Parsing files... Auto-populating student form via PRISM AI.';
+  }
+
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+  formData.append('auto_save', 'false');
+
+  try {
+    const res = await fetch('/api/ingest_documents', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to ingest document.');
+
+    const s = data.student;
+
+    if (s.name) document.getElementById('mf-name').value = s.name;
+    if (s.board) document.getElementById('mf-board').value = s.board;
+    if (s.class_level) document.getElementById('mf-class').value = s.class_level;
+    if (s.grades && s.grades.current_expected_board) {
+      document.getElementById('mf-gexp').value = s.grades.current_expected_board;
+    }
+    if (s.standardized_tests && s.standardized_tests.SAT) {
+      document.getElementById('mf-sat').value = s.standardized_tests.SAT;
+    }
+    if (s.cuet_subjects && s.cuet_subjects.length > 0) {
+      document.getElementById('mf-cuet').value = s.cuet_subjects.join(', ');
+    }
+
+    const g10Subs = s.grades ? (s.grades.g10_subjects || s.grades.grade_10_subjects || s.grades.subjects) : null;
+    if (g10Subs) {
+      for (const [subName, subMark] of Object.entries(g10Subs)) {
+        if (typeof addManageG10SubjectRow === 'function') addManageG10SubjectRow(subName);
+        const subInput = document.querySelector(`.mf-g10-subj-mark[data-g10-subject="${subName}"]`);
+        if (subInput && subMark) {
+          subInput.value = typeof subMark === 'number' ? subMark : parseFloat(subMark) || 95;
+        }
+      }
+    }
+
+    if (statusEl) {
+      statusEl.style.color = 'var(--green)';
+      statusEl.innerHTML = `Auto-filled details for <strong>${s.name || 'Student'}</strong>. Review fields and click "add student".`;
+    }
+  } catch (err) {
+    if (statusEl) {
+      statusEl.style.color = 'var(--red)';
+      statusEl.innerHTML = `Ingestion error: ${err.message}`;
+    }
+  }
+}
+window.ingestCounselorDocument = ingestCounselorDocument;
+

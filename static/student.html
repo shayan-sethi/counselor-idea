@@ -31,6 +31,22 @@
     <div class="page-title-row">
       <h1>Your Academic Profile</h1>
       <p class="subtitle">enter your details · get instant compliance analysis against your target pathways</p>
+    <!-- Automated AI Document Ingestion -->
+    <div class="form-card" style="margin-bottom: 24px;">
+      <div class="form-section-title" style="color: var(--amber);">AUTOMATED AGENTIC DATA INGESTION</div>
+      <p class="subtitle" style="margin-bottom: 16px; font-size: 0.8rem;">
+        Upload your academic transcript, marks card, or resume. PRISM AI automatically extracts and populates your subjects, grades, test scores, and extracurricular achievements.
+      </p>
+      <div class="dropzone" id="ingest-dropzone" style="border: 1px dashed var(--border-bright); padding: 20px; text-align: center; cursor: pointer; background: var(--surface); border-radius: 4px;" onclick="document.getElementById('ingest-file-input').click()">
+        <input type="file" id="ingest-file-input" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="display: none;" onchange="handleFileSelect(event)" />
+        <div style="font-weight: 600; color: var(--text-1); font-size: 0.85rem;">Drop Transcripts & Resumes here, or <span style="color: var(--amber); text-decoration: underline;">click to browse</span></div>
+        <div style="font-size: 0.72rem; color: var(--text-3); margin-top: 4px;">Supports PDFs, Marksheets, Resumes, and Text Files</div>
+      </div>
+      <div id="file-list-preview" style="margin-top: 10px; font-size: 0.75rem; color: var(--text-2); font-family: var(--mono);"></div>
+      <button type="button" id="btn-auto-ingest" class="btn-run" onclick="uploadAndIngestDocuments()" style="margin-top: 14px; width: 100%;">
+        extract & auto-populate profile →
+      </button>
+      <div id="ingest-status" style="margin-top: 10px; font-size: 0.75rem; font-family: var(--mono); display: none;"></div>
     </div>
 
     <form id="student-form" class="student-form" onsubmit="submitProfile(event)">

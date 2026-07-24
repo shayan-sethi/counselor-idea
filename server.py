@@ -4,6 +4,11 @@ import datetime
 import joblib
 import pandas as pd
 from flask import Flask, jsonify, request, send_from_directory
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # ──────────────────────────────────────────────
 #  PRISM Web API Server
@@ -16,11 +21,14 @@ from prism_agent.knowledge_graph import KnowledgeGraph
 from prism_agent.reasoner import Reasoner
 from prism_agent.planner import Planner
 from prism_agent.agent import PRISMAgent
+from prism_agent.ingestion_agent import DocumentIngestionAgent
+from prism_agent.board_converter import BoardGradeConverter
 
 kg = KnowledgeGraph()
 reasoner = Reasoner(kg)
 planner = Planner()
 agent = PRISMAgent(kg, reasoner, planner)
+ingestion_agent = DocumentIngestionAgent()
 
 # ── Portfolio auto-classifier ──
 TIER_1_KEYWORDS = ["international", "olympiad", "patent", "published", "national award",
@@ -297,6 +305,96 @@ def api_create_student():
             traces[tid] = agent_res.get("trace", [])
 
     return jsonify({"student": student, "audit": result, "traces": traces}), 201
+
+# ── Agentic Automated Data Ingestion ──
+
+@app.route("/api/ingest_documents", methods=["POST"])
+def api_ingest_documents():
+    uploaded_files = []
+    if "files" in request.files:
+        uploaded_files = request.files.getlist("files")
+    elif "file" in request.files:
+        uploaded_files = [request.files["file"]]
+
+    if not uploaded_files or not any(f.filename for f in uploaded_files):
+        return jsonify({"error": "No valid document files uploaded"}), 400
+
+    file_contents = []
+    file_names = []
+    uploads_dir = os.path.join(BASE_DIR, "uploads")
+    os.makedirs(uploads_dir, exist_ok=True)
+
+    for f in uploaded_files:
+        if f.filename:
+            fname = f.filename
+            content = f.read()
+            file_contents.append(content)
+            file_names.append(fname)
+            save_path = os.path.join(uploads_dir, fname)
+            with open(save_path, "wb") as out_f:
+                out_f.write(content)
+
+    extracted_profile = ingestion_agent.process_documents(file_contents, file_names)
+
+    auto_save = request.form.get("auto_save", "true").lower() == "true"
+    student_id = request.form.get("student_id", "").strip()
+
+    if "id" not in extracted_profile:
+        extracted_profile["id"] = student_id or "STU_PREVIEW"
+
+    if auto_save:
+        if not student_id or student_id == "STU_PREVIEW":
+            student_id = next_student_id()
+            extracted_profile["id"] = student_id
+            if "status" not in extracted_profile:
+                extracted_profile["status"] = {"cuet_form_submitted": False, "tmua_registered": False, "sat_score": None}
+            STUDENTS.append(extracted_profile)
+        else:
+            idx = next((i for i, s in enumerate(STUDENTS) if s["id"] == student_id), None)
+            if idx is not None:
+                existing = STUDENTS[idx]
+                existing.update(extracted_profile)
+                existing["id"] = student_id
+                extracted_profile = existing
+            else:
+                extracted_profile["id"] = student_id
+                STUDENTS.append(extracted_profile)
+        save_students(STUDENTS)
+
+    evaluation = {}
+    try:
+        evaluation = reasoner.evaluate_student(extracted_profile)
+    except Exception as eval_err:
+        print(f"[Ingest Warning] Evaluation check warning: {eval_err}")
+
+    return jsonify({
+        "student": extracted_profile,
+        "evaluation": evaluation,
+        "extracted_from": file_names
+    })
+
+# ── Inter-Board Grade Standardization Endpoint ──
+
+@app.route("/api/convert_grade", methods=["POST", "GET"])
+def api_convert_grade():
+    if request.method == "POST":
+        data = request.get_json() or {}
+        raw_grade = data.get("grade")
+        board = data.get("board", "CBSE")
+        class_level = int(data.get("class_level", 12))
+    else:
+        raw_grade = request.args.get("grade")
+        board = request.args.get("board", "CBSE")
+        class_level = int(request.args.get("class_level", 12))
+
+    pct_equiv, level = BoardGradeConverter.convert_grade(raw_grade, class_level=class_level, board=board)
+    return jsonify({
+        "raw_grade": raw_grade,
+        "class_level": class_level,
+        "board": board,
+        "percentage_equivalent": pct_equiv,
+        "performance_level": level
+    })
 
 # ── Update student ──
 

@@ -1,5 +1,6 @@
 import datetime
 from .knowledge_graph import KnowledgeGraph
+from .board_converter import BoardGradeConverter
 
 class Reasoner:
     def __init__(self, knowledge_graph: KnowledgeGraph, current_date_str="2026-07-22"):
@@ -30,6 +31,7 @@ class Reasoner:
         Evaluates compliance for a single student against all their target courses/exams.
         Allows overriding board subjects for hypothetical simulation.
         """
+        student = BoardGradeConverter.standardize_profile_grades(student)
         targets = student.get("targets", [])
         student_results = {
             "student_id": student["id"],

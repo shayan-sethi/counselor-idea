@@ -12,8 +12,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 
 def train_and_evaluate():
-    dataset_path = "/Users/ShayanSethi/Documents/GitHub/agent/data/cleaned_courses_dataset.csv"
-    models_dir = "/Users/ShayanSethi/Documents/GitHub/agent/models"
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    dataset_path = os.path.join(base_dir, "data", "cleaned_courses_dataset.csv")
+    models_dir = os.path.join(base_dir, "models")
     os.makedirs(models_dir, exist_ok=True)
 
     if not os.path.exists(dataset_path):
