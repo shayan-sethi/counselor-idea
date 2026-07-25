@@ -578,12 +578,21 @@ function renderSelectedTargets() {
 function showStep(step) {
   document.getElementById('step-profile').classList.toggle('hidden', step !== 'profile');
   document.getElementById('step-results').classList.toggle('hidden', step !== 'results');
+  const rEl = document.getElementById('step-radar');
+  if (rEl) rEl.classList.toggle('hidden', step !== 'radar');
+  
   document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
+  const rTab = document.getElementById('tab-radar');
+  if (rTab) rTab.classList.toggle('active', step === 'radar');
 
   const advisorCard = document.getElementById('ai-advisor-card');
   if (advisorCard && step !== 'results') {
     advisorCard.classList.add('hidden');
+  }
+  
+  if (step === 'radar') {
+    renderStudentRadar();
   }
 }
 
@@ -1033,5 +1042,85 @@ async function uploadAndIngestDocuments() {
   }
 }
 window.uploadAndIngestDocuments = uploadAndIngestDocuments;
+
+// ══════════════════════════════════════════════
+//  OPPORTUNITY RADAR
+// ══════════════════════════════════════════════
+
+async function renderStudentRadar() {
+  const body = document.getElementById('radar-body');
+  if (!body) return;
+  
+  if (!createdStudentId) {
+    body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock radar matches</div>';
+    return;
+  }
+  
+  body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> scanning opportunities…</div>';
+  
+  try {
+    const res = await fetch(`/api/opportunities/${createdStudentId}`);
+    const matches = await res.json();
+    
+    if (matches.length === 0) {
+      body.innerHTML = '<div class="loading-row">No matching opportunities found for your current profile. Try adjusting target pathways or subjects.</div>';
+      return;
+    }
+    
+    let html = `
+      <section class="student-list" style="margin-top:20px;">
+        <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+          <span class="lh-col">Opportunity</span>
+          <span class="lh-col">Deadline Status</span>
+          <span class="lh-col">Match Score</span>
+          <span class="lh-col">Rationale (Why)</span>
+        </div>
+        <div class="rows-container">
+    `;
+    
+    matches.forEach(m => {
+      let dlHtml = '—';
+      if (m.competition.deadline) {
+        if (m.days_remaining !== null) {
+          if (m.days_remaining < 0) {
+            dlHtml = `<span style="color:var(--text-3);">Closed</span>`;
+          } else {
+            dlHtml = `<span style="color:${m.is_urgent ? 'var(--red)' : 'var(--text-2)'}; font-weight:600;">${m.competition.deadline}<br/><small style="font-family:var(--mono); font-size:0.6rem;">(${m.days_remaining} days left)</small></span>`;
+          }
+        } else {
+          dlHtml = `<span>${m.competition.deadline}</span>`;
+        }
+      }
+      
+      const scoreColor = m.match_score >= 90 ? 'var(--green)' : m.match_score >= 70 ? 'var(--amber)' : 'var(--red)';
+      
+      html += `
+        <div class="stu-row" style="grid-template-columns: 2fr 1fr 1fr 2fr; cursor: default;">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <strong style="font-size:0.85rem; color:var(--text-1);">${m.competition.name}</strong>
+            <span style="font-size:0.68rem; color:var(--text-3); font-family:var(--mono);">${m.competition.type} · ${m.competition.fee}</span>
+          </div>
+          <div style="font-size:0.75rem;">${dlHtml}</div>
+          <div style="font-family:var(--mono); font-weight:700; color:${scoreColor}; font-size:0.85rem;">${m.match_score}% Match</div>
+          <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">
+            ${m.why}
+            <div style="color:var(--text-3); font-size:0.68rem; margin-top:4px; line-height:1.3;">${m.competition.description}</div>
+            ${m.competition.url ? `<a href="${m.competition.url}" target="_blank" class="student-link" style="display:inline-block; margin-top:6px; font-size:0.68rem; font-family:var(--mono);">visit official link ↗</a>` : ''}
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `
+        </div>
+      </section>
+    `;
+    body.innerHTML = html;
+  } catch (err) {
+    console.error("Error loading opportunities:", err);
+    body.innerHTML = '<div class="loading-row" style="color:var(--red);">✕ failed to load opportunities</div>';
+  }
+}
+window.renderStudentRadar = renderStudentRadar;
 
 

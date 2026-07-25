@@ -20,6 +20,7 @@
     <nav class="topbar-nav">
       <button class="tab active" id="tab-profile" onclick="showStep('profile')">your profile</button>
       <button class="tab" id="tab-results" onclick="showStep('results')">audit results</button>
+      <button class="tab" id="tab-radar" onclick="showStep('radar')">opportunity radar</button>
     </nav>
     <div class="topbar-right">
       <a href="/" class="student-link">← counselor view</a>
@@ -268,6 +269,18 @@
         <input type="text" id="sf-chat-input" placeholder="Type your question to the advisor..." onkeydown="if(event.key==='Enter') sendStudentAdvisorMessage()" style="flex: 1; font-family: var(--mono); font-size: 0.78rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
         <button type="button" class="btn-run" onclick="sendStudentAdvisorMessage()" style="padding: 8px 16px; font-size: 0.78rem;">ask advisor</button>
       </div>
+    </div>
+  </main>
+
+  <!-- ═══ OPPORTUNITY RADAR ═══ -->
+  <main id="step-radar" class="hidden">
+    <div class="page-title-row">
+      <h1>Opportunity Radar</h1>
+      <p class="subtitle">personalized competitions, olympiads, and deadlines matched to your profile</p>
+    </div>
+
+    <div id="radar-body">
+      <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock radar matches</div>
     </div>
   </main>
 

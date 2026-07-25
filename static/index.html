@@ -22,6 +22,7 @@
       <button class="tab" id="tab-manage" onclick="switchView('manage')">manage</button>
       <button class="tab" id="tab-pred" onclick="switchView('predictor')">predictor</button>
       <button class="tab" id="tab-reports" onclick="switchView('reports')">reports</button>
+      <button class="tab" id="tab-radar" onclick="switchView('radar')">radar</button>
     </nav>
     <div class="topbar-right">
       <a href="/student" class="student-link">student portal →</a>
@@ -536,6 +537,44 @@
         </div>
       </div>
     </div>
+  </main>
+
+  <!-- ═══ OPPORTUNITY RADAR VIEW ═══ -->
+  <main id="view-radar" class="hidden">
+    <div class="page-title-row">
+      <h1>Opportunity Radar</h1>
+      <p class="subtitle">match students to elite competitions, science fairs, and essay deadlines</p>
+    </div>
+
+    <!-- Student Selector & Scraper Card -->
+    <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
+      <div class="form-section-title">select student & manage opportunities</div>
+      <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+        <div class="field" style="flex: 1; min-width: 240px; margin-bottom: 0;">
+          <label>Student Profile</label>
+          <select id="radar-student-select" onchange="onRadarStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
+        </div>
+        <div class="field" style="flex: 2; min-width: 320px; margin-bottom: 0;">
+          <label>Scrape & Import Competition from CompeteMap URL</label>
+          <input type="text" id="radar-import-url" placeholder="https://competemap.com/competitions/..." style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;" />
+        </div>
+        <button class="btn-run" onclick="importCompetition()" style="padding: 10px 20px;">import & scan →</button>
+      </div>
+      <div id="radar-import-status" style="font-family: var(--mono); font-size: 0.72rem; margin-top: 8px; display: none;"></div>
+    </div>
+
+    <!-- Matches Table -->
+    <section class="student-list">
+      <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+        <span class="lh-col">Opportunity</span>
+        <span class="lh-col">Deadline Status</span>
+        <span class="lh-col">Match Score</span>
+        <span class="lh-col">Rationale (Why)</span>
+      </div>
+      <div id="radar-matches-list" class="rows-container">
+        <div class="loading-row"><span class="blink">▌</span> loading opportunity list…</div>
+      </div>
+    </section>
   </main>
 
   <!-- ═══ DRAWER ═══ -->

@@ -1407,5 +1407,61 @@
       "tmua_registered": false,
       "sat_score": null
     }
+  },
+  {
+    "id": "STU_017",
+    "name": "Aarav Sharma",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "95",
+      "class_11_aggregate": "91",
+      "current_expected_board": "96",
+      "class_10_subjects": {
+        "Mathematics": 96,
+        "Science": 95,
+        "Social Science": 92,
+        "English": 94,
+        "Hindi / Second Language": 90
+      },
+      "subjects": {
+        "Mathematics": 97,
+        "Physics": 96,
+        "Chemistry": 95,
+        "Computer Science": 98
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1540,
+      "AP_CALCULUS_BC": 5,
+      "AP_COMPUTER_SCIENCE_A": 5
+    },
+    "portfolio": [
+      {
+        "activity": "Founder, Rural Book Service Project",
+        "description": "Distributing books to rural kids (15 hrs/wk, 40 wks/yr)",
+        "tier": 2
+      },
+      {
+        "activity": "Captain, High School Debate Team",
+        "description": "Won regional championships (10 hrs/wk, 30 wks/yr)",
+        "tier": 2
+      }
+    ],
+    "targets": [
+      "CUSTOM_COMPUTER_SCIENCE_1"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
   }
 ]

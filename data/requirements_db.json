@@ -675,5 +675,29 @@
     "grade_prerequisites": [],
     "portfolio_tier": 3,
     "citations": []
+  },
+  "CUSTOM_COMPUTER_SCIENCE_1": {
+    "id": "CUSTOM_COMPUTER_SCIENCE_1",
+    "name": "Computer Science",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Cambridge",
+    "deadlines": [],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must study Mathematics"
+      },
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must study Physics"
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 3,
+    "citations": []
   }
 }

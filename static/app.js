@@ -125,15 +125,16 @@ async function refreshData() {
 
 // ── View switching ──
 function switchView(v) {
-  ['dashboard', 'manage', 'predictor', 'reports'].forEach(id => {
+  ['dashboard', 'manage', 'predictor', 'reports', 'radar'].forEach(id => {
     const el = document.getElementById(`view-${id}`);
     if (el) el.classList.toggle('hidden', id !== v);
-    const tabMap = { 'dashboard': 'dash', 'manage': 'manage', 'predictor': 'pred', 'reports': 'reports' };
+    const tabMap = { 'dashboard': 'dash', 'manage': 'manage', 'predictor': 'pred', 'reports': 'reports', 'radar': 'radar' };
     const tabEl = document.getElementById(`tab-${tabMap[id]}`);
     if (tabEl) tabEl.classList.toggle('active', id === v);
   });
   if (v === 'manage') renderManageList();
   if (v === 'reports') renderReportsView();
+  if (v === 'radar') renderRadarView();
 }
 
 // ══════════════════════════════════════════════
@@ -1703,4 +1704,121 @@ function printCohortReport() {
   window.print();
 }
 window.printCohortReport = printCohortReport;
+
+// ══════════════════════════════════════════════
+//  OPPORTUNITY RADAR
+// ══════════════════════════════════════════════
+
+function renderRadarView() {
+  const sel = document.getElementById('radar-student-select');
+  if (!sel) return;
+  const currentVal = sel.value;
+  sel.innerHTML = '';
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${s.id})`;
+    sel.appendChild(opt);
+  });
+  if (currentVal && students.some(s => s.id === currentVal)) {
+    sel.value = currentVal;
+  } else if (students.length > 0) {
+    sel.value = students[0].id;
+  }
+  if (sel.value) {
+    onRadarStudentChange(sel.value);
+  }
+}
+window.renderRadarView = renderRadarView;
+
+async function onRadarStudentChange(studentId) {
+  const listCont = document.getElementById('radar-matches-list');
+  if (!listCont) return;
+  listCont.innerHTML = '<div class="loading-row"><span class="blink">▌</span> scanning opportunities…</div>';
+  
+  try {
+    const res = await fetch(`/api/opportunities/${studentId}`);
+    const matches = await res.json();
+    
+    listCont.innerHTML = '';
+    if (matches.length === 0) {
+      listCont.innerHTML = '<div class="loading-row">No matching opportunities found for this student.</div>';
+      return;
+    }
+    
+    matches.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'stu-row';
+      row.style.gridTemplateColumns = '2fr 1fr 1fr 2fr';
+      
+      let dlHtml = '—';
+      if (m.competition.deadline) {
+        if (m.days_remaining !== null) {
+          if (m.days_remaining < 0) {
+            dlHtml = `<span style="color:var(--text-3);">Closed</span>`;
+          } else {
+            dlHtml = `<span style="color:${m.is_urgent ? 'var(--red)' : 'var(--text-2)'};">${m.competition.deadline}<br/><small style="font-family:var(--mono); font-size:0.6rem;">(${m.days_remaining} days left)</small></span>`;
+          }
+        } else {
+          dlHtml = `<span>${m.competition.deadline}</span>`;
+        }
+      }
+      
+      const scoreColor = m.match_score >= 90 ? 'var(--green)' : m.match_score >= 70 ? 'var(--amber)' : 'var(--red)';
+      
+      row.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <strong style="font-size:0.85rem; color:var(--text-1);">${m.competition.name}</strong>
+          <span style="font-size:0.68rem; color:var(--text-3); font-family:var(--mono);">${m.competition.type} · ${m.competition.fee}</span>
+        </div>
+        <div style="font-size:0.75rem;">${dlHtml}</div>
+        <div style="font-family:var(--mono); font-weight:700; color:${scoreColor}; font-size:0.85rem;">${m.match_score}% Match</div>
+        <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">${m.why}<br/><small style="color:var(--text-3); display:block; margin-top:2px;">${m.competition.description}</small></div>
+      `;
+      listCont.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Error loading opportunities:", err);
+    listCont.innerHTML = '<div class="loading-row" style="color:var(--red);">✕ failed to load opportunities</div>';
+  }
+}
+window.onRadarStudentChange = onRadarStudentChange;
+
+async function importCompetition() {
+  const urlInput = document.getElementById('radar-import-url');
+  const statusEl = document.getElementById('radar-import-status');
+  if (!urlInput || !urlInput.value.trim()) return alert("Please enter a valid CompeteMap URL");
+  
+  const url = urlInput.value.trim();
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--text-2)';
+  statusEl.innerHTML = '<span class="blink">▌</span> scraping and importing competition from CompeteMap…';
+  
+  try {
+    const res = await fetch('/api/import_competition', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const d = await res.json();
+    if (res.ok) {
+      statusEl.style.color = 'var(--green)';
+      statusEl.innerHTML = `✓ Successfully imported <strong>${d.name}</strong>! Target tags: ${d.subject_tags.join(', ')}. Scanned and added to database.`;
+      urlInput.value = '';
+      
+      // Refresh current student matches
+      const sel = document.getElementById('radar-student-select');
+      if (sel && sel.value) {
+        onRadarStudentChange(sel.value);
+      }
+    } else {
+      statusEl.style.color = 'var(--red)';
+      statusEl.innerHTML = `✕ Import failed: ${d.error}`;
+    }
+  } catch (err) {
+    statusEl.style.color = 'var(--red)';
+    statusEl.innerHTML = `✕ Network error: ${err.message}`;
+  }
+}
+window.importCompetition = importCompetition;
 

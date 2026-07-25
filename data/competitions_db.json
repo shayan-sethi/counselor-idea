@@ -1,0 +1,99 @@
+[
+  {
+    "id": "cmm2id5dy0000vnvvr9ra995x",
+    "name": "Breakthrough Junior Challenge",
+    "type": "Science competition",
+    "subject_tags": [
+      "Science",
+      "Computer Science",
+      "Biology",
+      "Chemistry",
+      "Physics"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 1,
+    "description": "Breakthrough Junior Challenge is a science competition listed under International / Other for ages 13-18. Secondary school students aged 13-18 worldwide. Registration deadline 15 Sept 2026. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmm2id5dy0000vnvvr9ra995x"
+  },
+  {
+    "id": "john_locke_essay_2026",
+    "name": "John Locke Essay Competition",
+    "type": "Essay Contest",
+    "subject_tags": [
+      "Economics",
+      "History",
+      "Political Science",
+      "English Core",
+      "Elective English",
+      "Philosophy",
+      "Law",
+      "Psychology",
+      "Sociology"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-06-30",
+    "portfolio_tier": 1,
+    "description": "An elite global essay contest organized by the John Locke Institute. Promotes high-quality essay writing across Economics, History, Politics, Philosophy, Theology, Law, and Psychology.",
+    "fee": "Free",
+    "url": "https://www.johnlockeinstitute.com/essay-competition"
+  },
+  {
+    "id": "iris_science_fair",
+    "name": "IRIS National Science Fair",
+    "type": "Science Fair",
+    "subject_tags": [
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Informatics Practices",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-08-31",
+    "portfolio_tier": 1,
+    "description": "India's premier national science research competition. Winners represent India at the Regeneron International Science and Engineering Fair (ISEF) in the USA.",
+    "fee": "Free",
+    "url": "http://www.irisnationalsciencefair.org/"
+  },
+  {
+    "id": "ukmt_senior_challenge",
+    "name": "UKMT Senior Mathematical Challenge",
+    "type": "Math Olympiad",
+    "subject_tags": [
+      "Mathematics",
+      "Further Mathematics",
+      "Mathematics Analysis & Approaches (HL/SL)",
+      "Mathematics Applications & Interpretation (HL/SL)"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-10-01",
+    "portfolio_tier": 2,
+    "description": "A 90-minute, multiple-choice challenge that encourages mathematical reasoning, precision of thought, and fluency in using basic mathematical techniques to solve interesting problems.",
+    "fee": "Paid",
+    "url": "https://www.ukmt.org.uk/competitions/sole/senior-mathematical-challenge"
+  },
+  {
+    "id": "hmmt_math_2026",
+    "name": "Harvard-MIT Mathematics Tournament (HMMT)",
+    "type": "Math Olympiad",
+    "subject_tags": [
+      "Mathematics",
+      "Further Mathematics",
+      "Mathematics Analysis & Approaches (HL/SL)"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-01-15",
+    "portfolio_tier": 1,
+    "description": "One of the largest and most prestigious high school mathematics competitions in the world, run by students at Harvard and MIT.",
+    "fee": "Paid",
+    "url": "https://www.hmmt.co/"
+  }
+]

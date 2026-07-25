@@ -23,6 +23,7 @@ from prism_agent.planner import Planner
 from prism_agent.agent import PRISMAgent
 from prism_agent.ingestion_agent import DocumentIngestionAgent
 from prism_agent.board_converter import BoardGradeConverter
+from prism_agent.opportunity_radar import OpportunityRadar, CompeteMapScraper
 
 kg = KnowledgeGraph()
 reasoner = Reasoner(kg)
@@ -691,6 +692,51 @@ def api_counselor_agent():
             "2. Send bulk warning email drafts to high-risk students."
         )
         return jsonify({"response": resp})
+
+# ── Opportunity Radar & Competition Monitor Endpoints ──
+
+COMPETITIONS_PATH = os.path.join(BASE_DIR, "data", "competitions_db.json")
+
+def load_competitions():
+    if os.path.exists(COMPETITIONS_PATH):
+        with open(COMPETITIONS_PATH, "r") as f:
+            return json.load(f)
+    return []
+
+def save_competitions(comps):
+    with open(COMPETITIONS_PATH, "w") as f:
+        json.dump(comps, f, indent=2)
+
+@app.route("/api/opportunities/<student_id>")
+def api_opportunities(student_id):
+    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+        
+    competitions = load_competitions()
+    matches = OpportunityRadar.match_student(student, competitions)
+    return jsonify(matches)
+
+@app.route("/api/import_competition", methods=["POST"])
+def api_import_competition():
+    data = request.get_json()
+    if not data or "url" not in data:
+        return jsonify({"error": "URL is required"}), 400
+        
+    url = data["url"].strip()
+    imported_comp = CompeteMapScraper.scrape_url(url)
+    if not imported_comp:
+        return jsonify({"error": "Failed to scrape competition details. Make sure the URL is a valid CompeteMap competition link."}), 400
+        
+    comps = load_competitions()
+    idx = next((i for i, c in enumerate(comps) if c["id"] == imported_comp["id"]), None)
+    if idx is not None:
+        comps[idx] = imported_comp
+    else:
+        comps.append(imported_comp)
+        
+    save_competitions(comps)
+    return jsonify(imported_comp), 201
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)
