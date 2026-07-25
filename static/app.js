@@ -125,11 +125,15 @@ async function refreshData() {
 
 // ── View switching ──
 function switchView(v) {
-  ['dashboard', 'manage', 'predictor'].forEach(id => {
-    document.getElementById(`view-${id}`).classList.toggle('hidden', id !== v);
-    document.getElementById(`tab-${id === 'manage' ? 'manage' : id === 'dashboard' ? 'dash' : 'pred'}`).classList.toggle('active', id === v);
+  ['dashboard', 'manage', 'predictor', 'reports'].forEach(id => {
+    const el = document.getElementById(`view-${id}`);
+    if (el) el.classList.toggle('hidden', id !== v);
+    const tabMap = { 'dashboard': 'dash', 'manage': 'manage', 'predictor': 'pred', 'reports': 'reports' };
+    const tabEl = document.getElementById(`tab-${tabMap[id]}`);
+    if (tabEl) tabEl.classList.toggle('active', id === v);
   });
   if (v === 'manage') renderManageList();
+  if (v === 'reports') renderReportsView();
 }
 
 // ══════════════════════════════════════════════
@@ -1230,4 +1234,473 @@ async function ingestCounselorDocument() {
   }
 }
 window.ingestCounselorDocument = ingestCounselorDocument;
+
+// ══════════════════════════════════════════════
+//  REPORTS
+// ══════════════════════════════════════════════
+
+let currentReportSubView = 'student';
+
+function switchReportSubView(type) {
+  currentReportSubView = type;
+  document.getElementById('report-sec-student').classList.toggle('hidden', type !== 'student');
+  document.getElementById('report-sec-cohort').classList.toggle('hidden', type !== 'cohort');
+  
+  const btnStud = document.getElementById('btn-report-sub-student');
+  const btnCoho = document.getElementById('btn-report-sub-cohort');
+  
+  if (type === 'student') {
+    btnStud.style.color = 'var(--accent)';
+    btnStud.style.borderColor = 'var(--accent)';
+    btnCoho.style.color = 'var(--text-3)';
+    btnCoho.style.borderColor = 'var(--border)';
+    renderStudentReportSelector();
+  } else {
+    btnCoho.style.color = 'var(--accent)';
+    btnCoho.style.borderColor = 'var(--accent)';
+    btnStud.style.color = 'var(--text-3)';
+    btnStud.style.borderColor = 'var(--border)';
+    renderCohortReport();
+  }
+}
+window.switchReportSubView = switchReportSubView;
+
+function renderReportsView() {
+  switchReportSubView(currentReportSubView);
+}
+window.renderReportsView = renderReportsView;
+
+function renderStudentReportSelector() {
+  const sel = document.getElementById('report-student-select');
+  if (!sel) return;
+  const currentVal = sel.value;
+  sel.innerHTML = '';
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${s.id})`;
+    sel.appendChild(opt);
+  });
+  if (currentVal && students.some(s => s.id === currentVal)) {
+    sel.value = currentVal;
+  } else if (students.length > 0) {
+    sel.value = students[0].id;
+  }
+  if (sel.value) {
+    onReportStudentChange(sel.value);
+  }
+}
+
+async function onReportStudentChange(studentId) {
+  const s = students.find(x => x.id === studentId);
+  if (!s) return;
+  
+  // Set metadata
+  document.getElementById('rep-date').textContent = new Date().toLocaleDateString();
+  document.getElementById('rep-name').textContent = s.name;
+  document.getElementById('rep-id').textContent = s.id;
+  document.getElementById('rep-board').textContent = `${s.board} · Class ${s.class_level}`;
+  document.getElementById('rep-grade').textContent = s.grades && s.grades.current_expected_board ? s.grades.current_expected_board : '—';
+  
+  // Set inputs
+  document.getElementById('report-notes-input').value = s.counselor_notes || '';
+  document.getElementById('rep-counselor-notes-text').textContent = s.counselor_notes || 'No custom counselor remarks appended. Use the notes panel above to update.';
+  
+  // Build subjects list
+  document.getElementById('rep-subjects-list').textContent = s.board_subjects ? s.board_subjects.join(', ') : '—';
+  const cuetWrap = document.getElementById('rep-cuet-subjects-wrap');
+  if (s.cuet_subjects && s.cuet_subjects.length > 0) {
+    cuetWrap.classList.remove('hidden');
+    document.getElementById('rep-cuet-list').textContent = s.cuet_subjects.join(', ');
+  } else {
+    cuetWrap.classList.add('hidden');
+  }
+  
+  // Portfolio tier
+  let pTier = 3;
+  if (s.portfolio && s.portfolio.length > 0) {
+    pTier = Math.min(...s.portfolio.map(p => p.tier || 3));
+  }
+  document.getElementById('rep-portfolio-tier').innerHTML = `Tier ${pTier} (${s.portfolio && s.portfolio.length ? s.portfolio.length : 0} activities)`;
+
+  // Fetch compliance & gaps from cohortAudit
+  const audit = cohortAudit[s.id];
+  const listCont = document.getElementById('rep-targets-list');
+  listCont.innerHTML = '';
+  
+  let overallCompliant = true;
+  let minMatchScore = 100;
+  
+  // Dynamic Checklist variables
+  let boardSubjectsOk = true;
+  let gradesOk = true;
+  let timelinesOk = true;
+  let portfolioOk = true;
+  let cuetOk = true;
+  
+  let boardSubjectsMsg = "All compulsory subjects registered";
+  let gradesMsg = "Expected grades meet cutoffs";
+  let timelinesMsg = "No upcoming deadline conflicts";
+  let portfolioMsg = "Portfolio strength matches target level";
+  let cuetMsg = "CUET subject mapping is valid";
+  
+  if (audit && Object.keys(audit.targets).length > 0) {
+    for (const tid in audit.targets) {
+      const t = audit.targets[tid];
+      const matchScore = t.match_score !== undefined ? t.match_score : (t.compliant ? 100 : 50);
+      if (!t.compliant) overallCompliant = false;
+      minMatchScore = Math.min(minMatchScore, matchScore);
+      
+      const card = document.createElement('div');
+      card.style.border = '1px solid var(--border)';
+      card.style.padding = '14px';
+      card.style.background = 'var(--surface)';
+      card.style.marginBottom = '12px';
+      
+      let statusHtml = t.compliant 
+        ? `<span style="color: var(--green); font-weight:700;">✓ ELIGIBLE</span>`
+        : `<span style="color: var(--red); font-weight:700;">✕ INELIGIBLE (${t.gaps.length} gaps)</span>`;
+      
+      let gapsHtml = '';
+      if (t.gaps && t.gaps.length > 0) {
+        gapsHtml = `<div style="margin-top: 8px;">`;
+        t.gaps.forEach(g => {
+          gapsHtml += `
+            <div style="font-size: 0.72rem; color: var(--red); padding: 6px 10px; border-left: 3px solid var(--red); background: rgba(255,64,64,0.03); margin-bottom: 6px;">
+              <strong>${g.subject || 'Rule'}:</strong> ${g.description}
+            </div>`;
+            
+          // Categorize gaps for checklist
+          if (g.type === 'subject_missing') {
+            boardSubjectsOk = false;
+            boardSubjectsMsg = g.description;
+          } else if (g.type === 'grade_cutoff_violation') {
+            gradesOk = false;
+            gradesMsg = g.description;
+          } else if (g.type === 'timeline_deadline' || g.type === 'test_missing' || g.type === 'test_score_low') {
+            timelinesOk = false;
+            timelinesMsg = g.description;
+          } else if (g.type === 'portfolio_tier_low') {
+            portfolioOk = false;
+            portfolioMsg = g.description;
+          } else if (g.type === 'cuet_unlawful_domain' || g.type === 'cuet_missing_subject') {
+            cuetOk = false;
+            cuetMsg = g.description;
+          }
+        });
+        gapsHtml += `</div>`;
+      }
+      
+      let remHtml = '';
+      if (t.remediations && t.remediations.length > 0) {
+        remHtml = `<div style="margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
+          <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">⚡ PRISMA REMEDIATION ADVICE:</div>`;
+        t.remediations.forEach(r => {
+          const feasColor = r.feasibility === 'HIGH' ? 'var(--green)' : r.feasibility === 'MEDIUM' ? 'var(--amber)' : 'var(--red)';
+          remHtml += `
+            <div style="font-size: 0.72rem; color: var(--text-2); margin-bottom: 8px; padding: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.01);">
+              <div style="font-weight: 600; color: var(--text-1); line-height: 1.4;">${r.remediation}</div>
+              <div style="margin-top: 4px; font-size: 0.68rem; color: var(--text-3); display: flex; justify-content: space-between;">
+                <span><strong>Task:</strong> ${r.action_item}</span>
+                <span style="font-family: var(--mono); color: ${feasColor}; font-weight: 700;">[FEASIBILITY: ${r.feasibility}]</span>
+              </div>
+            </div>`;
+        });
+        remHtml += `</div>`;
+      }
+      
+      card.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <strong style="font-size: 0.85rem; color: var(--text-1);">${t.target_name}</strong>
+          <span style="font-family: var(--mono); font-size: 0.75rem; font-weight:700; color:${matchScore >= 90 ? 'var(--green)' : matchScore >= 70 ? 'var(--amber)' : 'var(--red)'};">${matchScore}% match</span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-2); display: flex; justify-content: space-between;">
+          <span>Track: ${t.track}</span>
+          <span>${statusHtml}</span>
+        </div>
+        ${gapsHtml}
+        ${remHtml}
+      `;
+      listCont.appendChild(card);
+    }
+  } else {
+    listCont.innerHTML = `<div style="color:var(--text-3); font-size:0.8rem; font-style:italic;">No target pathways added to this student profile yet.</div>`;
+  }
+  
+  // Render Dynamic Checklist HTML
+  const checklistCont = document.getElementById('rep-readiness-checklist');
+  if (checklistCont) {
+    let showCuet = s.track === 'India' || (audit && Object.values(audit.targets).some(t => t.track === 'India'));
+    checklistCont.innerHTML = `
+      <div style="border: 1px solid var(--border); padding: 16px; background: var(--surface); margin-bottom: 24px;">
+        <div style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; margin-bottom: 12px; font-weight: 700; letter-spacing: 0.05em;">📌 PATHWAY READINESS CHECKLIST</div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 20px;">
+          <!-- Board Subjects -->
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="color: ${boardSubjectsOk ? 'var(--green)' : 'var(--red)'}; font-weight: bold; font-size: 1.1rem; line-height: 1;">${boardSubjectsOk ? '✓' : '✕'}</span>
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-1);">Board Subject Registration</div>
+              <div style="font-size: 0.68rem; color: var(--text-3); margin-top: 2px; line-height: 1.3;">${boardSubjectsMsg}</div>
+            </div>
+          </div>
+          <!-- Academic Cutoffs -->
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="color: ${gradesOk ? 'var(--green)' : 'var(--amber)'}; font-weight: bold; font-size: 1.1rem; line-height: 1;">${gradesOk ? '✓' : '✕'}</span>
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-1);">Academic Performance Cutoffs</div>
+              <div style="font-size: 0.68rem; color: var(--text-3); margin-top: 2px; line-height: 1.3;">${gradesMsg}</div>
+            </div>
+          </div>
+          <!-- Timelines & Exams -->
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="color: ${timelinesOk ? 'var(--green)' : 'var(--amber)'}; font-weight: bold; font-size: 1.1rem; line-height: 1;">${timelinesOk ? '✓' : '✕'}</span>
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-1);">Standardized Tests & Deadlines</div>
+              <div style="font-size: 0.68rem; color: var(--text-3); margin-top: 2px; line-height: 1.3;">${timelinesMsg}</div>
+            </div>
+          </div>
+          <!-- Portfolio check -->
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="color: ${portfolioOk ? 'var(--green)' : 'var(--amber)'}; font-weight: bold; font-size: 1.1rem; line-height: 1;">${portfolioOk ? '✓' : '✕'}</span>
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-1);">Extracurricular Portfolio Tier</div>
+              <div style="font-size: 0.68rem; color: var(--text-3); margin-top: 2px; line-height: 1.3;">${portfolioMsg}</div>
+            </div>
+          </div>
+          <!-- CUET Mapping (if applicable) -->
+          ${showCuet ? `
+          <div style="display: flex; gap: 10px; align-items: flex-start; grid-column: span 2;">
+            <span style="color: ${cuetOk ? 'var(--green)' : 'var(--red)'}; font-weight: bold; font-size: 1.1rem; line-height: 1;">${cuetOk ? '✓' : '✕'}</span>
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-1);">CUET Subject Alignment</div>
+              <div style="font-size: 0.68rem; color: var(--text-3); margin-top: 2px; line-height: 1.3;">${cuetMsg}</div>
+            </div>
+          </div>` : ''}
+        </div>
+      </div>`;
+  }
+  
+  // Set overall status
+  const statEl = document.getElementById('rep-status');
+  if (overallCompliant && audit && Object.keys(audit.targets).length > 0) {
+    statEl.textContent = 'ON TRACK';
+    statEl.style.color = 'var(--green)';
+  } else if (minMatchScore >= 70 && audit && Object.keys(audit.targets).length > 0) {
+    statEl.textContent = 'NEEDS ATTENTION';
+    statEl.style.color = 'var(--amber)';
+  } else if (audit && Object.keys(audit.targets).length > 0) {
+    statEl.textContent = 'CRITICAL RISK';
+    statEl.style.color = 'var(--red)';
+  } else {
+    statEl.textContent = 'NO TARGETS';
+    statEl.style.color = 'var(--text-3)';
+  }
+
+  // Load ML predictions dynamically based on the student's top target course
+  let topTarget = null;
+  if (audit && Object.keys(audit.targets).length > 0) {
+    // Find the first target
+    const tid = Object.keys(audit.targets)[0];
+    topTarget = audit.targets[tid];
+  }
+  
+  let targetSubjectCode = "CAH17"; // Default Computing
+  let aim = "BSc";
+  if (topTarget) {
+    const tName = topTarget.target_name.toLowerCase();
+    if (tName.includes("eco") || tName.includes("business")) {
+      targetSubjectCode = "CAH25";
+      aim = "BSc";
+    } else if (tName.includes("math")) {
+      targetSubjectCode = "CAH11";
+      aim = "BSc";
+    }
+  }
+  
+  // Convert board aggregate expectation to UCAS tariff roughly
+  let expectedPct = 85.0;
+  if (s.grades && s.grades.current_expected_board) {
+    expectedPct = parseFloat(s.grades.current_expected_board) || 85.0;
+  }
+  let estimatedTariff = 120.0;
+  if (expectedPct >= 95) estimatedTariff = 156.0;
+  else if (expectedPct >= 90) estimatedTariff = 144.0;
+  else if (expectedPct >= 85) estimatedTariff = 128.0;
+  else if (expectedPct >= 80) estimatedTariff = 112.0;
+
+  try {
+    const res = await fetch('/api/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        subject: targetSubjectCode,
+        aim: aim,
+        country: 'England',
+        tariff: estimatedTariff,
+        nss: 84.5,
+        tef: 'Gold',
+        tef_exp: 'Gold',
+        tef_out: 'Gold',
+        foundation: 0,
+        honours: 1,
+        sandwich: 0,
+        yearabroad: 0
+      })
+    });
+    const d = await res.json();
+    const p = d.predictions;
+    if (p) {
+      document.getElementById('rep-ml-salary').textContent = p.salary != null ? `£${Math.round(p.salary).toLocaleString('en-GB')}` : '—';
+      document.getElementById('rep-ml-employment').textContent = p.employment != null ? `${p.employment.toFixed(1)}%` : '—';
+      document.getElementById('rep-ml-continuation').textContent = p.continuation != null ? `${p.continuation.toFixed(1)}%` : '—';
+      
+      document.getElementById('rep-ml-salary-bar').style.width = p.salary != null ? `${Math.min(100, (p.salary / 50000) * 100)}%` : '0%';
+      document.getElementById('rep-ml-employment-bar').style.width = p.employment != null ? `${p.employment}%` : '0%';
+      document.getElementById('rep-ml-continuation-bar').style.width = p.continuation != null ? `${p.continuation}%` : '0%';
+    }
+  } catch (err) {
+    console.error("Failed to run predictions for report:", err);
+  }
+}
+window.onReportStudentChange = onReportStudentChange;
+
+async function saveReportNotes() {
+  const sel = document.getElementById('report-student-select');
+  if (!sel || !sel.value) return;
+  const notesVal = document.getElementById('report-notes-input').value;
+  
+  const studentId = sel.value;
+  const s = students.find(x => x.id === studentId);
+  if (!s) return;
+  
+  const btn = document.getElementById('btn-save-report-notes');
+  btn.disabled = true;
+  btn.textContent = 'saving…';
+  
+  try {
+    const res = await fetch(`/api/students/${studentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...s, counselor_notes: notesVal })
+    });
+    if (res.ok) {
+      alert("Notes saved successfully!");
+      s.counselor_notes = notesVal;
+      document.getElementById('rep-counselor-notes-text').textContent = notesVal || 'No custom counselor remarks appended. Use the notes panel above to update.';
+    } else {
+      alert("Failed to save notes.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error saving notes: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'save notes to profile';
+  }
+}
+window.saveReportNotes = saveReportNotes;
+
+function renderCohortReport() {
+  document.querySelectorAll('.cohort-rep-date').forEach(el => {
+    el.textContent = new Date().toLocaleDateString();
+  });
+  
+  document.getElementById('rep-cohort-size').textContent = students.length;
+  document.getElementById('rep-cohort-total').textContent = students.length;
+  
+  let strongCount = 0;
+  let riskCount = 0;
+  let criticalCount = 0;
+  
+  const tableBody = document.getElementById('cohort-report-table-body');
+  tableBody.innerHTML = '';
+  
+  const commonGaps = {};
+  
+  students.forEach(s => {
+    const audit = cohortAudit[s.id];
+    let minMatch = 100;
+    let targetNames = [];
+    
+    if (audit && Object.keys(audit.targets).length > 0) {
+      for (const tid in audit.targets) {
+        const t = audit.targets[tid];
+        targetNames.push(t.target_name);
+        const matchScore = t.match_score !== undefined ? t.match_score : (t.compliant ? 100 : 50);
+        minMatch = Math.min(minMatch, matchScore);
+        
+        t.gaps.forEach(g => {
+          const sub = g.subject || 'General';
+          commonGaps[sub] = (commonGaps[sub] || 0) + 1;
+        });
+      }
+    }
+    
+    if (minMatch >= 90) strongCount++;
+    else if (minMatch >= 70) riskCount++;
+    else criticalCount++;
+    
+    let statusText = 'CRITICAL';
+    let statusColor = 'var(--red)';
+    if (minMatch >= 90) {
+      statusText = 'STRONG';
+      statusColor = 'var(--green)';
+    } else if (minMatch >= 70) {
+      statusText = 'MODERATE';
+      statusColor = 'var(--amber)';
+    } else if (targetNames.length === 0) {
+      statusText = 'NO TARGETS';
+      statusColor = 'var(--text-3)';
+      minMatch = '—';
+    }
+    
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid var(--border)';
+    tr.style.height = '36px';
+    tr.innerHTML = `
+      <td style="font-family: var(--mono);">${s.id}</td>
+      <td style="font-weight: 700; color: var(--text-1);">${s.name}</td>
+      <td>${s.board} (Cl. ${s.class_level})</td>
+      <td style="color: var(--text-2);">${targetNames.length > 0 ? targetNames.join('; ') : 'None'}</td>
+      <td style="text-align: right; font-family: var(--mono); font-weight:700;">${minMatch}${typeof minMatch === 'number' ? '%' : ''}</td>
+      <td style="text-align: right; font-weight:700; color:${statusColor};">${statusText}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+  
+  document.getElementById('rep-cohort-strong').textContent = strongCount;
+  document.getElementById('rep-cohort-risk').textContent = riskCount;
+  document.getElementById('rep-cohort-critical').textContent = criticalCount;
+  
+  // Gap frequencies
+  const gapContainer = document.getElementById('cohort-report-gaps-summary');
+  gapContainer.innerHTML = '';
+  const sortedGaps = Object.entries(commonGaps).sort((a,b) => b[1] - a[1]);
+  if (sortedGaps.length > 0) {
+    sortedGaps.forEach(([sub, freq]) => {
+      const el = document.createElement('div');
+      el.style.border = '1px solid var(--border)';
+      el.style.background = 'var(--surface)';
+      el.style.padding = '12px';
+      el.innerHTML = `
+        <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">SUBJECT: ${sub}</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--red); margin-top: 4px;">${freq} Students Affected</div>
+      `;
+      gapContainer.appendChild(el);
+    });
+  } else {
+    gapContainer.innerHTML = `<div style="color:var(--text-3); font-size:0.8rem; font-style:italic;">No active prerequisite gaps detected across the cohort.</div>`;
+  }
+}
+window.renderCohortReport = renderCohortReport;
+
+function printReport() {
+  window.print();
+}
+window.printReport = printReport;
+
+function printCohortReport() {
+  window.print();
+}
+window.printCohortReport = printCohortReport;
 

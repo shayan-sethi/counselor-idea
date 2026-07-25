@@ -21,6 +21,7 @@
       <button class="tab active" id="tab-dash" onclick="switchView('dashboard')">compliance</button>
       <button class="tab" id="tab-manage" onclick="switchView('manage')">manage</button>
       <button class="tab" id="tab-pred" onclick="switchView('predictor')">predictor</button>
+      <button class="tab" id="tab-reports" onclick="switchView('reports')">reports</button>
     </nav>
     <div class="topbar-right">
       <a href="/student" class="student-link">student portal →</a>
@@ -326,6 +327,212 @@
           <div class="pred-result-item"><span class="pri-label">graduate salary</span><span class="pri-value" id="r-salary">—</span></div>
           <div class="pred-result-item"><span class="pri-label">continuation rate</span><span class="pri-value" id="r-continuation">—</span></div>
           <div class="pred-result-item"><span class="pri-label">employment rate</span><span class="pri-value" id="r-employment">—</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ═══ REPORTS VIEW ═══ -->
+  <main id="view-reports" class="hidden">
+    <div class="page-title-row" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+      <div>
+        <h1>Automated Reports</h1>
+        <p class="subtitle">generate print-ready compliance, remediation & outcomes reports</p>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-reset" onclick="switchReportSubView('student')" id="btn-report-sub-student" style="color: var(--accent); border-color: var(--accent);">student report</button>
+        <button class="btn-reset" onclick="switchReportSubView('cohort')" id="btn-report-sub-cohort">cohort report</button>
+      </div>
+    </div>
+
+    <!-- Student Report Generator -->
+    <div id="report-sec-student">
+      <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
+        <div class="form-section-title">select student & options</div>
+        <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+          <div class="field" style="flex: 1; min-width: 240px; margin-bottom: 0;">
+            <label>Student Profile</label>
+            <select id="report-student-select" onchange="onReportStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
+          </div>
+          <button class="btn-run" onclick="printReport()" style="padding: 10px 20px;">print / save pdf →</button>
+        </div>
+        
+        <div style="margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
+          <div class="field" style="flex: 1; min-width: 300px; margin-bottom: 0;">
+            <label>Counselor Custom Remarks & Notes (Appended to Report)</label>
+            <textarea id="report-notes-input" placeholder="Type customized recommendations, timeline updates, or warnings here..." style="width: 100%; height: 90px; padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--sans); font-size: 0.8rem; border-radius: 4px; resize: vertical;"></textarea>
+          </div>
+          <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+            <button class="btn-reset" id="btn-save-report-notes" onclick="saveReportNotes()" style="height: 38px;">save notes to profile</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Printable Report Document Container -->
+      <div id="student-report-doc" class="form-card" style="padding: 40px; background: #0c0c0c; border: 1px solid var(--border); color: var(--text-1); min-height: 800px; line-height: 1.5;">
+        <!-- Header -->
+        <div style="border-bottom: 2px solid var(--text-1); padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">PRISM Compliance Engine</div>
+            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; margin-top: 4px;">STUDENT PROGRESS & PATHWAY REPORT</div>
+          </div>
+          <div style="text-align: right; font-family: var(--mono); font-size: 0.72rem; color: var(--text-3);">
+            <div>GENERATED: <span id="rep-date">—</span></div>
+            <div>STATUS: <span id="rep-status" style="font-weight: 700;">—</span></div>
+          </div>
+        </div>
+
+        <!-- Student Info Block -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">STUDENT NAME</div>
+            <div style="font-weight: 700; font-size: 1rem; margin-top: 4px;" id="rep-name">—</div>
+          </div>
+          <div>
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">STUDENT ID</div>
+            <div style="font-family: var(--mono); font-size: 0.9rem; font-weight: 700; margin-top: 4px;" id="rep-id">—</div>
+          </div>
+          <div>
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">ACADEMIC BOARD / LEVEL</div>
+            <div style="font-weight: 700; font-size: 0.9rem; margin-top: 4px;" id="rep-board">—</div>
+          </div>
+          <div>
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">EXPECTED GRADE / SCORE</div>
+            <div style="font-family: var(--mono); font-weight: 700; font-size: 0.9rem; margin-top: 4px;" id="rep-grade">—</div>
+          </div>
+        </div>
+
+        <!-- Pathway Readiness Checklist -->
+        <div id="rep-readiness-checklist" style="margin-bottom: 24px;"></div>
+
+        <!-- Layout grid: Left column (Pathways Compliance), Right column (Standardized Tests & ML Outcomes Projections) -->
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; margin-bottom: 24px;">
+          <div>
+            <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">🎯 TARGET PATHWAYS & ELIGIBILITY</h3>
+            <div id="rep-targets-list"></div>
+          </div>
+          
+          <div>
+            <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">💡 ML OUTCOMES PROJECTIONS</h3>
+            <div style="border: 1px solid var(--border); padding: 16px; background: var(--surface); margin-bottom: 20px;">
+              <p style="font-size: 0.72rem; color: var(--text-3); margin-bottom: 14px; line-height: 1.4;">Based on PRISM's Random Forest predictive models trained on 25K+ UK course records, here are the estimated outcome benchmarks for equivalent tracks:</p>
+              
+              <div style="margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-family: var(--mono); margin-bottom: 4px;">
+                  <span>EST. GRADUATE SALARY:</span>
+                  <span id="rep-ml-salary" style="font-weight: 700; color: var(--accent);">—</span>
+                </div>
+                <div style="height: 4px; background: var(--border);"><div id="rep-ml-salary-bar" style="height: 100%; background: var(--accent); width: 0%;"></div></div>
+              </div>
+              
+              <div style="margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-family: var(--mono); margin-bottom: 4px;">
+                  <span>EMPLOYMENT RATE:</span>
+                  <span id="rep-ml-employment" style="font-weight: 700; color: var(--green);">—</span>
+                </div>
+                <div style="height: 4px; background: var(--border);"><div id="rep-ml-employment-bar" style="height: 100%; background: var(--green); width: 0%;"></div></div>
+              </div>
+              
+              <div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-family: var(--mono); margin-bottom: 4px;">
+                  <span>CONTINUATION RATE:</span>
+                  <span id="rep-ml-continuation" style="font-weight: 700; color: var(--amber);">—</span>
+                </div>
+                <div style="height: 4px; background: var(--border);"><div id="rep-ml-continuation-bar" style="height: 100%; background: var(--amber); width: 0%;"></div></div>
+              </div>
+            </div>
+
+            <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">📋 SUBJECT REGISTRATION</h3>
+            <div style="font-family: var(--mono); font-size: 0.75rem; color: var(--text-2); background: rgba(255,255,255,0.02); padding: 12px; border: 1px solid var(--border); border-radius: 4px;">
+              <div style="margin-bottom: 8px;"><strong style="color: var(--text-1);">Board Subjects:</strong> <span id="rep-subjects-list">—</span></div>
+              <div id="rep-cuet-subjects-wrap" class="hidden"><strong>CUET Domains:</strong> <span id="rep-cuet-list">—</span></div>
+              <div id="rep-portfolio-wrap" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
+                <strong style="color: var(--text-1);">Portfolio Quality:</strong> <span id="rep-portfolio-tier">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Counselor Notes Area in Document -->
+        <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 24px;">
+          <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">📢 COUNSELOR OFFICIAL RECOMMENDATIONS & NOTES</h3>
+          <div id="rep-counselor-notes-text" style="font-size: 0.85rem; color: var(--text-2); font-style: italic; white-space: pre-line; background: rgba(200, 255, 0, 0.01); border: 1px dashed var(--border); padding: 16px; border-radius: 4px;">No custom counselor remarks appended. Use the notes panel above to update.</div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.65rem; color: var(--text-3);">
+          <span>PRISM REPORT GENERATOR MODULE · CONFIDENTIAL</span>
+          <span>© 2026 PRISM PATHWAYS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cohort Report Generator -->
+    <div id="report-sec-cohort" class="hidden">
+      <div style="display: flex; gap: 16px; margin-bottom: 24px;">
+        <button class="btn-run" onclick="printCohortReport()">print / save cohort report pdf →</button>
+      </div>
+
+      <div id="cohort-report-doc" class="form-card" style="padding: 40px; background: #0c0c0c; border: 1px solid var(--border); color: var(--text-1); min-height: 800px; line-height: 1.5;">
+        <!-- Header -->
+        <div style="border-bottom: 2px solid var(--text-1); padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">PRISM Compliance Engine</div>
+            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; margin-top: 4px;">COHORT COMPLIANCE & RISK AUDIT REPORT</div>
+          </div>
+          <div style="text-align: right; font-family: var(--mono); font-size: 0.72rem; color: var(--text-3);">
+            <div>GENERATED: <span class="cohort-rep-date">—</span></div>
+            <div>COHORT SIZE: <span id="rep-cohort-size" style="font-weight: 700;">—</span></div>
+          </div>
+        </div>
+
+        <!-- Cohort Summary Widgets -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px;">
+          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">TOTAL STUDENTS</div>
+            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--text-1); margin-top: 4px;" id="rep-cohort-total">—</div>
+          </div>
+          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">STRONG MATCH (90%+)</div>
+            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--green); margin-top: 4px;" id="rep-cohort-strong">—</div>
+          </div>
+          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">HIGH RISK (45-69%)</div>
+            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--amber); margin-top: 4px;" id="rep-cohort-risk">—</div>
+          </div>
+          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
+            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">CRITICAL RISK (&lt;45%)</div>
+            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--red); margin-top: 4px;" id="rep-cohort-critical">—</div>
+          </div>
+        </div>
+
+        <!-- Detailed compliance list -->
+        <h3 style="font-family: var(--mono); font-size: 0.75rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">📋 STUDENT COMPLIANCE SUMMARY</h3>
+        
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-bottom: 24px; text-align: left;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border); font-family: var(--mono); color: var(--text-3); height: 28px;">
+              <th>ID</th>
+              <th>NAME</th>
+              <th>BOARD</th>
+              <th>TARGET PATHWAYS</th>
+              <th style="text-align: right;">MIN MATCH SCORE</th>
+              <th style="text-align: right;">STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="cohort-report-table-body">
+            <!-- Populated via Javascript -->
+          </tbody>
+        </table>
+
+        <!-- Top Gap Breakdown -->
+        <h3 style="font-family: var(--mono); font-size: 0.75rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">⚠️ DETECTED PREREQUISITE GAP FREQUENCIES</h3>
+        <div id="cohort-report-gaps-summary" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;"></div>
+
+        <!-- Footer -->
+        <div style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.65rem; color: var(--text-3);">
+          <span>PRISM REPORT GENERATOR MODULE · COHORT SUMMARY</span>
+          <span>© 2026 PRISM PATHWAYS</span>
         </div>
       </div>
     </div>

@@ -643,17 +643,17 @@
     "cuet_subjects": [],
     "grades": {
       "current_expected_board": "90.0%",
+      "g10_subjects": {},
       "subjects": {
-        "Mathematics": 96.0,
-        "Physics": 93.0,
-        "Chemistry": 95.0,
-        "Biology": 92.0,
-        "English": 91.0,
-        "Geography": 90.0,
-        "Literature": 94.0,
-        "History": 89.0
-      },
-      "g10_subjects": {}
+        "Biology": 92,
+        "Chemistry": 95,
+        "English": 91,
+        "Geography": 90,
+        "History": 89,
+        "Literature": 94,
+        "Mathematics": 96,
+        "Physics": 93
+      }
     },
     "standardized_tests": {},
     "portfolio": [
@@ -802,9 +802,10 @@
     "id": "STU_012",
     "status": {
       "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
+      "sat_score": null,
+      "tmua_registered": false
+    },
+    "counselor_notes": "Aarav needs to add target pathways and register for relevant CUET exams."
   },
   {
     "name": "Aarav Mehta",

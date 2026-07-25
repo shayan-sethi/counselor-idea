@@ -779,4 +779,33 @@ main {
   font-size: 0.85rem;
 }
 
+/* ── Print Media Styles ── */
+@media print {
+  body {
+    background: #000000 !important;
+    color: #ffffff !important;
+  }
+  .topbar, .drawer, .drawer-backdrop, .manage-form-wrap, .form-card:not(#student-report-doc):not(#cohort-report-doc), button, input, select, textarea, .page-title-row div:last-child {
+    display: none !important;
+  }
+  main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  #view-reports {
+    display: block !important;
+  }
+  #student-report-doc, #cohort-report-doc {
+    border: none !important;
+    padding: 0 !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+  }
+  /* Ensure correct container visibility */
+  #view-dashboard, #view-manage, #view-predictor {
+    display: none !important;
+  }
+}
+
 

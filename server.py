@@ -413,7 +413,7 @@ def api_update_student(student_id):
     # Update allowed fields
     for field in ["name", "board", "class_level", "board_subjects", "cuet_subjects",
                   "grades", "standardized_tests", "portfolio", "targets", "status",
-                  "planned_class_11_subjects"]:
+                  "planned_class_11_subjects", "counselor_notes"]:
         if field in data:
             student[field] = data[field]
 
