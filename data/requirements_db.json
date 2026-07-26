@@ -699,5 +699,18 @@
     "grade_prerequisites": [],
     "portfolio_tier": 3,
     "citations": []
+  },
+  "CUSTOM_ENGINEERING_2": {
+    "id": "CUSTOM_ENGINEERING_2",
+    "name": "Engineering",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Oxford",
+    "deadlines": [],
+    "subject_prerequisites": [],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 1,
+    "citations": []
   }
 }

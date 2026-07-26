@@ -1,3 +1,4 @@
+import sys
 import os
 import json
 import datetime
@@ -9,6 +10,12 @@ try:
     load_dotenv()
 except ImportError:
     pass
+
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+if hasattr(sys.stderr, 'reconfigure'):
+    sys.stderr.reconfigure(encoding='utf-8')
+
 
 # ──────────────────────────────────────────────
 #  PRISM Web API Server
@@ -24,6 +31,7 @@ from prism_agent.agent import PRISMAgent
 from prism_agent.ingestion_agent import DocumentIngestionAgent
 from prism_agent.board_converter import BoardGradeConverter
 from prism_agent.opportunity_radar import OpportunityRadar, CompeteMapScraper
+from prism_agent.scholarship_agent import ScholarshipAgent
 
 kg = KnowledgeGraph()
 reasoner = Reasoner(kg)
@@ -88,7 +96,7 @@ if os.path.exists(mp):
     with open(mp, "r") as f:
         MODEL_METRICS = json.load(f)
 
-print("✔ PRISM engine + ML models loaded.")
+print("[+] PRISM engine + ML models loaded.")
 
 # ──────────────────────────────────────────────
 #  Flask App
@@ -870,6 +878,63 @@ def api_calendar(student_id):
 
     events.sort(key=lambda x: x["date"])
     return jsonify(events)
+
+# ── Scholarship & Financial Aid Endpoints ──
+
+SCHOLARSHIPS_PATH = os.path.join(BASE_DIR, "data", "scholarships.json")
+
+def load_scholarships():
+    if os.path.exists(SCHOLARSHIPS_PATH):
+        with open(SCHOLARSHIPS_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def save_scholarships(schols):
+    with open(SCHOLARSHIPS_PATH, "w", encoding="utf-8") as f:
+        json.dump(schols, f, indent=2)
+
+@app.route("/api/scholarships", methods=["GET"])
+def api_get_scholarships():
+    return jsonify(load_scholarships())
+
+@app.route("/api/match_scholarships/<student_id>")
+def api_match_scholarships(student_id):
+    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+        
+    scholarships = load_scholarships()
+    matches = ScholarshipAgent.match_scholarships(student, scholarships)
+    return jsonify(matches)
+
+@app.route("/api/import_scholarship", methods=["POST"])
+def api_import_scholarship():
+    data = request.get_json()
+    if not data or "name" not in data:
+        return jsonify({"error": "Scholarship name is required"}), 400
+        
+    import datetime
+    schol_id = f"schol_custom_{int(datetime.datetime.now().timestamp())}"
+    
+    new_schol = {
+        "id": schol_id,
+        "name": data.get("name"),
+        "type": data.get("type", "Merit-based"),
+        "provider": data.get("provider", "Unknown Provider"),
+        "eligibility_criteria": data.get("eligibility_criteria", "See official website for details."),
+        "award_value": data.get("award_value", "Varies"),
+        "deadline": data.get("deadline", "TBD"),
+        "tags": data.get("tags", []),
+        "min_class_level": int(data.get("min_class_level", 9)),
+        "max_class_level": int(data.get("max_class_level", 12)),
+        "url": data.get("url", "#")
+    }
+    
+    schols = load_scholarships()
+    schols.append(new_schol)
+    save_scholarships(schols)
+    
+    return jsonify(new_schol), 201
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)

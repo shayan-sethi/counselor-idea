@@ -140,7 +140,7 @@ function updateSubjectGradesUI() {
 function updateSubjectsGrid() {
   const board = document.getElementById('sf-board').value;
   const subjects = BOARD_SUBJECTS[board] || BOARD_SUBJECTS["CBSE"];
-  
+
   // Student subjects checkboxes
   const subEl = document.getElementById('sf-subjects');
   subEl.innerHTML = '';
@@ -367,7 +367,7 @@ async function createAndAddTarget() {
     if (res.ok) {
       const tData = await res.json();
       targets[tData.id] = tData;
-      
+
       if (!selectedTargetIds.includes(tData.id)) {
         selectedTargetIds.push(tData.id);
       }
@@ -409,7 +409,7 @@ function addAPRow(key, score) {
   row.style.gridTemplateColumns = '2fr 1fr auto';
   row.style.marginBottom = '4px';
   row.style.alignItems = 'center';
-  
+
   const subjectsMap = {
     "AP_CALCULUS_BC": "AP Calculus BC",
     "AP_CALCULUS_AB": "AP Calculus AB",
@@ -467,7 +467,7 @@ async function animateAgentTrace(traceMap, callback) {
 
   card.classList.remove('hidden');
   term.innerHTML = '';
-  
+
   // Tool name to human-readable description mapping
   const TOOL_LABELS = {
     'fetch_student': '📋 Loading your profile...',
@@ -511,7 +511,7 @@ async function animateAgentTrace(traceMap, callback) {
     const log = combinedTrace[i];
     const line = document.createElement('div');
     line.style.marginBottom = '6px';
-    
+
     if (log.type === 'header') {
       line.style.color = '#7aa2f7';
       line.style.fontWeight = 'bold';
@@ -528,7 +528,7 @@ async function animateAgentTrace(traceMap, callback) {
       const summary = humanizeObservation(log.message);
       line.innerHTML = `<span style="color: #565f89; padding-left: 16px;">→ ${summary}</span>`;
     }
-    
+
     term.appendChild(line);
     term.parentElement.scrollTop = term.parentElement.scrollHeight;
     await new Promise(r => setTimeout(r, 450));
@@ -584,7 +584,9 @@ function showStep(step) {
   if (sEl) sEl.classList.toggle('hidden', step !== 'shortlist');
   const cEl = document.getElementById('step-calendar');
   if (cEl) cEl.classList.toggle('hidden', step !== 'calendar');
-  
+  const sEl = document.getElementById('step-scholarships');
+  if (sEl) sEl.classList.toggle('hidden', step !== 'scholarships');
+
   document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
   const rTab = document.getElementById('tab-radar');
@@ -593,14 +595,18 @@ function showStep(step) {
   if (sTab) sTab.classList.toggle('active', step === 'shortlist');
   const cTab = document.getElementById('tab-calendar');
   if (cTab) cTab.classList.toggle('active', step === 'calendar');
+  const sTab = document.getElementById('tab-scholarships');
+  if (sTab) sTab.classList.toggle('active', step === 'scholarships');
 
   const advisorCard = document.getElementById('ai-advisor-card');
   if (advisorCard && step !== 'results') {
     advisorCard.classList.add('hidden');
   }
-  
+
   if (step === 'radar') {
     renderStudentRadar();
+  } else if (step === 'scholarships') {
+    renderStudentScholarships();
   }
   if (step === 'shortlist') {
     renderStudentShortlist();
@@ -905,11 +911,11 @@ async function sendStudentAdvisorMessage() {
     // Render markdown format
     const agentMsg = document.createElement('div');
     agentMsg.style.cssText = 'margin-bottom: 12px; border-left: 2px solid var(--amber); padding-left: 8px; font-family: var(--sans);';
-    
+
     let html = data.reply
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
-      
+
     agentMsg.innerHTML = `<strong style="color:var(--amber);">PRISM Copilot:</strong><br>${html}`;
     chatContainer.appendChild(agentMsg);
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -934,7 +940,7 @@ function handleFileSelect(event) {
     if (files.length === 0) {
       listEl.innerHTML = '';
     } else {
-      listEl.innerHTML = '📁 Selected Files: ' + files.map(f => `<strong>${f.name}</strong> (${(f.size/1024).toFixed(1)} KB)`).join(', ');
+      listEl.innerHTML = '📁 Selected Files: ' + files.map(f => `<strong>${f.name}</strong> (${(f.size / 1024).toFixed(1)} KB)`).join(', ');
     }
   }
 }
@@ -1064,23 +1070,23 @@ window.uploadAndIngestDocuments = uploadAndIngestDocuments;
 async function renderStudentRadar() {
   const body = document.getElementById('radar-body');
   if (!body) return;
-  
+
   if (!createdStudentId) {
     body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock radar matches</div>';
     return;
   }
-  
+
   body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> scanning opportunities…</div>';
-  
+
   try {
     const res = await fetch(`/api/opportunities/${createdStudentId}`);
     const matches = await res.json();
-    
+
     if (matches.length === 0) {
       body.innerHTML = '<div class="loading-row">No matching opportunities found for your current profile. Try adjusting target pathways or subjects.</div>';
       return;
     }
-    
+
     let html = `
       <section class="student-list" style="margin-top:20px;">
         <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
@@ -1091,7 +1097,7 @@ async function renderStudentRadar() {
         </div>
         <div class="rows-container">
     `;
-    
+
     matches.forEach(m => {
       let dlHtml = '—';
       if (m.competition.deadline) {
@@ -1105,9 +1111,9 @@ async function renderStudentRadar() {
           dlHtml = `<span>${m.competition.deadline}</span>`;
         }
       }
-      
+
       const scoreColor = m.match_score >= 90 ? 'var(--green)' : m.match_score >= 70 ? 'var(--amber)' : 'var(--red)';
-      
+
       html += `
         <div class="stu-row" style="grid-template-columns: 2fr 1fr 1fr 2fr; cursor: default;">
           <div style="display:flex; flex-direction:column; gap:4px;">
@@ -1124,7 +1130,7 @@ async function renderStudentRadar() {
         </div>
       `;
     });
-    
+
     html += `
         </div>
       </section>
@@ -1179,11 +1185,11 @@ async function filterStudentColleges() {
     const shortlisted = student.shortlisted_colleges || [];
 
     studentCollegesList.forEach(c => {
-      const matchQuery = !query || 
-        c.name.toLowerCase().includes(query) || 
+      const matchQuery = !query ||
+        c.name.toLowerCase().includes(query) ||
         c.country.toLowerCase().includes(query) ||
         c.courses.some(crs => crs.toLowerCase().includes(query));
-        
+
       if (!matchQuery) return;
 
       const isShortlisted = shortlisted.includes(c.id);
@@ -1282,7 +1288,7 @@ async function renderStudentCalendar() {
   }
 
   listCont.innerHTML = '<div class="loading-row"><span class="blink">▌</span> loading deadlines calendar…</div>';
-  
+
   try {
     const res = await fetch(`/api/calendar/${createdStudentId}`);
     studentCalendarEvents = await res.json();
@@ -1315,7 +1321,7 @@ function updateStudentCalendarUI() {
   if (lbl) {
     lbl.textContent = `${months[studentCalMonth]} ${studentCalYear}`;
   }
-  
+
   renderStudentCalendarGrid();
   filterStudentCalendar();
 }
@@ -1324,20 +1330,20 @@ function renderStudentCalendarGrid() {
   const cellsCont = document.getElementById('student-calendar-grid-cells');
   if (!cellsCont) return;
   cellsCont.innerHTML = '';
-  
+
   const firstDay = new Date(studentCalYear, studentCalMonth, 1).getDay();
   const totalDays = new Date(studentCalYear, studentCalMonth + 1, 0).getDate();
-  
+
   for (let i = 0; i < firstDay; i++) {
     const pad = document.createElement('div');
     pad.style.height = '42px';
     cellsCont.appendChild(pad);
   }
-  
+
   const showCollege = document.getElementById('stud-cal-filter-college').checked;
   const showExam = document.getElementById('stud-cal-filter-exam').checked;
   const showComp = document.getElementById('stud-cal-filter-competition').checked;
-  
+
   for (let day = 1; day <= totalDays; day++) {
     const cell = document.createElement('div');
     cell.style.height = '42px';
@@ -1353,36 +1359,36 @@ function renderStudentCalendarGrid() {
     cell.style.fontSize = '0.72rem';
     cell.style.fontFamily = 'var(--mono)';
     cell.style.transition = 'all 0.15s ease';
-    
+
     if (studentSelectedCalDay === day) {
       cell.style.borderColor = 'var(--accent)';
       cell.style.background = 'rgba(200,255,0,0.04)';
     }
-    
+
     const dayLabel = document.createElement('span');
     dayLabel.textContent = day;
     dayLabel.style.color = 'var(--text-1)';
     dayLabel.style.fontWeight = '600';
     cell.appendChild(dayLabel);
-    
+
     const dayEvents = studentCalendarEvents.filter(e => {
       const eDate = new Date(e.date);
-      return eDate.getFullYear() === studentCalYear && 
-             eDate.getMonth() === studentCalMonth && 
-             eDate.getDate() === day;
+      return eDate.getFullYear() === studentCalYear &&
+        eDate.getMonth() === studentCalMonth &&
+        eDate.getDate() === day;
     });
-    
+
     const dotsCont = document.createElement('div');
     dotsCont.style.display = 'flex';
     dotsCont.style.gap = '3px';
-    
+
     let hasCol = false, hasEx = false, hasCmp = false;
     dayEvents.forEach(e => {
       if (e.type === 'college' && showCollege) hasCol = true;
       if (e.type === 'exam' && showExam) hasEx = true;
       if (e.type === 'competition' && showComp) hasCmp = true;
     });
-    
+
     if (hasCol) {
       const dot = document.createElement('span');
       dot.style.width = '5px';
@@ -1407,9 +1413,9 @@ function renderStudentCalendarGrid() {
       dot.style.background = 'var(--green)';
       dotsCont.appendChild(dot);
     }
-    
+
     cell.appendChild(dotsCont);
-    
+
     cell.onclick = () => {
       if (studentSelectedCalDay === day) {
         studentSelectedCalDay = null;
@@ -1418,7 +1424,7 @@ function renderStudentCalendarGrid() {
       }
       updateStudentCalendarUI();
     };
-    
+
     cellsCont.appendChild(cell);
   }
 }
@@ -1431,22 +1437,22 @@ function filterStudentCalendar() {
   const showCollege = document.getElementById('stud-cal-filter-college').checked;
   const showExam = document.getElementById('stud-cal-filter-exam').checked;
   const showComp = document.getElementById('stud-cal-filter-competition').checked;
-  
+
   const currentContextDate = new Date("2026-07-25");
-  
+
   const filtered = studentCalendarEvents.filter(e => {
     if (e.type === 'college' && !showCollege) return false;
     if (e.type === 'exam' && !showExam) return false;
     if (e.type === 'competition' && !showComp) return false;
-    
+
     const eDate = new Date(e.date);
     const matchMonth = eDate.getFullYear() === studentCalYear && eDate.getMonth() === studentCalMonth;
     if (!matchMonth) return false;
-    
+
     if (studentSelectedCalDay !== null && eDate.getDate() !== studentSelectedCalDay) return false;
     return true;
   });
-  
+
   if (filtered.length === 0) {
     listCont.innerHTML = `
       <div class="loading-row" style="color:var(--text-3);">
@@ -1455,17 +1461,17 @@ function filterStudentCalendar() {
     `;
     return;
   }
-  
+
   filtered.forEach(e => {
     const row = document.createElement('div');
     row.className = 'stu-row';
     row.style.gridTemplateColumns = '100px 2fr 120px 2fr';
     row.style.cursor = 'default';
-    
+
     const eventDate = new Date(e.date);
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const formattedDate = `${eventDate.getDate()} ${months[eventDate.getMonth()]}`;
-    
+
     const diffTime = eventDate.getTime() - currentContextDate.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     let countdownHtml = '';
@@ -1476,7 +1482,7 @@ function filterStudentCalendar() {
     } else {
       countdownHtml = `<span style="color:${diffDays <= 30 ? 'var(--red)' : 'var(--text-2)'}; font-size:0.6rem; display:block; font-weight:600;">In ${diffDays} days</span>`;
     }
-    
+
     let badgeColor = 'var(--red)';
     let typeName = 'College';
     if (e.type === 'exam') {
@@ -1486,13 +1492,13 @@ function filterStudentCalendar() {
       badgeColor = 'var(--green)';
       typeName = 'Olympiad/Contest';
     }
-    
+
     const badgeHtml = `
       <span style="font-family:var(--mono); font-size:0.55rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:2px 8px; border:1px solid ${badgeColor}; color:${badgeColor}; border-radius:12px;">
         ${typeName}
       </span>
     `;
-    
+
     row.innerHTML = `
       <div>
         <strong style="color:var(--text-1); font-size:0.8rem; display:block;">${formattedDate}</strong>
@@ -1507,4 +1513,83 @@ function filterStudentCalendar() {
 }
 window.filterStudentCalendar = filterStudentCalendar;
 
+// ══════════════════════════════════════════════
+//  SCHOLARSHIP MONITOR
+// ══════════════════════════════════════════════
 
+async function renderStudentScholarships() {
+  const body = document.getElementById('scholarships-body');
+  if (!body) return;
+
+  if (!createdStudentId) {
+    body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock scholarship recommendations</div>';
+    return;
+  }
+
+  body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> AI agent is evaluating your profile against available scholarships...</div>';
+
+  try {
+    const res = await fetch(`/api/match_scholarships/${createdStudentId}`);
+    const matches = await res.json();
+
+    if (!matches || matches.length === 0) {
+      body.innerHTML = '<div class="loading-row">No matching scholarships found for your current profile. Try adjusting target pathways or subjects.</div>';
+      return;
+    }
+
+    let html = `
+      <section class="student-list" style="margin-top:20px;">
+        <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+          <span class="lh-col">Scholarship</span>
+          <span class="lh-col">Deadline</span>
+          <span class="lh-col">Match Score</span>
+          <span class="lh-col">AI Rationale (Why & Actions)</span>
+        </div>
+        <div class="rows-container">
+    `;
+
+    matches.forEach(m => {
+      let dlHtml = '—';
+      if (m.scholarship.deadline) {
+        if (m.days_remaining !== null) {
+          if (m.days_remaining < 0) {
+            dlHtml = `<span style="color:var(--text-3);">Closed</span>`;
+          } else {
+            dlHtml = `<span style="color:${m.is_urgent ? 'var(--red)' : 'var(--text-2)'}; font-weight:600;">${m.scholarship.deadline}<br/><small style="font-family:var(--mono); font-size:0.6rem;">(${m.days_remaining} days left)</small></span>`;
+          }
+        } else {
+          dlHtml = `<span>${m.scholarship.deadline}</span>`;
+        }
+      }
+
+      const scoreColor = m.match_score >= 80 ? 'var(--green)' : m.match_score >= 50 ? 'var(--amber)' : 'var(--red)';
+
+      html += `
+        <div class="stu-row" style="grid-template-columns: 2fr 1fr 1fr 2fr; cursor: default;">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <strong style="font-size:0.85rem; color:var(--text-1);">${m.scholarship.name}</strong>
+            <span style="font-size:0.68rem; color:var(--text-3); font-family:var(--mono);">${m.scholarship.type} · ${m.scholarship.provider}</span>
+            <span style="font-size:0.65rem; color:var(--amber); font-weight:600; margin-top:2px;">Award: ${m.scholarship.award_value}</span>
+          </div>
+          <div style="font-size:0.75rem;">${dlHtml}</div>
+          <div style="font-family:var(--mono); font-weight:700; color:${scoreColor}; font-size:0.85rem;">${m.match_score}% Match</div>
+          <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">
+            <div style="margin-bottom:6px;"><strong style="color:var(--text-1);">Why:</strong> ${m.why}</div>
+            <div style="color:var(--amber);"><strong style="color:var(--amber);">Actions needed:</strong> ${m.actions_needed}</div>
+            ${m.scholarship.url ? `<a href="${m.scholarship.url}" target="_blank" class="student-link" style="display:inline-block; margin-top:6px; font-size:0.68rem; font-family:var(--mono);">visit official link ↗</a>` : ''}
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+        </div>
+      </section>
+    `;
+    body.innerHTML = html;
+  } catch (err) {
+    console.error("Error loading scholarships:", err);
+    body.innerHTML = '<div class="loading-row" style="color:var(--red);">✕ failed to load scholarships</div>';
+  }
+}
+window.renderStudentScholarships = renderStudentScholarships;

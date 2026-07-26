@@ -1,0 +1,67 @@
+[
+  {
+    "id": "schol_tata_cornell",
+    "name": "Tata Scholarship at Cornell University",
+    "type": "Need-based",
+    "provider": "Cornell University",
+    "eligibility_criteria": "Must be an Indian citizen, accepted for undergraduate admission to Cornell, and eligible for need-based financial aid.",
+    "award_value": "Full tuition and living expenses for up to 8 semesters.",
+    "deadline": "2026-11-01",
+    "tags": ["STEM", "Engineering", "Architecture", "Need-based", "India"],
+    "min_class_level": 12,
+    "max_class_level": 12,
+    "url": "https://admissions.cornell.edu/apply/international-students/tata-scholarship"
+  },
+  {
+    "id": "schol_pearson_uoft",
+    "name": "Lester B. Pearson International Scholarship",
+    "type": "Merit-based",
+    "provider": "University of Toronto",
+    "eligibility_criteria": "International student, nominated by their school. Outstanding academic achievement and creativity. Recognized as leaders within their school.",
+    "award_value": "Tuition, books, incidental fees, and full residence support for 4 years.",
+    "deadline": "2026-10-11",
+    "tags": ["Merit-based", "All Subjects", "Canada", "Leadership"],
+    "min_class_level": 12,
+    "max_class_level": 12,
+    "url": "https://future.utoronto.ca/pearson/about/"
+  },
+  {
+    "id": "schol_reach_oxford",
+    "name": "Reach Oxford Scholarship",
+    "type": "Need-based",
+    "provider": "University of Oxford",
+    "eligibility_criteria": "Students from low-income countries who cannot study for a degree in their own countries for political or financial reasons. Must hold an offer from Oxford.",
+    "award_value": "Course fees, a grant for living costs, and one return air fare per year.",
+    "deadline": "2026-02-14",
+    "tags": ["Need-based", "All Subjects except Medicine", "UK", "Humanities", "Science"],
+    "min_class_level": 12,
+    "max_class_level": 12,
+    "url": "https://www.ox.ac.uk/admissions/undergraduate/fees-and-funding/oxford-support/reach-oxford-scholarship"
+  },
+  {
+    "id": "schol_karsh_duke",
+    "name": "Karsh International Scholarship",
+    "type": "Merit and Need-based",
+    "provider": "Duke University",
+    "eligibility_criteria": "International students demonstrating strong academic preparation and documented need for financial aid.",
+    "award_value": "Full tuition, room and board, mandatory fees, demonstrated need, plus 3 summers of funding for research/internships.",
+    "deadline": "2026-01-02",
+    "tags": ["Merit-based", "Need-based", "Research", "All Subjects", "US"],
+    "min_class_level": 12,
+    "max_class_level": 12,
+    "url": "https://ousf.duke.edu/karsh-international-scholarship/"
+  },
+  {
+    "id": "schol_reliance_ug",
+    "name": "Reliance Foundation Undergraduate Scholarships",
+    "type": "Merit-cum-Means",
+    "provider": "Reliance Foundation",
+    "eligibility_criteria": "Indian students enrolled in 1st year of UG courses. Must have passed Class 12 with minimum 60%. Household income < Rs. 15 Lakh.",
+    "award_value": "Up to Rs. 2 Lakhs over the duration of the degree.",
+    "deadline": "2026-10-15",
+    "tags": ["Merit-based", "India", "Undergraduate", "All Subjects"],
+    "min_class_level": 12,
+    "max_class_level": 12,
+    "url": "https://www.scholarships.reliancefoundation.org/"
+  }
+]

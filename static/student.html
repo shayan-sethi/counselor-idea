@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRISM — Student Portal</title>
-  <meta name="description" content="PRISM Student Portal: Enter your academic profile and get instant compliance analysis." />
+  <meta name="description"
+    content="PRISM Student Portal: Enter your academic profile and get instant compliance analysis." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css" />
 </head>
+
 <body>
 
   <!-- ═══ TOPBAR ═══ -->
@@ -21,6 +26,7 @@
       <button class="tab active" id="tab-profile" onclick="showStep('profile')">your profile</button>
       <button class="tab" id="tab-results" onclick="showStep('results')">audit results</button>
       <button class="tab" id="tab-radar" onclick="showStep('radar')">opportunity radar</button>
+      <button class="tab" id="tab-scholarships" onclick="showStep('scholarships')">scholarships & aid</button>
       <button class="tab" id="tab-shortlist" onclick="showStep('shortlist')">college shortlisting</button>
       <button class="tab" id="tab-calendar" onclick="showStep('calendar')">deadlines calendar</button>
     </nav>
@@ -34,199 +40,225 @@
     <div class="page-title-row">
       <h1>Your Academic Profile</h1>
       <p class="subtitle">enter your details · get instant compliance analysis against your target pathways</p>
-    <!-- Automated AI Document Ingestion -->
-    <div class="form-card" style="margin-bottom: 24px;">
-      <div class="form-section-title" style="color: var(--amber);">AUTOMATED AGENTIC DATA INGESTION</div>
-      <p class="subtitle" style="margin-bottom: 16px; font-size: 0.8rem;">
-        Upload your academic transcript, marks card, or resume. PRISM AI automatically extracts and populates your subjects, grades, test scores, and extracurricular achievements.
-      </p>
-      <div class="dropzone" id="ingest-dropzone" style="border: 1px dashed var(--border-bright); padding: 20px; text-align: center; cursor: pointer; background: var(--surface); border-radius: 4px;" onclick="document.getElementById('ingest-file-input').click()">
-        <input type="file" id="ingest-file-input" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="display: none;" onchange="handleFileSelect(event)" />
-        <div style="font-weight: 600; color: var(--text-1); font-size: 0.85rem;">Drop Transcripts & Resumes here, or <span style="color: var(--amber); text-decoration: underline;">click to browse</span></div>
-        <div style="font-size: 0.72rem; color: var(--text-3); margin-top: 4px;">Supports PDFs, Marksheets, Resumes, and Text Files</div>
-      </div>
-      <div id="file-list-preview" style="margin-top: 10px; font-size: 0.75rem; color: var(--text-2); font-family: var(--mono);"></div>
-      <button type="button" id="btn-auto-ingest" class="btn-run" onclick="uploadAndIngestDocuments()" style="margin-top: 14px; width: 100%;">
-        extract & auto-populate profile →
-      </button>
-      <div id="ingest-status" style="margin-top: 10px; font-size: 0.75rem; font-family: var(--mono); display: none;"></div>
-    </div>
-
-    <form id="student-form" class="student-form" onsubmit="submitProfile(event)">
-
-      <!-- Step 1: Basics -->
-      <div class="form-card">
-        <div class="form-section-title">01 — basics</div>
-        <div class="form-row">
-          <div class="field field-wide">
-            <label>Your Full Name *</label>
-            <input type="text" id="sf-name" required placeholder="e.g. Aarav Sharma" />
-          </div>
+      <!-- Automated AI Document Ingestion -->
+      <div class="form-card" style="margin-bottom: 24px;">
+        <div class="form-section-title" style="color: var(--amber);">AUTOMATED AGENTIC DATA INGESTION</div>
+        <p class="subtitle" style="margin-bottom: 16px; font-size: 0.8rem;">
+          Upload your academic transcript, marks card, or resume. PRISM AI automatically extracts and populates your
+          subjects, grades, test scores, and extracurricular achievements.
+        </p>
+        <div class="dropzone" id="ingest-dropzone"
+          style="border: 1px dashed var(--border-bright); padding: 20px; text-align: center; cursor: pointer; background: var(--surface); border-radius: 4px;"
+          onclick="document.getElementById('ingest-file-input').click()">
+          <input type="file" id="ingest-file-input" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg"
+            style="display: none;" onchange="handleFileSelect(event)" />
+          <div style="font-weight: 600; color: var(--text-1); font-size: 0.85rem;">Drop Transcripts & Resumes here, or
+            <span style="color: var(--amber); text-decoration: underline;">click to browse</span></div>
+          <div style="font-size: 0.72rem; color: var(--text-3); margin-top: 4px;">Supports PDFs, Marksheets, Resumes,
+            and Text Files</div>
         </div>
-        <div class="form-row">
-          <div class="field">
-            <label>Board *</label>
-            <select id="sf-board">
-              <option value="CBSE">CBSE</option>
-              <option value="ICSE">ICSE</option>
-              <option value="State Board">State Board</option>
-              <option value="IB">IB</option>
-              <option value="A-Levels">A-Levels</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Class Level *</label>
-            <select id="sf-class">
-              <option value="10">Class 10</option>
-              <option value="11">Class 11</option>
-              <option value="12" selected>Class 12</option>
-            </select>
-          </div>
+        <div id="file-list-preview"
+          style="margin-top: 10px; font-size: 0.75rem; color: var(--text-2); font-family: var(--mono);"></div>
+        <button type="button" id="btn-auto-ingest" class="btn-run" onclick="uploadAndIngestDocuments()"
+          style="margin-top: 14px; width: 100%;">
+          extract & auto-populate profile →
+        </button>
+        <div id="ingest-status" style="margin-top: 10px; font-size: 0.75rem; font-family: var(--mono); display: none;">
         </div>
       </div>
 
-      <!-- Step 2: Subjects -->
-      <div class="form-card">
-        <div class="form-section-title">02 — your subjects</div>
-        <p class="field-hint">Select all subjects you are currently studying (or plan to study in Class 11/12).</p>
-        <div class="check-grid" id="sf-subjects"></div>
-        <div style="display: flex; gap: 8px; margin-top: 12px;">
-          <input type="text" id="sf-custom-subject-input" placeholder="Don't see your subject? Type custom subject name..." style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-          <button type="button" class="btn-ghost-sm" onclick="addCustomBoardSubject()">+ add subject</button>
-        </div>
-      </div>
+      <form id="student-form" class="student-form" onsubmit="submitProfile(event)">
 
-      <!-- Step 3: Targets -->
-      <div class="form-card">
-        <div class="form-section-title">03 — target pathways</div>
-        <p class="field-hint">Add target pathways you are aiming for (enter what you want to study at what university).</p>
-
-        <!-- Selected targets list -->
-        <div class="selected-targets-container" id="sf-selected-targets-list" style="margin-bottom: 20px;"></div>
-
-        <!-- Add custom target form fields -->
-        <div class="add-target-box" style="border: 1px dashed var(--border); padding: 16px; margin-top: 12px;">
-          <div class="form-section-title" style="font-size: 0.75rem; margin-bottom: 12px;">add target pathway</div>
-          
+        <!-- Step 1: Basics -->
+        <div class="form-card">
+          <div class="form-section-title">01 — basics</div>
           <div class="form-row">
-            <div class="field field-wide" style="position:relative">
-              <label>University / Provider *</label>
-              <input type="text" id="sf-target-uni" placeholder="e.g. University of Cambridge" oninput="searchStudentUnis(this.value)" autocomplete="off" />
-              <div id="sf-uni-results" class="autocomplete-results hidden"></div>
+            <div class="field field-wide">
+              <label>Your Full Name *</label>
+              <input type="text" id="sf-name" required placeholder="e.g. Aarav Sharma" />
             </div>
           </div>
-
-          <div class="form-row">
-            <div class="field field-wide" style="position:relative">
-              <label>Course Name *</label>
-              <input type="text" id="sf-target-name" placeholder="e.g. Computer Science" oninput="searchStudentCourses(this.value)" autocomplete="off" />
-              <div id="sf-course-results" class="autocomplete-results hidden"></div>
-            </div>
-          </div>
-
           <div class="form-row">
             <div class="field">
-              <label>Track *</label>
-              <select id="sf-target-track">
-                <option value="UK">United Kingdom</option>
-                <option value="US">United States</option>
-                <option value="India">India</option>
+              <label>Board *</label>
+              <select id="sf-board">
+                <option value="CBSE">CBSE</option>
+                <option value="ICSE">ICSE</option>
+                <option value="State Board">State Board</option>
+                <option value="IB">IB</option>
+                <option value="A-Levels">A-Levels</option>
               </select>
             </div>
             <div class="field">
-              <label>Min Portfolio Tier</label>
-              <select id="sf-target-portfolio">
-                <option value="3">Tier 3 (School)</option>
-                <option value="2">Tier 2 (National)</option>
-                <option value="1">Tier 1 (International)</option>
+              <label>Class Level *</label>
+              <select id="sf-class">
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12" selected>Class 12</option>
               </select>
             </div>
           </div>
-
-          <div class="field" style="margin-bottom:14px; margin-top:14px;">
-            <label>Compulsory Board Subjects (check all that apply)</label>
-            <div class="check-grid" id="sf-target-compulsory"></div>
-          </div>
-
-          <button type="button" class="btn-ghost-sm" id="btn-create-add-target" onclick="createAndAddTarget()">+ add pathway</button>
         </div>
-      </div>
 
-      <!-- Step 4: Grades -->
-      <div class="form-card">
-        <div class="form-section-title">04 — grades & test scores</div>
-        <div class="form-row">
-          <div class="field">
-            <label>Class 10 Aggregate %</label>
-            <input type="text" id="sf-g10" placeholder="e.g. 88%" />
-          </div>
-          <div class="field">
-            <label>Class 11 Aggregate %</label>
-            <input type="text" id="sf-g11" placeholder="e.g. 85%" />
-          </div>
-          <div class="field">
-            <label>Expected Board %</label>
-            <input type="text" id="sf-gexp" placeholder="e.g. 90%" />
+        <!-- Step 2: Subjects -->
+        <div class="form-card">
+          <div class="form-section-title">02 — your subjects</div>
+          <p class="field-hint">Select all subjects you are currently studying (or plan to study in Class 11/12).</p>
+          <div class="check-grid" id="sf-subjects"></div>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <input type="text" id="sf-custom-subject-input"
+              placeholder="Don't see your subject? Type custom subject name..."
+              style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
+            <button type="button" class="btn-ghost-sm" onclick="addCustomBoardSubject()">+ add subject</button>
           </div>
         </div>
 
-        <!-- Grade 10 Individual Subject Marks -->
-        <div class="field" style="margin-top: 16px; margin-bottom: 16px;">
-          <label>Grade 10 Subject Marks (0-100)</label>
-          <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Enter your individual Class 10 subject marks.</p>
-          <div id="sf-g10-subject-grades-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;"></div>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <input type="text" id="sf-g10-custom-subj" placeholder="Add Grade 10 subject (e.g. French, Social Science)..." style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-            <button type="button" class="btn-ghost-sm" onclick="addG10SubjectRow()">+ add Grade 10 subject</button>
+        <!-- Step 3: Targets -->
+        <div class="form-card">
+          <div class="form-section-title">03 — target pathways</div>
+          <p class="field-hint">Add target pathways you are aiming for (enter what you want to study at what
+            university).</p>
+
+          <!-- Selected targets list -->
+          <div class="selected-targets-container" id="sf-selected-targets-list" style="margin-bottom: 20px;"></div>
+
+          <!-- Add custom target form fields -->
+          <div class="add-target-box" style="border: 1px dashed var(--border); padding: 16px; margin-top: 12px;">
+            <div class="form-section-title" style="font-size: 0.75rem; margin-bottom: 12px;">add target pathway</div>
+
+            <div class="form-row">
+              <div class="field field-wide" style="position:relative">
+                <label>University / Provider *</label>
+                <input type="text" id="sf-target-uni" placeholder="e.g. University of Cambridge"
+                  oninput="searchStudentUnis(this.value)" autocomplete="off" />
+                <div id="sf-uni-results" class="autocomplete-results hidden"></div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field field-wide" style="position:relative">
+                <label>Course Name *</label>
+                <input type="text" id="sf-target-name" placeholder="e.g. Computer Science"
+                  oninput="searchStudentCourses(this.value)" autocomplete="off" />
+                <div id="sf-course-results" class="autocomplete-results hidden"></div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label>Track *</label>
+                <select id="sf-target-track">
+                  <option value="UK">United Kingdom</option>
+                  <option value="US">United States</option>
+                  <option value="India">India</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Min Portfolio Tier</label>
+                <select id="sf-target-portfolio">
+                  <option value="3">Tier 3 (School)</option>
+                  <option value="2">Tier 2 (National)</option>
+                  <option value="1">Tier 1 (International)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field" style="margin-bottom:14px; margin-top:14px;">
+              <label>Compulsory Board Subjects (check all that apply)</label>
+              <div class="check-grid" id="sf-target-compulsory"></div>
+            </div>
+
+            <button type="button" class="btn-ghost-sm" id="btn-create-add-target" onclick="createAndAddTarget()">+ add
+              pathway</button>
           </div>
         </div>
 
-        <!-- Class 11/12 Individual Subject Marks -->
-        <div class="field" style="margin-bottom: 16px;" id="sf-subject-grades-section">
-          <label>Class 11/12 Expected Subject Marks (0-100)</label>
-          <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Expected marks for subjects selected in Step 02.</p>
-          <div id="sf-subject-grades-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;"></div>
-        </div>
-        <div class="form-row">
-          <div class="field">
-            <label>SAT Score (if taken)</label>
-            <input type="number" id="sf-sat" placeholder="e.g. 1480" min="400" max="1600" />
-          </div>
-          <div class="field">
-            <label>AP Exams Taken</label>
-            <div id="sf-ap-list" style="margin-bottom: 8px;"></div>
-            <div class="ap-picker-row" style="display: flex; gap: 6px;">
-              <select id="sf-ap-subject" style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
-                <option value="" disabled selected>Select AP Subject...</option>
-              </select>
-              <select id="sf-ap-score" style="width: 70px; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
-                <option value="5">5</option>
-                <option value="4">4</option>
-                <option value="3">3</option>
-                <option value="2">2</option>
-                <option value="1">1</option>
-              </select>
-              <button type="button" class="btn-ghost-sm" onclick="addAPFromSelect()">+ add</button>
+        <!-- Step 4: Grades -->
+        <div class="form-card">
+          <div class="form-section-title">04 — grades & test scores</div>
+          <div class="form-row">
+            <div class="field">
+              <label>Class 10 Aggregate %</label>
+              <input type="text" id="sf-g10" placeholder="e.g. 88%" />
+            </div>
+            <div class="field">
+              <label>Class 11 Aggregate %</label>
+              <input type="text" id="sf-g11" placeholder="e.g. 85%" />
+            </div>
+            <div class="field">
+              <label>Expected Board %</label>
+              <input type="text" id="sf-gexp" placeholder="e.g. 90%" />
             </div>
           </div>
+
+          <!-- Grade 10 Individual Subject Marks -->
+          <div class="field" style="margin-top: 16px; margin-bottom: 16px;">
+            <label>Grade 10 Subject Marks (0-100)</label>
+            <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Enter your individual
+              Class 10 subject marks.</p>
+            <div id="sf-g10-subject-grades-container"
+              style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+              <input type="text" id="sf-g10-custom-subj"
+                placeholder="Add Grade 10 subject (e.g. French, Social Science)..."
+                style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
+              <button type="button" class="btn-ghost-sm" onclick="addG10SubjectRow()">+ add Grade 10 subject</button>
+            </div>
+          </div>
+
+          <!-- Class 11/12 Individual Subject Marks -->
+          <div class="field" style="margin-bottom: 16px;" id="sf-subject-grades-section">
+            <label>Class 11/12 Expected Subject Marks (0-100)</label>
+            <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Expected marks for
+              subjects selected in Step 02.</p>
+            <div id="sf-subject-grades-container"
+              style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label>SAT Score (if taken)</label>
+              <input type="number" id="sf-sat" placeholder="e.g. 1480" min="400" max="1600" />
+            </div>
+            <div class="field">
+              <label>AP Exams Taken</label>
+              <div id="sf-ap-list" style="margin-bottom: 8px;"></div>
+              <div class="ap-picker-row" style="display: flex; gap: 6px;">
+                <select id="sf-ap-subject"
+                  style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
+                  <option value="" disabled selected>Select AP Subject...</option>
+                </select>
+                <select id="sf-ap-score"
+                  style="width: 70px; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
+                  <option value="5">5</option>
+                  <option value="4">4</option>
+                  <option value="3">3</option>
+                  <option value="2">2</option>
+                  <option value="1">1</option>
+                </select>
+                <button type="button" class="btn-ghost-sm" onclick="addAPFromSelect()">+ add</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:14px">
+            <label>CUET Domain Subjects (if applicable)</label>
+            <input type="text" id="sf-cuet" placeholder="comma-separated, e.g. Physics, Mathematics, English" />
+          </div>
         </div>
 
-        <div class="field" style="margin-top:14px">
-          <label>CUET Domain Subjects (if applicable)</label>
-          <input type="text" id="sf-cuet" placeholder="comma-separated, e.g. Physics, Mathematics, English" />
+        <!-- Step 5: Portfolio -->
+        <div class="form-card">
+          <div class="form-section-title">05 — extracurriculars & portfolio</div>
+          <p class="field-hint">Describe your activities and achievements. Our AI will automatically assess the impact
+            level — no need to classify them yourself.</p>
+          <div id="sf-portfolio-list"></div>
+          <button type="button" class="btn-ghost-sm" onclick="addStudentPortfolioRow()">+ add activity</button>
         </div>
-      </div>
 
-      <!-- Step 5: Portfolio -->
-      <div class="form-card">
-        <div class="form-section-title">05 — extracurriculars & portfolio</div>
-        <p class="field-hint">Describe your activities and achievements. Our AI will automatically assess the impact level — no need to classify them yourself.</p>
-        <div id="sf-portfolio-list"></div>
-        <button type="button" class="btn-ghost-sm" onclick="addStudentPortfolioRow()">+ add activity</button>
-      </div>
-
-      <button type="submit" class="btn-run btn-wide" id="sf-submit">submit & get audit results →</button>
-    </form>
+        <button type="submit" class="btn-run btn-wide" id="sf-submit">submit & get audit results →</button>
+      </form>
   </main>
 
   <!-- ═══ RESULTS ═══ -->
@@ -239,12 +271,17 @@
     <!-- PRISM AI Agent Console -->
     <div id="agent-console-card" class="form-card hidden" style="margin-bottom: 24px;">
       <div class="form-section-title">ai reasoning log</div>
-      <div class="terminal-container" style="background: #0f111a; border: 1px solid #1f2335; border-radius: 6px; padding: 16px; font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; height: 320px; overflow-y: auto; color: #a9b1d6; position: relative;">
-        <div class="terminal-header" style="position: sticky; top: -16px; left: -16px; right: -16px; background: #1a1b26; border-bottom: 1px solid #24283b; padding: 6px 16px; margin: -16px -16px 12px -16px; display: flex; align-items: center; justify-content: space-between;">
+      <div class="terminal-container"
+        style="background: #0f111a; border: 1px solid #1f2335; border-radius: 6px; padding: 16px; font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; height: 320px; overflow-y: auto; color: #a9b1d6; position: relative;">
+        <div class="terminal-header"
+          style="position: sticky; top: -16px; left: -16px; right: -16px; background: #1a1b26; border-bottom: 1px solid #24283b; padding: 6px 16px; margin: -16px -16px 12px -16px; display: flex; align-items: center; justify-content: space-between;">
           <div style="display: flex; gap: 6px;">
-            <span style="width: 10px; height: 10px; border-radius: 50%; background: #f7768e; display: inline-block;"></span>
-            <span style="width: 10px; height: 10px; border-radius: 50%; background: #e0af68; display: inline-block;"></span>
-            <span style="width: 10px; height: 10px; border-radius: 50%; background: #9ece6a; display: inline-block;"></span>
+            <span
+              style="width: 10px; height: 10px; border-radius: 50%; background: #f7768e; display: inline-block;"></span>
+            <span
+              style="width: 10px; height: 10px; border-radius: 50%; background: #e0af68; display: inline-block;"></span>
+            <span
+              style="width: 10px; height: 10px; border-radius: 50%; background: #9ece6a; display: inline-block;"></span>
           </div>
           <span style="font-size: 0.7rem; color: #565f89; text-transform: uppercase;">AI Reasoning Log</span>
         </div>
@@ -257,19 +294,26 @@
     </div>
 
     <!-- PRISM AI Pathway Advisor Chat -->
-    <div id="ai-advisor-card" class="form-card hidden" style="margin-top: 24px; border: 1px solid var(--border); padding: 16px; background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border-radius: 8px;">
+    <div id="ai-advisor-card" class="form-card hidden"
+      style="margin-top: 24px; border: 1px solid var(--border); padding: 16px; background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border-radius: 8px;">
       <div class="form-section-title" style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 1.1rem;">🤖</span> prism ai pathway advisor
       </div>
-      <p class="field-hint" style="margin-bottom: 12px;">Get agentic advice on how to improve your match score or address critical gaps.</p>
-      
-      <div id="ai-advisor-chat" style="max-height: 240px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; padding: 10px; background: rgba(15, 23, 42, 0.4); margin-bottom: 12px; font-size: 0.8rem; line-height: 1.5; color: var(--text-2); min-height: 80px;">
-        <div style="margin-bottom: 8px; color: var(--text-3); font-style: italic;">Ask me about "TMUA preparation", "Math requirements", or "extracurricular projects"!</div>
+      <p class="field-hint" style="margin-bottom: 12px;">Get agentic advice on how to improve your match score or
+        address critical gaps.</p>
+
+      <div id="ai-advisor-chat"
+        style="max-height: 240px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px; padding: 10px; background: rgba(15, 23, 42, 0.4); margin-bottom: 12px; font-size: 0.8rem; line-height: 1.5; color: var(--text-2); min-height: 80px;">
+        <div style="margin-bottom: 8px; color: var(--text-3); font-style: italic;">Ask me about "TMUA preparation",
+          "Math requirements", or "extracurricular projects"!</div>
       </div>
-      
+
       <div style="display: flex; gap: 8px;">
-        <input type="text" id="sf-chat-input" placeholder="Type your question to the advisor..." onkeydown="if(event.key==='Enter') sendStudentAdvisorMessage()" style="flex: 1; font-family: var(--mono); font-size: 0.78rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-        <button type="button" class="btn-run" onclick="sendStudentAdvisorMessage()" style="padding: 8px 16px; font-size: 0.78rem;">ask advisor</button>
+        <input type="text" id="sf-chat-input" placeholder="Type your question to the advisor..."
+          onkeydown="if(event.key==='Enter') sendStudentAdvisorMessage()"
+          style="flex: 1; font-family: var(--mono); font-size: 0.78rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
+        <button type="button" class="btn-run" onclick="sendStudentAdvisorMessage()"
+          style="padding: 8px 16px; font-size: 0.78rem;">ask advisor</button>
       </div>
     </div>
   </main>
@@ -286,6 +330,19 @@
     </div>
   </main>
 
+  <!-- ═══ SCHOLARSHIPS & AID ═══ -->
+  <main id="step-scholarships" class="hidden">
+    <div class="page-title-row">
+      <h1>Scholarship & Financial Aid Monitor</h1>
+      <p class="subtitle">AI-matched scholarships, grants, and financial aid recommendations based on your profile</p>
+    </div>
+
+    <div id="scholarships-body">
+      <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock scholarship
+        recommendations</div>
+    </div>
+  </main>
+
   <!-- ═══ SHORTLISTING ═══ -->
   <main id="step-shortlist" class="hidden">
     <div class="page-title-row">
@@ -297,7 +354,9 @@
       <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
         <div class="field" style="margin-bottom: 0;">
           <label>Search Colleges</label>
-          <input type="text" id="student-shortlist-search" placeholder="Type college name, course, or country..." oninput="filterStudentColleges()" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;" />
+          <input type="text" id="student-shortlist-search" placeholder="Type college name, course, or country..."
+            oninput="filterStudentColleges()"
+            style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;" />
         </div>
       </div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" id="student-colleges-grid">
@@ -316,50 +375,63 @@
     <div id="student-calendar-body">
       <div class="form-card" style="margin-bottom: 24px; padding: 18px; display: flex; justify-content: flex-end;">
         <div style="display: flex; gap: 16px; align-items: center; font-family: var(--mono); font-size: 0.72rem;">
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="stud-cal-filter-college" checked onchange="filterStudentCalendar()"/> <span style="color:var(--red);">■ College Deadlines</span></label>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="stud-cal-filter-exam" checked onchange="filterStudentCalendar()"/> <span style="color:var(--amber);">■ Entrance Exams</span></label>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="stud-cal-filter-competition" checked onchange="filterStudentCalendar()"/> <span style="color:var(--green);">■ Competitions</span></label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox"
+              id="stud-cal-filter-college" checked onchange="filterStudentCalendar()" /> <span
+              style="color:var(--red);">■ College Deadlines</span></label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox"
+              id="stud-cal-filter-exam" checked onchange="filterStudentCalendar()" /> <span
+              style="color:var(--amber);">■ Entrance Exams</span></label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox"
+              id="stud-cal-filter-competition" checked onchange="filterStudentCalendar()" /> <span
+              style="color:var(--green);">■ Competitions</span></label>
         </div>
       </div>
       <!-- Calendar Main Grid & Timeline Split Layout -->
       <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start;">
-        
+
         <!-- Interactive Grid Card -->
         <div class="form-card" style="padding: 16px; margin: 0;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <button type="button" class="btn-reset" onclick="navigateStudentCalendarMonth(-1)" style="padding: 4px 10px; font-size: 0.8rem;">◀</button>
-            <strong id="student-calendar-month-label" style="font-family: var(--mono); font-size: 0.85rem; text-transform: uppercase;">July 2026</strong>
-            <button type="button" class="btn-reset" onclick="navigateStudentCalendarMonth(1)" style="padding: 4px 10px; font-size: 0.8rem;">▶</button>
+            <button type="button" class="btn-reset" onclick="navigateStudentCalendarMonth(-1)"
+              style="padding: 4px 10px; font-size: 0.8rem;">◀</button>
+            <strong id="student-calendar-month-label"
+              style="font-family: var(--mono); font-size: 0.85rem; text-transform: uppercase;">July 2026</strong>
+            <button type="button" class="btn-reset" onclick="navigateStudentCalendarMonth(1)"
+              style="padding: 4px 10px; font-size: 0.8rem;">▶</button>
           </div>
-          
+
           <!-- Days of Week Header -->
-          <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-family: var(--mono); font-size: 0.6rem; color: var(--text-3); margin-bottom: 8px;">
+          <div
+            style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-family: var(--mono); font-size: 0.6rem; color: var(--text-3); margin-bottom: 8px;">
             <span>SU</span><span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span>
           </div>
-          
+
           <!-- Grid Cells -->
           <div id="student-calendar-grid-cells" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
             <!-- Populated dynamically -->
           </div>
         </div>
-        
+
         <!-- Detail List of Deadlines for the Month -->
         <div class="student-list" style="margin: 0;">
-          <div class="list-header" style="grid-template-columns: 100px 2fr 120px 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+          <div class="list-header"
+            style="grid-template-columns: 100px 2fr 120px 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
             <span class="lh-col">Date</span>
             <span class="lh-col">Deadline Event</span>
             <span class="lh-col">Type</span>
             <span class="lh-col">Description</span>
           </div>
           <div id="student-calendar-list" class="rows-container">
-            <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock calendar grid…</div>
+            <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock calendar grid…
+            </div>
           </div>
         </div>
-        
+
       </div>
     </div>
   </main>
 
   <script src="/static/student.js?v=9"></script>
 </body>
+
 </html>

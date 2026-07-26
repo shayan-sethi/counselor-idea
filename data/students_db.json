@@ -184,451 +184,6 @@
     ]
   },
   {
-    "name": "Extracted Student",
-    "class_level": 10,
-    "board": "IB",
-    "board_subjects": [],
-    "planned_class_11_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Economics",
-      "English"
-    ],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "202.0%",
-      "subjects": {
-        "English": 202.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "device (with a published patent applicat",
-        "description": "device (with a published patent application) recognized nationally. Award-winning",
-        "tier": 1
-      },
-      {
-        "activity": "INITIATIVES/PROJECTS",
-        "description": "INITIATIVES/PROJECTS",
-        "tier": 3
-      },
-      {
-        "activity": "Award and the Best Prototype award at Pl",
-        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
-        "tier": 3
-      },
-      {
-        "activity": "apj-abdul-kalam-ignited-minds-children-c",
-        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
-        "tier": 3
-      },
-      {
-        "activity": "\u2022 Sports: Swimmer with medals at the nat",
-        "description": "\u2022 Sports: Swimmer with medals at the national level, represented the country at",
-        "tier": 1
-      },
-      {
-        "activity": "\u2022 Maths: UKMT Senior Mathematics Competi",
-        "description": "\u2022 Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
-        "tier": 3
-      },
-      {
-        "activity": "Competition Gold Award",
-        "description": "Competition Gold Award",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_007",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "name": "Extracted Student",
-    "class_level": 10,
-    "board": "IB",
-    "board_subjects": [],
-    "planned_class_11_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Economics",
-      "English"
-    ],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "202.0%",
-      "subjects": {
-        "English": 202.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "device (with a published patent applicat",
-        "description": "device (with a published patent application) recognized nationally. Award-winning",
-        "tier": 1
-      },
-      {
-        "activity": "INITIATIVES/PROJECTS",
-        "description": "INITIATIVES/PROJECTS",
-        "tier": 3
-      },
-      {
-        "activity": "Award and the Best Prototype award at Pl",
-        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
-        "tier": 3
-      },
-      {
-        "activity": "apj-abdul-kalam-ignited-minds-children-c",
-        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
-        "tier": 3
-      },
-      {
-        "activity": "\u2022 Sports: Swimmer with medals at the nat",
-        "description": "\u2022 Sports: Swimmer with medals at the national level, represented the country at",
-        "tier": 1
-      },
-      {
-        "activity": "\u2022 Maths: UKMT Senior Mathematics Competi",
-        "description": "\u2022 Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
-        "tier": 3
-      },
-      {
-        "activity": "Competition Gold Award",
-        "description": "Competition Gold Award",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_008",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "name": "Extracted Student",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "202.0%",
-      "subjects": {
-        "English": 202.0
-      },
-      "g10_subjects": {}
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "device (with a published patent applicat",
-        "description": "device (with a published patent application) recognized nationally. Award-winning",
-        "tier": 1
-      },
-      {
-        "activity": "INITIATIVES/PROJECTS",
-        "description": "INITIATIVES/PROJECTS",
-        "tier": 3
-      },
-      {
-        "activity": "Award and the Best Prototype award at Pl",
-        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
-        "tier": 3
-      },
-      {
-        "activity": "apj-abdul-kalam-ignited-minds-children-c",
-        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
-        "tier": 3
-      },
-      {
-        "activity": "\u2022 Sports: Swimmer with medals at the nat",
-        "description": "\u2022 Sports: Swimmer with medals at the national level, represented the country at",
-        "tier": 1
-      },
-      {
-        "activity": "\u2022 Maths: UKMT Senior Mathematics Competi",
-        "description": "\u2022 Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
-        "tier": 3
-      },
-      {
-        "activity": "Competition Gold Award",
-        "description": "Competition Gold Award",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_009",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "subjects": {},
-      "g10_subjects": {
-        "Mathematics": 95.0,
-        "Physics": 95.0,
-        "Chemistry": 95.0,
-        "Computer Science": 95.0,
-        "English": 95.0,
-        "Spanish": 95.0,
-        "Geography": 95.0,
-        "Environmental Management": 95.0,
-        "Literature": 95.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "device (with a published patent application) ",
-        "description": "device (with a published patent application) recognized nationally. Award-winning",
-        "tier": 1
-      },
-      {
-        "activity": "EpiAlert is an innovative device developed by",
-        "description": "EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic",
-        "tier": 3
-      },
-      {
-        "activity": "Award and the Best Prototype award at Plaksha",
-        "description": "Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League.",
-        "tier": 3
-      },
-      {
-        "activity": "apj-abdul-kalam-ignited-minds-children-creati",
-        "description": "apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023-",
-        "tier": 3
-      },
-      {
-        "activity": "To reduce the widespread air pollution in the",
-        "description": "To reduce the widespread air pollution in the city, Saiansh developed a mobile",
-        "tier": 3
-      },
-      {
-        "activity": "Sports: Swimmer with medals at the national l",
-        "description": "Sports: Swimmer with medals at the national level, represented the country at",
-        "tier": 1
-      },
-      {
-        "activity": "Science: Interested in Physics advancements a",
-        "description": "Science: Interested in Physics advancements and research, worked as part of",
-        "tier": 3
-      },
-      {
-        "activity": "Maths: UKMT Senior Mathematics Competition Go",
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths",
-        "tier": 1
-      },
-      {
-        "activity": "Competition Gold Award",
-        "description": "Competition Gold Award",
-        "tier": 1
-      }
-    ],
-    "targets": [],
-    "id": "STU_010",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "subjects": {},
-      "g10_subjects": {
-        "Mathematics": 95.0,
-        "Physics": 95.0,
-        "Chemistry": 95.0,
-        "Computer Science": 95.0,
-        "English": 95.0,
-        "Spanish": 95.0,
-        "Geography": 95.0,
-        "Environmental Management": 95.0,
-        "Literature": 95.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "IBDP Grade 11 student at The Shri Ram Sc",
-        "description": "IBDP Grade 11 student at The Shri Ram School, Moulsari, with a strong interest for engineering, innovation, AI, and sustainability. Creator of EpiAlert, a seizure detection device (with a published patent application) recognized nationally. Award-winning innovator and international-level swimmer representing India. Passionate about leveraging technology for social impact and real-world problem solving. EDUCATION The Shri Ram School, Moulsari",
-        "tier": 1
-      },
-      {
-        "activity": "IB Diploma Programme (Currently Pursuing",
-        "description": "IB Diploma Programme (Currently Pursuing), Grade 11",
-        "tier": 3
-      },
-      {
-        "activity": "Higher Level (HL)",
-        "description": "Higher Level (HL): Physics, Chemistry, Economics, Mathematics AA",
-        "tier": 3
-      },
-      {
-        "activity": "Standard Level (SL)",
-        "description": "Standard Level (SL): English, Spanish",
-        "tier": 3
-      },
-      {
-        "activity": "Previously completed IGCSE (Grades 6\u201310)",
-        "description": "Previously completed IGCSE (Grades 6\u201310)",
-        "tier": 3
-      },
-      {
-        "activity": "Consistent Grade Topper across all acade",
-        "description": "Consistent Grade Topper across all academic years",
-        "tier": 3
-      },
-      {
-        "activity": "Achieved 9A* in IGCSE Board Examinations (Feb",
-        "description": "Achieved 9A* in IGCSE Board Examinations (Feb-March 2026) in:",
-        "tier": 3
-      },
-      {
-        "activity": "First Language English",
-        "description": "First Language English",
-        "tier": 3
-      },
-      {
-        "activity": "Literature in English",
-        "description": "Literature in English",
-        "tier": 3
-      },
-      {
-        "activity": "Computer Science",
-        "description": "Computer Science",
-        "tier": 3
-      },
-      {
-        "activity": "Mathematics International",
-        "description": "Mathematics International",
-        "tier": 1
-      },
-      {
-        "activity": "Environmental Management",
-        "description": "Environmental Management",
-        "tier": 3
-      },
-      {
-        "activity": "Standardised Testing",
-        "description": "Standardised Testing:",
-        "tier": 3
-      },
-      {
-        "activity": "SAT",
-        "description": "SAT: 1570 (790 Maths, 780 English RW) \u2013 May 2026 EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
-        "tier": 1
-      },
-      {
-        "activity": "Device has been recognized nationally, with t",
-        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
-        "tier": 1
-      },
-      {
-        "activity": "Pollution Alert To reduce the widespread",
-        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
-        "tier": 1
-      },
-      {
-        "activity": "Technology",
-        "description": "Technology: Python programming, ML development, avid tech quizzer",
-        "tier": 3
-      },
-      {
-        "activity": "Sports",
-        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
-        "tier": 1
-      },
-      {
-        "activity": "Science",
-        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
-        "tier": 1
-      },
-      {
-        "activity": "Maths",
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
-        "tier": 1
-      },
-      {
-        "activity": "Scuba Diving",
-        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_011",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
     "name": "Aarav Mehta",
     "class_level": 12,
     "board": "CBSE",
@@ -1031,157 +586,6 @@
     },
     "portfolio": [
       {
-        "activity": "IBDP Grade 11 student at The Shri Ram Sc",
-        "description": "IBDP Grade 11 student at The Shri Ram School, Moulsari, with a strong interest for engineering, innovation, AI, and sustainability. Creator of EpiAlert, a seizure detection device (with a published patent application) recognized nationally. Award-winning innovator and international-level swimmer representing India. Passionate about leveraging technology for social impact and real-world problem solving. EDUCATION The Shri Ram School, Moulsari",
-        "tier": 1
-      },
-      {
-        "activity": "IB Diploma Programme (Currently Pursuing",
-        "description": "IB Diploma Programme (Currently Pursuing), Grade 11",
-        "tier": 3
-      },
-      {
-        "activity": "Higher Level (HL)",
-        "description": "Higher Level (HL): Physics, Chemistry, Economics, Mathematics AA",
-        "tier": 3
-      },
-      {
-        "activity": "Standard Level (SL)",
-        "description": "Standard Level (SL): English, Spanish",
-        "tier": 3
-      },
-      {
-        "activity": "Previously completed IGCSE (Grades 6\u201310)",
-        "description": "Previously completed IGCSE (Grades 6\u201310)",
-        "tier": 3
-      },
-      {
-        "activity": "Consistent Grade Topper across all acade",
-        "description": "Consistent Grade Topper across all academic years",
-        "tier": 3
-      },
-      {
-        "activity": "Achieved 9A* in IGCSE Board Examinations (Feb",
-        "description": "Achieved 9A* in IGCSE Board Examinations (Feb-March 2026) in:",
-        "tier": 3
-      },
-      {
-        "activity": "First Language English",
-        "description": "First Language English",
-        "tier": 3
-      },
-      {
-        "activity": "Literature in English",
-        "description": "Literature in English",
-        "tier": 3
-      },
-      {
-        "activity": "Computer Science",
-        "description": "Computer Science",
-        "tier": 3
-      },
-      {
-        "activity": "Mathematics International",
-        "description": "Mathematics International",
-        "tier": 1
-      },
-      {
-        "activity": "Environmental Management",
-        "description": "Environmental Management",
-        "tier": 3
-      },
-      {
-        "activity": "Standardised Testing",
-        "description": "Standardised Testing:",
-        "tier": 3
-      },
-      {
-        "activity": "SAT",
-        "description": "SAT: 1570 (790 Maths, 780 English RW) \u2013 May 2026 EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
-        "tier": 1
-      },
-      {
-        "activity": "Device has been recognized nationally, with t",
-        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
-        "tier": 1
-      },
-      {
-        "activity": "Pollution Alert To reduce the widespread",
-        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
-        "tier": 1
-      },
-      {
-        "activity": "Technology",
-        "description": "Technology: Python programming, ML development, avid tech quizzer",
-        "tier": 3
-      },
-      {
-        "activity": "Sports",
-        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
-        "tier": 1
-      },
-      {
-        "activity": "Science",
-        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
-        "tier": 1
-      },
-      {
-        "activity": "Maths",
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
-        "tier": 1
-      },
-      {
-        "activity": "Scuba Diving",
-        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_014",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "subjects": {},
-      "g10_subjects": {
-        "Mathematics": 95.0,
-        "Physics": 95.0,
-        "Chemistry": 95.0,
-        "Computer Science": 95.0,
-        "English": 95.0,
-        "Spanish": 95.0,
-        "Geography": 95.0,
-        "Environmental Management": 95.0,
-        "Literature": 95.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
         "activity": "EpiAlert EpiAlert is an innovative devic",
         "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
         "tier": 1
@@ -1461,6 +865,92 @@
     ],
     "targets": [
       "CUSTOM_COMPUTER_SCIENCE_1"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_018",
+    "name": "ABCD EFGH",
+    "class_level": 11,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics Analysis & Approaches (HL/SL)",
+      "Physics (HL/SL)",
+      "Chemistry (HL/SL)",
+      "English A Literature (HL/SL)",
+      "Economics (HL/SL)"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "95",
+      "class_10_subjects": {
+        "Mathematics": 95,
+        "Science": 75,
+        "Social Science": 80,
+        "English": 75,
+        "Hindi / Second Language": 70
+      },
+      "subjects": {}
+    },
+    "standardized_tests": {
+      "SAT": 1420
+    },
+    "portfolio": [
+      {
+        "activity": "Math Olympiad",
+        "description": "Gold Medal",
+        "tier": 1
+      }
+    ],
+    "targets": [
+      "CUSTOM_ENGINEERING_2"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_019",
+    "name": "ABCD EFGH",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics Analysis & Approaches (HL/SL)",
+      "Physics (HL/SL)",
+      "Chemistry (HL/SL)",
+      "English A Literature (HL/SL)",
+      "Economics (HL/SL)"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "95",
+      "class_10_subjects": {
+        "Mathematics": 95,
+        "Science": 75,
+        "Social Science": 80,
+        "English": 75,
+        "Hindi / Second Language": 70
+      },
+      "subjects": {}
+    },
+    "standardized_tests": {
+      "SAT": 1420
+    },
+    "portfolio": [
+      {
+        "activity": "Math Olympiad",
+        "description": "Gold Medal",
+        "tier": 1
+      }
+    ],
+    "targets": [
+      "CUSTOM_ENGINEERING_2"
     ],
     "status": {
       "cuet_form_submitted": false,
