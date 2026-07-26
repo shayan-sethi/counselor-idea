@@ -1886,16 +1886,20 @@ function filterCollegesList() {
   container.innerHTML = '';
   
   const shortlisted = student.shortlisted_colleges || [];
-  
-  collegesList.forEach(c => {
+  let renderCount = 0;
+  for (let i = 0; i < collegesList.length; i++) {
+    const c = collegesList[i];
     const matchQuery = !query || 
       c.name.toLowerCase().includes(query) || 
       c.country.toLowerCase().includes(query) ||
       c.courses.some(crs => crs.toLowerCase().includes(query));
       
-    if (!matchQuery) return;
+    if (!matchQuery) continue;
     
     const isShortlisted = shortlisted.includes(c.id);
+    if (!isShortlisted && renderCount >= 50) continue;
+    
+    renderCount++;
     const card = document.createElement('div');
     card.className = 'form-card';
     card.style.padding = '18px';

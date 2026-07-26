@@ -1199,16 +1199,21 @@ async function filterStudentColleges() {
     const sRes = await fetch(`/api/students/${createdStudentId}`);
     const student = await sRes.json();
     const shortlisted = student.shortlisted_colleges || [];
-
-    studentCollegesList.forEach(c => {
+    let renderCount = 0;
+    for (let i = 0; i < studentCollegesList.length; i++) {
+      const c = studentCollegesList[i];
       const matchQuery = !query ||
         c.name.toLowerCase().includes(query) ||
         c.country.toLowerCase().includes(query) ||
         c.courses.some(crs => crs.toLowerCase().includes(query));
 
-      if (!matchQuery) return;
-
+      if (!matchQuery) continue;
+      
       const isShortlisted = shortlisted.includes(c.id);
+      if (!isShortlisted && renderCount >= 50) continue;
+      
+      renderCount++;
+
       const card = document.createElement('div');
       card.className = 'form-card';
       card.style.padding = '18px';
