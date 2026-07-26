@@ -859,7 +859,7 @@ def load_colleges():
                     "deadlines": deadlines,
                     "required_exams": required_exams,
                     "subject_requirements": subject_requirements,
-                    "expected_sat": str(row.get("SAT_AVG", "N/A"))
+                    "expected_sat": str(int(row["SAT_AVG"])) if pd.notna(row.get("SAT_AVG")) and str(row.get("SAT_AVG")) not in ["N/A", "nan"] else "N/A"
                 })
                 
     # Add UK
