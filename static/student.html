@@ -21,6 +21,7 @@
       <button class="tab active" id="tab-profile" onclick="showStep('profile')">your profile</button>
       <button class="tab" id="tab-results" onclick="showStep('results')">audit results</button>
       <button class="tab" id="tab-radar" onclick="showStep('radar')">opportunity radar</button>
+      <button class="tab" id="tab-scholarships" onclick="showStep('scholarships')">scholarships & aid</button>
     </nav>
     <div class="topbar-right">
       <a href="/" class="student-link">← counselor view</a>
@@ -281,6 +282,18 @@
 
     <div id="radar-body">
       <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock radar matches</div>
+    </div>
+  </main>
+
+  <!-- ═══ SCHOLARSHIPS & AID ═══ -->
+  <main id="step-scholarships" class="hidden">
+    <div class="page-title-row">
+      <h1>Scholarship & Financial Aid Monitor</h1>
+      <p class="subtitle">AI-matched scholarships, grants, and financial aid recommendations based on your profile</p>
+    </div>
+
+    <div id="scholarships-body">
+      <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock scholarship recommendations</div>
     </div>
   </main>
 

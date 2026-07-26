@@ -95,5 +95,84 @@
     "description": "One of the largest and most prestigious high school mathematics competitions in the world, run by students at Harvard and MIT.",
     "fee": "Paid",
     "url": "https://www.hmmt.co/"
+  },
+  {
+    "id": "cmovyeapf0002j718h1ws7ae1",
+    "name": "Science in School Student Writing Contest 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Elective English",
+      "Biology",
+      "History",
+      "Political Science",
+      "Economics",
+      "Physics",
+      "Computer Science",
+      "English Core",
+      "Chemistry",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-08-01",
+    "portfolio_tier": 2,
+    "description": "Science in School Student Writing Contest 2026 is a writing competition listed under International / Other for ages 14-19. Secondary students. Registration deadline 1 Aug 2026. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmovyeapf0002j718h1ws7ae1"
+  },
+  {
+    "id": "cmmgrmg7b0004vnt9caqcd9ni",
+    "name": "The Bar Mock Trial Competition",
+    "type": "Competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 10,
+    "max_class_level": 12,
+    "deadline": "2026-09-09",
+    "portfolio_tier": 2,
+    "description": "The Bar Mock Trial Competition is a other competition based in United Kingdom for ages 15-18. Years 10-13 (England/Wales), years 11-14 (NI), S4-S6 (Scotland). Registration deadline 9 Sept 2026. Fee: \u00a3250 standard entry; \u00a3330 Bar Mock Trial PLUS.",
+    "fee": "\u00a3250 standard entry; \u00a3330 Bar Mock Trial PLUS",
+    "url": "https://competemap.com/competitions/cmmgrmg7b0004vnt9caqcd9ni"
+  },
+  {
+    "id": "cmqp5iid6000nie04tcku76tr",
+    "name": "ESU Performing Shakespeare Competition",
+    "type": "Competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 10,
+    "deadline": "2026-09-16",
+    "portfolio_tier": 2,
+    "description": "ESU Performing Shakespeare Competition is a other competition based in United Kingdom for ages 11-14. Ages 11-14 (Years 7-9); Key Stage 3; home-schooled pupils in England and Wales. Registration deadline 16 Sept 2026. Fee: \u00a365-\u00a375 (one or two entries per school); subsidies and fee waivers available for schools with high levels of FSM and EAL students.",
+    "fee": "\u00a365-\u00a375 (one or two entries per school); subsidies and fee waivers available for schools with high levels of FSM and EAL students",
+    "url": "https://competemap.com/competitions/cmqp5iid6000nie04tcku76tr"
+  },
+  {
+    "id": "cmm3j7bdn0003j7j6z39o2hkg",
+    "name": "Trinity College Cambridge Gould Prize for Essays in English Literature 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Elective English",
+      "History",
+      "Political Science",
+      "Economics",
+      "English Core"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-07-31",
+    "portfolio_tier": 2,
+    "description": "Trinity College Cambridge Gould Prize for Essays in English Literature 2026 is a writing competition listed under International / Other for ages 16-18. Year 12 / Lower Sixth or international equivalent. Registration deadline 31 Jul 2026. Fee: Free / no entry fee listed.",
+    "fee": "Free / no entry fee listed",
+    "url": "https://competemap.com/competitions/cmm3j7bdn0003j7j6z39o2hkg"
   }
 ]

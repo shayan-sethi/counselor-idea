@@ -580,11 +580,15 @@ function showStep(step) {
   document.getElementById('step-results').classList.toggle('hidden', step !== 'results');
   const rEl = document.getElementById('step-radar');
   if (rEl) rEl.classList.toggle('hidden', step !== 'radar');
+  const sEl = document.getElementById('step-scholarships');
+  if (sEl) sEl.classList.toggle('hidden', step !== 'scholarships');
   
   document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
   const rTab = document.getElementById('tab-radar');
   if (rTab) rTab.classList.toggle('active', step === 'radar');
+  const sTab = document.getElementById('tab-scholarships');
+  if (sTab) sTab.classList.toggle('active', step === 'scholarships');
 
   const advisorCard = document.getElementById('ai-advisor-card');
   if (advisorCard && step !== 'results') {
@@ -593,6 +597,8 @@ function showStep(step) {
   
   if (step === 'radar') {
     renderStudentRadar();
+  } else if (step === 'scholarships') {
+    renderStudentScholarships();
   }
 }
 
@@ -1123,4 +1129,83 @@ async function renderStudentRadar() {
 }
 window.renderStudentRadar = renderStudentRadar;
 
+// ══════════════════════════════════════════════
+//  SCHOLARSHIP MONITOR
+// ══════════════════════════════════════════════
 
+async function renderStudentScholarships() {
+  const body = document.getElementById('scholarships-body');
+  if (!body) return;
+  
+  if (!createdStudentId) {
+    body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock scholarship recommendations</div>';
+    return;
+  }
+  
+  body.innerHTML = '<div class="loading-row"><span class="blink">▌</span> AI agent is evaluating your profile against available scholarships...</div>';
+  
+  try {
+    const res = await fetch(`/api/match_scholarships/${createdStudentId}`);
+    const matches = await res.json();
+    
+    if (!matches || matches.length === 0) {
+      body.innerHTML = '<div class="loading-row">No matching scholarships found for your current profile. Try adjusting target pathways or subjects.</div>';
+      return;
+    }
+    
+    let html = `
+      <section class="student-list" style="margin-top:20px;">
+        <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+          <span class="lh-col">Scholarship</span>
+          <span class="lh-col">Deadline</span>
+          <span class="lh-col">Match Score</span>
+          <span class="lh-col">AI Rationale (Why & Actions)</span>
+        </div>
+        <div class="rows-container">
+    `;
+    
+    matches.forEach(m => {
+      let dlHtml = '—';
+      if (m.scholarship.deadline) {
+        if (m.days_remaining !== null) {
+          if (m.days_remaining < 0) {
+            dlHtml = `<span style="color:var(--text-3);">Closed</span>`;
+          } else {
+            dlHtml = `<span style="color:${m.is_urgent ? 'var(--red)' : 'var(--text-2)'}; font-weight:600;">${m.scholarship.deadline}<br/><small style="font-family:var(--mono); font-size:0.6rem;">(${m.days_remaining} days left)</small></span>`;
+          }
+        } else {
+          dlHtml = `<span>${m.scholarship.deadline}</span>`;
+        }
+      }
+      
+      const scoreColor = m.match_score >= 80 ? 'var(--green)' : m.match_score >= 50 ? 'var(--amber)' : 'var(--red)';
+      
+      html += `
+        <div class="stu-row" style="grid-template-columns: 2fr 1fr 1fr 2fr; cursor: default;">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <strong style="font-size:0.85rem; color:var(--text-1);">${m.scholarship.name}</strong>
+            <span style="font-size:0.68rem; color:var(--text-3); font-family:var(--mono);">${m.scholarship.type} · ${m.scholarship.provider}</span>
+            <span style="font-size:0.65rem; color:var(--amber); font-weight:600; margin-top:2px;">Award: ${m.scholarship.award_value}</span>
+          </div>
+          <div style="font-size:0.75rem;">${dlHtml}</div>
+          <div style="font-family:var(--mono); font-weight:700; color:${scoreColor}; font-size:0.85rem;">${m.match_score}% Match</div>
+          <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">
+            <div style="margin-bottom:6px;"><strong style="color:var(--text-1);">Why:</strong> ${m.why}</div>
+            <div style="color:var(--amber);"><strong style="color:var(--amber);">Actions needed:</strong> ${m.actions_needed}</div>
+            ${m.scholarship.url ? `<a href="${m.scholarship.url}" target="_blank" class="student-link" style="display:inline-block; margin-top:6px; font-size:0.68rem; font-family:var(--mono);">visit official link ↗</a>` : ''}
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `
+        </div>
+      </section>
+    `;
+    body.innerHTML = html;
+  } catch (err) {
+    console.error("Error loading scholarships:", err);
+    body.innerHTML = '<div class="loading-row" style="color:var(--red);">✕ failed to load scholarships</div>';
+  }
+}
+window.renderStudentScholarships = renderStudentScholarships;
