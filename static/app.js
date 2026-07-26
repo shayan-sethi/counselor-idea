@@ -1925,10 +1925,22 @@ function filterCollegesList() {
         <span style="color:var(--text-2);">${c.courses.join(', ')}</span>
       </div>
       
+      ${c.subject_requirements ? `
+      <div style="margin-bottom:10px; font-size:0.75rem;">
+        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Subject Requirements:</strong>
+        <span style="color:var(--text-2);">${c.subject_requirements.join(', ')}</span>
+      </div>` : ''}
+      
       <div style="margin-bottom:10px; font-size:0.75rem;">
         <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Required Exams:</strong>
         <span style="font-family:var(--mono); font-weight:700; color:var(--amber);">${c.required_exams.join(', ')}</span>
       </div>
+
+      ${c.expected_sat && c.expected_sat !== "N/A" && c.expected_sat !== "nan" ? `
+      <div style="margin-bottom:10px; font-size:0.75rem;">
+        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Expected SAT:</strong>
+        <span style="font-family:var(--mono); font-weight:700; color:var(--green);">${c.expected_sat}</span>
+      </div>` : ''}
 
       <div style="border-top:1px dashed var(--border); padding-top:8px;">
         <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Admissions Deadlines:</strong>

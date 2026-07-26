@@ -66,7 +66,7 @@ Return a JSON array of objects, one for each evaluated scholarship. Your entire 
         
         try:
             model = genai.GenerativeModel(
-                model_name="gemini-2.5-flash",
+                model_name="gemini-2.0-flash",
                 generation_config={"temperature": 0.1}
             )
             response = model.generate_content(prompt)

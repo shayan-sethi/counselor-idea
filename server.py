@@ -201,28 +201,78 @@ def api_model_metrics():
 
 # ── UK Course Database Search Endpoints ──
 
+COLLEGES_CACHE = None
+
 @app.route("/api/search_unis")
 def api_search_unis():
     query = request.args.get("q", "").strip().lower()
-    df_path = os.path.join(BASE_DIR, "data", "cleaned_courses_dataset.csv")
-    if not os.path.exists(df_path):
-        return jsonify([])
+    uk_df_path = os.path.join(BASE_DIR, "data", "cleaned_courses_dataset.csv")
+    us_df_path = os.path.join(BASE_DIR, "data", "cleaned_us_colleges.csv")
+    ind_json_path = os.path.join(BASE_DIR, "data", "indian_unis.json")
+
+    results = []
     
-    try:
-        df = pd.read_csv(df_path, usecols=["LEGAL_NAME"])
-        unis = df["LEGAL_NAME"].dropna().unique()
+    # UK
+    if os.path.exists(uk_df_path):
+        df_uk = pd.read_csv(uk_df_path, usecols=["LEGAL_NAME"])
+        uk_unis = df_uk["LEGAL_NAME"].dropna().unique()
         if query:
-            filtered = [u for u in unis if query in u.lower()]
+            uk_filtered = [u for u in uk_unis if query in u.lower()]
         else:
-            filtered = list(unis[:50])
-        return jsonify(sorted(filtered))
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+            uk_filtered = list(uk_unis[:20])
+        results.extend([{"name": str(u), "country": "UK"} for u in uk_filtered])
+        
+    # US
+    if os.path.exists(us_df_path):
+        df_us = pd.read_csv(us_df_path, usecols=["INSTNM"])
+        us_unis = df_us["INSTNM"].dropna().unique()
+        if query:
+            us_filtered = [u for u in us_unis if query in u.lower()]
+        else:
+            us_filtered = list(us_unis[:20])
+        results.extend([{"name": str(u), "country": "US"} for u in us_filtered])
+        
+    # India
+    if os.path.exists(ind_json_path):
+        with open(ind_json_path, "r", encoding="utf-8") as f:
+            ind_data = json.load(f)
+            ind_unis = [u["name"] for u in ind_data]
+            if query:
+                ind_filtered = [u for u in ind_unis if query in u.lower()]
+            else:
+                ind_filtered = list(ind_unis[:20])
+            results.extend([{"name": str(u), "country": "India"} for u in ind_filtered])
+            
+    # Sort and take top N if large
+    results = sorted(results, key=lambda x: x["name"])
+    return jsonify(results[:50] if not query else results)
 
 @app.route("/api/search_courses")
 def api_search_courses():
     uni = request.args.get("uni", "").strip()
     query = request.args.get("q", "").strip().lower()
+    
+    # Quick check for Indian
+    ind_json_path = os.path.join(BASE_DIR, "data", "indian_unis.json")
+    if os.path.exists(ind_json_path):
+        with open(ind_json_path, "r", encoding="utf-8") as f:
+            ind_data = json.load(f)
+            for u in ind_data:
+                if u["name"].lower() == uni.lower():
+                    results = [{"title": c, "subject_group": None, "tariff": None} for c in u.get("courses", [])]
+                    if query:
+                        results = [r for r in results if query in r["title"].lower()]
+                    return jsonify(results)
+                    
+    # Quick check for US
+    us_df_path = os.path.join(BASE_DIR, "data", "cleaned_us_colleges.csv")
+    if os.path.exists(us_df_path):
+        df_us = pd.read_csv(us_df_path, usecols=["INSTNM"])
+        us_names = set(df_us["INSTNM"].str.lower().dropna())
+        if uni.lower() in us_names:
+            return jsonify([{"title": "Undergraduate Bachelors Program", "subject_group": "Generic", "tariff": None}])
+
+    # UK
     df_path = os.path.join(BASE_DIR, "data", "cleaned_courses_dataset.csv")
     if not os.path.exists(df_path):
         return jsonify([])
@@ -752,10 +802,78 @@ COLLEGES_PATH = os.path.join(BASE_DIR, "data", "colleges_db.json")
 EXAMS_PATH = os.path.join(BASE_DIR, "data", "exams_db.json")
 
 def load_colleges():
+    global COLLEGES_CACHE
+    if COLLEGES_CACHE is not None:
+        return COLLEGES_CACHE
+
+    # Base colleges from colleges_db.json
+    colleges = []
     if os.path.exists(COLLEGES_PATH):
-        with open(COLLEGES_PATH, "r") as f:
-            return json.load(f)
-    return []
+        with open(COLLEGES_PATH, "r", encoding="utf-8") as f:
+            colleges.extend(json.load(f))
+            
+    # Add Indian
+    ind_json_path = os.path.join(BASE_DIR, "data", "indian_unis.json")
+    if os.path.exists(ind_json_path):
+        with open(ind_json_path, "r", encoding="utf-8") as f:
+            ind_data = json.load(f)
+            for item in ind_data:
+                if not any(c["id"] == item["id"] for c in colleges):
+                    colleges.append(item)
+                    
+    # Add US
+    us_df_path = os.path.join(BASE_DIR, "data", "cleaned_us_colleges.csv")
+    if os.path.exists(us_df_path):
+        df_us = pd.read_csv(us_df_path)
+        for _, row in df_us.iterrows():
+            cid = f"US_{row['UNITID']}"
+            name = str(row['INSTNM'])
+            if not any(c["name"] == name for c in colleges):
+                try:
+                    deadlines = json.loads(str(row.get('DEADLINES', '[]')))
+                except:
+                    deadlines = []
+                try:
+                    subject_requirements = json.loads(str(row.get('SUBJECT_REQUIREMENTS', '[]')))
+                except:
+                    subject_requirements = []
+                try:
+                    required_exams = json.loads(str(row.get('REQUIRED_EXAMS', '[]')))
+                except:
+                    required_exams = []
+
+                colleges.append({
+                    "id": cid,
+                    "name": name,
+                    "country": "US",
+                    "courses": ["Undergraduate Program"],
+                    "deadlines": deadlines,
+                    "required_exams": required_exams,
+                    "subject_requirements": subject_requirements,
+                    "expected_sat": str(row.get("SAT_AVG", "N/A"))
+                })
+                
+    # Add UK
+    uk_df_path = os.path.join(BASE_DIR, "data", "cleaned_courses_dataset.csv")
+    if os.path.exists(uk_df_path):
+        df_uk = pd.read_csv(uk_df_path, usecols=["LEGAL_NAME"]).drop_duplicates()
+        for _, row in df_uk.iterrows():
+            name = str(row["LEGAL_NAME"])
+            if pd.isna(name) or name == "nan": continue
+            import re
+            cid = f"UK_{re.sub(r'[^A-Z0-9]', '', name.upper())}"
+            if not any(c["name"] == name for c in colleges):
+                colleges.append({
+                    "id": cid,
+                    "name": name,
+                    "country": "UK",
+                    "courses": ["Various Programs"],
+                    "deadlines": [],
+                    "required_exams": []
+                })
+                
+    COLLEGES_CACHE = colleges
+    return colleges
 
 def load_exams():
     if os.path.exists(EXAMS_PATH):

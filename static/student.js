@@ -271,16 +271,29 @@ async function searchStudentUnis(val) {
 
     container.innerHTML = "";
     container.classList.remove("hidden");
-    list.forEach(uni => {
+    list.forEach(uniObj => {
+      const uniName = uniObj.name;
+      const uniCountry = uniObj.country;
       const div = document.createElement("div");
       div.className = "autocomplete-suggestion";
-      div.textContent = uni;
+      div.textContent = `${uniName} (${uniCountry})`;
       div.onclick = () => {
-        document.getElementById("sf-target-uni").value = uni;
-        selectedUniversity = uni;
+        document.getElementById("sf-target-uni").value = uniName;
+        selectedUniversity = uniName;
         container.classList.add("hidden");
         document.getElementById("sf-target-name").value = "";
-        document.getElementById("sf-target-track").value = "UK";
+        const trackSelect = document.getElementById("sf-target-track");
+        if (trackSelect) {
+            let found = false;
+            for (let i = 0; i < trackSelect.options.length; i++) {
+                if (trackSelect.options[i].value === uniCountry) {
+                    trackSelect.value = uniCountry;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) trackSelect.value = "UK";
+        }
       };
       container.appendChild(div);
     });
@@ -1225,10 +1238,22 @@ async function filterStudentColleges() {
           <span style="color:var(--text-2);">${c.courses.join(', ')}</span>
         </div>
         
+        ${c.subject_requirements ? `
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Subject Requirements:</strong>
+          <span style="color:var(--text-2);">${c.subject_requirements.join(', ')}</span>
+        </div>` : ''}
+        
         <div style="margin-bottom:10px; font-size:0.75rem;">
           <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Required Exams:</strong>
           <span style="font-family:var(--mono); font-weight:700; color:var(--amber);">${c.required_exams.join(', ')}</span>
         </div>
+
+        ${c.expected_sat && c.expected_sat !== "N/A" && c.expected_sat !== "nan" ? `
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Expected SAT:</strong>
+          <span style="font-family:var(--mono); font-weight:700; color:var(--green);">${c.expected_sat}</span>
+        </div>` : ''}
 
         <div style="border-top:1px dashed var(--border); padding-top:8px;">
           <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Admissions Deadlines:</strong>

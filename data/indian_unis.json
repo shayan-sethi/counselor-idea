@@ -1,0 +1,102 @@
+[
+  {
+    "id": "IND_ASHOKA",
+    "name": "Ashoka University",
+    "country": "India",
+    "courses": [
+      "B.Sc (Hons) Computer Science",
+      "B.A (Hons) Economics",
+      "B.A (Hons) Liberal Arts"
+    ],
+    "deadlines": [
+      {
+        "label": "Round 1 Application Deadline",
+        "date": "2026-11-22",
+        "description": "First round of admissions closes."
+      },
+      {
+        "label": "Round 2 Application Deadline",
+        "date": "2027-01-15",
+        "description": "Second round of admissions closes."
+      }
+    ],
+    "required_exams": ["AAT", "SAT"]
+  },
+  {
+    "id": "IND_KREA",
+    "name": "Krea University",
+    "country": "India",
+    "courses": [
+      "B.A. (Hons) Economics",
+      "B.Sc. (Hons) Computer Science",
+      "B.A. (Hons) Psychology"
+    ],
+    "deadlines": [],
+    "required_exams": ["Krea Aptitude Test", "SAT"]
+  },
+  {
+    "id": "IND_JINDAL",
+    "name": "O.P. Jindal Global University",
+    "country": "India",
+    "courses": [
+      "B.A. (Hons) Legal Studies",
+      "B.A. (Hons) Global Affairs",
+      "BBA (Hons)"
+    ],
+    "deadlines": [],
+    "required_exams": ["JSAT", "SAT", "ACT", "LSAT-India"]
+  },
+  {
+    "id": "IND_PLAKSHA",
+    "name": "Plaksha University",
+    "country": "India",
+    "courses": [
+      "B.Tech Computer Science and Artificial Intelligence",
+      "B.Tech Robotics and Cyber-Physical Systems"
+    ],
+    "deadlines": [],
+    "required_exams": ["SAT", "ACT", "JEE Mains"]
+  },
+  {
+    "id": "IND_SNU",
+    "name": "Shiv Nadar University",
+    "country": "India",
+    "courses": [
+      "B.Tech Computer Science and Engineering",
+      "B.Sc (Research) Physics",
+      "BMS (Bachelor of Management Studies)"
+    ],
+    "deadlines": [],
+    "required_exams": ["SNUSAT", "SAT", "JEE Mains"]
+  },
+  {
+    "id": "IND_FLAME",
+    "name": "FLAME University",
+    "country": "India",
+    "courses": [
+      "B.A. Economics",
+      "B.A. Psychology",
+      "BBA Finance"
+    ],
+    "deadlines": [],
+    "required_exams": ["FEAT", "SAT"]
+  },
+  {
+    "id": "IND_DU",
+    "name": "Delhi University (DU)",
+    "country": "India",
+    "courses": [
+      "B.Sc (Hons) Computer Science",
+      "B.A (Hons) Economics",
+      "B.Com (Hons)"
+    ],
+    "deadlines": [
+      {
+        "label": "CSAS Phase 1 Registration Close",
+        "date": "2027-05-15",
+        "description": "Delhi University Common Seat Allocation System portal closes for Phase 1."
+      }
+    ],
+    "required_exams": ["CUET_UG"]
+  }
+]
