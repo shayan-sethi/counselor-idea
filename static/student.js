@@ -580,23 +580,23 @@ function showStep(step) {
   document.getElementById('step-results').classList.toggle('hidden', step !== 'results');
   const rEl = document.getElementById('step-radar');
   if (rEl) rEl.classList.toggle('hidden', step !== 'radar');
-  const sEl = document.getElementById('step-shortlist');
-  if (sEl) sEl.classList.toggle('hidden', step !== 'shortlist');
+  const slEl = document.getElementById('step-shortlist');
+  if (slEl) slEl.classList.toggle('hidden', step !== 'shortlist');
   const cEl = document.getElementById('step-calendar');
   if (cEl) cEl.classList.toggle('hidden', step !== 'calendar');
-  const sEl = document.getElementById('step-scholarships');
-  if (sEl) sEl.classList.toggle('hidden', step !== 'scholarships');
+  const schEl = document.getElementById('step-scholarships');
+  if (schEl) schEl.classList.toggle('hidden', step !== 'scholarships');
 
   document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
   const rTab = document.getElementById('tab-radar');
   if (rTab) rTab.classList.toggle('active', step === 'radar');
-  const sTab = document.getElementById('tab-shortlist');
-  if (sTab) sTab.classList.toggle('active', step === 'shortlist');
+  const slTab = document.getElementById('tab-shortlist');
+  if (slTab) slTab.classList.toggle('active', step === 'shortlist');
   const cTab = document.getElementById('tab-calendar');
   if (cTab) cTab.classList.toggle('active', step === 'calendar');
-  const sTab = document.getElementById('tab-scholarships');
-  if (sTab) sTab.classList.toggle('active', step === 'scholarships');
+  const schTab = document.getElementById('tab-scholarships');
+  if (schTab) schTab.classList.toggle('active', step === 'scholarships');
 
   const advisorCard = document.getElementById('ai-advisor-card');
   if (advisorCard && step !== 'results') {
