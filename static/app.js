@@ -1047,6 +1047,9 @@ async function searchUniversities(val) {
     return;
   }
 
+  container.innerHTML = '<div style="padding:10px;text-align:center;color:var(--text-3); font-size: 0.8rem;">⏳ Searching universities...</div>';
+  container.classList.remove("hidden");
+
   try {
     const res = await fetch(`/api/search_unis?q=${encodeURIComponent(val)}`);
     const list = await res.json();

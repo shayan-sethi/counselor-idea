@@ -22,7 +22,7 @@ def clean_us_data():
     df['ADM_RATE'] = df['ADM_RATE'].apply(lambda x: f"{float(x)*100:.1f}%" if pd.notna(x) else "N/A")
     
     # Keep SAT_AVG as string or N/A
-    df['SAT_AVG'] = df['SAT_AVG'].apply(lambda x: str(int(float(x))) if pd.notna(x) else "N/A")
+    df['SAT_AVG'] = df['SAT_AVG'].apply(lambda x: str(int(round(float(x) / 10.0) * 10)) if pd.notna(x) else "N/A")
 
     # Ensure URLs have http/https
     def clean_url(url):

@@ -203,49 +203,62 @@ def api_model_metrics():
 
 COLLEGES_CACHE = None
 
-@app.route("/api/search_unis")
-def api_search_unis():
-    query = request.args.get("q", "").strip().lower()
+SEARCH_UNIS_CACHE = None
+def get_search_unis_data():
+    global SEARCH_UNIS_CACHE
+    if SEARCH_UNIS_CACHE is not None:
+        return SEARCH_UNIS_CACHE
+
     uk_df_path = os.path.join(BASE_DIR, "data", "cleaned_courses_dataset.csv")
     us_df_path = os.path.join(BASE_DIR, "data", "cleaned_us_colleges.csv")
     ind_json_path = os.path.join(BASE_DIR, "data", "indian_unis.json")
 
-    results = []
+    unis_list = []
     
     # UK
     if os.path.exists(uk_df_path):
         df_uk = pd.read_csv(uk_df_path, usecols=["LEGAL_NAME"])
         uk_unis = df_uk["LEGAL_NAME"].dropna().unique()
-        if query:
-            uk_filtered = [u for u in uk_unis if query in u.lower()]
-        else:
-            uk_filtered = list(uk_unis[:20])
-        results.extend([{"name": str(u), "country": "UK"} for u in uk_filtered])
+        unis_list.extend([{"name": str(u), "country": "UK"} for u in uk_unis])
         
     # US
     if os.path.exists(us_df_path):
         df_us = pd.read_csv(us_df_path, usecols=["INSTNM"])
         us_unis = df_us["INSTNM"].dropna().unique()
-        if query:
-            us_filtered = [u for u in us_unis if query in u.lower()]
-        else:
-            us_filtered = list(us_unis[:20])
-        results.extend([{"name": str(u), "country": "US"} for u in us_filtered])
+        unis_list.extend([{"name": str(u), "country": "US"} for u in us_unis])
         
     # India
     if os.path.exists(ind_json_path):
         with open(ind_json_path, "r", encoding="utf-8") as f:
             ind_data = json.load(f)
             ind_unis = [u["name"] for u in ind_data]
-            if query:
-                ind_filtered = [u for u in ind_unis if query in u.lower()]
-            else:
-                ind_filtered = list(ind_unis[:20])
-            results.extend([{"name": str(u), "country": "India"} for u in ind_filtered])
+            unis_list.extend([{"name": str(u), "country": "India"} for u in ind_unis])
             
-    # Sort and take top N if large
-    results = sorted(results, key=lambda x: x["name"])
-    return jsonify(results[:50] if not query else results)
+    SEARCH_UNIS_CACHE = sorted(unis_list, key=lambda x: x["name"])
+    return SEARCH_UNIS_CACHE
+
+SEARCH_COURSES_DF_CACHE = None
+def get_courses_df():
+    global SEARCH_COURSES_DF_CACHE
+    if SEARCH_COURSES_DF_CACHE is not None:
+        return SEARCH_COURSES_DF_CACHE
+    df_path = os.path.join(BASE_DIR, "data", "cleaned_courses_dataset.csv")
+    if os.path.exists(df_path):
+        SEARCH_COURSES_DF_CACHE = pd.read_csv(df_path, usecols=["LEGAL_NAME", "TITLE", "TARAGG", "sbj_group"])
+    return SEARCH_COURSES_DF_CACHE
+
+@app.route("/api/search_unis")
+def api_search_unis():
+    query = request.args.get("q", "").strip().lower()
+    try:
+        all_unis = get_search_unis_data()
+        if query:
+            results = [u for u in all_unis if query in u["name"].lower()]
+        else:
+            results = all_unis[:50]
+        return jsonify(results[:50] if query else results)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/search_courses")
 def api_search_courses():
@@ -265,20 +278,16 @@ def api_search_courses():
                     return jsonify(results)
                     
     # Quick check for US
-    us_df_path = os.path.join(BASE_DIR, "data", "cleaned_us_colleges.csv")
-    if os.path.exists(us_df_path):
-        df_us = pd.read_csv(us_df_path, usecols=["INSTNM"])
-        us_names = set(df_us["INSTNM"].str.lower().dropna())
-        if uni.lower() in us_names:
-            return jsonify([{"title": "Undergraduate Bachelors Program", "subject_group": "Generic", "tariff": None}])
+    all_unis = get_search_unis_data()
+    if any(u["name"].lower() == uni.lower() and u["country"] == "US" for u in all_unis):
+        return jsonify([{"title": "Undergraduate Bachelors Program", "subject_group": "Generic", "tariff": None}])
 
     # UK
-    df_path = os.path.join(BASE_DIR, "data", "cleaned_courses_dataset.csv")
-    if not os.path.exists(df_path):
+    df = get_courses_df()
+    if df is None or df.empty:
         return jsonify([])
 
     try:
-        df = pd.read_csv(df_path, usecols=["LEGAL_NAME", "TITLE", "TARAGG", "sbj_group"])
         if uni:
             df = df[df["LEGAL_NAME"].str.lower() == uni.lower()]
         
