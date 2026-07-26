@@ -1269,7 +1269,7 @@ async function filterStudentColleges() {
         </div>
       `;
       container.appendChild(card);
-    });
+    }
 
   } catch (err) {
     console.error(err);

@@ -1955,7 +1955,7 @@ function filterCollegesList() {
       </div>
     `;
     container.appendChild(card);
-  });
+  }
 }
 window.filterCollegesList = filterCollegesList;
 
