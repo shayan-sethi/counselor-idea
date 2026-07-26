@@ -23,6 +23,8 @@
       <button class="tab" id="tab-pred" onclick="switchView('predictor')">predictor</button>
       <button class="tab" id="tab-reports" onclick="switchView('reports')">reports</button>
       <button class="tab" id="tab-radar" onclick="switchView('radar')">radar</button>
+      <button class="tab" id="tab-shortlist" onclick="switchView('shortlist')">shortlisting</button>
+      <button class="tab" id="tab-calendar" onclick="switchView('calendar')">calendar</button>
     </nav>
     <div class="topbar-right">
       <a href="/student" class="student-link">student portal →</a>
@@ -575,6 +577,93 @@
         <div class="loading-row"><span class="blink">▌</span> loading opportunity list…</div>
       </div>
     </section>
+  </main>
+
+  <!-- ═══ SHORTLISTING VIEW ═══ -->
+  <main id="view-shortlist" class="hidden">
+    <div class="page-title-row">
+      <h1>College Shortlisting</h1>
+      <p class="subtitle">search, explore, and build student college shortlists globally</p>
+    </div>
+
+    <!-- Student Selector -->
+    <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
+      <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
+        <div class="field" style="flex: 1; min-width: 240px; margin-bottom: 0;">
+          <label>Active Student Profile</label>
+          <select id="shortlist-student-select" onchange="onShortlistStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
+        </div>
+        <div class="field" style="flex: 2; min-width: 320px; margin-bottom: 0;">
+          <label>Search Colleges</label>
+          <input type="text" id="shortlist-search" placeholder="Type college name, course, or country (e.g. Cambridge, India)..." oninput="filterCollegesList()" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Colleges List Grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;" id="colleges-grid-container">
+      <!-- Populated via Javascript -->
+    </div>
+  </main>
+
+  <!-- ═══ CALENDAR VIEW ═══ -->
+  <main id="view-calendar" class="hidden">
+    <div class="page-title-row">
+      <h1>Deadlines Calendar</h1>
+      <p class="subtitle">chronological application deadlines, standardized exams (TMUA, SAT, JEE) & competitions</p>
+    </div>
+
+    <!-- Controls -->
+    <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div class="field" style="min-width: 240px; margin-bottom: 0;">
+          <label>Active Student Profile</label>
+          <select id="calendar-student-select" onchange="onCalendarStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: 0.72rem;">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="cal-filter-college" checked onchange="filterCalendarEvents()"/> <span style="color:var(--red);">■ College Deadlines</span></label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="cal-filter-exam" checked onchange="filterCalendarEvents()"/> <span style="color:var(--amber);">■ Entrance Exams</span></label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="cal-filter-competition" checked onchange="filterCalendarEvents()"/> <span style="color:var(--green);">■ Competitions</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendar Main Grid & Timeline Split Layout -->
+    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start;">
+      
+      <!-- Interactive Grid Card -->
+      <div class="form-card" style="padding: 16px; margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <button class="btn-reset" onclick="navigateCalendarMonth(-1)" style="padding: 4px 10px; font-size: 0.8rem;">◀</button>
+          <strong id="calendar-month-label" style="font-family: var(--mono); font-size: 0.85rem; text-transform: uppercase;">July 2026</strong>
+          <button class="btn-reset" onclick="navigateCalendarMonth(1)" style="padding: 4px 10px; font-size: 0.8rem;">▶</button>
+        </div>
+        
+        <!-- Days of Week Header -->
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-family: var(--mono); font-size: 0.6rem; color: var(--text-3); margin-bottom: 8px;">
+          <span>SU</span><span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span>
+        </div>
+        
+        <!-- Grid Cells -->
+        <div id="calendar-grid-cells" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      
+      <!-- Detail List of Deadlines for the Month -->
+      <div class="student-list" style="margin: 0;">
+        <div class="list-header" style="grid-template-columns: 100px 2fr 120px 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+          <span class="lh-col">Date</span>
+          <span class="lh-col">Deadline Event</span>
+          <span class="lh-col">Type</span>
+          <span class="lh-col">Description</span>
+        </div>
+        <div id="calendar-events-list" class="rows-container">
+          <div class="loading-row"><span class="blink">▌</span> select a student to load calendar grid…</div>
+        </div>
+      </div>
+      
+    </div>
   </main>
 
   <!-- ═══ DRAWER ═══ -->

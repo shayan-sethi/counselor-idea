@@ -1,0 +1,74 @@
+[
+  {
+    "id": "TMUA",
+    "name": "TMUA (Test of Mathematics for University Admission)",
+    "deadline": "2026-09-16",
+    "exam_date": "2026-10-14",
+    "track": "UK",
+    "description": "Admissions test required for Computer Science and Economics courses at Cambridge, Imperial, and other elite UK universities."
+  },
+  {
+    "id": "ESAT",
+    "name": "ESAT (Engineering and Physical Sciences Admissions Test)",
+    "deadline": "2026-09-16",
+    "exam_date": "2026-10-15",
+    "track": "UK",
+    "description": "Admissions test required for Engineering, Physics, and Natural Sciences at Cambridge and Imperial College London."
+  },
+  {
+    "id": "SAT",
+    "name": "SAT Exam (October Session)",
+    "deadline": "2026-09-04",
+    "exam_date": "2026-10-03",
+    "track": "US",
+    "description": "Standardized test widely used for college admissions in the United States and global private institutions."
+  },
+  {
+    "id": "SAT_DEC",
+    "name": "SAT Exam (December Session)",
+    "deadline": "2026-11-06",
+    "exam_date": "2026-12-05",
+    "track": "US",
+    "description": "Digital SAT session, often the final chance for regular decision admissions deadlines."
+  },
+  {
+    "id": "ACT",
+    "name": "ACT Exam (October Session)",
+    "deadline": "2026-09-18",
+    "exam_date": "2026-10-24",
+    "track": "US",
+    "description": "Standardized US college admissions test measuring English, math, reading, and science reasoning."
+  },
+  {
+    "id": "AP_EXAMS",
+    "name": "AP Exams Registration Deadline",
+    "deadline": "2026-11-10",
+    "exam_date": "2027-05-10",
+    "track": "US",
+    "description": "Final registration deadline to take Advanced Placement exams through the College Board in May."
+  },
+  {
+    "id": "JEE_MAIN_S1",
+    "name": "JEE Main (Session 1)",
+    "deadline": "2026-11-22",
+    "exam_date": "2027-01-24",
+    "track": "India",
+    "description": "Joint Entrance Examination (Main) registration deadline for the January Session engineering admissions."
+  },
+  {
+    "id": "JEE_MAIN_S2",
+    "name": "JEE Main (Session 2)",
+    "deadline": "2027-03-02",
+    "exam_date": "2027-04-12",
+    "track": "India",
+    "description": "Registration deadline for JEE Main April session."
+  },
+  {
+    "id": "CUET_UG",
+    "name": "CUET UG (Common University Entrance Test)",
+    "deadline": "2027-03-26",
+    "exam_date": "2027-05-15",
+    "track": "India",
+    "description": "Compulsory common entrance test for undergraduate admissions across central universities in India (including DU)."
+  }
+]

@@ -22,14 +22,18 @@
     "grades": {
       "current_expected_board": "88.0%",
       "subjects": {
-        "Physics": 85.0,
-        "Chemistry": 86.0,
-        "Computer Science": 92.0,
-        "English": 90.0
+        "Chemistry": 86,
+        "Computer Science": 92,
+        "English": 90,
+        "Physics": 85
       }
     },
     "standardized_tests": {},
-    "portfolio": []
+    "portfolio": [],
+    "shortlisted_colleges": [
+      "MIT",
+      "CAMBRIDGE"
+    ]
   },
   {
     "id": "STU_002",

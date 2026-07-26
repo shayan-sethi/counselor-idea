@@ -580,11 +580,19 @@ function showStep(step) {
   document.getElementById('step-results').classList.toggle('hidden', step !== 'results');
   const rEl = document.getElementById('step-radar');
   if (rEl) rEl.classList.toggle('hidden', step !== 'radar');
+  const sEl = document.getElementById('step-shortlist');
+  if (sEl) sEl.classList.toggle('hidden', step !== 'shortlist');
+  const cEl = document.getElementById('step-calendar');
+  if (cEl) cEl.classList.toggle('hidden', step !== 'calendar');
   
   document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
   const rTab = document.getElementById('tab-radar');
   if (rTab) rTab.classList.toggle('active', step === 'radar');
+  const sTab = document.getElementById('tab-shortlist');
+  if (sTab) sTab.classList.toggle('active', step === 'shortlist');
+  const cTab = document.getElementById('tab-calendar');
+  if (cTab) cTab.classList.toggle('active', step === 'calendar');
 
   const advisorCard = document.getElementById('ai-advisor-card');
   if (advisorCard && step !== 'results') {
@@ -593,6 +601,12 @@ function showStep(step) {
   
   if (step === 'radar') {
     renderStudentRadar();
+  }
+  if (step === 'shortlist') {
+    renderStudentShortlist();
+  }
+  if (step === 'calendar') {
+    renderStudentCalendar();
   }
 }
 
@@ -1122,5 +1136,375 @@ async function renderStudentRadar() {
   }
 }
 window.renderStudentRadar = renderStudentRadar;
+
+// ══════════════════════════════════════════════
+//  COLLEGE SHORTLIST & DEADLINE CALENDAR
+// ══════════════════════════════════════════════
+
+let studentCollegesList = [];
+let studentCalendarEvents = [];
+
+async function renderStudentShortlist() {
+  const container = document.getElementById('student-colleges-grid');
+  if (!container) return;
+
+  if (!createdStudentId) {
+    container.innerHTML = '<div class="loading-row"><span class="blink">▌</span> submit your profile first to view college options</div>';
+    return;
+  }
+
+  if (studentCollegesList.length === 0) {
+    try {
+      const res = await fetch('/api/colleges');
+      studentCollegesList = await res.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  filterStudentColleges();
+}
+window.renderStudentShortlist = renderStudentShortlist;
+
+async function filterStudentColleges() {
+  const container = document.getElementById('student-colleges-grid');
+  if (!container) return;
+
+  const query = document.getElementById('student-shortlist-search').value.toLowerCase().trim();
+  container.innerHTML = '';
+
+  try {
+    const sRes = await fetch(`/api/students/${createdStudentId}`);
+    const student = await sRes.json();
+    const shortlisted = student.shortlisted_colleges || [];
+
+    studentCollegesList.forEach(c => {
+      const matchQuery = !query || 
+        c.name.toLowerCase().includes(query) || 
+        c.country.toLowerCase().includes(query) ||
+        c.courses.some(crs => crs.toLowerCase().includes(query));
+        
+      if (!matchQuery) return;
+
+      const isShortlisted = shortlisted.includes(c.id);
+      const card = document.createElement('div');
+      card.className = 'form-card';
+      card.style.padding = '18px';
+      card.style.background = isShortlisted ? 'rgba(200,255,0,0.02)' : 'var(--surface)';
+      card.style.border = isShortlisted ? '1px solid var(--accent)' : '1px solid var(--border)';
+      card.style.margin = '0';
+
+      let deadlinesHtml = '';
+      c.deadlines.forEach(dl => {
+        deadlinesHtml += `
+          <div style="font-size:0.72rem; color:var(--text-2); margin-top:4px;">
+            📅 <strong>${dl.label}:</strong> ${dl.date} <br/>
+            <span style="font-size:0.65rem; color:var(--text-3);">${dl.description}</span>
+          </div>`;
+      });
+
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+          <div>
+            <h3 style="font-size:1rem; font-weight:700; color:var(--text-1);">${c.name}</h3>
+            <span style="font-family:var(--mono); font-size:0.68rem; color:var(--text-3); text-transform:uppercase;">${c.country}</span>
+          </div>
+          <button type="button" class="${isShortlisted ? 'btn-reset' : 'btn-run'}" onclick="toggleStudentShortlist('${c.id}')" style="padding:6px 14px; font-size:0.72rem;">
+            ${isShortlisted ? 'remove shortlist' : 'shortlist college'}
+          </button>
+        </div>
+        
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Popular Courses:</strong>
+          <span style="color:var(--text-2);">${c.courses.join(', ')}</span>
+        </div>
+        
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Required Exams:</strong>
+          <span style="font-family:var(--mono); font-weight:700; color:var(--amber);">${c.required_exams.join(', ')}</span>
+        </div>
+
+        <div style="border-top:1px dashed var(--border); padding-top:8px;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Admissions Deadlines:</strong>
+          ${deadlinesHtml}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = '<div class="loading-row" style="color:var(--red);">✕ failed to load college shortlist</div>';
+  }
+}
+window.filterStudentColleges = filterStudentColleges;
+
+async function toggleStudentShortlist(collegeId) {
+  if (!createdStudentId) return;
+
+  try {
+    const sRes = await fetch(`/api/students/${createdStudentId}`);
+    const student = await sRes.json();
+    let shortlisted = [...(student.shortlisted_colleges || [])];
+    if (shortlisted.includes(collegeId)) {
+      shortlisted = shortlisted.filter(id => id !== collegeId);
+    } else {
+      shortlisted.push(collegeId);
+    }
+
+    const res = await fetch(`/api/students/${createdStudentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...student, shortlisted_colleges: shortlisted })
+    });
+    if (res.ok) {
+      filterStudentColleges();
+    } else {
+      alert("Failed to update shortlist.");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+window.toggleStudentShortlist = toggleStudentShortlist;
+
+let studentCalYear = 2026;
+let studentCalMonth = 6;
+let studentSelectedCalDay = null;
+
+async function renderStudentCalendar() {
+  const listCont = document.getElementById('student-calendar-list');
+  if (!listCont) return;
+
+  if (!createdStudentId) {
+    listCont.innerHTML = '<div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock calendar</div>';
+    return;
+  }
+
+  listCont.innerHTML = '<div class="loading-row"><span class="blink">▌</span> loading deadlines calendar…</div>';
+  
+  try {
+    const res = await fetch(`/api/calendar/${createdStudentId}`);
+    studentCalendarEvents = await res.json();
+    studentSelectedCalDay = null;
+    updateStudentCalendarUI();
+  } catch (err) {
+    console.error("Error loading calendar:", err);
+    listCont.innerHTML = '<div class="loading-row" style="color:var(--red);">✕ failed to load deadlines calendar</div>';
+  }
+}
+window.renderStudentCalendar = renderStudentCalendar;
+
+function navigateStudentCalendarMonth(direction) {
+  studentCalMonth += direction;
+  if (studentCalMonth < 0) {
+    studentCalMonth = 11;
+    studentCalYear -= 1;
+  } else if (studentCalMonth > 11) {
+    studentCalMonth = 0;
+    studentCalYear += 1;
+  }
+  studentSelectedCalDay = null;
+  updateStudentCalendarUI();
+}
+window.navigateStudentCalendarMonth = navigateStudentCalendarMonth;
+
+function updateStudentCalendarUI() {
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const lbl = document.getElementById('student-calendar-month-label');
+  if (lbl) {
+    lbl.textContent = `${months[studentCalMonth]} ${studentCalYear}`;
+  }
+  
+  renderStudentCalendarGrid();
+  filterStudentCalendar();
+}
+
+function renderStudentCalendarGrid() {
+  const cellsCont = document.getElementById('student-calendar-grid-cells');
+  if (!cellsCont) return;
+  cellsCont.innerHTML = '';
+  
+  const firstDay = new Date(studentCalYear, studentCalMonth, 1).getDay();
+  const totalDays = new Date(studentCalYear, studentCalMonth + 1, 0).getDate();
+  
+  for (let i = 0; i < firstDay; i++) {
+    const pad = document.createElement('div');
+    pad.style.height = '42px';
+    cellsCont.appendChild(pad);
+  }
+  
+  const showCollege = document.getElementById('stud-cal-filter-college').checked;
+  const showExam = document.getElementById('stud-cal-filter-exam').checked;
+  const showComp = document.getElementById('stud-cal-filter-competition').checked;
+  
+  for (let day = 1; day <= totalDays; day++) {
+    const cell = document.createElement('div');
+    cell.style.height = '42px';
+    cell.style.display = 'flex';
+    cell.style.flexDirection = 'column';
+    cell.style.alignItems = 'center';
+    cell.style.justifyContent = 'space-between';
+    cell.style.padding = '4px 2px';
+    cell.style.background = 'var(--surface)';
+    cell.style.border = '1px solid var(--border)';
+    cell.style.borderRadius = '4px';
+    cell.style.cursor = 'pointer';
+    cell.style.fontSize = '0.72rem';
+    cell.style.fontFamily = 'var(--mono)';
+    cell.style.transition = 'all 0.15s ease';
+    
+    if (studentSelectedCalDay === day) {
+      cell.style.borderColor = 'var(--accent)';
+      cell.style.background = 'rgba(200,255,0,0.04)';
+    }
+    
+    const dayLabel = document.createElement('span');
+    dayLabel.textContent = day;
+    dayLabel.style.color = 'var(--text-1)';
+    dayLabel.style.fontWeight = '600';
+    cell.appendChild(dayLabel);
+    
+    const dayEvents = studentCalendarEvents.filter(e => {
+      const eDate = new Date(e.date);
+      return eDate.getFullYear() === studentCalYear && 
+             eDate.getMonth() === studentCalMonth && 
+             eDate.getDate() === day;
+    });
+    
+    const dotsCont = document.createElement('div');
+    dotsCont.style.display = 'flex';
+    dotsCont.style.gap = '3px';
+    
+    let hasCol = false, hasEx = false, hasCmp = false;
+    dayEvents.forEach(e => {
+      if (e.type === 'college' && showCollege) hasCol = true;
+      if (e.type === 'exam' && showExam) hasEx = true;
+      if (e.type === 'competition' && showComp) hasCmp = true;
+    });
+    
+    if (hasCol) {
+      const dot = document.createElement('span');
+      dot.style.width = '5px';
+      dot.style.height = '5px';
+      dot.style.borderRadius = '50%';
+      dot.style.background = 'var(--red)';
+      dotsCont.appendChild(dot);
+    }
+    if (hasEx) {
+      const dot = document.createElement('span');
+      dot.style.width = '5px';
+      dot.style.height = '5px';
+      dot.style.borderRadius = '50%';
+      dot.style.background = 'var(--amber)';
+      dotsCont.appendChild(dot);
+    }
+    if (hasCmp) {
+      const dot = document.createElement('span');
+      dot.style.width = '5px';
+      dot.style.height = '5px';
+      dot.style.borderRadius = '50%';
+      dot.style.background = 'var(--green)';
+      dotsCont.appendChild(dot);
+    }
+    
+    cell.appendChild(dotsCont);
+    
+    cell.onclick = () => {
+      if (studentSelectedCalDay === day) {
+        studentSelectedCalDay = null;
+      } else {
+        studentSelectedCalDay = day;
+      }
+      updateStudentCalendarUI();
+    };
+    
+    cellsCont.appendChild(cell);
+  }
+}
+
+function filterStudentCalendar() {
+  const listCont = document.getElementById('student-calendar-list');
+  if (!listCont) return;
+  listCont.innerHTML = '';
+
+  const showCollege = document.getElementById('stud-cal-filter-college').checked;
+  const showExam = document.getElementById('stud-cal-filter-exam').checked;
+  const showComp = document.getElementById('stud-cal-filter-competition').checked;
+  
+  const currentContextDate = new Date("2026-07-25");
+  
+  const filtered = studentCalendarEvents.filter(e => {
+    if (e.type === 'college' && !showCollege) return false;
+    if (e.type === 'exam' && !showExam) return false;
+    if (e.type === 'competition' && !showComp) return false;
+    
+    const eDate = new Date(e.date);
+    const matchMonth = eDate.getFullYear() === studentCalYear && eDate.getMonth() === studentCalMonth;
+    if (!matchMonth) return false;
+    
+    if (studentSelectedCalDay !== null && eDate.getDate() !== studentSelectedCalDay) return false;
+    return true;
+  });
+  
+  if (filtered.length === 0) {
+    listCont.innerHTML = `
+      <div class="loading-row" style="color:var(--text-3);">
+        No events found for ${studentSelectedCalDay ? `Day ${studentSelectedCalDay}` : 'this month'} matching filters.
+      </div>
+    `;
+    return;
+  }
+  
+  filtered.forEach(e => {
+    const row = document.createElement('div');
+    row.className = 'stu-row';
+    row.style.gridTemplateColumns = '100px 2fr 120px 2fr';
+    row.style.cursor = 'default';
+    
+    const eventDate = new Date(e.date);
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const formattedDate = `${eventDate.getDate()} ${months[eventDate.getMonth()]}`;
+    
+    const diffTime = eventDate.getTime() - currentContextDate.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    let countdownHtml = '';
+    if (diffDays < 0) {
+      countdownHtml = `<span style="color:var(--text-3); font-size:0.6rem; display:block;">Passed</span>`;
+    } else if (diffDays === 0) {
+      countdownHtml = `<span style="color:var(--red); font-weight:700; font-size:0.6rem; display:block;">Today</span>`;
+    } else {
+      countdownHtml = `<span style="color:${diffDays <= 30 ? 'var(--red)' : 'var(--text-2)'}; font-size:0.6rem; display:block; font-weight:600;">In ${diffDays} days</span>`;
+    }
+    
+    let badgeColor = 'var(--red)';
+    let typeName = 'College';
+    if (e.type === 'exam') {
+      badgeColor = 'var(--amber)';
+      typeName = 'Entrance Test';
+    } else if (e.type === 'competition') {
+      badgeColor = 'var(--green)';
+      typeName = 'Olympiad/Contest';
+    }
+    
+    const badgeHtml = `
+      <span style="font-family:var(--mono); font-size:0.55rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; padding:2px 8px; border:1px solid ${badgeColor}; color:${badgeColor}; border-radius:12px;">
+        ${typeName}
+      </span>
+    `;
+    
+    row.innerHTML = `
+      <div>
+        <strong style="color:var(--text-1); font-size:0.8rem; display:block;">${formattedDate}</strong>
+        ${countdownHtml}
+      </div>
+      <div style="font-weight:700; color:var(--text-1); font-size:0.8rem; line-height:1.3;">${e.title}</div>
+      <div>${badgeHtml}</div>
+      <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">${e.description}</div>
+    `;
+    listCont.appendChild(row);
+  });
+}
+window.filterStudentCalendar = filterStudentCalendar;
 
 

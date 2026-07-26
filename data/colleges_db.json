@@ -1,0 +1,152 @@
+[
+  {
+    "id": "CAMBRIDGE",
+    "name": "University of Cambridge",
+    "country": "UK",
+    "courses": [
+      "Computer Science",
+      "Engineering",
+      "Mathematics",
+      "Natural Sciences"
+    ],
+    "deadlines": [
+      {
+        "label": "UCAS Application Deadline",
+        "date": "2026-10-15",
+        "description": "Deadline for Oxbridge UCAS application submissions."
+      },
+      {
+        "label": "TMUA / ESAT Test Registration Close",
+        "date": "2026-09-16",
+        "description": "Compulsory registration closes for Oxbridge CS and Engineering admissions tests."
+      }
+    ],
+    "required_exams": ["TMUA", "ESAT"]
+  },
+  {
+    "id": "OXFORD",
+    "name": "University of Oxford",
+    "country": "UK",
+    "courses": [
+      "Computer Science",
+      "Mathematics",
+      "Physics",
+      "Economics & Management"
+    ],
+    "deadlines": [
+      {
+        "label": "UCAS Application Deadline",
+        "date": "2026-10-15",
+        "description": "Deadline for Oxbridge UCAS application submissions."
+      }
+    ],
+    "required_exams": ["MAT", "PAT"]
+  },
+  {
+    "id": "IMPERIAL",
+    "name": "Imperial College London",
+    "country": "UK",
+    "courses": [
+      "Computing",
+      "Aeronautical Engineering",
+      "Physics",
+      "Mathematics"
+    ],
+    "deadlines": [
+      {
+        "label": "UCAS Equal Consideration Deadline",
+        "date": "2027-01-29",
+        "description": "Main UCAS application deadline for standard courses."
+      }
+    ],
+    "required_exams": ["TMUA", "ESAT"]
+  },
+  {
+    "id": "MIT",
+    "name": "Massachusetts Institute of Technology (MIT)",
+    "country": "US",
+    "courses": [
+      "Computer Science & Engineering",
+      "Mathematics",
+      "Physics",
+      "Mechanical Engineering"
+    ],
+    "deadlines": [
+      {
+        "label": "Early Action Deadline",
+        "date": "2026-11-01",
+        "description": "Deadline to apply Early Action to MIT."
+      },
+      {
+        "label": "Regular Decision Deadline",
+        "date": "2027-01-05",
+        "description": "Deadline to apply Regular Decision to MIT."
+      }
+    ],
+    "required_exams": ["SAT", "ACT", "AP_CALCULUS_BC"]
+  },
+  {
+    "id": "STANFORD",
+    "name": "Stanford University",
+    "country": "US",
+    "courses": [
+      "Computer Science",
+      "Management Science & Engineering",
+      "Economics"
+    ],
+    "deadlines": [
+      {
+        "label": "Restrictive Early Action Deadline",
+        "date": "2026-11-01",
+        "description": "Deadline for Restrictive Early Action."
+      },
+      {
+        "label": "Regular Decision Deadline",
+        "date": "2027-01-05",
+        "description": "Deadline for Regular Decision application."
+      }
+    ],
+    "required_exams": ["SAT", "ACT"]
+  },
+  {
+    "id": "DU",
+    "name": "Delhi University (DU)",
+    "country": "India",
+    "courses": [
+      "B.Sc (Hons) Computer Science",
+      "B.A (Hons) Economics",
+      "B.Com (Hons)"
+    ],
+    "deadlines": [
+      {
+        "label": "CSAS Phase 1 Registration Close",
+        "date": "2027-05-15",
+        "description": "Delhi University Common Seat Allocation System portal closes for Phase 1."
+      }
+    ],
+    "required_exams": ["CUET_UG"]
+  },
+  {
+    "id": "ASHOKA",
+    "name": "Ashoka University",
+    "country": "India",
+    "courses": [
+      "B.Sc (Hons) Computer Science",
+      "B.A (Hons) Economics",
+      "B.A (Hons) Liberal Arts"
+    ],
+    "deadlines": [
+      {
+        "label": "Round 1 Application Deadline",
+        "date": "2026-11-22",
+        "description": "First round of admissions closes."
+      },
+      {
+        "label": "Round 2 Application Deadline",
+        "date": "2027-01-15",
+        "description": "Second round of admissions closes."
+      }
+    ],
+    "required_exams": ["AAT", "SAT"]
+  }
+]

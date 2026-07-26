@@ -2,7 +2,7 @@
   {
     "id": "cmm2id5dy0000vnvvr9ra995x",
     "name": "Breakthrough Junior Challenge",
-    "type": "Science competition",
+    "type": "Science Competition",
     "subject_tags": [
       "Science",
       "Computer Science",
@@ -14,7 +14,7 @@
     "max_class_level": 12,
     "deadline": "2026-09-15",
     "portfolio_tier": 1,
-    "description": "Breakthrough Junior Challenge is a science competition listed under International / Other for ages 13-18. Secondary school students aged 13-18 worldwide. Registration deadline 15 Sept 2026. Fee: Free.",
+    "description": "Create a short video explaining a big scientific concept in Physics, Life Sciences, or Mathematics.",
     "fee": "Free",
     "url": "https://competemap.com/competitions/cmm2id5dy0000vnvvr9ra995x"
   },
@@ -37,7 +37,7 @@
     "max_class_level": 12,
     "deadline": "2026-06-30",
     "portfolio_tier": 1,
-    "description": "An elite global essay contest organized by the John Locke Institute. Promotes high-quality essay writing across Economics, History, Politics, Philosophy, Theology, Law, and Psychology.",
+    "description": "An elite global essay contest organized by the John Locke Institute. Promotes high-quality writing across Economics, History, Politics, Philosophy, Theology, Law, and Psychology.",
     "fee": "Free",
     "url": "https://www.johnlockeinstitute.com/essay-competition"
   },
@@ -57,7 +57,7 @@
     "max_class_level": 12,
     "deadline": "2026-08-31",
     "portfolio_tier": 1,
-    "description": "India's premier national science research competition. Winners represent India at the Regeneron International Science and Engineering Fair (ISEF) in the USA.",
+    "description": "India's premier national science research competition. Winners represent India at ISEF in the USA.",
     "fee": "Free",
     "url": "http://www.irisnationalsciencefair.org/"
   },
@@ -75,7 +75,7 @@
     "max_class_level": 12,
     "deadline": "2026-10-01",
     "portfolio_tier": 2,
-    "description": "A 90-minute, multiple-choice challenge that encourages mathematical reasoning, precision of thought, and fluency in using basic mathematical techniques to solve interesting problems.",
+    "description": "A multiple-choice challenge encouraging mathematical reasoning and fluency in solving interesting problems.",
     "fee": "Paid",
     "url": "https://www.ukmt.org.uk/competitions/sole/senior-mathematical-challenge"
   },
@@ -92,8 +92,96 @@
     "max_class_level": 12,
     "deadline": "2026-01-15",
     "portfolio_tier": 1,
-    "description": "One of the largest and most prestigious high school mathematics competitions in the world, run by students at Harvard and MIT.",
+    "description": "One of the largest and most prestigious high school math Tournaments in the world, run by Harvard and MIT students.",
     "fee": "Paid",
     "url": "https://www.hmmt.co/"
+  },
+  {
+    "id": "usaco_2026",
+    "name": "USACO (USA Computing Olympiad)",
+    "type": "Coding Olympiad",
+    "subject_tags": [
+      "Computer Science",
+      "Informatics Practices",
+      "Mathematics"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-12-18",
+    "portfolio_tier": 1,
+    "description": "Premier algorithmic programming competition for high school students in the US and globally. Divisions include Bronze, Silver, Gold, and Platinum.",
+    "fee": "Free",
+    "url": "http://www.usaco.org/"
+  },
+  {
+    "id": "amc_12_math",
+    "name": "AMC 12 (American Mathematics Competition)",
+    "type": "Math Olympiad",
+    "subject_tags": [
+      "Mathematics",
+      "Further Mathematics",
+      "Mathematics Analysis & Approaches (HL/SL)"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-10-25",
+    "portfolio_tier": 2,
+    "description": "A 75-minute, 25-question multiple-choice high school math exam. High scorers qualify for the AIME.",
+    "fee": "Paid",
+    "url": "https://www.maa.org/math-competitions/amc-1012"
+  },
+  {
+    "id": "marshall_society_essay",
+    "name": "Marshall Society Essay Competition",
+    "type": "Essay Contest",
+    "subject_tags": [
+      "Economics",
+      "Political Science",
+      "History"
+    ],
+    "min_class_level": 10,
+    "max_class_level": 12,
+    "deadline": "2026-08-10",
+    "portfolio_tier": 1,
+    "description": "The premier economics essay competition run by the Marshall Society, the economics society of Cambridge University.",
+    "fee": "Free",
+    "url": "https://marshallsociety.com/essay-competition/"
+  },
+  {
+    "id": "harvard_crimson_essay",
+    "name": "Harvard Crimson Global Essay Competition",
+    "type": "Essay Contest",
+    "subject_tags": [
+      "English Core",
+      "Elective English",
+      "History",
+      "Political Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-11-30",
+    "portfolio_tier": 2,
+    "description": "A global writing contest that challenges high schoolers to showcase writing excellence and critical thinking.",
+    "fee": "Paid",
+    "url": "https://www.crimson-essay.com/"
+  },
+  {
+    "id": "trinity_college_essay",
+    "name": "Trinity College Cambridge Essay Competition",
+    "type": "Essay Contest",
+    "subject_tags": [
+      "History",
+      "Philosophy",
+      "Law",
+      "Political Science",
+      "English Core"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-08-01",
+    "portfolio_tier": 1,
+    "description": "Prestigious essay prize run by Trinity College Cambridge, encouraging students to think about academic topics outside the school syllabus.",
+    "fee": "Free",
+    "url": "https://www.trin.cam.ac.uk/admissions/undergraduate/essay-prizes/"
   }
 ]

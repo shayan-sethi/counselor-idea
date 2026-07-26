@@ -414,7 +414,7 @@ def api_update_student(student_id):
     # Update allowed fields
     for field in ["name", "board", "class_level", "board_subjects", "cuet_subjects",
                   "grades", "standardized_tests", "portfolio", "targets", "status",
-                  "planned_class_11_subjects", "counselor_notes"]:
+                  "planned_class_11_subjects", "counselor_notes", "shortlisted_colleges"]:
         if field in data:
             student[field] = data[field]
 
@@ -737,6 +737,139 @@ def api_import_competition():
         
     save_competitions(comps)
     return jsonify(imported_comp), 201
+
+# ── College Shortlist & Deadline Calendar Endpoints ──
+
+COLLEGES_PATH = os.path.join(BASE_DIR, "data", "colleges_db.json")
+EXAMS_PATH = os.path.join(BASE_DIR, "data", "exams_db.json")
+
+def load_colleges():
+    if os.path.exists(COLLEGES_PATH):
+        with open(COLLEGES_PATH, "r") as f:
+            return json.load(f)
+    return []
+
+def load_exams():
+    if os.path.exists(EXAMS_PATH):
+        with open(EXAMS_PATH, "r") as f:
+            return json.load(f)
+    return []
+
+@app.route("/api/colleges")
+def api_colleges():
+    return jsonify(load_colleges())
+
+@app.route("/api/exams")
+def api_exams():
+    return jsonify(load_exams())
+
+@app.route("/api/calendar/<student_id>")
+def api_calendar(student_id):
+    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    events = []
+    seen_event_keys = set()
+
+    # 1. Target Course Deadlines
+    for tid in student.get("targets", []):
+        t = kg.get_course_or_exam(tid)
+        if t:
+            for dl in t.get("deadlines", []):
+                key = (t["name"], dl["label"], dl["date"])
+                if key not in seen_event_keys:
+                    seen_event_keys.add(key)
+                    events.append({
+                        "title": f"{t['name']} - {dl['label']}",
+                        "date": dl["date"],
+                        "type": "college",
+                        "description": dl.get("description", "")
+                    })
+
+    # 2. Shortlisted College Deadlines
+    colleges = load_colleges()
+    shortlisted_ids = student.get("shortlisted_colleges", [])
+    for cid in shortlisted_ids:
+        c = next((col for col in colleges if col["id"] == cid), None)
+        if c:
+            for dl in c.get("deadlines", []):
+                key = (c["name"], dl["label"], dl["date"])
+                if key not in seen_event_keys:
+                    seen_event_keys.add(key)
+                    events.append({
+                        "title": f"{c['name']} - {dl['label']}",
+                        "date": dl["date"],
+                        "type": "college",
+                        "description": dl.get("description", "")
+                    })
+
+    # 3. Standardized Entrance Exams Timelines
+    exams = load_exams()
+    student_tracks = set()
+    required_exam_ids = set()
+
+    for tid in student.get("targets", []):
+        t = kg.get_course_or_exam(tid)
+        if t:
+            student_tracks.add(t.get("track"))
+            for et in t.get("admission_tests", []):
+                required_exam_ids.add(et)
+
+    for cid in shortlisted_ids:
+        c = next((col for col in colleges if col["id"] == cid), None)
+        if c:
+            student_tracks.add(c.get("country"))
+            for ex in c.get("required_exams", []):
+                required_exam_ids.add(ex)
+
+    for ex in exams:
+        is_relevant = (
+            ex["id"] in required_exam_ids or 
+            ex["track"] in student_tracks or
+            (ex["track"] == "US" and "US" in student_tracks) or
+            (ex["track"] == "UK" and "UK" in student_tracks) or
+            (ex["track"] == "India" and "India" in student_tracks)
+        )
+        if is_relevant:
+            reg_key = (ex["name"], "Registration Deadline", ex["deadline"])
+            if reg_key not in seen_event_keys:
+                seen_event_keys.add(reg_key)
+                events.append({
+                    "title": f"{ex['name']} Registration Close",
+                    "date": ex["deadline"],
+                    "type": "exam",
+                    "description": f"Registration closes. {ex['description']}"
+                })
+            exam_key = (ex["name"], "Exam Date", ex["exam_date"])
+            if exam_key not in seen_event_keys:
+                seen_event_keys.add(exam_key)
+                events.append({
+                    "title": f"{ex['name']} Exam Date",
+                    "date": ex["exam_date"],
+                    "type": "exam",
+                    "description": f"Official test date. {ex['description']}"
+                })
+
+    # 4. Competition Deadlines (Opportunity Radar - Match Score >= 75%)
+    competitions = load_competitions()
+    matches = OpportunityRadar.match_student(student, competitions)
+    for m in matches:
+        if m["match_score"] >= 75:
+            comp = m["competition"]
+            if comp.get("deadline"):
+                key = (comp["name"], "Submission Deadline", comp["deadline"])
+                if key not in seen_event_keys:
+                    seen_event_keys.add(key)
+                    events.append({
+                        "title": f"{comp['name']} Deadline",
+                        "date": comp["deadline"],
+                        "type": "competition",
+                        "description": comp.get("description", "")
+                    })
+
+    events.sort(key=lambda x: x["date"])
+    return jsonify(events)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)

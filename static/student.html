@@ -21,6 +21,8 @@
       <button class="tab active" id="tab-profile" onclick="showStep('profile')">your profile</button>
       <button class="tab" id="tab-results" onclick="showStep('results')">audit results</button>
       <button class="tab" id="tab-radar" onclick="showStep('radar')">opportunity radar</button>
+      <button class="tab" id="tab-shortlist" onclick="showStep('shortlist')">college shortlisting</button>
+      <button class="tab" id="tab-calendar" onclick="showStep('calendar')">deadlines calendar</button>
     </nav>
     <div class="topbar-right">
       <a href="/" class="student-link">← counselor view</a>
@@ -281,6 +283,80 @@
 
     <div id="radar-body">
       <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock radar matches</div>
+    </div>
+  </main>
+
+  <!-- ═══ SHORTLISTING ═══ -->
+  <main id="step-shortlist" class="hidden">
+    <div class="page-title-row">
+      <h1>College Shortlisting</h1>
+      <p class="subtitle">explore top global universities and shortlist them to track application milestones</p>
+    </div>
+
+    <div id="student-shortlist-body">
+      <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
+        <div class="field" style="margin-bottom: 0;">
+          <label>Search Colleges</label>
+          <input type="text" id="student-shortlist-search" placeholder="Type college name, course, or country..." oninput="filterStudentColleges()" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;" />
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" id="student-colleges-grid">
+        <div class="loading-row"><span class="blink">▌</span> submit your profile first to view college options</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ═══ CALENDAR ═══ -->
+  <main id="step-calendar" class="hidden">
+    <div class="page-title-row">
+      <h1>Deadlines Calendar</h1>
+      <p class="subtitle">your unified admissions timeline, entrance exams, and high-match competitions</p>
+    </div>
+
+    <div id="student-calendar-body">
+      <div class="form-card" style="margin-bottom: 24px; padding: 18px; display: flex; justify-content: flex-end;">
+        <div style="display: flex; gap: 16px; align-items: center; font-family: var(--mono); font-size: 0.72rem;">
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="stud-cal-filter-college" checked onchange="filterStudentCalendar()"/> <span style="color:var(--red);">■ College Deadlines</span></label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="stud-cal-filter-exam" checked onchange="filterStudentCalendar()"/> <span style="color:var(--amber);">■ Entrance Exams</span></label>
+          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="stud-cal-filter-competition" checked onchange="filterStudentCalendar()"/> <span style="color:var(--green);">■ Competitions</span></label>
+        </div>
+      </div>
+      <!-- Calendar Main Grid & Timeline Split Layout -->
+      <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start;">
+        
+        <!-- Interactive Grid Card -->
+        <div class="form-card" style="padding: 16px; margin: 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <button type="button" class="btn-reset" onclick="navigateStudentCalendarMonth(-1)" style="padding: 4px 10px; font-size: 0.8rem;">◀</button>
+            <strong id="student-calendar-month-label" style="font-family: var(--mono); font-size: 0.85rem; text-transform: uppercase;">July 2026</strong>
+            <button type="button" class="btn-reset" onclick="navigateStudentCalendarMonth(1)" style="padding: 4px 10px; font-size: 0.8rem;">▶</button>
+          </div>
+          
+          <!-- Days of Week Header -->
+          <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-family: var(--mono); font-size: 0.6rem; color: var(--text-3); margin-bottom: 8px;">
+            <span>SU</span><span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span>
+          </div>
+          
+          <!-- Grid Cells -->
+          <div id="student-calendar-grid-cells" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+        
+        <!-- Detail List of Deadlines for the Month -->
+        <div class="student-list" style="margin: 0;">
+          <div class="list-header" style="grid-template-columns: 100px 2fr 120px 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+            <span class="lh-col">Date</span>
+            <span class="lh-col">Deadline Event</span>
+            <span class="lh-col">Type</span>
+            <span class="lh-col">Description</span>
+          </div>
+          <div id="student-calendar-list" class="rows-container">
+            <div class="loading-row"><span class="blink">▌</span> submit your profile first to unlock calendar grid…</div>
+          </div>
+        </div>
+        
+      </div>
     </div>
   </main>
 
