@@ -228,14 +228,14 @@ body {
 }
 .student-row {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border-bottom: 1px solid var(--border);
   padding: 16px 20px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 16px;
   align-items: center;
   cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.1s;
+  transition: all 0.2s ease;
 }
 .student-row:hover {
   box-shadow: var(--shadow-sm);
