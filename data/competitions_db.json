@@ -262,5 +262,661 @@
     "description": "Prestigious essay prize run by Trinity College Cambridge, encouraging students to think about academic topics outside the school syllabus.",
     "fee": "Free",
     "url": "https://www.trin.cam.ac.uk/admissions/undergraduate/essay-prizes/"
+  },
+  {
+    "id": "cmq6thrv70003vn6hjw6u3ljh",
+    "name": "The Eurekas",
+    "type": "Science competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 11,
+    "deadline": "2026-06-08",
+    "portfolio_tier": 2,
+    "description": "The Eurekas is a science competition listed under International / Other for ages 11-16. Students aged 11-16 in the United Kingdom and Ireland. Registration deadline 8 Jun 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmq6thrv70003vn6hjw6u3ljh"
+  },
+  {
+    "id": "cmlr3hxr50000vn2yxlvggl8w",
+    "name": "Mission Space Lab",
+    "type": "Programming competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "Mission Space Lab is a programming competition listed under International / Other for ages up to 19. Teams of 2-6 young people aged 19 and under, supervised by a mentor. Registration deadline unknown. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmlr3hxr50000vn2yxlvggl8w"
+  },
+  {
+    "id": "cmrwc07hn0004vn7ypi2epsii",
+    "name": "Blue Ocean Student Entrepreneur Competition 2027",
+    "type": "Other competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2027-02-21",
+    "portfolio_tier": 2,
+    "description": "Blue Ocean Student Entrepreneur Competition 2027 is a other competition listed under International / Other for ages 14-18. High school students aged 14-18 at time of registration. Registration deadline 21 Feb 2027. Fee: Free / no entry fee listed.",
+    "fee": "Free / no entry fee listed",
+    "url": "https://competemap.com/competitions/cmrwc07hn0004vn7ypi2epsii"
+  },
+  {
+    "id": "cmnwwza2g0012jr042h3d2rup",
+    "name": "Intermediate Biology Olympiad 2026",
+    "type": "Science competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Further Mathematics",
+      "Mathematics",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 1,
+    "description": "Intermediate Biology Olympiad 2026 is a science competition listed under International / Other for ages 16-18. First year post-16 (e.g., Y12 and equivalents). Registration deadline unknown.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmnwwza2g0012jr042h3d2rup"
+  },
+  {
+    "id": "cmm3j7b4f0002j7j6bybod102",
+    "name": "Trinity College Cambridge Robson History Prize 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-07-31",
+    "portfolio_tier": 2,
+    "description": "Trinity College Cambridge Robson History Prize 2026 is a writing competition listed under International / Other for ages 16-18. Year 12 / Lower Sixth / S5 or international equivalent. Registration deadline 31 Jul 2026. Fee: Free / no entry fee listed.",
+    "fee": "Free / no entry fee listed",
+    "url": "https://competemap.com/competitions/cmm3j7b4f0002j7j6bybod102"
+  },
+  {
+    "id": "cmlzm473l0001vnbp9b0y8e19",
+    "name": "Peterhouse JCR Arts Competition",
+    "type": "Other competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 11,
+    "deadline": "2025-10-21",
+    "portfolio_tier": 2,
+    "description": "Peterhouse JCR Arts Competition is a other competition listed under International / Other for ages 14-16. Year 10-11 (England/Wales), S3-S4 (Scotland), Year 11-12 (Northern Ireland), state schools in UK and Ireland. Registration deadline 21 Oct 2025. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmlzm473l0001vnbp9b0y8e19"
+  },
+  {
+    "id": "cmrw8lspp0003vnneqoafg3yh",
+    "name": "International Bio-League Competition 2026",
+    "type": "Science competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-08-01",
+    "portfolio_tier": 2,
+    "description": "International Bio-League Competition 2026 is a science competition listed under International / Other for ages 14-18. Grades 9-12 and gap-year entrants according to the official registration form. Registration deadline 1 Aug 2026. Fee: Free / no entry fee listed on official site.",
+    "fee": "Free / no entry fee listed on official site",
+    "url": "https://competemap.com/competitions/cmrw8lspp0003vnneqoafg3yh"
+  },
+  {
+    "id": "cmqaxdjzr0000j7e8dj0ry0w7",
+    "name": "Rotary Young Photographer (UK &amp; Ireland)",
+    "type": "Other competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "Rotary Young Photographer (UK &amp; Ireland) is a other competition listed under International / Other for ages up to 17. Young people in Great Britain and Ireland; age bands vary by competition pack. Registration deadline unknown.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmqaxdjzr0000j7e8dj0ry0w7"
+  },
+  {
+    "id": "cmly3z9xf0007j7n1qo12y8yq",
+    "name": "Minds Underground Economics Essay Competition 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Accountancy",
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Business Studies",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "Minds Underground Economics Essay Competition 2026 is a writing competition listed under International / Other for ages 8-18. Global school students. Registration deadline unknown.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmly3z9xf0007j7n1qo12y8yq"
+  },
+  {
+    "id": "cmq6thsj50005vn6hdkx40slt",
+    "name": "Coolest Projects Online 2026",
+    "type": "Programming competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-05-27",
+    "portfolio_tier": 2,
+    "description": "Coolest Projects Online 2026 is a programming competition listed under International / Other for ages up to 18. Young people up to age 18 anywhere in the world. Registration deadline 27 May 2026. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmq6thsj50005vn6hdkx40slt"
+  },
+  {
+    "id": "cmm3j7bmt0004j7j6i24mzzvy",
+    "name": "Trinity College Cambridge Languages and Cultures Essay Prize 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-07-31",
+    "portfolio_tier": 2,
+    "description": "Trinity College Cambridge Languages and Cultures Essay Prize 2026 is a writing competition listed under International / Other for ages 16-18. Year 12 / Lower Sixth or international equivalent. Registration deadline 31 Jul 2026. Fee: Free / no entry fee listed.",
+    "fee": "Free / no entry fee listed",
+    "url": "https://competemap.com/competitions/cmm3j7bmt0004j7j6i24mzzvy"
+  },
+  {
+    "id": "cmm8ittf80006l504bigw5b23",
+    "name": "British Psychology Olympiad 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Further Mathematics",
+      "Economics",
+      "English Core",
+      "Mathematics",
+      "Elective English"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-04-03",
+    "portfolio_tier": 1,
+    "description": "British Psychology Olympiad 2026 is a writing competition listed under International / Other for ages 16-17. Registration deadline 3 Apr 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmm8ittf80006l504bigw5b23"
+  },
+  {
+    "id": "cmluw9phy0000vn5xdzmhp5zk",
+    "name": "John Locke Institute Global Essay Prize 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-05-31",
+    "portfolio_tier": 1,
+    "description": "John Locke Institute Global Essay Prize 2026 is a writing competition listed under International / Other for ages up to 19. Students 18 and under (with additional younger categories). Registration deadline 31 May 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmluw9phy0000vn5xdzmhp5zk"
+  },
+  {
+    "id": "cmnslqn8v0000jr046ac7z50y",
+    "name": "Immerse Education Blog Competition",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "Immerse Education Blog Competition is a writing competition listed under International / Other for ages 13-18. Students aged 13\u201318. Registration deadline unknown.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmnslqn8v0000jr046ac7z50y"
+  },
+  {
+    "id": "cmm3j7doj000bj7j6nizb06hu",
+    "name": "CREST Awards \u2014 Global Award",
+    "type": "Science competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "CREST Awards \u2014 Global Award is a science competition listed under International / Other. School-age learners via international partner/school delivery. Registration deadline unknown.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmm3j7doj000bj7j6nizb06hu"
+  },
+  {
+    "id": "cmrw8lsha0002vnne7qwnchsf",
+    "name": "High School Mathematical Contest in Modeling (HiMCM) 2026",
+    "type": "Mathematics competition",
+    "subject_tags": [
+      "Mathematics",
+      "Further Mathematics"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-11-04",
+    "portfolio_tier": 2,
+    "description": "High School Mathematical Contest in Modeling (HiMCM) 2026 is a mathematics competition listed under International / Other. High school students or below. Registration deadline 4 Nov 2026. Fee: USD 100 per team; non-refundable.",
+    "fee": "USD 100 per team; non-refundable",
+    "url": "https://competemap.com/competitions/cmrw8lsha0002vnne7qwnchsf"
+  },
+  {
+    "id": "cmq6thqzt0000vn6h65gnvh0y",
+    "name": "Primary Mathematics Challenge",
+    "type": "Mathematics competition",
+    "subject_tags": [
+      "Mathematics",
+      "Further Mathematics"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 10,
+    "deadline": "2026-11-19",
+    "portfolio_tier": 1,
+    "description": "Primary Mathematics Challenge is a mathematics competition listed under International / Other for ages 9-11. Primary pupils aged 9-11; schools worldwide may enter. Registration deadline 19 Nov 2026. Fee: Paper packs \u00a314.50 per 10 pupils plus postage; online \u00a313.50 per 10 pupils; PDF \u00a312.50 per 10 pupils; VAT applies.",
+    "fee": "Paper packs \u00a314",
+    "url": "https://competemap.com/competitions/cmq6thqzt0000vn6h65gnvh0y"
+  },
+  {
+    "id": "cmm3j7alq0000j7j6kv9gd07z",
+    "name": "Trinity College Cambridge R.A. Butler Politics Prize 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-07-31",
+    "portfolio_tier": 2,
+    "description": "Trinity College Cambridge R.A. Butler Politics Prize 2026 is a writing competition listed under International / Other for ages 16-18. Year 12 / Lower Sixth or international equivalent. Registration deadline 31 Jul 2026. Fee: Free / no entry fee listed.",
+    "fee": "Free / no entry fee listed",
+    "url": "https://competemap.com/competitions/cmm3j7alq0000j7j6kv9gd07z"
+  },
+  {
+    "id": "cmlr3cpdd0000vnenvl91z2wf",
+    "name": "Mission Zero",
+    "type": "Programming competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-03-23",
+    "portfolio_tier": 2,
+    "description": "Mission Zero is a programming competition listed under International / Other for ages up to 19. Individuals or teams of up to 4 young people aged 19 and under, supervised by a mentor. Registration deadline 23 Mar 2026. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmlr3cpdd0000vnenvl91z2wf"
+  },
+  {
+    "id": "cmrwc070k0002vn7y02l8h512",
+    "name": "The Earth Prize 2027",
+    "type": "Science competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "The Earth Prize 2027 is a science competition listed under International / Other for ages 13-19. Teenage students worldwide; official current eligibility text references ages 13-19 / birth years 2006-2012 for the prior cycle. Registration deadline unknown. Fee: Free / no entry fee listed.",
+    "fee": "Free / no entry fee listed",
+    "url": "https://competemap.com/competitions/cmrwc070k0002vn7y02l8h512"
+  },
+  {
+    "id": "cmrwc07960003vn7ypht5bzy1",
+    "name": "Technovation Girls 2025-2026",
+    "type": "Programming competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-03-18",
+    "portfolio_tier": 2,
+    "description": "Technovation Girls 2025-2026 is a programming competition listed under International / Other for ages 8-18. Girls and gender-expansive students ages 8-18 in Beginner, Junior and Senior divisions. Registration deadline 18 Mar 2026. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmrwc07960003vn7ypht5bzy1"
+  },
+  {
+    "id": "cmr95v53k0002vnpv8jof6rkv",
+    "name": "HIR Academic Writing Contest 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-08-24",
+    "portfolio_tier": 2,
+    "description": "HIR Academic Writing Contest 2026 is a writing competition listed under International / Other for ages 12-18. Grades 7-12 / middle and high school students internationally. Registration deadline 24 Aug 2026. Fee: Paid registration required before submission; amount not visible in captured page.",
+    "fee": "Paid registration required before submission; amount not visible in captured page",
+    "url": "https://competemap.com/competitions/cmr95v53k0002vnpv8jof6rkv"
+  },
+  {
+    "id": "cmovyebty0004j718zx861wz0",
+    "name": "I Am Writing Competitions 2026 (Teen/YA/Middle Grade)",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-05-14",
+    "portfolio_tier": 2,
+    "description": "I Am Writing Competitions 2026 (Teen/YA/Middle Grade) is a writing competition listed under International / Other. Teen and young-adult writing categories (plus additional categories). Registration deadline 14 May 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmovyebty0004j718zx861wz0"
+  },
+  {
+    "id": "cmlpkg1v30000j7lnz9c08nuw",
+    "name": "Foyle Young Poets of the Year Award",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-07-31",
+    "portfolio_tier": 2,
+    "description": "Foyle Young Poets of the Year Award is a writing competition listed under International / Other for ages 11-17. Young poets aged 11-17. Registration deadline 31 Jul 2026. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmlpkg1v30000j7lnz9c08nuw"
+  },
+  {
+    "id": "cmp4aqu130000j7u80oulp4am",
+    "name": "Young Wildlife Photographer of the Year",
+    "type": "Other competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2025-12-04",
+    "portfolio_tier": 2,
+    "description": "Young Wildlife Photographer of the Year is a other competition listed under International / Other for ages up to 17. Young photographers aged 17 and under; categories include 10 and Under, 11-14, and 15-17. Registration deadline 4 Dec 2025. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmp4aqu130000j7u80oulp4am"
+  },
+  {
+    "id": "cmlzfwf1a0000vn9n3j5lxohy",
+    "name": "Immerse Education Essay Competition",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "Immerse Education Essay Competition is a writing competition listed under International / Other for ages 13-18. Secondary students (essay-competition route). Registration deadline unknown.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmlzfwf1a0000vn9n3j5lxohy"
+  },
+  {
+    "id": "cmq6thrb80001vn6h8vg0uwlq",
+    "name": "First Mathematics Challenge",
+    "type": "Mathematics competition",
+    "subject_tags": [
+      "Mathematics",
+      "Further Mathematics"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 10,
+    "deadline": "2026-06-17",
+    "portfolio_tier": 1,
+    "description": "First Mathematics Challenge is a mathematics competition listed under International / Other for ages 7-9. Pupils aged 7-9; UK and worldwide. Registration deadline 17 Jun 2026. Fee: PDF packs \u00a311 per 10 pupils; online access \u00a313 per 10 pupils.",
+    "fee": "PDF packs \u00a311 per 10 pupils; online access \u00a313 per 10 pupils",
+    "url": "https://competemap.com/competitions/cmq6thrb80001vn6h8vg0uwlq"
+  },
+  {
+    "id": "cmlzm46mu0000vnbpqequm0pb",
+    "name": "Rotary Young Artist (UK &amp; Ireland)",
+    "type": "Other competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-09-15",
+    "portfolio_tier": 2,
+    "description": "Rotary Young Artist (UK &amp; Ireland) is a other competition listed under International / Other for ages up to 17. Young people in Great Britain and Ireland; age bands vary by Rotary competition pack. Registration deadline unknown.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmlzm46mu0000vnbpqequm0pb"
+  },
+  {
+    "id": "cmrw8lrzk0000vnnehwj4dv42",
+    "name": "iGEM High School Competition 2026",
+    "type": "Science competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-06-04",
+    "portfolio_tier": 2,
+    "description": "iGEM High School Competition 2026 is a science competition listed under International / Other for ages 16-18. High school-level students enrolled at high schools or other secondary education institutions. Registration deadline 4 Jun 2026. Fee: Required iGEM team program fees in EUR. Stage I and Stage II program fees are required for competing; in-person teams also buy Jamboree tickets. Check official fee table for current amounts..",
+    "fee": "Required iGEM team program fees in EUR",
+    "url": "https://competemap.com/competitions/cmrw8lrzk0000vnnehwj4dv42"
+  },
+  {
+    "id": "cmnslqvmn0008jr04r1gtaz0p",
+    "name": "Cambridge Re:Think Essay Competition 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-05-10",
+    "portfolio_tier": 2,
+    "description": "Cambridge Re:Think Essay Competition 2026 is a writing competition listed under International / Other for ages 11-18. Junior 11-13; Senior 14-18. Registration deadline 10 May 2026. Fee: Free.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmnslqvmn0008jr04r1gtaz0p"
+  },
+  {
+    "id": "cmmevfbov0000vnzn5phzhuq2",
+    "name": "International Greenwich Olympiad (IGO) 2026",
+    "type": "Science competition",
+    "subject_tags": [
+      "Chemistry",
+      "Biology",
+      "Further Mathematics",
+      "Mathematics",
+      "Computer Science",
+      "Physics",
+      "Science"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-03-01",
+    "portfolio_tier": 1,
+    "description": "International Greenwich Olympiad (IGO) 2026 is a science competition listed under International / Other for ages 10-19. School-age participants across junior and senior secondary ranges. Registration deadline 1 Mar 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmmevfbov0000vnzn5phzhuq2"
+  },
+  {
+    "id": "cmo5fxvnb000kle04cll1w9oq",
+    "name": "British Psychology Olympiad",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Further Mathematics",
+      "Economics",
+      "English Core",
+      "Mathematics",
+      "Elective English"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-02-01",
+    "portfolio_tier": 1,
+    "description": "British Psychology Olympiad is a writing competition listed under International / Other for ages 13-17. Secondary school students; UK Years 9\u201312 (primarily Year 12). Registration deadline 1 Feb 2026. Fee: \u00a315.00.",
+    "fee": "\u00a315",
+    "url": "https://competemap.com/competitions/cmo5fxvnb000kle04cll1w9oq"
+  },
+  {
+    "id": "cmlzhl8ls0000vna9qji6tdwv",
+    "name": "Spirited Arts Competition",
+    "type": "Other competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "deadline": "2026-07-31",
+    "portfolio_tier": 2,
+    "description": "Spirited Arts Competition is a other competition listed under International / Other for ages 5-19. School pupils aged 3-19. Registration deadline 31 Jul 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmlzhl8ls0000vna9qji6tdwv"
+  },
+  {
+    "id": "cmm8iuku2000ll504qdu4tv7h",
+    "name": "ESU International Public Speaking Competition",
+    "type": "Other competition",
+    "subject_tags": [
+      "Science",
+      "Mathematics",
+      "Economics",
+      "History"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-09-16",
+    "portfolio_tier": 2,
+    "description": "ESU International Public Speaking Competition is a other competition listed under International / Other for ages 16-20. Students aged 16-20 selected through an ESU-recognised national or regional public speaking competition. Registration deadline 16 Sept 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmm8iuku2000ll504qdu4tv7h"
+  },
+  {
+    "id": "cmqax8z5x000bj7q3fm66f7cg",
+    "name": "Woolf Essay Prize 2026",
+    "type": "Writing competition",
+    "subject_tags": [
+      "Political Science",
+      "History",
+      "Economics",
+      "English Core",
+      "Elective English"
+    ],
+    "min_class_level": 11,
+    "max_class_level": 12,
+    "deadline": "2026-06-08",
+    "portfolio_tier": 2,
+    "description": "Woolf Essay Prize 2026 is a writing competition listed under International / Other for ages 16-18. Women in Year 12 or equivalent, regardless of school or country. Registration deadline 8 Jun 2026.",
+    "fee": "Free",
+    "url": "https://competemap.com/competitions/cmqax8z5x000bj7q3fm66f7cg"
   }
 ]
