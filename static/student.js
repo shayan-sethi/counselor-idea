@@ -95,9 +95,27 @@ async function init() {
     if (boardSelect) {
       boardSelect.addEventListener('change', updateSubjectsGrid);
     }
+    const g10BoardSelect = document.getElementById('sf-g10-board');
+    if (g10BoardSelect) {
+      g10BoardSelect.addEventListener('change', updateG10Placeholders);
+    }
   } catch (e) {
     console.error('Init error:', e);
   }
+}
+
+function getPlaceholderForBoard(board) {
+  if (board === 'IB' || board === 'IB MYP') return "e.g. 7";
+  if (board === 'IGCSE' || board === 'A-Levels') return "e.g. A*";
+  return "e.g. 95";
+}
+
+function updateG10Placeholders() {
+  const g10Board = document.getElementById('sf-g10-board')?.value;
+  const ph = getPlaceholderForBoard(g10Board);
+  document.querySelectorAll('.sf-g10-subj-mark').forEach(input => {
+    input.placeholder = ph;
+  });
 }
 
 let selectedUniversity = "";
@@ -129,9 +147,11 @@ function updateSubjectGradesUI() {
     field.className = 'field';
     field.style.marginBottom = '8px';
     const val = existingValues[sub] !== undefined ? existingValues[sub] : '';
+    const board = document.getElementById('sf-board').value;
+    const ph = getPlaceholderForBoard(board);
     field.innerHTML = `
       <label style="font-size: 0.72rem; color: var(--text-2); margin-bottom: 4px; display: block;">${sub}</label>
-      <input type="number" class="sf-subj-mark" data-subject="${sub}" min="0" max="100" placeholder="e.g. 95" value="${val}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+      <input type="text" class="sf-subj-mark" data-subject="${sub}" placeholder="${ph}" value="${val}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
     `;
     container.appendChild(field);
   });
@@ -200,12 +220,14 @@ function addG10SubjectRow(subjectName = '') {
   const field = document.createElement('div');
   field.className = 'field';
   field.style.marginBottom = '8px';
+  const g10Board = document.getElementById('sf-g10-board')?.value;
+  const ph = getPlaceholderForBoard(g10Board);
   field.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
       <label style="font-size: 0.72rem; color: var(--text-2); display: block;">${sub}</label>
       <button type="button" class="btn-delete-sm" onclick="this.closest('.field').remove()" style="font-size:0.65rem; padding: 0 4px;">✕</button>
     </div>
-    <input type="number" class="sf-g10-subj-mark" data-g10-subject="${sub}" min="0" max="100" placeholder="e.g. 90" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+    <input type="text" class="sf-g10-subj-mark" data-g10-subject="${sub}" placeholder="${ph}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
   `;
   container.appendChild(field);
   if (inputEl && !subjectName) inputEl.value = '';
@@ -670,6 +692,8 @@ async function submitProfile(e) {
   const cuetSubjects = cuetRaw ? cuetRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   const grades = {};
+  const g10Board = document.getElementById('sf-g10-board')?.value;
+  if (g10Board) grades.g10_board = g10Board;
   const g10 = document.getElementById('sf-g10').value.trim();
   const g11 = document.getElementById('sf-g11').value.trim();
   const gexp = document.getElementById('sf-gexp').value.trim();
@@ -679,8 +703,8 @@ async function submitProfile(e) {
 
   const g10SubjectsGrades = {};
   document.querySelectorAll('.sf-g10-subj-mark').forEach(input => {
-    const mark = parseInt(input.value);
-    if (!isNaN(mark)) {
+    const mark = input.value.trim();
+    if (mark) {
       g10SubjectsGrades[input.dataset.g10Subject] = mark;
     }
   });
@@ -688,8 +712,8 @@ async function submitProfile(e) {
 
   const subjectsGrades = {};
   document.querySelectorAll('.sf-subj-mark').forEach(input => {
-    const mark = parseInt(input.value);
-    if (!isNaN(mark)) {
+    const mark = input.value.trim();
+    if (mark) {
       subjectsGrades[input.dataset.subject] = mark;
     }
   });

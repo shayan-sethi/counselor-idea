@@ -106,10 +106,28 @@ async function init() {
     if (boardSelect) {
       boardSelect.addEventListener('change', updateManageSubjectsGrid);
     }
+    const g10BoardSelect = document.getElementById('mf-g10-board');
+    if (g10BoardSelect) {
+      g10BoardSelect.addEventListener('change', updateManageG10Placeholders);
+    }
   } catch (e) {
     document.getElementById('student-rows').innerHTML =
       '<div class="loading-row" style="color:var(--red)">✕ failed to connect to engine</div>';
   }
+}
+
+function getPlaceholderForBoard(board) {
+  if (board === 'IB' || board === 'IB MYP') return "e.g. 7";
+  if (board === 'IGCSE' || board === 'A-Levels') return "e.g. A*";
+  return "e.g. 95";
+}
+
+function updateManageG10Placeholders() {
+  const g10Board = document.getElementById('mf-g10-board')?.value;
+  const ph = getPlaceholderForBoard(g10Board);
+  document.querySelectorAll('.mf-g10-subj-mark').forEach(input => {
+    input.placeholder = ph;
+  });
 }
 
 async function refreshData() {
@@ -340,9 +358,11 @@ function updateManageSubjectGradesUI() {
     field.className = 'field';
     field.style.marginBottom = '8px';
     const val = existingValues[sub] !== undefined ? existingValues[sub] : '';
+    const board = document.getElementById('mf-board').value;
+    const ph = getPlaceholderForBoard(board);
     field.innerHTML = `
       <label style="font-size: 0.72rem; color: var(--text-2); margin-bottom: 4px; display: block;">${sub}</label>
-      <input type="number" class="mf-subj-mark" data-subject="${sub}" min="0" max="100" placeholder="e.g. 95" value="${val}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+      <input type="text" class="mf-subj-mark" data-subject="${sub}" placeholder="${ph}" value="${val}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
     `;
     container.appendChild(field);
   });
@@ -463,12 +483,14 @@ function addManageG10SubjectRow(subjectName = '') {
   const field = document.createElement('div');
   field.className = 'field';
   field.style.marginBottom = '8px';
+  const g10Board = document.getElementById('mf-g10-board')?.value;
+  const ph = getPlaceholderForBoard(g10Board);
   field.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
       <label style="font-size: 0.72rem; color: var(--text-2); display: block;">${sub}</label>
       <button type="button" class="btn-delete-sm" onclick="this.closest('.field').remove()" style="font-size:0.65rem; padding: 0 4px;">✕</button>
     </div>
-    <input type="number" class="mf-g10-subj-mark" data-g10-subject="${sub}" min="0" max="100" placeholder="e.g. 90" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
+    <input type="text" class="mf-g10-subj-mark" data-g10-subject="${sub}" placeholder="${ph}" style="font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); width: 100%; border-radius: 4px;" />
   `;
   container.appendChild(field);
   if (inputEl && !subjectName) inputEl.value = '';
@@ -669,6 +691,8 @@ function getFormData() {
   const cuetSubjects = cuetRaw ? cuetRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
 
   const grades = {};
+  const g10Board = document.getElementById('mf-g10-board')?.value;
+  if (g10Board) grades.g10_board = g10Board;
   const g10 = document.getElementById('mf-g10').value.trim();
   const g11 = document.getElementById('mf-g11').value.trim();
   const gexp = document.getElementById('mf-gexp').value.trim();
@@ -678,8 +702,8 @@ function getFormData() {
 
   const g10SubjectsGrades = {};
   document.querySelectorAll('.mf-g10-subj-mark').forEach(input => {
-    const mark = parseInt(input.value);
-    if (!isNaN(mark)) {
+    const mark = input.value.trim();
+    if (mark) {
       g10SubjectsGrades[input.dataset.g10Subject] = mark;
     }
   });
@@ -687,8 +711,8 @@ function getFormData() {
 
   const subjectsGrades = {};
   document.querySelectorAll('.mf-subj-mark').forEach(input => {
-    const mark = parseInt(input.value);
-    if (!isNaN(mark)) {
+    const mark = input.value.trim();
+    if (mark) {
       subjectsGrades[input.dataset.subject] = mark;
     }
   });
@@ -796,6 +820,7 @@ function editStudent(sid) {
   });
 
   document.getElementById('mf-cuet').value = (s.cuet_subjects || []).join(', ');
+  if (s.grades?.g10_board) document.getElementById('mf-g10-board').value = s.grades.g10_board;
   document.getElementById('mf-g10').value = s.grades?.class_10_aggregate || '';
   document.getElementById('mf-g11').value = s.grades?.class_11_aggregate || '';
   document.getElementById('mf-gexp').value = s.grades?.current_expected_board || '';

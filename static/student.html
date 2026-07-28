@@ -178,22 +178,34 @@
           <div class="form-section-title">04 — grades & test scores</div>
           <div class="form-row">
             <div class="field">
-              <label>Class 10 Aggregate %</label>
+              <label>Grade 10 Board *</label>
+              <select id="sf-g10-board">
+                <option value="CBSE">CBSE</option>
+                <option value="ICSE">ICSE</option>
+                <option value="State Board">State Board</option>
+                <option value="IGCSE">IGCSE</option>
+                <option value="IB MYP">IB MYP</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Grade 10 Aggregate</label>
               <input type="text" id="sf-g10" placeholder="e.g. 88%" />
             </div>
             <div class="field">
-              <label>Class 11 Aggregate %</label>
+              <label>Class 11 Aggregate</label>
               <input type="text" id="sf-g11" placeholder="e.g. 85%" />
             </div>
+          </div>
+          <div class="form-row">
             <div class="field">
-              <label>Expected Board %</label>
+              <label>Expected Board Aggregate</label>
               <input type="text" id="sf-gexp" placeholder="e.g. 90%" />
             </div>
           </div>
 
           <!-- Grade 10 Individual Subject Marks -->
           <div class="field" style="margin-top: 16px; margin-bottom: 16px;">
-            <label>Grade 10 Subject Marks (0-100)</label>
+            <label>Grade 10 Subject Marks</label>
             <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Enter your individual
               Class 10 subject marks.</p>
             <div id="sf-g10-subject-grades-container"
@@ -209,7 +221,7 @@
 
           <!-- Class 11/12 Individual Subject Marks -->
           <div class="field" style="margin-bottom: 16px;" id="sf-subject-grades-section">
-            <label>Class 11/12 Expected Subject Marks (0-100)</label>
+            <label>Class 11/12 Expected Subject Marks</label>
             <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Expected marks for
               subjects selected in Step 02.</p>
             <div id="sf-subject-grades-container"

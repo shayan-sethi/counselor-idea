@@ -61,7 +61,7 @@ class DocumentIngestionAgent:
         if not extracted_profile:
             extracted_profile = self._extract_with_rules(combined_text)
 
-        return BoardGradeConverter.standardize_profile_grades(extracted_profile)
+        return extracted_profile
 
     def _extract_with_gemini(self, text):
         from google import genai
@@ -81,12 +81,13 @@ class DocumentIngestionAgent:
 
         class SubjectGrade(BaseModel):
             subject_name: str
-            grade: float = Field(description="Numeric percentage or letter grade float e.g. 95.0")
+            grade: str = Field(description="The native grade achieved, e.g. 'A*', '7', '95', or 'A'")
 
         class Grades(BaseModel):
-            current_expected_board: str = Field(description="e.g. 92.5%")
-            subjects: List[SubjectGrade] = Field(description="Current subjects and their numeric percentage or letter grade float e.g. 95.0")
-            g10_subjects: List[SubjectGrade] = Field(description="Grade 10 subjects and their numeric percentage float e.g. 95.0")
+            g10_board: Optional[str] = Field(description="The board for Grade 10, e.g. IGCSE, CBSE, ICSE, IB MYP, State Board")
+            current_expected_board: str = Field(description="e.g. 92.5%, 42/45")
+            subjects: List[SubjectGrade] = Field(description="Current subjects and their native grades")
+            g10_subjects: List[SubjectGrade] = Field(description="Grade 10 subjects and their native grades")
 
         class StudentProfile(BaseModel):
             name: str = Field(description="Student Full Name")
@@ -115,7 +116,10 @@ CRITICAL INSTRUCTIONS:
    - Grade 11/12 / IBDP / A-Level subjects (e.g. HL Physics, SL English) go strictly into "board_subjects".
    - Do not mix Grade 10 subjects into current board_subjects if the student is in Grade 11/12.
 3. CLASS LEVEL: If student is pursuing IB Diploma (IBDP), Grade 11, Grade 12, or A-Levels, set "class_level": 12 and "board": "IB" (or A-Levels/CBSE).
-4. IGCSE MARKS: If Grade 10 IGCSE / MYP results are listed (e.g. "Achieved 9A* in IGCSE ... in: English, Physics, Math..."), extract the subjects into "grades.g10_subjects" and assign 95.0 for A* or equivalent.
+4. IGCSE / GRADE 10 MARKS & BOARD: 
+   - Detect the Grade 10 board (e.g. IGCSE, CBSE, ICSE, IB MYP) and set it in "grades.g10_board".
+   - Extract the subjects into "grades.g10_subjects".
+   - CRITICAL: Keep the grades in their NATIVE format (e.g. "A*", "A", "7", "95"). DO NOT convert them to percentages.
 """
         response = client.models.generate_content(
             model="gemini-2.0-flash",

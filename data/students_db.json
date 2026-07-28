@@ -568,18 +568,18 @@
     "cuet_subjects": [],
     "grades": {
       "current_expected_board": "90.0%",
-      "subjects": {},
       "g10_subjects": {
-        "Mathematics": 95.0,
-        "Physics": 95.0,
-        "Chemistry": 95.0,
-        "Computer Science": 95.0,
-        "English": 95.0,
-        "Spanish": 95.0,
-        "Geography": 95.0,
-        "Environmental Management": 95.0,
-        "Literature": 95.0
-      }
+        "Chemistry": 95,
+        "Computer Science": 95,
+        "English": 95,
+        "Environmental Management": 95,
+        "Geography": 95,
+        "Literature": 95,
+        "Mathematics": 95,
+        "Physics": 95,
+        "Spanish": 95
+      },
+      "subjects": {}
     },
     "standardized_tests": {
       "SAT": 1570
@@ -630,9 +630,16 @@
     "id": "STU_015",
     "status": {
       "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
+      "sat_score": null,
+      "tmua_registered": false
+    },
+    "shortlisted_colleges": [
+      "MIT",
+      "OXFORD",
+      "US_166027",
+      "STANFORD",
+      "US_211440"
+    ]
   },
   {
     "name": "Aarav Mehta",
@@ -952,6 +959,178 @@
     "targets": [
       "CUSTOM_ENGINEERING_2"
     ],
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "SAIANSH TAPURIAH",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "Economics",
+      "English",
+      "Spanish",
+      "Geography",
+      "Environmental Management",
+      "Literature"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {},
+      "g10_subjects": {
+        "Mathematics": 95.0,
+        "Physics": 95.0,
+        "Chemistry": 95.0,
+        "Computer Science": 95.0,
+        "English": 95.0,
+        "Spanish": 95.0,
+        "Geography": 95.0,
+        "Environmental Management": 95.0,
+        "Literature": 95.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "EpiAlert EpiAlert is an innovative devic",
+        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
+        "tier": 1
+      },
+      {
+        "activity": "Device has been recognized nationally, with t",
+        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
+        "tier": 1
+      },
+      {
+        "activity": "Pollution Alert To reduce the widespread",
+        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
+        "tier": 1
+      },
+      {
+        "activity": "Technology",
+        "description": "Technology: Python programming, ML development, avid tech quizzer",
+        "tier": 3
+      },
+      {
+        "activity": "Sports",
+        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
+        "tier": 1
+      },
+      {
+        "activity": "Science",
+        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
+        "tier": 1
+      },
+      {
+        "activity": "Maths",
+        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
+        "tier": 1
+      },
+      {
+        "activity": "Scuba Diving",
+        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_020",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "name": "SAIANSH TAPURIAH",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Mathematics",
+      "Physics",
+      "Chemistry",
+      "Computer Science",
+      "Economics",
+      "English",
+      "Spanish",
+      "Geography",
+      "Environmental Management",
+      "Literature"
+    ],
+    "planned_class_11_subjects": [],
+    "cuet_subjects": [],
+    "grades": {
+      "current_expected_board": "90.0%",
+      "subjects": {},
+      "g10_subjects": {
+        "Mathematics": 95.0,
+        "Physics": 95.0,
+        "Chemistry": 95.0,
+        "Computer Science": 95.0,
+        "English": 95.0,
+        "Spanish": 95.0,
+        "Geography": 95.0,
+        "Environmental Management": 95.0,
+        "Literature": 95.0
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1570
+    },
+    "portfolio": [
+      {
+        "activity": "EpiAlert EpiAlert is an innovative devic",
+        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
+        "tier": 1
+      },
+      {
+        "activity": "Device has been recognized nationally, with t",
+        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
+        "tier": 1
+      },
+      {
+        "activity": "Pollution Alert To reduce the widespread",
+        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
+        "tier": 1
+      },
+      {
+        "activity": "Technology",
+        "description": "Technology: Python programming, ML development, avid tech quizzer",
+        "tier": 3
+      },
+      {
+        "activity": "Sports",
+        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
+        "tier": 1
+      },
+      {
+        "activity": "Science",
+        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
+        "tier": 1
+      },
+      {
+        "activity": "Maths",
+        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
+        "tier": 1
+      },
+      {
+        "activity": "Scuba Diving",
+        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
+        "tier": 3
+      }
+    ],
+    "targets": [],
+    "id": "STU_021",
     "status": {
       "cuet_form_submitted": false,
       "tmua_registered": false,

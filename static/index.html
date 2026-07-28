@@ -174,22 +174,34 @@
 
           <div class="form-row">
             <div class="field">
-              <label>Class 10 Aggregate</label>
+              <label>Grade 10 Board *</label>
+              <select id="mf-g10-board">
+                <option value="CBSE">CBSE</option>
+                <option value="ICSE">ICSE</option>
+                <option value="State Board">State Board</option>
+                <option value="IGCSE">IGCSE</option>
+                <option value="IB MYP">IB MYP</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Grade 10 Aggregate</label>
               <input type="text" id="mf-g10" placeholder="e.g. 88%" />
             </div>
             <div class="field">
               <label>Class 11 Aggregate</label>
               <input type="text" id="mf-g11" placeholder="e.g. 85%" />
             </div>
+          </div>
+          <div class="form-row">
             <div class="field">
-              <label>Expected Board %</label>
+              <label>Expected Board Aggregate</label>
               <input type="text" id="mf-gexp" placeholder="e.g. 90%" />
             </div>
           </div>
 
           <!-- Grade 10 Individual Subject Marks -->
           <div class="field" style="margin-bottom: 14px;">
-            <label>Grade 10 Subject Marks (0-100)</label>
+            <label>Grade 10 Subject Marks</label>
             <div id="mf-g10-subject-grades-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;"></div>
             <div style="display: flex; gap: 8px; margin-top: 8px;">
               <input type="text" id="mf-g10-custom-subj" placeholder="Add Grade 10 subject..." style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
@@ -199,7 +211,7 @@
 
           <!-- Class 11/12 Individual Subject Marks -->
           <div class="field" style="margin-bottom: 14px; display: none;" id="mf-subject-grades-section">
-            <label>Class 11/12 Expected Subject Marks (0-100)</label>
+            <label>Class 11/12 Expected Subject Marks</label>
             <div id="mf-subject-grades-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 8px;"></div>
           </div>
 
