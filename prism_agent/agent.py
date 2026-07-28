@@ -328,6 +328,16 @@ Write a sentence explaining your thought before calling each tool.
         if target:
             final_data["target_name"] = target["name"]
             final_data["track"] = target["track"]
+            
+        student = next((s for s in students_list if s["id"] == student_id), None)
+        if student and target:
+            gaps = final_data.get("gaps", [])
+            match_score = final_data.get("match_score")
+            if match_score is None:
+                match_score = self.reasoner._calculate_match_score(gaps)
+                final_data["match_score"] = match_score
+                final_data["risk_level"] = self.reasoner._risk_level_label(match_score)
+            final_data["difficulty_label"] = self.reasoner._classify_difficulty(student, target, match_score, gaps)
 
         return final_data
 
@@ -372,7 +382,8 @@ Write a sentence explaining your thought before calling each tool.
             "risk_level": risk_level,
             "urgency_score": temp_analysis["targets"][target_id]["urgency_score"],
             "gaps": gaps,
-            "remediations": remediations
+            "remediations": remediations,
+            "difficulty_label": self.reasoner._classify_difficulty(student, target, match_score, gaps)
         }
 
     def _solve_goal_simulated(self, student_id, target_id, students_list, simulated_subjects=None, silent=False):
@@ -473,5 +484,6 @@ Write a sentence explaining your thought before calling each tool.
             "remediations": remediations,
             "target_name": target["name"],
             "track": target["track"],
-            "trace": trace
+            "trace": trace,
+            "difficulty_label": self.reasoner._classify_difficulty(student, target, match_score, gaps)
         }

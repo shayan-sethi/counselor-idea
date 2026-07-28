@@ -102,25 +102,142 @@ print("[+] PRISM engine + ML models loaded.")
 #  Flask App
 # ──────────────────────────────────────────────
 
+from flask import session, redirect, url_for
+import hashlib
+from functools import wraps
+
 app = Flask(__name__, static_folder="static", static_url_path="/static")
+app.secret_key = "prism-secure-secret-key-12345"
+
+USERS_PATH = os.path.join(BASE_DIR, "data", "users_db.json")
+
+def load_users():
+    if os.path.exists(USERS_PATH):
+        with open(USERS_PATH, "r") as f:
+            return json.load(f)
+    return []
+
+def hash_password(password):
+    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+# ── Auth Decorators ──
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            return jsonify({"error": "Unauthorized. Please log in."}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+def counselor_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            return jsonify({"error": "Unauthorized. Please log in."}), 401
+        if session.get("role") != "counselor":
+            return jsonify({"error": "Forbidden. Counselor role required."}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+def student_self_only(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            return jsonify({"error": "Unauthorized. Please log in."}), 401
+        role = session.get("role")
+        if role == "counselor":
+            return f(*args, **kwargs)
+        
+        # Determine student_id from route kwargs or JSON body or query param
+        student_id = kwargs.get("student_id")
+        if not student_id and request.is_json:
+            student_id = request.get_json().get("student_id")
+        if not student_id:
+            student_id = request.args.get("student_id")
+            
+        if role == "student" and session.get("student_id") != student_id:
+            return jsonify({"error": "Forbidden. You can only access your own profile."}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ── Security Headers ──
+
+@app.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self';"
+    return response
+
+# ── Auth Endpoints ──
+
+@app.route("/api/login", methods=["POST"])
+def api_login():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing login credentials"}), 400
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+    
+    users = load_users()
+    user = next((u for u in users if u["username"].lower() == username.lower()), None)
+    if not user or user["password_hash"] != hash_password(password):
+        return jsonify({"error": "Invalid username or password"}), 401
+    
+    session["username"] = user["username"]
+    session["role"] = user["role"]
+    session["student_id"] = user["student_id"]
+    
+    return jsonify({
+        "message": "Login successful",
+        "role": user["role"],
+        "student_id": user["student_id"],
+        "username": user["username"]
+    })
+
+@app.route("/api/logout", methods=["POST", "GET"])
+def api_logout():
+    session.clear()
+    return jsonify({"message": "Logged out successfully"})
+
+@app.route("/api/user_session")
+def api_user_session():
+    if "username" not in session:
+        return jsonify({"authenticated": False}), 200
+    return jsonify({
+        "authenticated": True,
+        "username": session["username"],
+        "role": session["role"],
+        "student_id": session["student_id"]
+    })
 
 # ── Page routes ──
 
 @app.route("/")
 def index():
+    if "username" not in session:
+        return redirect("/static/login.html")
+    if session.get("role") != "counselor":
+        return redirect("/student")
     return send_from_directory("static", "index.html")
 
 @app.route("/student")
 def student_portal():
+    if "username" not in session:
+        return redirect("/static/login.html")
     return send_from_directory("static", "student.html")
 
 # ── Read endpoints ──
 
 @app.route("/api/students")
+@counselor_required
 def api_students():
     return jsonify(STUDENTS)
 
 @app.route("/api/student/<student_id>")
+@student_self_only
 def api_student_single(student_id):
     s = next((s for s in STUDENTS if s["id"] == student_id), None)
     if not s:
@@ -128,10 +245,12 @@ def api_student_single(student_id):
     return jsonify(s)
 
 @app.route("/api/targets")
+@login_required
 def api_targets():
     return jsonify(kg.requirements)
 
 @app.route("/api/targets", methods=["POST"])
+@counselor_required
 def api_create_target():
     data = request.get_json()
     if not data:
@@ -182,6 +301,7 @@ def api_create_target():
     return jsonify(new_target), 201
 
 @app.route("/api/targets/<target_id>", methods=["DELETE"])
+@counselor_required
 def api_delete_target(target_id):
     if target_id not in kg.requirements:
         return jsonify({"error": "Target not found"}), 404
@@ -194,6 +314,7 @@ def api_delete_target(target_id):
     return jsonify({"ok": True})
 
 @app.route("/api/model_metrics")
+@login_required
 def api_model_metrics():
     return jsonify(MODEL_METRICS)
 
@@ -248,6 +369,7 @@ def get_courses_df():
     return SEARCH_COURSES_DF_CACHE
 
 @app.route("/api/search_unis")
+@login_required
 def api_search_unis():
     query = request.args.get("q", "").strip().lower()
     try:
@@ -261,6 +383,7 @@ def api_search_unis():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/api/search_courses")
+@login_required
 def api_search_courses():
     uni = request.args.get("uni", "").strip()
     query = request.args.get("q", "").strip().lower()
@@ -308,6 +431,7 @@ def api_search_courses():
         return jsonify({"error": str(e)}), 500
 
 @app.route("/api/students", methods=["POST"])
+@counselor_required
 def api_create_student():
     data = request.get_json()
     if not data:
@@ -368,7 +492,8 @@ def api_create_student():
                 "risk_level": agent_res.get("risk_level", "Strong Match"),
                 "urgency_score": agent_res.get("urgency_score", 0),
                 "gaps": agent_res.get("gaps", []),
-                "remediations": agent_res.get("remediations", [])
+                "remediations": agent_res.get("remediations", []),
+                "difficulty_label": agent_res.get("difficulty_label", "Target")
             }
             traces[tid] = agent_res.get("trace", [])
 
@@ -377,6 +502,7 @@ def api_create_student():
 # ── Agentic Automated Data Ingestion ──
 
 @app.route("/api/ingest_documents", methods=["POST"])
+@counselor_required
 def api_ingest_documents():
     uploaded_files = []
     if "files" in request.files:
@@ -444,6 +570,7 @@ def api_ingest_documents():
 # ── Inter-Board Grade Standardization Endpoint ──
 
 @app.route("/api/convert_grade", methods=["POST", "GET"])
+@login_required
 def api_convert_grade():
     if request.method == "POST":
         data = request.get_json() or {}
@@ -466,8 +593,15 @@ def api_convert_grade():
 
 # ── Update student ──
 
-@app.route("/api/students/<student_id>", methods=["PUT"])
+@app.route("/api/students/<student_id>", methods=["GET", "PUT"])
+@student_self_only
 def api_update_student(student_id):
+    if request.method == "GET":
+        student = next((s for s in STUDENTS if s["id"] == student_id), None)
+        if not student:
+            return jsonify({"error": "Student not found"}), 404
+        return jsonify(student)
+
     data = request.get_json()
     if not data:
         return jsonify({"error": "No data"}), 400
@@ -495,6 +629,7 @@ def api_update_student(student_id):
 # ── Delete student ──
 
 @app.route("/api/students/<student_id>", methods=["DELETE"])
+@counselor_required
 def api_delete_student(student_id):
     global STUDENTS
     before = len(STUDENTS)
@@ -507,6 +642,7 @@ def api_delete_student(student_id):
 # ── Evaluate ──
 
 @app.route("/api/evaluate", methods=["POST"])
+@student_self_only
 def api_evaluate():
     data = request.get_json()
     student_id = data.get("student_id")
@@ -535,7 +671,8 @@ def api_evaluate():
                 "risk_level": agent_res.get("risk_level", "Strong Match"),
                 "urgency_score": agent_res.get("urgency_score", 0),
                 "gaps": agent_res.get("gaps", []),
-                "remediations": agent_res.get("remediations", [])
+                "remediations": agent_res.get("remediations", []),
+                "difficulty_label": agent_res.get("difficulty_label", "Target")
             }
             traces[tid] = agent_res.get("trace", [])
 
@@ -543,6 +680,7 @@ def api_evaluate():
     return jsonify(result)
 
 @app.route("/api/evaluate_cohort")
+@counselor_required
 def api_evaluate_cohort():
     results = {}
     for student in STUDENTS:
@@ -563,7 +701,8 @@ def api_evaluate_cohort():
                     "risk_level": agent_res.get("risk_level", "Strong Match"),
                     "urgency_score": agent_res.get("urgency_score", 0),
                     "gaps": agent_res.get("gaps", []),
-                    "remediations": agent_res.get("remediations", [])
+                    "remediations": agent_res.get("remediations", []),
+                    "difficulty_label": agent_res.get("difficulty_label", "Target")
                 }
         results[student["id"]] = result
     return jsonify(results)
@@ -571,6 +710,7 @@ def api_evaluate_cohort():
 # ── ML Predict ──
 
 @app.route("/api/predict", methods=["POST"])
+@login_required
 def api_predict():
     data = request.get_json()
     tef_map = {"Gold": 3, "Silver": 2, "Bronze": 1, "None": 0}
@@ -600,6 +740,7 @@ def api_predict():
 # ── Student Portal AI Copilot Advisor ──
 
 @app.route("/api/student_advisor", methods=["POST"])
+@student_self_only
 def api_student_advisor():
     data = request.get_json()
     student_id = data.get("student_id")
@@ -670,6 +811,7 @@ def api_student_advisor():
 # ── Counselor Portal AI Cohort Command Center Agent ──
 
 @app.route("/api/counselor_agent", methods=["POST"])
+@counselor_required
 def api_counselor_agent():
     data = request.get_json()
     command = data.get("command", "").strip().lower()
@@ -775,6 +917,7 @@ def save_competitions(comps):
         json.dump(comps, f, indent=2)
 
 @app.route("/api/opportunities/<student_id>")
+@student_self_only
 def api_opportunities(student_id):
     student = next((s for s in STUDENTS if s["id"] == student_id), None)
     if not student:
@@ -785,6 +928,7 @@ def api_opportunities(student_id):
     return jsonify(matches)
 
 @app.route("/api/import_competition", methods=["POST"])
+@counselor_required
 def api_import_competition():
     data = request.get_json()
     if not data or "url" not in data:
@@ -891,14 +1035,17 @@ def load_exams():
     return []
 
 @app.route("/api/colleges")
+@login_required
 def api_colleges():
     return jsonify(load_colleges())
 
 @app.route("/api/exams")
+@login_required
 def api_exams():
     return jsonify(load_exams())
 
 @app.route("/api/calendar/<student_id>")
+@student_self_only
 def api_calendar(student_id):
     student = next((s for s in STUDENTS if s["id"] == student_id), None)
     if not student:
@@ -1021,10 +1168,12 @@ def save_scholarships(schols):
         json.dump(schols, f, indent=2)
 
 @app.route("/api/scholarships", methods=["GET"])
+@login_required
 def api_get_scholarships():
     return jsonify(load_scholarships())
 
 @app.route("/api/match_scholarships/<student_id>")
+@student_self_only
 def api_match_scholarships(student_id):
     student = next((s for s in STUDENTS if s["id"] == student_id), None)
     if not student:
@@ -1035,6 +1184,7 @@ def api_match_scholarships(student_id):
     return jsonify(matches)
 
 @app.route("/api/import_scholarship", methods=["POST"])
+@counselor_required
 def api_import_scholarship():
     data = request.get_json()
     if not data or "name" not in data:

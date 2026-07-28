@@ -7,31 +7,42 @@
   <meta name="description" content="PRISM: AI-powered compliance dashboard for education counselors." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style.css?v=2" />
 </head>
 <body>
 
-  <!-- ═══ TOPBAR ═══ -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="logo">PRISM<span class="logo-dot">.</span></span>
-      <span class="logo-label">counselor co-pilot</span>
+  <!-- ═══ SIDEBAR & MAIN LAYOUT ═══ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">U</div>
+      <div class="brand-name">unlockED</div>
     </div>
-    <nav class="topbar-nav">
-      <button class="tab active" id="tab-dash" onclick="switchView('dashboard')">compliance</button>
-      <button class="tab" id="tab-manage" onclick="switchView('manage')">manage</button>
-      <button class="tab" id="tab-pred" onclick="switchView('predictor')">predictor</button>
-      <button class="tab" id="tab-reports" onclick="switchView('reports')">reports</button>
-      <button class="tab" id="tab-radar" onclick="switchView('radar')">radar</button>
-      <button class="tab" id="tab-shortlist" onclick="switchView('shortlist')">shortlisting</button>
-      <button class="tab" id="tab-calendar" onclick="switchView('calendar')">calendar</button>
+    <nav class="nav-links">
+      <button class="nav-item active" id="tab-dash" onclick="switchView('dashboard')">Dashboard</button>
+      <button class="nav-item" id="tab-manage" onclick="switchView('manage')">Students</button>
+      <button class="nav-item" id="tab-shortlist" onclick="switchView('shortlist')">Universities</button>
+      <button class="nav-item" id="tab-student-profile" onclick="switchView('student-profile')">Recommendations</button>
+      <button class="nav-item" id="tab-calendar" onclick="switchView('calendar')">Deadlines</button>
+      <button class="nav-item" id="tab-reports" onclick="switchView('reports')">Analytics</button>
+      <button class="nav-item" id="tab-radar" onclick="switchView('radar')">Settings</button>
     </nav>
-    <div class="topbar-right">
-      <a href="/student" class="student-link">student portal →</a>
-      <span class="engine-status"><span class="status-dot"></span>live</span>
+    <div class="counselor-profile">
+      <div class="cp-avatar"><img src="https://i.pravatar.cc/100?img=5" alt="Avatar"></div>
+      <div class="cp-info">
+        <span class="cp-name">Sarah Johnson</span>
+        <span class="cp-role">School Counsellor</span>
+      </div>
     </div>
-  </header>
+  </aside>
 
+  <div class="app-container">
+    <header class="topbar">
+      <input type="text" class="search-bar" placeholder="Search students, schools...">
+      <div class="btn-icon">🔔</div>
+      <div class="btn-icon" onclick="logout()" style="color: #ef4444;" title="Logout">🚪</div>
+    </header>
+    <div class="content-wrapper">
+      
   <!-- ═══ DASHBOARD ═══ -->
   <main id="view-dashboard">
     <div class="page-title-row">
@@ -678,38 +689,91 @@
     </div>
   </main>
 
-  <!-- ═══ DRAWER ═══ -->
-  <div class="drawer-backdrop hidden" id="drawer-backdrop" onclick="closeDrawer()"></div>
-  <aside class="drawer hidden" id="drawer">
-    <div class="drawer-top">
-      <div class="drawer-ident">
-        <span class="drawer-initials" id="d-initials">—</span>
-        <div>
-          <div class="drawer-name" id="d-name">—</div>
-          <div class="drawer-detail" id="d-detail">—</div>
+  <!-- ═══ NEW STUDENT PROFILE VIEW ═══ -->
+  <main id="view-student-profile" class="hidden">
+    <div class="profile-layout">
+      
+      <!-- Left Panel -->
+      <div class="left-panel">
+        <div class="action-buttons">
+          <button class="btn-outline">🗓 Schedule Meeting</button>
+          <button class="btn-primary">📄 Generate Report</button>
+        </div>
+        
+        <div class="details-card">
+          <div class="dc-title">Student Details</div>
+          <div class="dc-row"><span class="dc-label">Email</span><span class="dc-value" id="sp-email">priya.sharma@gmail.com</span></div>
+          <div class="dc-row"><span class="dc-label">Phone</span><span class="dc-value" id="sp-phone">+1 (555) 019-2834</span></div>
+          <div class="dc-row"><span class="dc-label">GPA</span><span class="dc-value" id="sp-gpa">3.8 / 4.0</span></div>
+          <div class="dc-row"><span class="dc-label">SAT Score</span><span class="dc-value" id="sp-sat">1420</span></div>
+          <div class="dc-row"><span class="dc-label">IELTS Academic</span><span class="dc-value" id="sp-ielts">7.5</span></div>
+        </div>
+
+        <div class="ai-insights">
+          <div class="ai-insights-title">✨ AI Insights & Suggestions</div>
+          <div class="ai-text">Excellent match score (96%) for Stanford Computer Science program based on tech-focused SOP draft.</div>
+          <div class="ai-text">Consider scheduling an essay review session for Georgia Tech. The early action deadline is fast approaching.</div>
+        </div>
+
+        <div class="notes-card">
+          <div class="dc-title">Counsellor Notes</div>
+          <div class="nc-date">Oct 29, 2026</div>
+          <div class="nc-text">Priya is highly motivated in AI research. Discussed adding more Data Science options.</div>
+          <div class="nc-date">Oct 15, 2026</div>
+          <div class="nc-text">Met with parent. Recommended SAT focus to improve CS prospects.</div>
+          <button class="btn-outline-sm" style="width: 100%; margin-top: 8px;">+ Add Note</button>
         </div>
       </div>
-      <button class="drawer-x" onclick="closeDrawer()">✕</button>
+
+      <!-- Right Panel (Matches) -->
+      <div class="right-panel">
+        <div class="matches-header">
+          <div>
+            <div class="page-title">AI University Recommendations</div>
+            <div class="page-subtitle">Curated list of institution suggestions for <span id="sp-name">Priya Sharma</span>.</div>
+          </div>
+          <div class="student-dropdown">
+            <img src="https://i.pravatar.cc/100?img=1" alt="Student">
+            <span id="sp-dropdown-name">Priya Sharma</span> ▾
+          </div>
+        </div>
+
+        <div class="filters-row">
+          <div class="pills">
+            <div class="pill active" onclick="filterMatches('all', this)">All Matches</div>
+            <div class="pill" onclick="filterMatches('best-fit', this)">Best Fit</div>
+            <div class="pill" onclick="filterMatches('Safety', this)">Safety</div>
+            <div class="pill" onclick="filterMatches('Target', this)">Target</div>
+            <div class="pill" onclick="filterMatches('Reach', this)">Reach</div>
+          </div>
+          <div class="sort-by">
+            Sort by: <strong>Match Score</strong> ▾
+          </div>
+        </div>
+
+        <div class="matches-grid" id="sp-matches-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
     </div>
-    <div class="drawer-tabs">
-      <button class="dtab active" id="dtab-gaps" onclick="switchDTab('gaps')">gaps</button>
-      <button class="dtab" id="dtab-rem" onclick="switchDTab('rem')">remediations</button>
-      <button class="dtab" id="dtab-sim" onclick="switchDTab('sim')">simulator</button>
-    </div>
+  </main>
+
+  <!-- Keep drawer html elements for legacy compatibility if JS errors -->
+  <div class="drawer-backdrop hidden" id="drawer-backdrop" onclick="closeDrawer()"></div>
+  <aside class="drawer hidden" id="drawer">
     <div class="drawer-content" id="drawer-scroll">
       <div id="d-gaps"></div>
       <div id="d-rem" class="hidden"></div>
       <div id="d-sim" class="hidden">
-        <p class="sim-info">Toggle subjects and run a hypothetical compliance check.</p>
         <div class="sim-checks" id="sim-checks"></div>
-        <div class="sim-btns">
-          <button class="btn-run" onclick="runSim()">simulate →</button>
-          <button class="btn-reset" onclick="resetSim()">reset</button>
-        </div>
       </div>
     </div>
   </aside>
 
-  <script src="/static/app.js?v=2"></script>
+    </div> <!-- end content-wrapper -->
+  </div> <!-- end app-container -->
+
+  <script src="/static/app.js?v=4"></script>
 </body>
 </html>

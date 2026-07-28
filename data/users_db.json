@@ -1,0 +1,98 @@
+[
+  {
+    "username": "counselor",
+    "password_hash": "5efd3d99ffa5347945cb96ce0cfc994d55d76a10ed702336aae44f7919db98a2",
+    "role": "counselor",
+    "student_id": null
+  },
+  {
+    "username": "STU_001",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_001"
+  },
+  {
+    "username": "STU_002",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_002"
+  },
+  {
+    "username": "STU_003",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_003"
+  },
+  {
+    "username": "STU_004",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_004"
+  },
+  {
+    "username": "STU_005",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_005"
+  },
+  {
+    "username": "STU_006",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_006"
+  },
+  {
+    "username": "STU_012",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_012"
+  },
+  {
+    "username": "STU_013",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_013"
+  },
+  {
+    "username": "STU_015",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_015"
+  },
+  {
+    "username": "STU_016",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_016"
+  },
+  {
+    "username": "STU_017",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_017"
+  },
+  {
+    "username": "STU_018",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_018"
+  },
+  {
+    "username": "STU_019",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_019"
+  },
+  {
+    "username": "STU_020",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_020"
+  },
+  {
+    "username": "STU_021",
+    "password_hash": "703b0a3d6ad75b649a28adde7d83c6251da457549263bc7ff45ec709b0a8448b",
+    "role": "student",
+    "student_id": "STU_021"
+  }
+]

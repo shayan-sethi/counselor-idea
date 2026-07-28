@@ -712,5 +712,29 @@
     "grade_prerequisites": [],
     "portfolio_tier": 1,
     "citations": []
+  },
+  "CUSTOM_UNDERGRADUATE_BACHELORS_PROGRAM": {
+    "id": "CUSTOM_UNDERGRADUATE_BACHELORS_PROGRAM",
+    "name": "Undergraduate Bachelors Program",
+    "track": "US",
+    "type": "UniversityCourse",
+    "university": "Cambridge College",
+    "deadlines": [],
+    "subject_prerequisites": [
+      {
+        "subject": "English Core",
+        "level": "compulsory",
+        "notes": "Must study English Core"
+      },
+      {
+        "subject": "Accountancy",
+        "level": "compulsory",
+        "notes": "Must study Accountancy"
+      }
+    ],
+    "admission_tests": [],
+    "grade_prerequisites": [],
+    "portfolio_tier": 3,
+    "citations": []
   }
 }

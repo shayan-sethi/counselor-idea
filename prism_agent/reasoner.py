@@ -431,3 +431,41 @@ class Reasoner:
             return "High Risk"
         else:
             return "Critical"
+
+    def _classify_difficulty(self, student, target, match_score, gaps):
+        """Classifies target difficulty into Reach, Target, or Safety for the student."""
+        ELITE_UNIVERSITIES = [
+            "cambridge", "oxford", "mit", "stanford", "harvard", 
+            "yale", "princeton", "caltech", "imperial", "ucl", "columbia",
+            "chicago", "berkeley", "cornell", "pennsylvania"
+        ]
+        
+        uni_name = (target.get("university", "") or target.get("name", "")).lower()
+        is_elite = any(elite in uni_name for elite in ELITE_UNIVERSITIES)
+        
+        has_critical_gaps = any(gap.get("severity") == "CRITICAL" for gap in gaps)
+        
+        if has_critical_gaps or match_score < 75:
+            return "Reach"
+            
+        if is_elite:
+            if match_score >= 95:
+                return "Target"
+            else:
+                return "Reach"
+                
+        if match_score >= 93:
+            portfolio = student.get("portfolio", [])
+            student_best_tier = 3
+            if portfolio:
+                student_best_tier = min([act.get("tier", 3) for act in portfolio])
+            else:
+                student_best_tier = 4
+            
+            req_portfolio_tier = int(target.get("portfolio_tier", 3))
+            
+            if student_best_tier <= req_portfolio_tier:
+                return "Safety"
+            return "Target"
+            
+        return "Target"

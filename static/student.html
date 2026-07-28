@@ -11,29 +11,40 @@
   <link
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/style.css?v=2" />
 </head>
 
 <body>
 
-  <!-- ═══ TOPBAR ═══ -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <span class="logo">PRISM<span class="logo-dot">.</span></span>
-      <span class="logo-label">student portal</span>
+  <!-- ═══ SIDEBAR & MAIN LAYOUT ═══ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">U</div>
+      <div class="brand-name">unlockED</div>
     </div>
-    <nav class="topbar-nav">
-      <button class="tab active" id="tab-profile" onclick="showStep('profile')">your profile</button>
-      <button class="tab" id="tab-results" onclick="showStep('results')">audit results</button>
-      <button class="tab" id="tab-radar" onclick="showStep('radar')">opportunity radar</button>
-      <button class="tab" id="tab-scholarships" onclick="showStep('scholarships')">scholarships & aid</button>
-      <button class="tab" id="tab-shortlist" onclick="showStep('shortlist')">college shortlisting</button>
-      <button class="tab" id="tab-calendar" onclick="showStep('calendar')">deadlines calendar</button>
+    <nav class="nav-links">
+      <button class="nav-item active" id="tab-profile" onclick="showStep('profile')">Your Profile</button>
+      <button class="nav-item" id="tab-results" onclick="showStep('results')">Audit Results</button>
+      <button class="nav-item" id="tab-radar" onclick="showStep('radar')">Opportunity Radar</button>
+      <button class="nav-item" id="tab-scholarships" onclick="showStep('scholarships')">Scholarships & Aid</button>
+      <button class="nav-item" id="tab-shortlist" onclick="showStep('shortlist')">College Shortlisting</button>
+      <button class="nav-item" id="tab-calendar" onclick="showStep('calendar')">Deadlines Calendar</button>
     </nav>
-    <div class="topbar-right">
-      <a href="/" class="student-link">← counselor view</a>
+    <div class="counselor-profile">
+      <div class="cp-avatar"><img src="https://i.pravatar.cc/100?img=1" alt="Avatar"></div>
+      <div class="cp-info">
+        <span class="cp-name">Student Portal</span>
+        <span class="cp-role">Applicant</span>
+      </div>
     </div>
-  </header>
+  </aside>
+
+  <div class="app-container">
+    <header class="topbar">
+      <a href="/" class="btn-outline-sm" id="counselor-view-link" style="text-decoration:none; color:var(--text-2);">← Counselor View</a>
+      <div class="btn-icon" onclick="logout()" style="color: #ef4444;" title="Logout">🚪</div>
+    </header>
+    <div class="content-wrapper">
 
   <!-- ═══ PROFILE FORM ═══ -->
   <main id="step-profile">
@@ -443,6 +454,8 @@
     </div>
   </main>
 
+    </div> <!-- end content-wrapper -->
+  </div> <!-- end app-container -->
   <script src="/static/student.js?v=9"></script>
 </body>
 

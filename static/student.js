@@ -2,6 +2,15 @@
    PRISM — Student Portal Controller
    ═══════════════════════════════════════════════════ */
 
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+  const response = await originalFetch(...args);
+  if (response.status === 401) {
+    window.location.href = '/static/login.html';
+  }
+  return response;
+};
+
 let targets = {};
 let createdStudentId = null;
 let selectedTargetIds = [];
@@ -85,9 +94,55 @@ const AP_SUBJECTS = {
 
 document.addEventListener('DOMContentLoaded', init);
 
+let currentUserRole = null;
+let currentUserStudentId = null;
+
+async function checkUserSession() {
+  try {
+    const res = await fetch('/api/user_session');
+    const data = await res.json();
+    if (!data.authenticated) {
+      window.location.href = '/static/login.html';
+      return false;
+    }
+    currentUserRole = data.role;
+    currentUserStudentId = data.student_id;
+    
+    // Hide counselor link if not a counselor
+    const counselorLink = document.getElementById('counselor-view-link');
+    if (counselorLink && currentUserRole !== 'counselor') {
+      counselorLink.style.display = 'none';
+    }
+    
+    return true;
+  } catch (err) {
+    console.error(err);
+    window.location.href = '/static/login.html';
+    return false;
+  }
+}
+
+async function logout() {
+  try {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/static/login.html';
+  } catch (err) {
+    window.location.href = '/static/login.html';
+  }
+}
+
+window.logout = logout;
+
 async function init() {
+  const authed = await checkUserSession();
+  if (!authed) return;
+
   try {
     const tRes = await fetch('/api/targets');
+    if (tRes.status === 401 || tRes.status === 403) {
+      window.location.href = '/static/login.html';
+      return;
+    }
     targets = await tRes.json();
     populateForm();
 
@@ -99,8 +154,116 @@ async function init() {
     if (g10BoardSelect) {
       g10BoardSelect.addEventListener('change', updateG10Placeholders);
     }
+
+    // Automatically load logged in student's profile
+    if (currentUserRole === 'student' && currentUserStudentId) {
+      createdStudentId = currentUserStudentId;
+      await loadExistingStudentProfile(currentUserStudentId);
+    }
   } catch (e) {
     console.error('Init error:', e);
+  }
+}
+
+async function loadExistingStudentProfile(studentId) {
+  try {
+    const res = await fetch(`/api/student/${studentId}`);
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        window.location.href = '/static/login.html';
+      }
+      return;
+    }
+    const s = await res.json();
+    
+    // Fill basic details
+    document.getElementById('sf-name').value = s.name || '';
+    document.getElementById('sf-board').value = s.board || 'CBSE';
+    document.getElementById('sf-class').value = s.class_level || 12;
+    
+    updateSubjectsGrid();
+    
+    // Check subjects
+    const subjects = s.board_subjects || [];
+    document.querySelectorAll('#sf-subjects input').forEach(cb => {
+      const checked = subjects.includes(cb.value);
+      cb.checked = checked;
+      cb.parentElement.classList.toggle('checked', checked);
+    });
+    
+    updateSubjectGradesUI();
+    
+    // Fill subject grades
+    const grades = s.grades || {};
+    const subjectsGrades = grades.subjects || {};
+    document.querySelectorAll('.sf-subj-mark').forEach(input => {
+      const sub = input.dataset.subject;
+      if (subjectsGrades[sub] !== undefined) {
+        input.value = subjectsGrades[sub];
+      }
+    });
+    
+    // Fill Grade 10 details
+    if (document.getElementById('sf-g10-board') && s.grades?.g10_board) {
+      document.getElementById('sf-g10-board').value = s.grades.g10_board;
+    }
+    updateG10Placeholders();
+    
+    document.getElementById('sf-g10').value = s.grades?.class_10_aggregate || '';
+    document.getElementById('sf-g11').value = s.grades?.class_11_aggregate || '';
+    document.getElementById('sf-gexp').value = s.grades?.current_expected_board || '';
+    
+    // Populate Grade 10 subject marks
+    const g10Container = document.getElementById('sf-g10-subject-grades-container');
+    if (g10Container) {
+      g10Container.innerHTML = '';
+      const g10Subjs = s.grades?.class_10_subjects || {};
+      const keys = Object.keys(g10Subjs).length > 0 ? Object.keys(g10Subjs) : DEFAULT_G10_SUBJECTS;
+      keys.forEach(sub => {
+        addG10SubjectRow(sub);
+      });
+      document.querySelectorAll('.sf-g10-subj-mark').forEach(input => {
+        const sub = input.dataset.g10Subject;
+        if (g10Subjs[sub] !== undefined) {
+          input.value = g10Subjs[sub];
+        }
+      });
+    }
+    
+    // Check targets
+    selectedTargetIds = s.targets || [];
+    renderSelectedTargets();
+    
+    // CUET
+    document.getElementById('sf-cuet').value = (s.cuet_subjects || []).join(', ');
+    
+    // SAT
+    document.getElementById('sf-sat').value = s.standardized_tests?.SAT || '';
+    
+    // APs
+    selectedAPs = {};
+    for (const key in AP_SUBJECTS) {
+      if (s.standardized_tests && s.standardized_tests[key] !== undefined) {
+        selectedAPs[key] = s.standardized_tests[key];
+      }
+    }
+    renderAPs();
+    
+    // Extracurriculars
+    document.getElementById('sf-portfolio-list').innerHTML = '';
+    (s.portfolio || []).forEach(item => {
+      addStudentPortfolioRow(item.activity, item.description, item.tier);
+    });
+    
+    // Shortlisted Colleges
+    shortlistedColleges = s.shortlisted_colleges || [];
+    if (typeof renderShortlist === 'function') renderShortlist();
+    
+    // Shortlisted Exams
+    shortlistedExams = s.shortlisted_exams || [];
+    if (typeof renderExamsTab === 'function') renderExamsTab();
+  } catch (err) {
+    console.error('Failed to load profile:', err);
   }
 }
 
@@ -738,23 +901,64 @@ async function submitProfile(e) {
   btn.textContent = 'analyzing…';
 
   try {
-    const res = await fetch('/api/students', {
+    let studentData;
+    const payload = {
+      name, board, class_level: classLevel,
+      board_subjects: boardSubjects,
+      cuet_subjects: cuetSubjects,
+      grades, standardized_tests: tests,
+      portfolio, targets: tgts
+    };
+
+    if (createdStudentId) {
+      const res = await fetch(`/api/students/${createdStudentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = '/static/login.html';
+          return;
+        }
+        const data = await res.json();
+        alert(`Error from server: ${data.error || JSON.stringify(data)}`);
+        return;
+      }
+      studentData = (await res.json()).student;
+    } else {
+      const res = await fetch('/api/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+          window.location.href = '/static/login.html';
+          return;
+        }
+        const data = await res.json();
+        alert(`Error from server: ${data.error || JSON.stringify(data)}`);
+        return;
+      }
+      studentData = (await res.json()).student;
+      createdStudentId = studentData.id;
+    }
+
+    // Now evaluate via /api/evaluate
+    const evalRes = await fetch('/api/evaluate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name, board, class_level: classLevel,
-        board_subjects: boardSubjects,
-        cuet_subjects: cuetSubjects,
-        grades, standardized_tests: tests,
-        portfolio, targets: tgts
-      })
+      body: JSON.stringify({ student_id: createdStudentId })
     });
-    const data = await res.json();
-    if (!res.ok) {
-      alert(`Error from server: ${data.error || JSON.stringify(data)}`);
-      return;
+    if (!evalRes.ok) {
+      if (evalRes.status === 401 || evalRes.status === 403) {
+        window.location.href = '/static/login.html';
+        return;
+      }
+      throw new Error('Evaluation failed');
     }
-    createdStudentId = data.student.id;
+    const data = await evalRes.json();
 
     // Show step results immediately
     showStep('results');
@@ -825,14 +1029,20 @@ function renderAuditResults(student, audit) {
     const rl = t.risk_level || 'Strong Match';
     const badgeColor = ms >= 90 ? 'tb-pass' : ms >= 70 ? 'tb-warn' : 'tb-fail';
 
+    const diffLabel = t.difficulty_label || 'Target';
+    const diffBadge = diffLabel === 'Safety' ? 'tb-pass' : diffLabel === 'Target' ? 'tb-warn' : 'tb-fail';
+
     const block = document.createElement('div');
     block.className = 'target-block';
     block.style.marginBottom = '16px';
 
     block.innerHTML = `
-      <div class="tb-header">
+      <div class="tb-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
         <span class="tb-name">${t.target_name}</span>
-        <span class="tb-badge ${badgeColor}">${ms}% Match · ${rl}</span>
+        <div style="display: flex; gap: 6px;">
+          <span class="tb-badge ${badgeColor}">${ms}% Match · ${rl}</span>
+          <span class="tb-badge ${diffBadge}" style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">${diffLabel}</span>
+        </div>
       </div>
     `;
 

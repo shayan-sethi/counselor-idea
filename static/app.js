@@ -3,6 +3,15 @@
    Dashboard + Manage (CRUD) + Predictor + Drawer
    ═══════════════════════════════════════════════════ */
 
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+  const response = await originalFetch(...args);
+  if (response.status === 401) {
+    window.location.href = '/static/login.html';
+  }
+  return response;
+};
+
 let students = [];
 let cohortAudit = {};
 let targets = {};
@@ -89,13 +98,53 @@ const AP_SUBJECTS = {
 
 document.addEventListener('DOMContentLoaded', init);
 
+async function checkUserSession() {
+  try {
+    const res = await fetch('/api/user_session');
+    const data = await res.json();
+    if (!data.authenticated) {
+      window.location.href = '/static/login.html';
+      return false;
+    }
+    if (data.role !== 'counselor') {
+      window.location.href = '/student';
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error(err);
+    window.location.href = '/static/login.html';
+    return false;
+  }
+}
+
+async function logout() {
+  try {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/static/login.html';
+  } catch (err) {
+    window.location.href = '/static/login.html';
+  }
+}
+
+window.logout = logout;
+
 async function init() {
+  const authed = await checkUserSession();
+  if (!authed) return;
+
   try {
     const [sRes, aRes, tRes] = await Promise.all([
       fetch('/api/students'),
       fetch('/api/evaluate_cohort'),
       fetch('/api/targets')
     ]);
+    
+    if (sRes.status === 401 || aRes.status === 401 || tRes.status === 401) {
+      window.location.href = '/static/login.html';
+      return;
+    }
+    
     students = await sRes.json();
     cohortAudit = await aRes.json();
     targets = await tRes.json();
@@ -143,12 +192,13 @@ async function refreshData() {
 
 // ── View switching ──
 function switchView(v) {
-  ['dashboard', 'manage', 'predictor', 'reports', 'radar', 'shortlist', 'calendar'].forEach(id => {
+  ['dashboard', 'manage', 'predictor', 'reports', 'radar', 'shortlist', 'calendar', 'student-profile'].forEach(id => {
     const el = document.getElementById(`view-${id}`);
     if (el) el.classList.toggle('hidden', id !== v);
     const tabMap = { 
       'dashboard': 'dash', 'manage': 'manage', 'predictor': 'pred', 
-      'reports': 'reports', 'radar': 'radar', 'shortlist': 'shortlist', 'calendar': 'calendar' 
+      'reports': 'reports', 'radar': 'radar', 'shortlist': 'shortlist', 'calendar': 'calendar',
+      'student-profile': 'student-profile'
     };
     const tabEl = document.getElementById(`tab-${tabMap[id]}`);
     if (tabEl) tabEl.classList.toggle('active', id === v);
@@ -275,43 +325,30 @@ function filterDashboard() {
 function renderStudentRows(list) {
   const rows = document.getElementById('student-rows');
   rows.innerHTML = '';
+  rows.className = 'dashboard-grid'; // Use new grid layout
 
   if (list.length === 0) {
-    rows.innerHTML = '<div class="loading-row">no students match your filters</div>';
+    rows.innerHTML = '<div style="padding: 20px; color: var(--text-3);">No students match your filters</div>';
     return;
   }
 
   list.forEach(s => {
     const info = getStudentMatchInfo(s.id);
-    const { minMatch, maxUrg, hasGap, names, riskLevel } = info;
-
-    const filled = Math.round((Math.min(minMatch, 100) / 100) * 8);
-    const empty = 8 - filled;
-    let riskColor, markerClass, statusText, statusClass;
-    if (minMatch >= 90) {
-      riskColor = 'var(--green)'; markerClass = 'nm-pass'; statusText = riskLevel; statusClass = 'st-pass';
-    } else if (minMatch >= 70) {
-      riskColor = 'var(--amber)'; markerClass = 'nm-warn'; statusText = riskLevel; statusClass = 'st-warn';
-    } else {
-      riskColor = 'var(--red)'; markerClass = 'nm-crit'; statusText = riskLevel; statusClass = 'st-crit';
-    }
-    const blocks = `<span style="color:${riskColor}">${'█'.repeat(filled)}</span><span style="color:var(--border)">${'░'.repeat(empty)}</span>`;
+    const { minMatch, names, riskLevel } = info;
 
     const row = document.createElement('div');
-    row.className = 'stu-row';
-    row.onclick = () => openDrawer(s.id);
+    row.className = 'student-row';
+    row.onclick = () => openStudentProfile(s.id);
     row.innerHTML = `
-      <div class="col-name">
-        <div class="name-marker ${markerClass}"></div>
-        <div><div class="name-text">${s.name}</div><div class="name-id">${s.id}</div></div>
+      <div>
+        <div class="sr-name">${s.name}</div>
+        <div class="sr-id">${s.id} · ${s.board} Class ${s.class_level}</div>
       </div>
-      <div><div class="col-board">${s.board}</div><div class="col-board-class">class ${s.class_level}</div></div>
-      <div class="col-targets">${names.join(' · ')}</div>
-      <div class="col-risk">
-        <div class="risk-blocks">${blocks}</div>
-        <div class="risk-pct" style="color:${riskColor}">${minMatch}%</div>
+      <div class="sr-metric"><strong>Targets:</strong> ${names.join(', ')}</div>
+      <div class="sr-metric"><strong>Match:</strong> ${minMatch}%</div>
+      <div class="sr-metric" style="color: ${minMatch >= 90 ? 'var(--green)' : minMatch >= 70 ? 'var(--amber)' : 'var(--red)'}; font-weight: 500;">
+        ${riskLevel}
       </div>
-      <div class="status-tag ${statusClass}">${statusText}</div>
     `;
     rows.appendChild(row);
   });
@@ -895,28 +932,110 @@ async function deleteStudent(sid, name) {
 //  DRAWER
 // ══════════════════════════════════════════════
 
-async function openDrawer(sid) {
+let currentAuditData = null; // Store audit data to allow filtering without refetching
+
+async function openStudentProfile(sid) {
   currentStudent = students.find(s => s.id === sid);
   if (!currentStudent) return;
   simSubjects = [...(currentStudent.board_subjects || [])];
 
-  const initials = currentStudent.name.split(' ').map(n => n[0]).join('');
-  document.getElementById('d-initials').textContent = initials;
-  document.getElementById('d-name').textContent = currentStudent.name;
-  document.getElementById('d-detail').textContent =
-    `${currentStudent.board} · class ${currentStudent.class_level} · ${currentStudent.board_subjects.join(', ')}`;
+  // Populate basic student details
+  document.getElementById('sp-name').textContent = currentStudent.name;
+  document.getElementById('sp-dropdown-name').textContent = currentStudent.name;
+  document.getElementById('sp-email').textContent = `${currentStudent.name.toLowerCase().replace(' ', '.')}@gmail.com`; // Mock email
+  
+  // Switch view to student profile
+  switchView('student-profile');
+  
+  // Update sidebar active tab
+  document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+  document.getElementById('tab-student-profile').classList.add('active');
 
-  document.getElementById('drawer-backdrop').classList.remove('hidden');
-  document.getElementById('drawer').classList.remove('hidden');
-  await renderCompliance(sid);
-  renderSimChecks();
-  switchDTab('gaps');
+  document.getElementById('sp-matches-grid').innerHTML = '<div style="padding: 20px; color: var(--text-3);">Analyzing profile and calculating matches...</div>';
+
+  // Fetch compliance/evaluation data
+  const body = { student_id: sid };
+  const res = await fetch('/api/evaluate', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+  });
+  currentAuditData = await res.json();
+  
+  // Render grid
+  renderMatchesGrid('all');
 }
 
+function filterMatches(filterType, element) {
+  if (element) {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    element.classList.add('active');
+  }
+  renderMatchesGrid(filterType);
+}
+
+function renderMatchesGrid(filterType) {
+  if (!currentAuditData) return;
+  const grid = document.getElementById('sp-matches-grid');
+  grid.innerHTML = '';
+  
+  let matchCount = 0;
+
+  for (const tid in currentAuditData.targets) {
+    const t = currentAuditData.targets[tid];
+    const ms = t.match_score !== undefined ? t.match_score : (t.compliant ? 100 : 50);
+    const diffLabel = t.difficulty_label || 'Target';
+    
+    // Apply filters
+    if (filterType === 'Safety' && diffLabel !== 'Safety') continue;
+    if (filterType === 'Target' && diffLabel !== 'Target') continue;
+    if (filterType === 'Reach' && diffLabel !== 'Reach') continue;
+    if (filterType === 'best-fit' && ms < 85) continue;
+    
+    matchCount++;
+    
+    const diffClass = diffLabel.toLowerCase(); // 'reach', 'target', 'safety'
+    
+    // Pick the first reasoning logic as "why recommended" or mock it
+    let reasonText = 'Strong alignment with her artificial intelligence research project and solid SAT math score.';
+    if (t.gaps && t.gaps.length > 0) {
+      reasonText = t.gaps[0].details || t.gaps[0].reason || 'Profile needs some improvement to meet all requirements.';
+    } else if (t.remediations && t.remediations.length > 0) {
+      reasonText = t.remediations[0].details || 'Excellent match with current academic trajectory.';
+    }
+    
+    const card = document.createElement('div');
+    card.className = 'match-card';
+    card.innerHTML = `
+      <div class="mc-header">
+        <div>
+          <div class="mc-title">${t.target_name}</div>
+          <div class="mc-subtitle">BS Computer Science (Simulated)</div>
+        </div>
+        <div class="mc-score ${diffClass}">${ms}% Match</div>
+      </div>
+      <div class="mc-reason">
+        <div class="mc-reason-title">WHY RECOMMENDED</div>
+        <div class="mc-reason-text">${reasonText}</div>
+      </div>
+      <div class="mc-checklist">
+        <div class="mcc-item"><span class="mcc-icon">✓</span> Need-blind financial aid</div>
+        <div class="mcc-item"><span class="mcc-icon ${diffClass === 'reach' ? 'mcc-icon-warn' : ''}">${diffClass === 'reach' ? '⚠️' : '✓'}</span> Decision: Nov 1 (3 days left)</div>
+      </div>
+      <div class="mc-actions">
+        <button class="btn-primary">Add to Shortlist</button>
+        <button class="btn-outline">View Details</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  }
+  
+  if (matchCount === 0) {
+    grid.innerHTML = '<div style="padding: 20px; color: var(--text-3);">No targets match this filter.</div>';
+  }
+}
+
+// Keep closeDrawer stub to avoid JS errors
 function closeDrawer() {
-  document.getElementById('drawer-backdrop').classList.add('hidden');
-  document.getElementById('drawer').classList.add('hidden');
-  currentStudent = null;
+  switchView('dashboard');
 }
 
 function switchDTab(t) {
@@ -946,7 +1065,9 @@ async function renderCompliance(sid, subs = null) {
 
     // Gaps
     const gb = document.createElement('div'); gb.className = 'target-block';
-    gb.innerHTML = `<div class="tb-header"><span class="tb-name">${t.target_name}</span><span class="tb-badge ${badgeColor}">${ms}% Match · ${rl}</span></div>`;
+    const diffLabel = t.difficulty_label || 'Target';
+    const diffBadge = diffLabel === 'Safety' ? 'tb-pass' : diffLabel === 'Target' ? 'tb-warn' : 'tb-fail';
+    gb.innerHTML = `<div class="tb-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;"><span class="tb-name">${t.target_name}</span><div style="display: flex; gap: 6px;"><span class="tb-badge ${badgeColor}">${ms}% Match · ${rl}</span><span class="tb-badge ${diffBadge}" style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">${diffLabel}</span></div></div>`;
     const gbody = document.createElement('div'); gbody.className = 'tb-body';
     if (t.compliant) {
       gbody.innerHTML = '<div class="tb-ok">✔ all requirements verified</div>';

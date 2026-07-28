@@ -32,7 +32,10 @@
     "portfolio": [],
     "shortlisted_colleges": [
       "MIT",
-      "CAMBRIDGE"
+      "CAMBRIDGE",
+      "OXFORD",
+      "IND_PLAKSHA",
+      "IMPERIAL"
     ]
   },
   {
@@ -72,14 +75,22 @@
     "grades": {
       "current_expected_board": "95.0%",
       "subjects": {
-        "Mathematics": 95.0,
-        "Physics": 96.0,
-        "Chemistry": 94.0,
-        "English": 92.0
+        "Chemistry": 94,
+        "English": 92,
+        "Mathematics": 95,
+        "Physics": 96
       }
     },
     "standardized_tests": {},
-    "portfolio": []
+    "portfolio": [],
+    "shortlisted_colleges": [
+      "CAMBRIDGE",
+      "OXFORD",
+      "IMPERIAL",
+      "MIT",
+      "DU",
+      "STANFORD"
+    ]
   },
   {
     "id": "STU_004",
@@ -1131,6 +1142,32 @@
     ],
     "targets": [],
     "id": "STU_021",
+    "status": {
+      "cuet_form_submitted": false,
+      "tmua_registered": false,
+      "sat_score": null
+    }
+  },
+  {
+    "id": "STU_022",
+    "name": "Saiansh Tapuriah",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Mathematics",
+      "Sociology"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "g10_board": "CBSE",
+      "class_10_subjects": {},
+      "subjects": {}
+    },
+    "standardized_tests": {},
+    "portfolio": [],
+    "targets": [
+      "CUSTOM_UNDERGRADUATE_BACHELORS_PROGRAM"
+    ],
     "status": {
       "cuet_form_submitted": false,
       "tmua_registered": false,
