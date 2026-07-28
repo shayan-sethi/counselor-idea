@@ -415,7 +415,7 @@ function updateManageSubjectsGrid() {
   subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
-    lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
+    lbl.innerHTML = `<input type="checkbox" value="${sub}" /><span>${sub}</span>`;
     const cb = lbl.querySelector('input');
     cb.addEventListener('change', () => {
       lbl.classList.toggle('checked', cb.checked);
@@ -430,7 +430,7 @@ function updateManageSubjectsGrid() {
   subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
-    lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
+    lbl.innerHTML = `<input type="checkbox" value="${sub}" /><span>${sub}</span>`;
     const cb = lbl.querySelector('input');
     cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
     compEl.appendChild(lbl);
@@ -594,7 +594,7 @@ function renderManageList() {
   const el = document.getElementById('manage-student-list');
   el.innerHTML = '';
   if (students.length === 0) {
-    el.innerHTML = '<div class="loading-row">no students yet</div>';
+    el.innerHTML = '<div class="loading-row">No students added yet.</div>';
   } else {
     students.forEach(s => {
       const row = document.createElement('div');
@@ -602,11 +602,11 @@ function renderManageList() {
       row.innerHTML = `
         <div class="msr-info">
           <span class="msr-name">${s.name}</span>
-          <span class="msr-meta">${s.id} · ${s.board} · class ${s.class_level}</span>
+          <span class="msr-meta">${s.id} · ${s.board} · Class ${s.class_level}</span>
         </div>
         <div class="msr-actions">
-          <button class="btn-edit" onclick="editStudent('${s.id}')">edit</button>
-          <button class="btn-delete" onclick="deleteStudent('${s.id}', '${s.name}')">delete</button>
+          <button class="btn-edit" onclick="editStudent('${s.id}')">Edit</button>
+          <button class="btn-delete" onclick="deleteStudent('${s.id}', '${s.name}')">Delete</button>
         </div>
       `;
       el.appendChild(row);
@@ -617,7 +617,7 @@ function renderManageList() {
   const tel = document.getElementById('manage-target-list');
   tel.innerHTML = '';
   if (Object.keys(targets).length === 0) {
-    tel.innerHTML = '<div class="loading-row">no target pathways yet</div>';
+    tel.innerHTML = '<div class="loading-row">No target pathways added yet.</div>';
   } else {
     for (const tid in targets) {
       const t = targets[tid];
@@ -626,10 +626,10 @@ function renderManageList() {
       row.innerHTML = `
         <div class="msr-info">
           <span class="msr-name">${t.name}</span>
-          <span class="msr-meta">${tid} · ${t.university || 'No university'} · Track: ${t.track} · portfolio: Tier ${t.portfolio_tier}</span>
+          <span class="msr-meta">${tid} · ${t.university || 'No university'} · Track: ${t.track} · Portfolio: Tier ${t.portfolio_tier}</span>
         </div>
         <div class="msr-actions">
-          <button class="btn-delete" onclick="deleteTarget('${tid}', '${t.name}')">delete</button>
+          <button class="btn-delete" onclick="deleteTarget('${tid}', '${t.name}')">Delete</button>
         </div>
       `;
       tel.appendChild(row);
@@ -812,7 +812,7 @@ async function submitStudentForm(e) {
     alert('Save failed');
   } finally {
     btn.disabled = false;
-    btn.textContent = editingId ? 'save changes →' : 'add student →';
+    btn.textContent = editingId ? 'Save Changes →' : 'Add Student →';
   }
 }
 
@@ -821,8 +821,8 @@ function editStudent(sid) {
   if (!s) return;
   editingId = sid;
 
-  document.getElementById('manage-form-title').textContent = `editing: ${s.name}`;
-  document.getElementById('mf-submit').textContent = 'save changes →';
+  document.getElementById('manage-form-title').textContent = `Editing: ${s.name}`;
+  document.getElementById('mf-submit').textContent = 'Save Changes →';
   document.getElementById('mf-cancel').style.display = '';
   document.getElementById('mf-id').value = sid;
   document.getElementById('mf-name').value = s.name;
@@ -899,8 +899,8 @@ function editStudent(sid) {
 
 function resetManageForm() {
   editingId = null;
-  document.getElementById('manage-form-title').textContent = 'add new student';
-  document.getElementById('mf-submit').textContent = 'add student →';
+  document.getElementById('manage-form-title').textContent = 'Add New Student';
+  document.getElementById('mf-submit').textContent = 'Add Student →';
   document.getElementById('mf-cancel').style.display = 'none';
   document.getElementById('manage-form').reset();
   updateManageSubjectsGrid();
@@ -941,7 +941,19 @@ async function openStudentProfile(sid) {
 
   // Populate basic student details
   document.getElementById('sp-name').textContent = currentStudent.name;
-  document.getElementById('sp-dropdown-name').textContent = currentStudent.name;
+  
+  const sel = document.getElementById('sp-student-select');
+  if (sel && sel.options.length === 0) {
+    students.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.name;
+      sel.appendChild(opt);
+    });
+  }
+  if (sel) sel.value = sid;
+  window.currentProfileId = sid;
+  
   document.getElementById('sp-email').textContent = `${currentStudent.name.toLowerCase().replace(' ', '.')}@gmail.com`; // Mock email
   
   // Switch view to student profile
@@ -982,7 +994,7 @@ function renderMatchesGrid(filterType) {
   for (const tid in currentAuditData.targets) {
     const t = currentAuditData.targets[tid];
     const ms = t.match_score !== undefined ? t.match_score : (t.compliant ? 100 : 50);
-    const diffLabel = t.difficulty_label || 'Target';
+    const diffLabel = t.difficulty_label || (ms >= 85 ? 'Safety' : (ms >= 65 ? 'Target' : 'Reach'));
     
     // Apply filters
     if (filterType === 'Safety' && diffLabel !== 'Safety') continue;

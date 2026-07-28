@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PRISM — Counselor Co-pilot</title>
-  <meta name="description" content="PRISM: AI-powered compliance dashboard for education counselors." />
+  <title>unlockED — Counselor Co-pilot</title>
+  <meta name="description" content="unlockED: AI-powered compliance dashboard for education counselors." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css?v=2" />
@@ -24,12 +24,12 @@
       <button class="nav-item" id="tab-student-profile" onclick="switchView('student-profile')">Recommendations</button>
       <button class="nav-item" id="tab-calendar" onclick="switchView('calendar')">Deadlines</button>
       <button class="nav-item" id="tab-reports" onclick="switchView('reports')">Analytics</button>
-      <button class="nav-item" id="tab-radar" onclick="switchView('radar')">Settings</button>
+      <button class="nav-item" id="tab-radar" onclick="switchView('radar')">Radar</button>
     </nav>
     <div class="counselor-profile">
-      <div class="cp-avatar"><img src="https://i.pravatar.cc/100?img=5" alt="Avatar"></div>
+      <div class="cp-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:100%;height:100%;color:var(--text-3);padding:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
       <div class="cp-info">
-        <span class="cp-name">Sarah Johnson</span>
+        <span class="cp-name">Mr. Rathi</span>
         <span class="cp-role">School Counsellor</span>
       </div>
     </div>
@@ -38,8 +38,8 @@
   <div class="app-container">
     <header class="topbar">
       <input type="text" class="search-bar" placeholder="Search students, schools...">
-      <div class="btn-icon">🔔</div>
-      <div class="btn-icon" onclick="logout()" style="color: #ef4444;" title="Logout">🚪</div>
+      <div class="btn-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
+      <div class="btn-icon" onclick="logout()" style="color: #ef4444;" title="Logout"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
     </header>
     <div class="content-wrapper">
       
@@ -61,8 +61,8 @@
 
     <!-- Cohort Insights -->
     <div id="cohort-insights" class="form-card" style="margin-bottom: 20px; padding: 16px;">
-      <div class="form-section-title">cohort insights</div>
-      <div id="insights-body" style="display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-2);"></div>
+      <div class="form-section-title">Cohort Insights</div>
+      <div id="insights-body" style="display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.9rem; color: var(--text-1);"></div>
     </div>
 
     <!-- Search / Filter / Sort -->
@@ -85,18 +85,18 @@
     </div>
 
     <!-- AI Agent Command Center -->
-    <div class="form-card" style="margin-bottom: 20px; padding: 16px; border: 1px solid var(--border); background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border-radius: 8px;">
-      <div class="form-section-title" style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 1.1rem;">⚡</span> prism ai agent command center
+    <div class="form-card" style="margin-bottom: 20px; padding: 20px; border: 1px solid #BFDBFE; background: #EFF6FF; border-radius: 12px;">
+      <div class="form-section-title" style="display: flex; align-items: center; gap: 8px; color: var(--text-1);">
+        <span style="font-size: 1.1rem; font-weight: 700;">UnlockED AI Agent Command Center</span>
       </div>
-      <p class="field-hint" style="margin-bottom: 12px;">Type counselor instructions (e.g. "draft warning emails", "recommend pathways for STU_001", or "risk summary").</p>
+      <p class="field-hint" style="margin-bottom: 16px; color: var(--text-2); font-size: 0.85rem;">Type counselor instructions (e.g. "draft warning emails", "recommend pathways for STU_001", or "risk summary").</p>
       
-      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-        <input type="text" id="cc-command-input" placeholder="Enter counselor agent command..." onkeydown="if(event.key==='Enter') runCounselorAgentCommand()" style="flex: 1; font-family: var(--mono); font-size: 0.78rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-        <button type="button" class="btn-run" onclick="runCounselorAgentCommand()" style="padding: 8px 16px; font-size: 0.78rem;">execute command</button>
+      <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+        <input type="text" id="cc-command-input" placeholder="Enter counselor agent command..." onkeydown="if(event.key==='Enter') runCounselorAgentCommand()" style="flex: 1; font-family: var(--sans); font-size: 0.9rem; padding: 10px 16px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 8px;" />
+        <button type="button" class="btn-run" onclick="runCounselorAgentCommand()" style="padding: 10px 24px; font-size: 0.9rem; border-radius: 8px; font-weight: 600;">Execute Command</button>
       </div>
 
-      <div id="cc-agent-response" style="display: none; border: 1px solid var(--border); border-radius: 4px; padding: 12px; background: rgba(15, 23, 42, 0.4); font-size: 0.8rem; line-height: 1.5; color: var(--text-2); max-height: 280px; overflow-y: auto;"></div>
+      <div id="cc-agent-response" style="display: none; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--surface); font-size: 0.9rem; line-height: 1.5; color: var(--text-1); max-height: 280px; overflow-y: auto; box-shadow: var(--shadow-sm);"></div>
     </div>
 
     <section class="student-list">
@@ -117,23 +117,23 @@
   <main id="view-manage" class="hidden">
     <div class="page-title-row">
       <h1>Manage Students</h1>
-      <p class="subtitle">add, edit, or remove student profiles</p>
+      <p class="subtitle">Add, edit, or remove student profiles</p>
     </div>
 
     <div class="manage-layout">
       <!-- Student form -->
       <div class="manage-form-wrap">
-        <div class="form-section-title" id="manage-form-title">add new student</div>
+        <div class="form-section-title" id="manage-form-title" style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px;">Add New Student</div>
         <form id="manage-student-form" onsubmit="submitManageStudent(event)">
           <!-- AI Ingestion Dropzone for Counselor -->
-          <div style="border: 1px dashed var(--border); background: var(--surface); padding: 12px; border-radius: 4px; margin-bottom: 16px;">
-            <div style="font-size: 0.72rem; font-weight: 600; color: var(--amber); margin-bottom: 4px;">AUTOMATED AGENTIC DATA INGESTION</div>
-            <div style="font-size: 0.7rem; color: var(--text-3); margin-bottom: 8px;">Upload transcript, marks card, or resume to auto-fill student details:</div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <input type="file" id="counselor-ingest-file" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-2);" />
-              <button type="button" class="btn-ghost-sm" onclick="ingestCounselorDocument()" style="padding: 6px 12px; font-weight: 600;">auto-fill form →</button>
+          <div style="border: 1px solid var(--border-h); background: #F8FAFC; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+            <div style="font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 6px;">Automated Agentic Data Ingestion</div>
+            <div style="font-size: 0.9rem; color: var(--text-2); margin-bottom: 16px;">Upload transcript, marks card, or resume to auto-fill student details:</div>
+            <div style="display: flex; gap: 16px; align-items: center;">
+              <input type="file" id="counselor-ingest-file" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="font-family: var(--sans); font-size: 0.9rem; color: var(--text-2);" />
+              <button type="button" class="btn-outline-sm" onclick="ingestCounselorDocument()">Auto-fill form →</button>
             </div>
-            <div id="counselor-ingest-status" style="font-size: 0.72rem; font-family: var(--mono); margin-top: 6px; display: none;"></div>
+            <div id="counselor-ingest-status" style="font-size: 0.9rem; font-weight: 500; margin-top: 12px; display: none;"></div>
           </div>
           <input type="hidden" id="mf-id" value="" />
 
@@ -168,8 +168,8 @@
             <label>Board Subjects *</label>
             <div class="check-grid" id="mf-subjects"></div>
             <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <input type="text" id="mf-custom-subject-input" placeholder="Custom subject name..." style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-              <button type="button" class="btn-ghost-sm" onclick="addManageCustomBoardSubject()">+ add subject</button>
+              <input type="text" id="mf-custom-subject-input" placeholder="Custom subject name..." style="flex: 1; font-family: var(--mono); font-size: 0.8rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 6px;" />
+              <button type="button" class="btn-outline-sm" onclick="addManageCustomBoardSubject()">+ Add Subject</button>
             </div>
           </div>
 
@@ -215,8 +215,8 @@
             <label>Grade 10 Subject Marks</label>
             <div id="mf-g10-subject-grades-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;"></div>
             <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <input type="text" id="mf-g10-custom-subj" placeholder="Add Grade 10 subject..." style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-              <button type="button" class="btn-ghost-sm" onclick="addManageG10SubjectRow()">+ add Grade 10 subject</button>
+              <input type="text" id="mf-g10-custom-subj" placeholder="Add Grade 10 subject..." style="flex: 1; font-family: var(--mono); font-size: 0.8rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 6px;" />
+              <button type="button" class="btn-outline-sm" onclick="addManageG10SubjectRow()">+ Add Grade 10 Subject</button>
             </div>
           </div>
 
@@ -245,31 +245,31 @@
                   <option value="2">2</option>
                   <option value="1">1</option>
                 </select>
-                <button type="button" class="btn-ghost-sm" onclick="addManageAPFromSelect()">+ add</button>
+                <button type="button" class="btn-outline-sm" onclick="addManageAPFromSelect()">+ Add</button>
               </div>
             </div>
           </div>
 
           <div class="field" style="margin-bottom:14px">
             <label>Portfolio / Extracurriculars</label>
-            <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin: 2px 0 8px;">Describe activities — AI will auto-classify impact tier.</p>
+            <p class="field-hint" style="font-size:0.75rem; color:var(--text-3); margin: 2px 0 8px;">Describe activities — AI will auto-classify impact tier.</p>
             <div id="mf-portfolio-list"></div>
-            <button type="button" class="btn-ghost-sm" onclick="addPortfolioRow()">+ add activity</button>
+            <button type="button" class="btn-outline-sm" onclick="addPortfolioRow()">+ Add Activity</button>
           </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn-run" id="mf-submit">add student →</button>
-            <button type="button" class="btn-reset" onclick="resetManageForm()" id="mf-cancel" style="display:none">cancel edit</button>
+          <div class="form-actions" style="margin-top: 20px;">
+            <button type="submit" class="btn-run" id="mf-submit">Add Student →</button>
+            <button type="button" class="btn-reset" onclick="resetManageForm()" id="mf-cancel" style="display:none">Cancel Edit</button>
           </div>
         </form>
       </div>
 
       <!-- Existing students list for editing -->
       <div class="manage-list-wrap">
-        <div class="form-section-title">existing students</div>
+        <div class="form-section-title">Existing Students</div>
         <div id="manage-student-list" style="margin-bottom:24px"></div>
 
-        <div class="form-section-title">add target pathway</div>
+        <div class="form-section-title">Add Target Pathway</div>
         <form id="target-form" onsubmit="submitTargetForm(event)" style="margin-top:14px">
           <div class="form-row">
             <div class="field field-wide" style="position:relative">
@@ -309,12 +309,12 @@
             <div class="check-grid" id="mt-compulsory"></div>
           </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn-run" id="mt-submit">add pathway →</button>
+          <div class="form-actions" style="margin-top: 16px;">
+            <button type="submit" class="btn-run" id="mt-submit">Add Pathway →</button>
           </div>
         </form>
 
-        <div class="form-section-title" style="margin-top:24px">existing target pathways</div>
+        <div class="form-section-title" style="margin-top:24px">Existing Target Pathways</div>
         <div id="manage-target-list" style="margin-top:14px"></div>
       </div>
     </div>
@@ -395,12 +395,12 @@
       </div>
 
       <!-- Printable Report Document Container -->
-      <div id="student-report-doc" class="form-card" style="padding: 40px; background: #0c0c0c; border: 1px solid var(--border); color: var(--text-1); min-height: 800px; line-height: 1.5;">
+      <div id="student-report-doc" class="form-card" style="padding: 40px; background: var(--surface); border: 1px solid var(--border-h); color: var(--text-1); min-height: 800px; line-height: 1.5; box-shadow: var(--shadow-sm);">
         <!-- Header -->
         <div style="border-bottom: 2px solid var(--text-1); padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
           <div>
-            <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">PRISM Compliance Engine</div>
-            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; margin-top: 4px;">STUDENT PROGRESS & PATHWAY REPORT</div>
+            <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">unlockED Compliance Engine</div>
+            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; margin-top: 4px; color: var(--text-1);">STUDENT PROGRESS & PATHWAY REPORT</div>
           </div>
           <div style="text-align: right; font-family: var(--mono); font-size: 0.72rem; color: var(--text-3);">
             <div>GENERATED: <span id="rep-date">—</span></div>
@@ -441,7 +441,7 @@
           <div>
             <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">💡 ML OUTCOMES PROJECTIONS</h3>
             <div style="border: 1px solid var(--border); padding: 16px; background: var(--surface); margin-bottom: 20px;">
-              <p style="font-size: 0.72rem; color: var(--text-3); margin-bottom: 14px; line-height: 1.4;">Based on PRISM's Random Forest predictive models trained on 25K+ UK course records, here are the estimated outcome benchmarks for equivalent tracks:</p>
+              <p style="font-size: 0.85rem; color: var(--text-3); margin-bottom: 14px; line-height: 1.4;">Based on unlockED's Random Forest predictive models trained on 25K+ UK course records, here are the estimated outcome benchmarks for equivalent tracks:</p>
               
               <div style="margin-bottom: 14px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-family: var(--mono); margin-bottom: 4px;">
@@ -486,9 +486,9 @@
         </div>
 
         <!-- Footer -->
-        <div style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.65rem; color: var(--text-3);">
-          <span>PRISM REPORT GENERATOR MODULE · CONFIDENTIAL</span>
-          <span>© 2026 PRISM PATHWAYS</span>
+        <div style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.75rem; color: var(--text-3);">
+          <span>unlockED REPORT GENERATOR MODULE · CONFIDENTIAL</span>
+          <span>© 2026 unlockED</span>
         </div>
       </div>
     </div>
@@ -675,7 +675,7 @@
       
       <!-- Detail List of Deadlines for the Month -->
       <div class="student-list" style="margin: 0;">
-        <div class="list-header" style="grid-template-columns: 100px 2fr 120px 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
+        <div class="list-header" style="grid-template-columns: 100px 2fr 120px 2fr; padding: 12px 24px; border-bottom: 1px solid var(--border); background: var(--surface); gap: 16px; font-size: 0.9rem;">
           <span class="lh-col">Date</span>
           <span class="lh-col">Deadline Event</span>
           <span class="lh-col">Type</span>
@@ -696,8 +696,8 @@
       <!-- Left Panel -->
       <div class="left-panel">
         <div class="action-buttons">
-          <button class="btn-outline">🗓 Schedule Meeting</button>
-          <button class="btn-primary">📄 Generate Report</button>
+          <button class="btn-outline" onclick="const sName=document.getElementById('sp-name').innerText; document.getElementById('cc-command-input').value='Schedule a meeting with ' + sName; switchView('dashboard'); runCounselorAgentCommand();">🗓 Schedule Meeting</button>
+          <button class="btn-primary" onclick="if(window.currentProfileId){document.getElementById('report-student-select').value=window.currentProfileId;} switchView('reports'); switchReportSubView('student');">📄 Generate Report</button>
         </div>
         
         <div class="details-card">
@@ -732,9 +732,10 @@
             <div class="page-title">AI University Recommendations</div>
             <div class="page-subtitle">Curated list of institution suggestions for <span id="sp-name">Priya Sharma</span>.</div>
           </div>
-          <div class="student-dropdown">
-            <img src="https://i.pravatar.cc/100?img=1" alt="Student">
-            <span id="sp-dropdown-name">Priya Sharma</span> ▾
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;color:var(--text-3);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <select id="sp-student-select" onchange="openStudentProfile(this.value)" style="padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: var(--sans); font-size: 0.85rem; font-weight: 500; color: var(--text-1);">
+            </select>
           </div>
         </div>
 

@@ -330,7 +330,7 @@ function updateSubjectsGrid() {
   subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
-    lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
+    lbl.innerHTML = `<input type="checkbox" value="${sub}" /><span>${sub}</span>`;
     const cb = lbl.querySelector('input');
     cb.addEventListener('change', () => {
       lbl.classList.toggle('checked', cb.checked);
@@ -345,7 +345,7 @@ function updateSubjectsGrid() {
   subjects.forEach(sub => {
     const lbl = document.createElement('label');
     lbl.className = 'sc-label';
-    lbl.innerHTML = `<input type="checkbox" value="${sub}" />${sub}`;
+    lbl.innerHTML = `<input type="checkbox" value="${sub}" /><span>${sub}</span>`;
     const cb = lbl.querySelector('input');
     cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
     compEl.appendChild(lbl);

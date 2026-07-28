@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PRISM — Student Portal</title>
+  <title>unlockED — Student Portal</title>
   <meta name="description"
-    content="PRISM Student Portal: Enter your academic profile and get instant compliance analysis." />
+    content="unlockED Student Portal: Enter your academic profile and get instant compliance analysis." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap"
@@ -52,14 +52,14 @@
       <h1>Your Academic Profile</h1>
       <p class="subtitle">enter your details · get instant compliance analysis against your target pathways</p>
       <!-- Automated AI Document Ingestion -->
-      <div class="form-card" style="margin-bottom: 24px;">
-        <div class="form-section-title" style="color: var(--amber);">AUTOMATED AGENTIC DATA INGESTION</div>
-        <p class="subtitle" style="margin-bottom: 16px; font-size: 0.8rem;">
-          Upload your academic transcript, marks card, or resume. PRISM AI automatically extracts and populates your
+      <div class="form-card" style="margin-bottom: 24px; padding: 24px; border: 1px solid var(--border-h); background: #F8FAFC;">
+        <div class="form-section-title" style="color: var(--accent); font-weight: 700; margin-bottom: 8px; font-size: 0.9rem;">Automated Agentic Data Ingestion</div>
+        <p class="subtitle" style="margin-bottom: 16px; font-size: 0.85rem; color: var(--text-2);">
+          Upload your academic transcript, marks card, or resume. unlockED AI automatically extracts and populates your
           subjects, grades, test scores, and extracurricular achievements.
         </p>
         <div class="dropzone" id="ingest-dropzone"
-          style="border: 1px dashed var(--border-bright); padding: 20px; text-align: center; cursor: pointer; background: var(--surface); border-radius: 4px;"
+          style="border: 1px dashed var(--border-h); padding: 24px; text-align: center; cursor: pointer; background: var(--surface); border-radius: 8px;"
           onclick="document.getElementById('ingest-file-input').click()">
           <input type="file" id="ingest-file-input" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg"
             style="display: none;" onchange="handleFileSelect(event)" />
@@ -82,7 +82,7 @@
 
         <!-- Step 1: Basics -->
         <div class="form-card">
-          <div class="form-section-title">01 — basics</div>
+          <div class="form-section-title">01 — Basics</div>
           <div class="form-row">
             <div class="field field-wide">
               <label>Your Full Name *</label>
@@ -113,20 +113,20 @@
 
         <!-- Step 2: Subjects -->
         <div class="form-card">
-          <div class="form-section-title">02 — your subjects</div>
+          <div class="form-section-title">02 — Your Subjects</div>
           <p class="field-hint">Select all subjects you are currently studying (or plan to study in Class 11/12).</p>
           <div class="check-grid" id="sf-subjects"></div>
           <div style="display: flex; gap: 8px; margin-top: 12px;">
             <input type="text" id="sf-custom-subject-input"
               placeholder="Don't see your subject? Type custom subject name..."
               style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-            <button type="button" class="btn-ghost-sm" onclick="addCustomBoardSubject()">+ add subject</button>
+            <button type="button" class="btn-outline-sm" onclick="addCustomBoardSubject()">+ Add Subject</button>
           </div>
         </div>
 
         <!-- Step 3: Targets -->
         <div class="form-card">
-          <div class="form-section-title">03 — target pathways</div>
+          <div class="form-section-title">03 — Target Pathways</div>
           <p class="field-hint">Add target pathways you are aiming for (enter what you want to study at what
             university).</p>
 
@@ -179,14 +179,13 @@
               <div class="check-grid" id="sf-target-compulsory"></div>
             </div>
 
-            <button type="button" class="btn-ghost-sm" id="btn-create-add-target" onclick="createAndAddTarget()">+ add
-              pathway</button>
+            <button type="button" class="btn-outline-sm" id="btn-create-add-target" onclick="createAndAddTarget()">+ Add Pathway</button>
           </div>
         </div>
 
         <!-- Step 4: Grades -->
         <div class="form-card">
-          <div class="form-section-title">04 — grades & test scores</div>
+          <div class="form-section-title">04 — Grades & Test Scores</div>
           <div class="form-row">
             <div class="field">
               <label>Grade 10 Board *</label>
@@ -226,7 +225,7 @@
               <input type="text" id="sf-g10-custom-subj"
                 placeholder="Add Grade 10 subject (e.g. French, Social Science)..."
                 style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-              <button type="button" class="btn-ghost-sm" onclick="addG10SubjectRow()">+ add Grade 10 subject</button>
+              <button type="button" class="btn-outline-sm" onclick="addG10SubjectRow()">+ Add Grade 10 Subject</button>
             </div>
           </div>
 
