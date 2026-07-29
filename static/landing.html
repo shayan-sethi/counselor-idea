@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>unlockED - AI Admissions Copilot</title>
+  <title>unlockED — Institutional B2B Admissions Infrastructure for K-12 & High Schools</title>
+  <meta name="description" content="AI-powered college counseling & compliance platform for high schools. Empower school counselors or run fully automated AI agentic counseling for schools without dedicated staff." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,18 +12,19 @@
     :root {
       --bg: #E1E1CD;
       --surface: #F5F5ED;
+      --surface-light: #EFEFE3;
       --border: #CBD5E1;
       --accent: #2D3A2E;
+      --accent-hover: #1E281F;
+      --accent-glow: rgba(45, 58, 46, 0.12);
       --text: #0F172A;
       --text-muted: #475569;
+      --green: #15803D;
+      --purple: #6B21A8;
       --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg);
@@ -35,587 +37,582 @@
     }
 
     .container {
-      max-width: 700px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 0 20px 40px;
+      padding: 0 24px 60px;
+      width: 100%;
       position: relative;
       z-index: 1;
-      width: 100%;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
     }
 
     /* Top Nav */
     nav {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      padding: 40px 0 60px;
+      padding: 32px 0 48px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 40px;
     }
 
     .logo {
-      font-family: var(--font-sans);
-      font-weight: 500;
-      font-size: 1.4rem;
+      font-weight: 700;
+      font-size: 1.5rem;
       letter-spacing: -0.02em;
-      color: #0F172A;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .logo sup {
-      color: #475569;
+    .logo-tag {
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-nav {
+      color: var(--text-muted);
+      text-decoration: none;
       font-size: 0.9rem;
-      margin-left: 2px;
+      font-weight: 500;
+      transition: color 0.2s;
     }
+    .btn-nav:hover { color: var(--text); }
 
-    /* Hero Section */
+    .btn-primary-sm {
+      background: var(--accent);
+      color: #E1E1CD;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary-sm:hover { background: var(--accent-hover); color: #E1E1CD; }
+
+    /* Hero */
     .hero {
       text-align: center;
-      padding: 20px 0;
-      animation: fadeIn 0.8s ease-out forwards;
+      padding: 20px 0 40px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .school-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(45, 58, 46, 0.08);
+      border: 1px solid rgba(45, 58, 46, 0.2);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      margin-bottom: 24px;
+      font-weight: 600;
     }
 
     .hero h1 {
-      font-size: 3.8rem;
-      font-weight: 600;
+      font-size: 3.4rem;
+      font-weight: 700;
       letter-spacing: -0.04em;
-      line-height: 1.1;
+      line-height: 1.15;
       margin-bottom: 24px;
       color: #0F172A;
     }
 
-    .hero p {
-      font-size: 1.15rem;
-      color: var(--text-muted);
-      max-width: 580px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-      font-weight: 400;
+    .hero h1 span {
+      color: #2D3A2E;
+      background: none;
+      -webkit-text-fill-color: initial;
     }
 
-    .btn-primary {
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero {
       background: var(--accent);
       color: #E1E1CD;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 30px;
+      cursor: pointer;
       border: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px var(--accent-glow);
+    }
+    .btn-hero:hover { background: #1E281F; color: #E1E1CD; transform: translateY(-2px); }
+
+    .btn-hero-secondary {
+      background: var(--surface-light);
+      color: var(--text);
       padding: 14px 28px;
       font-size: 1rem;
       font-weight: 600;
       border-radius: 30px;
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: all 0.2s;
+      text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .btn-hero-secondary:hover { background: var(--border); }
+
+    /* Features Grid */
+    .section-title {
+      text-align: center;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-weight: 700;
     }
 
-    .btn-primary:hover {
-      background: #1E281F;
-    }
-    
-    .login-link {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-    .login-link a {
-      color: #a5b4fc;
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .login-link a:hover {
-      color: #c7d2fe;
+    .section-heading {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+      letter-spacing: -0.02em;
     }
 
-    /* Features Card */
-    .features-card {
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .feature-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 30px;
-      margin-top: 60px;
-      text-align: left;
+      padding: 28px;
+      transition: all 0.3s;
     }
 
-    .features-title {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
+    .feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
     }
 
-    .feature-item {
-      display: flex;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-    .feature-item:last-child {
-      margin-bottom: 0;
-    }
-    .feature-icon {
-      color: var(--accent);
-      background: rgba(45, 58, 46, 0.05);
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-    .feature-text h3 {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #0F172A;
-    }
-    .feature-text p {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* Wizard Section */
-    #wizard {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-      flex: 1;
-    }
-
-    .wizard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin-bottom: 40px;
-    }
-
-    .back-btn {
-      color: var(--text-muted);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-family: var(--font-sans);
-    }
-    .back-btn:hover { color: var(--text); }
-
-    .progress-dots {
-      display: flex;
-      gap: 6px;
-    }
-    .dot {
-      width: 24px;
-      height: 2px;
-      background: var(--border);
-      border-radius: 2px;
-      transition: background 0.3s;
-    }
-    .dot.active { background: var(--accent); }
-    .dot.completed { background: #4f46e5; }
-
-    .step {
-      display: none;
-      width: 100%;
-      animation: fadeIn 0.4s ease-out forwards;
-    }
-    .step.active { display: block; }
-
-    .step h2 {
-      font-size: 1.8rem;
-      font-weight: 500;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .option-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .option {
-      background: transparent;
-      border: 1px solid var(--border);
+    .feature-icon-badge {
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      padding: 16px 20px;
-      color: var(--text);
-      font-size: 1rem;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .option:hover {
-      border-color: var(--text-muted);
-      background: rgba(0, 0, 0, 0.02);
-    }
-    
-    .option.selected {
-      border-color: var(--accent);
-      background: rgba(45, 58, 46, 0.05);
-    }
-
-    .option-radio {
-      width: 18px;
-      height: 18px;
-      border: 1px solid var(--text-muted);
-      border-radius: 50%;
+      background: var(--accent-glow);
+      color: var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .option.selected .option-radio {
-      border-color: var(--accent);
-    }
-    .option.selected .option-radio::after {
-      content: '';
-      width: 10px;
-      height: 10px;
-      background: var(--accent);
-      border-radius: 50%;
-    }
-
-    /* Loader */
-    .loader-view {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 40vh;
-    }
-
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 2px solid rgba(45,58,46,0.1);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      font-size: 1.3rem;
       margin-bottom: 20px;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .feature-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #0F172A;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* School Onboarding / Verification Wizard */
+    #school-wizard {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 680px;
+      margin: 0 auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .wizard-step-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .wizard-step-sub {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      font-family: var(--font-sans);
+    }
+
+    .form-control:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .radio-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .radio-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .radio-card:hover {
+      border-color: var(--accent);
+    }
+
+    .radio-card.selected {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .radio-card h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .radio-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .power-level-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .badge-full-ai { background: rgba(168, 85, 247, 0.2); color: #C084FC; border: 1px solid #A855F7; }
+    .badge-copilot { background: rgba(34, 197, 94, 0.2); color: #4ADE80; border: 1px solid #22C55E; }
+
+    .wizard-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
     }
   </style>
 </head>
 <body>
 
-  <div class="container" id="main-view">
+  <div class="container">
     <nav>
-      <div class="logo">unlockED<sup>+</sup></div>
+      <div class="logo">
+        unlockED <span>SaaS</span>
+        <span class="logo-tag">B2B Institutional</span>
+      </div>
+      <div class="nav-actions">
+        <a href="/static/login.html" class="btn-nav">School Sign In</a>
+        <a href="#school-wizard" onclick="startSchoolWizard()" class="btn-primary-sm">Verify School & Register →</a>
+      </div>
     </nav>
 
-    <div class="hero">
-      <h1>Where you stand —<br>and how to get in.</h1>
-      <p>An AI that scores your profile like an admissions officer would, then shows you exactly where people with your numbers got in — your whole plan in about a minute.</p>
-      
-      <button class="btn-primary" onclick="startWizard()">
-        Build my plan 
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
+    <!-- Main View -->
+    <div id="main-view">
+      <div class="hero">
+        <div class="school-badge">
+          🏫 B2B AI Infrastructure for Schools & Academies
+        </div>
+        <h1>The Institutional AI Platform for <span>High School College Admissions</span></h1>
+        <p>
+          Equip your school with AI-powered compliance auditing, cohort risk radar, and university recommendations. Designed for school counselors—and empowered to run full Autonomous AI Counseling for schools without staff.
+        </p>
 
-      <div class="login-link">
-        Already have an account? <a href="/static/login.html">Sign in</a>
+        <div class="hero-buttons">
+          <button class="btn-hero" onclick="startSchoolWizard()">
+            Register & Verify Your School 🚀
+          </button>
+          <a href="/static/login.html" class="btn-hero-secondary">
+            Counselor Portal Demo
+          </a>
+        </div>
       </div>
 
-      <div class="features-card">
-        <div class="features-title">What we build for you</div>
-        <div class="feature-item">
-          <div class="feature-icon">1</div>
-          <div class="feature-text">
-            <h3>AI Profile Review</h3>
-            <p>Scored like a top-tier admissions officer would.</p>
+      <div class="section-title">Institutional Features</div>
+      <div class="section-heading">Built for High Schools, Counselors & Administrators</div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-badge">📄</div>
+          <h3>Agentic Batch Ingestion</h3>
+          <p>Counselors can drag and drop transcripts, Grade 10 marksheets, SAT scores, and resumes. AI automatically parses and populates entire student cohorts in seconds.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-badge">🤖</div>
+          <h3>Autonomous Counselor AI Agent</h3>
+          <p>For schools without dedicated counseling staff, AI agents take full power—auditing subject compliance, generating student roadmaps, and notifying parents automatically.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-badge">📊</div>
+          <h3>Cohort Risk & Compliance Radar</h3>
+          <p>Real-time institutional dashboard displaying compliance pass/fail rates, missing domain subjects, and risk metrics across all graduating classes.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-badge">🎓</div>
+          <h3>Global Pathway & Scholarship Engine</h3>
+          <p>Cross-references student profiles with UK UCAS requirements, US holistic standards, and Indian CUET/JEE benchmarks + auto-matches global scholarships.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-badge">✉️</div>
+          <h3>Automated Parent & Student Mailer</h3>
+          <p>Draft and send personalized compliance warning emails, deadline alerts, and strategic subject recommendations directly from the school portal.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-badge">🔒</div>
+          <h3>Verified School Governance</h3>
+          <p>Domain-verified administrative controls allowing school principals and heads of counseling to customize university target lists and grading scales.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- School Verification & Preferences Wizard -->
+    <div id="school-wizard">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px;" id="wiz-progress">Step 1 of 3 — School Verification</span>
+        <button onclick="cancelWizard()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;">✕</button>
+      </div>
+
+      <!-- Step 1: School Verification -->
+      <div id="wiz-step-1">
+        <div class="wizard-step-title">Verify Your Institution</div>
+        <div class="wizard-step-sub">Enter official high school details to claim your school's unlockED workspace.</div>
+
+        <div class="form-group">
+          <label>Official High School Name *</label>
+          <input type="text" id="ws-school-name" class="form-control" placeholder="e.g. The Cathedral & John Connon School" required />
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label>School Board / Curriculum *</label>
+            <select id="ws-school-board" class="form-control">
+              <option value="CBSE">CBSE</option>
+              <option value="ICSE / ISC">ICSE / ISC</option>
+              <option value="IB World School">IB World School</option>
+              <option value="Cambridge / IGCSE & A-Levels">Cambridge / A-Levels</option>
+              <option value="State Board">State Board</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Annual Graduating Cohort Size *</label>
+            <select id="ws-cohort-size" class="form-control">
+              <option value="1-50">1 - 50 Students</option>
+              <option value="51-150">51 - 150 Students</option>
+              <option value="151-300">151 - 300 Students</option>
+              <option value="300+">300+ Students</option>
+            </select>
           </div>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon">2</div>
-          <div class="feature-text">
-            <h3>Admissions Roadmap</h3>
-            <p>Your full strategy, sequenced by impact.</p>
+
+        <div class="form-group">
+          <label>Official School Domain / Email *</label>
+          <input type="email" id="ws-school-email" class="form-control" placeholder="counselor@cathedral-school.edu" required />
+        </div>
+
+        <div class="wizard-actions">
+          <div></div>
+          <button class="btn-hero" onclick="nextWizStep(2)">Verify School & Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 2: Counselor Department Status & AI Power Delegation -->
+      <div id="wiz-step-2" style="display: none;">
+        <div class="wizard-step-title">Counseling Staff & AI Delegation</div>
+        <div class="wizard-step-sub">Tell us about your counseling team. If your school has no counselor, unlockED AI Agents take full operational power.</div>
+
+        <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600;">Select Counseling Setup *</label>
+        
+        <div class="radio-card-grid">
+          <div class="radio-card" id="rc-no-counselor" onclick="selectCounselorSetup('none')">
+            <h4>No Counselor Staff</h4>
+            <p>Our school does not have a dedicated college counseling department.</p>
+            <div class="power-level-badge badge-full-ai">⚡ Full AI Agent Power Enabled</div>
+          </div>
+
+          <div class="radio-card selected" id="rc-has-counselor" onclick="selectCounselorSetup('staff')">
+            <h4>Counseling Staff Exists</h4>
+            <p>We have full-time or part-time school counselors on staff.</p>
+            <div class="power-level-badge badge-copilot">🤝 Counselor Co-Pilot Mode</div>
           </div>
         </div>
-        <div class="feature-item">
-          <div class="feature-icon">3</div>
-          <div class="feature-text">
-            <h3>Target College List</h3>
-            <p>Built from your real chances and academic goals.</p>
+
+        <div id="ai-power-notice" style="background: rgba(168, 85, 247, 0.1); border: 1px solid var(--purple); border-radius: 12px; padding: 16px; margin-bottom: 20px; font-size: 0.88rem; color: #E9D5FF; line-height: 1.5; display: none;">
+          <strong>🤖 Autonomous AI Mode Activated:</strong> Since your school has no counseling department, unlockED AI agents will automatically execute profile audits, university compliance scoring, and student guidance recommendations on behalf of the administration.
+        </div>
+
+        <div class="wizard-actions">
+          <button class="btn-hero-secondary" onclick="nextWizStep(1)">← Back</button>
+          <button class="btn-hero" onclick="nextWizStep(3)">Configure Preferences →</button>
+        </div>
+      </div>
+
+      <!-- Step 3: School Preferences & Target Setup -->
+      <div id="wiz-step-3" style="display: none;">
+        <div class="wizard-step-title">School Preferences & Targets</div>
+        <div class="wizard-step-sub">Customize target pathways and default admission regions for your graduating class.</div>
+
+        <div class="form-group">
+          <label>Primary Destination Pathways for Students *</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
+            <label style="text-transform: none; font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; font-weight: normal;"><input type="checkbox" checked value="US" /> United States (Ivy / Holistic)</label>
+            <label style="text-transform: none; font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; font-weight: normal;"><input type="checkbox" checked value="UK" /> United Kingdom (UCAS)</label>
+            <label style="text-transform: none; font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; font-weight: normal;"><input type="checkbox" checked value="India" /> India (CUET / Private)</label>
+            <label style="text-transform: none; font-size: 0.9rem; color: var(--text); display: flex; align-items: center; gap: 8px; font-weight: normal;"><input type="checkbox" value="Global" /> Europe & Singapore</label>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="container" id="wizard">
-    <div class="wizard-header">
-      <button class="back-btn" onclick="prevStep()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        Back
-      </button>
-      <div class="logo">unlockED<sup>+</sup></div>
-    </div>
+        <div class="form-group" style="margin-top: 20px;">
+          <label>Administrator / Contact Person Name *</label>
+          <input type="text" id="ws-admin-name" class="form-control" placeholder="e.g. Dr. Sunita Rao (Principal)" required />
+        </div>
 
-    <!-- Step 1 -->
-    <div class="step active" id="step-1">
-      <h2>What grade are you in?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 1)">
-          <div class="option-radio"></div> 9th Grade
-        </div>
-        <div class="option" onclick="selectOption(this, 1)">
-          <div class="option-radio"></div> 10th Grade
-        </div>
-        <div class="option" onclick="selectOption(this, 1)">
-          <div class="option-radio"></div> 11th Grade
-        </div>
-        <div class="option" onclick="selectOption(this, 1)">
-          <div class="option-radio"></div> 12th Grade
+        <div class="wizard-actions">
+          <button class="btn-hero-secondary" onclick="nextWizStep(2)">← Back</button>
+          <button class="btn-hero" onclick="finishSchoolRegistration()">Complete School Launch 🎉</button>
         </div>
       </div>
-    </div>
 
-    <!-- Step 2 -->
-    <div class="step" id="step-2">
-      <h2>What board are you in?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 2)">
-          <div class="option-radio"></div> CBSE
-        </div>
-        <div class="option" onclick="selectOption(this, 2)">
-          <div class="option-radio"></div> ICSE
-        </div>
-        <div class="option" onclick="selectOption(this, 2)">
-          <div class="option-radio"></div> State Board
-        </div>
-        <div class="option" onclick="selectOption(this, 2)">
-          <div class="option-radio"></div> IGCSE
-        </div>
-        <div class="option" onclick="selectOption(this, 2)">
-          <div class="option-radio"></div> IB MYP
-        </div>
-        <div class="option" onclick="selectOption(this, 2)">
-          <div class="option-radio"></div> IB DP
-        </div>
+      <!-- Success Screen -->
+      <div id="wiz-success" style="display: none; text-align: center; padding: 20px 0;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🎉</div>
+        <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: #0F172A;">School Workspace Created!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 28px; font-size: 1rem; line-height: 1.6;">
+          Your school domain has been verified and registered. You can now access the counselor command center and batch ingest student records.
+        </p>
+        <a href="/static/index.html" class="btn-hero" style="text-decoration: none; display: inline-flex;">Launch Counselor Workspace →</a>
       </div>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="step" id="step-3">
-      <h2>What are your grades like?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 3)">
-          <div class="option-radio"></div> 95% - 100%
-        </div>
-        <div class="option" onclick="selectOption(this, 3)">
-          <div class="option-radio"></div> 90% - 95%
-        </div>
-        <div class="option" onclick="selectOption(this, 3)">
-          <div class="option-radio"></div> 80% - 90%
-        </div>
-        <div class="option" onclick="selectOption(this, 3)">
-          <div class="option-radio"></div> Below 80%
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 4 -->
-    <div class="step" id="step-4">
-      <h2>What's your SAT looking like?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 4)">
-          <div class="option-radio"></div> 1500 or higher
-        </div>
-        <div class="option" onclick="selectOption(this, 4)">
-          <div class="option-radio"></div> 1300 – 1490
-        </div>
-        <div class="option" onclick="selectOption(this, 4)">
-          <div class="option-radio"></div> Below 1300
-        </div>
-        <div class="option" onclick="selectOption(this, 4)">
-          <div class="option-radio"></div> Haven't taken it
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 5 -->
-    <div class="step" id="step-5">
-      <h2>How strong are your extracurriculars?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 5)">
-          <div class="option-radio"></div> National/International recognition
-        </div>
-        <div class="option" onclick="selectOption(this, 5)">
-          <div class="option-radio"></div> State/Regional awards & leadership
-        </div>
-        <div class="option" onclick="selectOption(this, 5)">
-          <div class="option-radio"></div> School level involvement
-        </div>
-        <div class="option" onclick="selectOption(this, 5)">
-          <div class="option-radio"></div> Just getting started
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 6 -->
-    <div class="step" id="step-6">
-      <h2>What is your intended major?</h2>
-      <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
-        <select id="major-select" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; outline: none; font-family: var(--font-sans);">
-          <option value="" disabled selected>Select a major...</option>
-          <option value="Computer Science">Computer Science</option>
-          <option value="Engineering">Engineering</option>
-          <option value="Business & Finance">Business & Finance</option>
-          <option value="Pre-Med & Healthcare">Pre-Med & Healthcare</option>
-          <option value="Law & Legal Studies">Law & Legal Studies</option>
-          <option value="Humanities">Humanities</option>
-          <option value="Arts & Design">Arts & Design</option>
-          <option value="Architecture">Architecture</option>
-          <option value="Social Sciences">Social Sciences</option>
-          <option value="Undecided">Undecided</option>
-        </select>
-        <button class="btn-primary" onclick="submitDropdown(6, 'major-select')" style="margin: 0; width: 100%; justify-content: center;">Next Step</button>
-      </div>
-    </div>
-
-    <!-- Step 7 -->
-    <div class="step" id="step-7">
-      <h2>What's your financial aid situation?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 7)">
-          <div class="option-radio"></div> ₹10 Lakhs - ₹20 Lakhs / year
-        </div>
-        <div class="option" onclick="selectOption(this, 7)">
-          <div class="option-radio"></div> ₹20 Lakhs - ₹40 Lakhs / year
-        </div>
-        <div class="option" onclick="selectOption(this, 7)">
-          <div class="option-radio"></div> ₹40 Lakhs - ₹80 Lakhs / year
-        </div>
-        <div class="option" onclick="selectOption(this, 7)">
-          <div class="option-radio"></div> ₹80+ Lakhs / year
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 8 -->
-    <div class="step" id="step-8">
-      <h2>What is your residency status?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 8)">
-          <div class="option-radio"></div> US Citizen / Permanent Resident
-        </div>
-        <div class="option" onclick="selectOption(this, 8)">
-          <div class="option-radio"></div> International Student
-        </div>
-      </div>
-    </div>
-
-    <!-- Step 9 -->
-    <div class="step" id="step-9">
-      <h2>Where do you want to study?</h2>
-      <div class="option-list">
-        <div class="option" onclick="selectOption(this, 9)">
-          <div class="option-radio"></div> India
-        </div>
-        <div class="option" onclick="selectOption(this, 9)">
-          <div class="option-radio"></div> UK
-        </div>
-        <div class="option" onclick="selectOption(this, 9)">
-          <div class="option-radio"></div> US
-        </div>
-        <div class="option" onclick="selectOption(this, 9)">
-          <div class="option-radio"></div> Europe
-        </div>
-        <div class="option" onclick="selectOption(this, 9)">
-          <div class="option-radio"></div> Southeast Asia
-        </div>
-      </div>
-    </div>
-
-    <!-- Tease Screen -->
-    <div class="loader-view" id="tease-screen" style="display: none; height: auto; text-align: center; margin-top: 60px;">
-      <h2 style="font-size: 2rem; margin-bottom: 20px; color: var(--text);">Your AI Roadmap is ready.</h2>
-      <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.5; font-size: 1.1rem; max-width: 400px; margin-left: auto; margin-right: auto;">
-        Use your report to unlock your report. You have to log in.
-      </p>
-      <a href="/static/login.html?signup=true" class="btn-primary" style="text-decoration: none;">Sign up to unlock</a>
     </div>
   </div>
 
   <script>
-    let currentStep = 1;
-    const totalSteps = 9;
-    const wizardData = {};
+    let currentCounselorSetup = 'staff';
 
-    function startWizard() {
+    function startSchoolWizard() {
       document.getElementById('main-view').style.display = 'none';
-      document.getElementById('wizard').style.display = 'flex';
+      document.getElementById('school-wizard').style.display = 'block';
     }
 
-    function selectOption(element, stepNum) {
-      // clear others
-      const siblings = element.parentElement.children;
-      for(let el of siblings) el.classList.remove('selected');
-      element.classList.add('selected');
-
-      // store data
-      wizardData[`step_${stepNum}`] = element.innerText.trim();
-
-      // wait a tiny bit then auto-advance
-      setTimeout(() => {
-        nextStep(stepNum);
-      }, 350);
+    function cancelWizard() {
+      document.getElementById('school-wizard').style.display = 'none';
+      document.getElementById('main-view').style.display = 'block';
     }
 
-    function submitDropdown(stepNum, selectId) {
-      const select = document.getElementById(selectId);
-      if (!select.value) return;
-      wizardData[`step_${stepNum}`] = select.value;
-      nextStep(stepNum);
+    function selectCounselorSetup(mode) {
+      currentCounselorSetup = mode;
+      document.getElementById('rc-no-counselor').classList.toggle('selected', mode === 'none');
+      document.getElementById('rc-has-counselor').classList.toggle('selected', mode === 'staff');
+      document.getElementById('ai-power-notice').style.display = mode === 'none' ? 'block' : 'none';
     }
 
-    function nextStep(stepNum) {
-      document.getElementById(`step-${stepNum}`).classList.remove('active');
-      if (stepNum < totalSteps) {
-        currentStep++;
-        document.getElementById(`step-${currentStep}`).classList.add('active');
-      } else {
-        // Finished wizard
-        localStorage.setItem('wizardData', JSON.stringify(wizardData));
-        document.querySelector('.wizard-header').style.display = 'none';
-        document.getElementById('tease-screen').style.display = 'block';
-      }
+    function nextWizStep(step) {
+      document.getElementById('wiz-step-1').style.display = 'none';
+      document.getElementById('wiz-step-2').style.display = 'none';
+      document.getElementById('wiz-step-3').style.display = 'none';
+
+      document.getElementById(`wiz-step-${step}`).style.display = 'block';
+      document.getElementById('wiz-progress').textContent = `Step ${step} of 3 — ${
+        step === 1 ? 'School Verification' : step === 2 ? 'Counseling Staff & AI Power' : 'School Preferences'
+      }`;
     }
 
-    function prevStep() {
-      if (currentStep > 1) {
-        document.getElementById(`step-${currentStep}`).classList.remove('active');
-        currentStep--;
-        document.getElementById(`step-${currentStep}`).classList.add('active');
-      } else {
-        document.getElementById('wizard').style.display = 'none';
-        document.getElementById('main-view').style.display = 'flex';
-      }
+    function finishSchoolRegistration() {
+      const schoolName = document.getElementById('ws-school-name').value || 'High School Workspace';
+      const schoolEmail = document.getElementById('ws-school-email').value || 'admin@school.edu';
+      
+      const config = {
+        schoolName,
+        schoolEmail,
+        counselorSetup: currentCounselorSetup,
+        fullAIPower: currentCounselorSetup === 'none'
+      };
+
+      localStorage.setItem('schoolConfig', JSON.stringify(config));
+
+      document.getElementById('wiz-step-3').style.display = 'none';
+      document.getElementById('wiz-success').style.display = 'block';
+      document.getElementById('wiz-progress').textContent = 'Registration Complete';
     }
   </script>
 </body>
 </html>
+

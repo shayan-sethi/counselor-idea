@@ -26,7 +26,7 @@ class ScholarshipAgent:
             return []
 
         # If API key is available, use Gemini for agentic reasoning
-        api_key = os.environ.get("GEMINI_API_KEY", "")
+        api_key = osiron.get("GEMINI_API_KEY", "")
         if api_key:
             return ScholarshipAgent._match_with_llm(student, candidate_scholarships, api_key, silent)
         else:

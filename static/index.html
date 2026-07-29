@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>unlockED — Counselor Co-pilot</title>
-  <meta name="description" content="unlockED: AI-powered compliance dashboard for education counselors." />
+  <title>Unlocked — AI Career Co-Pilot</title>
+  <meta name="description" content="Unlocked: AI-powered compliance dashboard for education counselors." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/style.css?v=2" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=3" />
 </head>
 <body>
 
@@ -15,19 +15,39 @@
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-icon">U</div>
-      <div class="brand-name">unlockED</div>
+      <div>
+        <div class="brand-name">Unlocked</div>
+        <div class="brand-subtitle">AI Career Co-Pilot</div>
+      </div>
     </div>
     <nav class="nav-links">
-      <button class="nav-item active" id="tab-dash" onclick="switchView('dashboard')">Dashboard</button>
-      <button class="nav-item" id="tab-manage" onclick="switchView('manage')">Students</button>
-      <button class="nav-item" id="tab-shortlist" onclick="switchView('shortlist')">Universities</button>
-      <button class="nav-item" id="tab-student-profile" onclick="switchView('student-profile')">Recommendations</button>
-      <button class="nav-item" id="tab-calendar" onclick="switchView('calendar')">Deadlines</button>
-      <button class="nav-item" id="tab-reports" onclick="switchView('reports')">Analytics</button>
-      <button class="nav-item" id="tab-radar" onclick="switchView('radar')">Radar</button>
+      <button class="nav-item active" id="tab-dash" onclick="switchView('dashboard')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" id="tab-manage" onclick="switchView('manage')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Students
+      </button>
+      <button class="nav-item" id="tab-shortlist" onclick="switchView('shortlist')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Opportunities
+      </button>
+      <button class="nav-item" id="tab-predictor" onclick="switchView('predictor')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        Universities
+      </button>
+      <button class="nav-item" id="tab-radar" onclick="switchView('radar')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        Benchmarking
+      </button>
+      <button class="nav-item" id="tab-reports" onclick="switchView('reports')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        Reports
+      </button>
     </nav>
     <div class="counselor-profile">
-      <div class="cp-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:100%;height:100%;color:var(--text-3);padding:4px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+      <div class="cp-avatar">A</div>
       <div class="cp-info">
         <span class="cp-name">Mr. Rathi</span>
         <span class="cp-role">School Counsellor</span>
@@ -37,743 +57,367 @@
 
   <div class="app-container">
     <header class="topbar">
-      <input type="text" class="search-bar" placeholder="Search students, schools...">
-      <div class="btn-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></div>
-      <div class="btn-icon" onclick="logout()" style="color: #ef4444;" title="Logout"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
+      <div class="search-container">
+        <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" class="search-bar" id="dash-search" oninput="filterDashboard()" placeholder="Search students, opportunities.">
+      </div>
+      <div class="topbar-right">
+        <div class="header-pill">
+          <span style="font-weight:700" id="m-cohort-header">527</span> students · <span style="color:var(--red)" id="m-risk-header">23 high-risk</span>
+        </div>
+        <div class="btn-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        </div>
+      </div>
     </header>
+
     <div class="content-wrapper">
       
-  <!-- ═══ DASHBOARD ═══ -->
-  <main id="view-dashboard">
-    <div class="page-title-row">
-      <h1>Cohort Compliance</h1>
-      <p class="subtitle" id="dash-subtitle">loading…</p>
-    </div>
-    <div class="metrics-strip">
-      <div class="metric"><span class="metric-num" id="m-cohort">—</span><span class="metric-lbl">students</span></div>
-      <div class="metric-div"></div>
-      <div class="metric"><span class="metric-num accent-g" id="m-pass">—</span><span class="metric-lbl">strong match</span></div>
-      <div class="metric-div"></div>
-      <div class="metric"><span class="metric-num accent-r" id="m-risk">—</span><span class="metric-lbl">high risk</span></div>
-      <div class="metric-div"></div>
-      <div class="metric"><span class="metric-num accent-y" id="m-gaps">—</span><span class="metric-lbl">active gaps</span></div>
-    </div>
-
-    <!-- Cohort Insights -->
-    <div id="cohort-insights" class="form-card" style="margin-bottom: 20px; padding: 16px;">
-      <div class="form-section-title">Cohort Insights</div>
-      <div id="insights-body" style="display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.9rem; color: var(--text-1);"></div>
-    </div>
-
-    <!-- Search / Filter / Sort -->
-    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
-      <input type="text" id="dash-search" placeholder="Search students by name..." oninput="filterDashboard()" style="flex: 1; min-width: 200px; font-family: var(--mono); font-size: 0.78rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-      <select id="dash-filter" onchange="filterDashboard()" style="font-family: var(--mono); font-size: 0.75rem; padding: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;">
-        <option value="all">All Students</option>
-        <option value="strong">Strong Match (90%+)</option>
-        <option value="moderate">Moderate Risk (70-89%)</option>
-        <option value="high">High Risk (45-69%)</option>
-        <option value="critical">Critical (&lt;45%)</option>
-      </select>
-      <select id="dash-sort" onchange="filterDashboard()" style="font-family: var(--mono); font-size: 0.75rem; padding: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;">
-        <option value="name-asc">Name A→Z</option>
-        <option value="name-desc">Name Z→A</option>
-        <option value="match-asc">Match Score ↑</option>
-        <option value="match-desc">Match Score ↓</option>
-        <option value="risk-desc">Risk ↓ (highest first)</option>
-      </select>
-    </div>
-
-    <!-- AI Agent Command Center -->
-    <div class="form-card" style="margin-bottom: 20px; padding: 20px; border: 1px solid #BFDBFE; background: #EFF6FF; border-radius: 12px;">
-      <div class="form-section-title" style="display: flex; align-items: center; gap: 8px; color: var(--text-1);">
-        <span style="font-size: 1.1rem; font-weight: 700;">UnlockED AI Agent Command Center</span>
-      </div>
-      <p class="field-hint" style="margin-bottom: 16px; color: var(--text-2); font-size: 0.85rem;">Type counselor instructions (e.g. "draft warning emails", "recommend pathways for STU_001", or "risk summary").</p>
-      
-      <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-        <input type="text" id="cc-command-input" placeholder="Enter counselor agent command..." onkeydown="if(event.key==='Enter') runCounselorAgentCommand()" style="flex: 1; font-family: var(--sans); font-size: 0.9rem; padding: 10px 16px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 8px;" />
-        <button type="button" class="btn-run" onclick="runCounselorAgentCommand()" style="padding: 10px 24px; font-size: 0.9rem; border-radius: 8px; font-weight: 600;">Execute Command</button>
-      </div>
-
-      <div id="cc-agent-response" style="display: none; border: 1px solid var(--border); border-radius: 8px; padding: 16px; background: var(--surface); font-size: 0.9rem; line-height: 1.5; color: var(--text-1); max-height: 280px; overflow-y: auto; box-shadow: var(--shadow-sm);"></div>
-    </div>
-
-    <section class="student-list">
-      <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 1fr;">
-        <span class="lh-col">Student</span>
-        <span class="lh-col">Targets</span>
-        <span class="lh-col">Match</span>
-        <span class="lh-col">Status</span>
-      </div>
-      <div id="student-rows" class="rows-container">
-        <div class="loading-row"><span class="blink">▌</span> loading cohort data…</div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ═══ MANAGE VIEW ═══ -->
-  <main id="view-manage" class="hidden">
-    <div class="page-title-row">
-      <h1>Manage Students</h1>
-      <p class="subtitle">Add, edit, or remove student profiles</p>
-    </div>
-
-    <div class="manage-layout">
-      <!-- Student form -->
-      <div class="manage-form-wrap">
-        <div class="form-section-title" id="manage-form-title" style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px;">Add New Student</div>
-        <form id="manage-student-form" onsubmit="submitManageStudent(event)">
-          <!-- AI Ingestion Dropzone for Counselor -->
-          <div style="border: 1px solid var(--border-h); background: #F8FAFC; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
-            <div style="font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 6px;">Automated Agentic Data Ingestion</div>
-            <div style="font-size: 0.9rem; color: var(--text-2); margin-bottom: 16px;">Upload transcript, marks card, or resume to auto-fill student details:</div>
-            <div style="display: flex; gap: 16px; align-items: center;">
-              <input type="file" id="counselor-ingest-file" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="font-family: var(--sans); font-size: 0.9rem; color: var(--text-2);" />
-              <button type="button" class="btn-outline-sm" onclick="ingestCounselorDocument()">Auto-fill form →</button>
-            </div>
-            <div id="counselor-ingest-status" style="font-size: 0.9rem; font-weight: 500; margin-top: 12px; display: none;"></div>
-          </div>
-          <input type="hidden" id="mf-id" value="" />
-
-          <div class="form-row">
-            <div class="field field-wide">
-              <label>Full Name *</label>
-              <input type="text" id="mf-name" required placeholder="e.g. Priya Gupta" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Board *</label>
-              <select id="mf-board">
-                <option value="CBSE">CBSE</option>
-                <option value="ICSE">ICSE</option>
-                <option value="State Board">State Board</option>
-                <option value="IB">IB</option>
-                <option value="A-Levels">A-Levels</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Class Level *</label>
-              <select id="mf-class">
-                <option value="10">Class 10</option>
-                <option value="11">Class 11</option>
-                <option value="12" selected>Class 12</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field" style="margin-bottom:14px">
-            <label>Board Subjects *</label>
-            <div class="check-grid" id="mf-subjects"></div>
-            <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <input type="text" id="mf-custom-subject-input" placeholder="Custom subject name..." style="flex: 1; font-family: var(--mono); font-size: 0.8rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 6px;" />
-              <button type="button" class="btn-outline-sm" onclick="addManageCustomBoardSubject()">+ Add Subject</button>
-            </div>
-          </div>
-
-          <div class="field" style="margin-bottom:14px">
-            <label>Target Pathways *</label>
-            <div class="check-grid" id="mf-targets"></div>
-          </div>
-
-          <div class="field" style="margin-bottom:14px">
-            <label>CUET Domain Subjects</label>
-            <input type="text" id="mf-cuet" placeholder="comma-separated, e.g. Physics, Mathematics, English" />
-          </div>
-
-          <div class="form-row">
-            <div class="field">
-              <label>Grade 10 Board *</label>
-              <select id="mf-g10-board">
-                <option value="CBSE">CBSE</option>
-                <option value="ICSE">ICSE</option>
-                <option value="State Board">State Board</option>
-                <option value="IGCSE">IGCSE</option>
-                <option value="IB MYP">IB MYP</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Grade 10 Aggregate</label>
-              <input type="text" id="mf-g10" placeholder="e.g. 88%" />
-            </div>
-            <div class="field">
-              <label>Class 11 Aggregate</label>
-              <input type="text" id="mf-g11" placeholder="e.g. 85%" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Expected Board Aggregate</label>
-              <input type="text" id="mf-gexp" placeholder="e.g. 90%" />
-            </div>
-          </div>
-
-          <!-- Grade 10 Individual Subject Marks -->
-          <div class="field" style="margin-bottom: 14px;">
-            <label>Grade 10 Subject Marks</label>
-            <div id="mf-g10-subject-grades-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;"></div>
-            <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <input type="text" id="mf-g10-custom-subj" placeholder="Add Grade 10 subject..." style="flex: 1; font-family: var(--mono); font-size: 0.8rem; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 6px;" />
-              <button type="button" class="btn-outline-sm" onclick="addManageG10SubjectRow()">+ Add Grade 10 Subject</button>
-            </div>
-          </div>
-
-          <!-- Class 11/12 Individual Subject Marks -->
-          <div class="field" style="margin-bottom: 14px; display: none;" id="mf-subject-grades-section">
-            <label>Class 11/12 Expected Subject Marks</label>
-            <div id="mf-subject-grades-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 8px;"></div>
-          </div>
-
-          <div class="form-row">
-            <div class="field">
-              <label>SAT Score</label>
-              <input type="number" id="mf-sat" placeholder="e.g. 1480" min="400" max="1600" />
-            </div>
-            <div class="field">
-              <label>AP Exams Taken</label>
-              <div id="mf-ap-list" style="margin-bottom: 8px;"></div>
-              <div class="ap-picker-row" style="display: flex; gap: 6px;">
-                <select id="mf-ap-subject" style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
-                  <option value="" disabled selected>Select AP Subject...</option>
-                </select>
-                <select id="mf-ap-score" style="width: 70px; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
-                  <option value="5">5</option>
-                  <option value="4">4</option>
-                  <option value="3">3</option>
-                  <option value="2">2</option>
-                  <option value="1">1</option>
-                </select>
-                <button type="button" class="btn-outline-sm" onclick="addManageAPFromSelect()">+ Add</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="field" style="margin-bottom:14px">
-            <label>Portfolio / Extracurriculars</label>
-            <p class="field-hint" style="font-size:0.75rem; color:var(--text-3); margin: 2px 0 8px;">Describe activities — AI will auto-classify impact tier.</p>
-            <div id="mf-portfolio-list"></div>
-            <button type="button" class="btn-outline-sm" onclick="addPortfolioRow()">+ Add Activity</button>
-          </div>
-
-          <div class="form-actions" style="margin-top: 20px;">
-            <button type="submit" class="btn-run" id="mf-submit">Add Student →</button>
-            <button type="button" class="btn-reset" onclick="resetManageForm()" id="mf-cancel" style="display:none">Cancel Edit</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Existing students list for editing -->
-      <div class="manage-list-wrap">
-        <div class="form-section-title">Existing Students</div>
-        <div id="manage-student-list" style="margin-bottom:24px"></div>
-
-        <div class="form-section-title">Add Target Pathway</div>
-        <form id="target-form" onsubmit="submitTargetForm(event)" style="margin-top:14px">
-          <div class="form-row">
-            <div class="field field-wide" style="position:relative">
-              <label>University / Provider *</label>
-              <input type="text" id="mt-uni" required placeholder="Type to search e.g. Oxford, Imperial..." oninput="searchUniversities(this.value)" autocomplete="off" />
-              <div id="mt-uni-results" class="autocomplete-results hidden"></div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field field-wide" style="position:relative">
-              <label>Course Name *</label>
-              <input type="text" id="mt-name" required placeholder="Select a university first, then type course e.g. Computer Science" oninput="searchCourses(this.value)" autocomplete="off" />
-              <div id="mt-course-results" class="autocomplete-results hidden"></div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label>Track *</label>
-              <select id="mt-track">
-                <option value="UK">United Kingdom</option>
-                <option value="US">United States</option>
-                <option value="India">India</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Min Portfolio Tier</label>
-              <select id="mt-portfolio">
-                <option value="3">Tier 3 (School)</option>
-                <option value="2">Tier 2 (National)</option>
-                <option value="1">Tier 1 (International)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field" style="margin-bottom:14px">
-            <label>Compulsory Board Subjects (check all that apply)</label>
-            <div class="check-grid" id="mt-compulsory"></div>
-          </div>
-
-          <div class="form-actions" style="margin-top: 16px;">
-            <button type="submit" class="btn-run" id="mt-submit">Add Pathway →</button>
-          </div>
-        </form>
-
-        <div class="form-section-title" style="margin-top:24px">Existing Target Pathways</div>
-        <div id="manage-target-list" style="margin-top:14px"></div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ═══ PREDICTOR ═══ -->
-  <main id="view-predictor" class="hidden">
-    <div class="page-title-row">
-      <h1>Course Outcome Predictor</h1>
-      <p class="subtitle">random forest models · 25K+ UK course records</p>
-    </div>
-    <div class="pred-layout">
-      <form class="pred-form" id="pred-form" onsubmit="runPredictor(event)">
-        <div class="form-section-title">course parameters</div>
-        <div class="form-row">
-          <div class="field"><label>Subject</label><select id="f-subject"><option value="CAH17">CAH17 – Computing</option><option value="CAH10">CAH10 – Engineering</option><option value="CAH02">CAH02 – Medicine</option><option value="CAH11">CAH11 – Mathematics</option><option value="CAH25">CAH25 – Business</option><option value="CAH15">CAH15 – Social Sciences</option><option value="CAH07">CAH07 – Physical Sciences</option></select></div>
-          <div class="field"><label>Degree</label><select id="f-aim"><option value="BSc">BSc</option><option value="BA">BA</option><option value="MEng">MEng</option><option value="MSci">MSci</option><option value="BEng">BEng</option></select></div>
-          <div class="field"><label>Country</label><select id="f-country"><option value="England">England</option><option value="Scotland">Scotland</option><option value="Wales">Wales</option><option value="Northern Ireland">N. Ireland</option></select></div>
-        </div>
-        <div class="form-row">
-          <div class="field"><label>UCAS Tariff</label><input type="number" id="f-tariff" value="128" /></div>
-          <div class="field"><label>NSS %</label><input type="number" id="f-nss" value="82" step="0.1" /></div>
-          <div class="field"><label>TEF</label><select id="f-tef"><option value="Gold">Gold</option><option value="Silver">Silver</option><option value="Bronze">Bronze</option><option value="None">None</option></select></div>
-        </div>
-        <div class="form-toggles">
-          <label class="ftoggle"><input type="checkbox" id="f-foundation" /><span>Foundation</span></label>
-          <label class="ftoggle"><input type="checkbox" id="f-honours" checked /><span>Honours</span></label>
-          <label class="ftoggle"><input type="checkbox" id="f-sandwich" /><span>Sandwich</span></label>
-          <label class="ftoggle"><input type="checkbox" id="f-yearabroad" /><span>Year Abroad</span></label>
-        </div>
-        <button type="submit" class="btn-run" id="btn-predict">run prediction →</button>
-      </form>
-      <div class="pred-output">
-        <div id="pred-empty" class="pred-empty"><span class="blink">▌</span> awaiting input_</div>
-        <div id="pred-results" class="pred-results hidden">
-          <div class="pred-result-item"><span class="pri-label">graduate salary</span><span class="pri-value" id="r-salary">—</span></div>
-          <div class="pred-result-item"><span class="pri-label">continuation rate</span><span class="pri-value" id="r-continuation">—</span></div>
-          <div class="pred-result-item"><span class="pri-label">employment rate</span><span class="pri-value" id="r-employment">—</span></div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ═══ REPORTS VIEW ═══ -->
-  <main id="view-reports" class="hidden">
-    <div class="page-title-row" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
-      <div>
-        <h1>Automated Reports</h1>
-        <p class="subtitle">generate print-ready compliance, remediation & outcomes reports</p>
-      </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn-reset" onclick="switchReportSubView('student')" id="btn-report-sub-student" style="color: var(--accent); border-color: var(--accent);">student report</button>
-        <button class="btn-reset" onclick="switchReportSubView('cohort')" id="btn-report-sub-cohort">cohort report</button>
-      </div>
-    </div>
-
-    <!-- Student Report Generator -->
-    <div id="report-sec-student">
-      <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
-        <div class="form-section-title">select student & options</div>
-        <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
-          <div class="field" style="flex: 1; min-width: 240px; margin-bottom: 0;">
-            <label>Student Profile</label>
-            <select id="report-student-select" onchange="onReportStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
-          </div>
-          <button class="btn-run" onclick="printReport()" style="padding: 10px 20px;">print / save pdf →</button>
-        </div>
-        
-        <div style="margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
-          <div class="field" style="flex: 1; min-width: 300px; margin-bottom: 0;">
-            <label>Counselor Custom Remarks & Notes (Appended to Report)</label>
-            <textarea id="report-notes-input" placeholder="Type customized recommendations, timeline updates, or warnings here..." style="width: 100%; height: 90px; padding: 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--sans); font-size: 0.8rem; border-radius: 4px; resize: vertical;"></textarea>
-          </div>
-          <div style="display: flex; flex-direction: column; justify-content: flex-end;">
-            <button class="btn-reset" id="btn-save-report-notes" onclick="saveReportNotes()" style="height: 38px;">save notes to profile</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Printable Report Document Container -->
-      <div id="student-report-doc" class="form-card" style="padding: 40px; background: var(--surface); border: 1px solid var(--border-h); color: var(--text-1); min-height: 800px; line-height: 1.5; box-shadow: var(--shadow-sm);">
-        <!-- Header -->
-        <div style="border-bottom: 2px solid var(--text-1); padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
+      <!-- ═══ DASHBOARD ═══ -->
+      <main id="view-dashboard">
+        <div class="dash-header">
           <div>
-            <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">unlockED Compliance Engine</div>
-            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; margin-top: 4px; color: var(--text-1);">STUDENT PROGRESS & PATHWAY REPORT</div>
+            <div class="greeting">Good morning, Mr. Rathi 👋</div>
+            <div class="greeting-sub" id="dash-subtitle">Tuesday, 29 July 2025 · You have 3 meetings today and 5 students need urgent attention.</div>
           </div>
-          <div style="text-align: right; font-family: var(--mono); font-size: 0.72rem; color: var(--text-3);">
-            <div>GENERATED: <span id="rep-date">—</span></div>
-            <div>STATUS: <span id="rep-status" style="font-weight: 700;">—</span></div>
-          </div>
-        </div>
-
-        <!-- Student Info Block -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px;">
-          <div>
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">STUDENT NAME</div>
-            <div style="font-weight: 700; font-size: 1rem; margin-top: 4px;" id="rep-name">—</div>
-          </div>
-          <div>
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">STUDENT ID</div>
-            <div style="font-family: var(--mono); font-size: 0.9rem; font-weight: 700; margin-top: 4px;" id="rep-id">—</div>
-          </div>
-          <div>
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">ACADEMIC BOARD / LEVEL</div>
-            <div style="font-weight: 700; font-size: 0.9rem; margin-top: 4px;" id="rep-board">—</div>
-          </div>
-          <div>
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">EXPECTED GRADE / SCORE</div>
-            <div style="font-family: var(--mono); font-weight: 700; font-size: 0.9rem; margin-top: 4px;" id="rep-grade">—</div>
+          <div style="display:flex; gap: 12px;">
+            <button class="btn-outline" onclick="switchView('manage')">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              New Student
+            </button>
+            <button class="btn-primary" onclick="document.getElementById('cc-command-input').focus()">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              AI Insights
+            </button>
           </div>
         </div>
 
-        <!-- Pathway Readiness Checklist -->
-        <div id="rep-readiness-checklist" style="margin-bottom: 24px;"></div>
-
-        <!-- Layout grid: Left column (Pathways Compliance), Right column (Standardized Tests & ML Outcomes Projections) -->
-        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; margin-bottom: 24px;">
-          <div>
-            <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">🎯 TARGET PATHWAYS & ELIGIBILITY</h3>
-            <div id="rep-targets-list"></div>
+        <div class="ai-alert-banner">
+          <div class="ai-alert-content">
+            <div class="ai-alert-icon">
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <div class="ai-alert-text">
+              <strong>AI detected 3 new scholarship opportunities matching 8 students this week.</strong>
+              <span>Tata-Cornell deadline in 11 days — Priya Sharma has 91% eligibility. Schedule follow-up?</span>
+            </div>
           </div>
-          
+          <button class="btn-alert">Review Now</button>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon" style="background:#E0E7FF; color:#4F46E5;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div>
+              <div class="kpi-trend up">+12</div>
+            </div>
+            <div class="kpi-value" id="m-cohort">527</div>
+            <div class="kpi-label">Students Monitored</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon" style="background:#FEE2E2; color:#DC2626;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+              <div class="kpi-trend up" style="color:var(--text-3)">+4</div>
+            </div>
+            <div class="kpi-value" id="m-risk">23</div>
+            <div class="kpi-label">High-Risk Students</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon" style="background:#D1FAE5; color:#059669;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></div>
+              <div class="kpi-trend up">+3%</div>
+            </div>
+            <div class="kpi-value" id="m-pass">68%</div>
+            <div class="kpi-label">Application Readiness</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon" style="background:#FEF3C7; color:#D97706;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></div>
+              <div class="kpi-trend up">+2%</div>
+            </div>
+            <div class="kpi-value" id="m-gaps">61%</div>
+            <div class="kpi-label">Avg. Profile Completion</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon" style="background:#ECFEFF; color:#0891B2;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+              <div class="kpi-trend down" style="color:var(--text-3)">5 urgent</div>
+            </div>
+            <div class="kpi-value">14</div>
+            <div class="kpi-label">Deadlines This Month</div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <!-- AI Priority Queue -->
           <div>
-            <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">💡 ML OUTCOMES PROJECTIONS</h3>
-            <div style="border: 1px solid var(--border); padding: 16px; background: var(--surface); margin-bottom: 20px;">
-              <p style="font-size: 0.85rem; color: var(--text-3); margin-bottom: 14px; line-height: 1.4;">Based on unlockED's Random Forest predictive models trained on 25K+ UK course records, here are the estimated outcome benchmarks for equivalent tracks:</p>
-              
-              <div style="margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-family: var(--mono); margin-bottom: 4px;">
-                  <span>EST. GRADUATE SALARY:</span>
-                  <span id="rep-ml-salary" style="font-weight: 700; color: var(--accent);">—</span>
-                </div>
-                <div style="height: 4px; background: var(--border);"><div id="rep-ml-salary-bar" style="height: 100%; background: var(--accent); width: 0%;"></div></div>
-              </div>
-              
-              <div style="margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-family: var(--mono); margin-bottom: 4px;">
-                  <span>EMPLOYMENT RATE:</span>
-                  <span id="rep-ml-employment" style="font-weight: 700; color: var(--green);">—</span>
-                </div>
-                <div style="height: 4px; background: var(--border);"><div id="rep-ml-employment-bar" style="height: 100%; background: var(--green); width: 0%;"></div></div>
-              </div>
-              
+            <div class="section-header">
               <div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-family: var(--mono); margin-bottom: 4px;">
-                  <span>CONTINUATION RATE:</span>
-                  <span id="rep-ml-continuation" style="font-weight: 700; color: var(--amber);">—</span>
+                <h2 class="section-title">AI Priority Queue</h2>
+                <p class="section-subtitle">Students ranked by risk score — needs your attention today</p>
+              </div>
+              <a href="#" class="view-all" onclick="switchView('manage')">View All &rsaquo;</a>
+            </div>
+            <div class="priority-list" id="student-rows">
+              <div style="padding:24px; text-align:center; color:var(--text-3);">Loading AI Priority Queue...</div>
+            </div>
+            
+            <!-- AI Command Center -->
+            <div class="ai-cmd-center">
+              <h2 class="section-title" style="display:flex;align-items:center;gap:8px;">
+                <svg width="20" height="20" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Counselor Co-Pilot
+              </h2>
+              <p class="section-subtitle">Execute counselor commands (e.g. "draft warning emails", "recommend pathways for STU_001")</p>
+              <div class="cmd-input-wrap">
+                <input type="text" id="cc-command-input" class="cmd-input" placeholder="Ask AI to analyze the cohort..." onkeydown="if(event.key==='Enter') runCounselorAgentCommand()">
+                <button type="button" class="btn-primary" onclick="runCounselorAgentCommand()">Run</button>
+              </div>
+              <div id="cc-agent-response"></div>
+            </div>
+          </div>
+
+          <!-- Schedule -->
+          <div>
+            <div class="section-header">
+              <h2 class="section-title">Today's Schedule</h2>
+              <div class="btn-circle"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+            </div>
+            <div class="schedule-card">
+              <div class="sch-item">
+                <div class="sch-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></div>
+                <div class="sch-details">
+                  <div class="sch-title">Aarav Mehta</div>
+                  <div class="sch-time">10:00 AM · Gap Review</div>
                 </div>
-                <div style="height: 4px; background: var(--border);"><div id="rep-ml-continuation-bar" style="height: 100%; background: var(--amber); width: 0%;"></div></div>
+              </div>
+              <div class="sch-item">
+                <div class="sch-icon urgent"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></div>
+                <div class="sch-details">
+                  <div class="sch-title" style="display:flex; justify-content:space-between;">
+                    Ananya Singh <span class="badge-urgent">Urgent</span>
+                  </div>
+                  <div class="sch-time">11:30 AM · Emergency Review</div>
+                </div>
+              </div>
+              <div class="sch-item">
+                <div class="sch-icon"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></div>
+                <div class="sch-details">
+                  <div class="sch-title">Ishaan Verma</div>
+                  <div class="sch-time">2:00 PM · SAT Planning</div>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+      </main>
 
-            <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">📋 SUBJECT REGISTRATION</h3>
-            <div style="font-family: var(--mono); font-size: 0.75rem; color: var(--text-2); background: rgba(255,255,255,0.02); padding: 12px; border: 1px solid var(--border); border-radius: 4px;">
-              <div style="margin-bottom: 8px;"><strong style="color: var(--text-1);">Board Subjects:</strong> <span id="rep-subjects-list">—</span></div>
-              <div id="rep-cuet-subjects-wrap" class="hidden"><strong>CUET Domains:</strong> <span id="rep-cuet-list">—</span></div>
-              <div id="rep-portfolio-wrap" style="margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px;">
-                <strong style="color: var(--text-1);">Portfolio Quality:</strong> <span id="rep-portfolio-tier">—</span>
+      <!-- ═══ STUDENTS EXCEL GRID ═══ -->
+      <main id="view-manage" class="hidden">
+        <div class="dash-header">
+          <div>
+            <div class="greeting">Student Database</div>
+            <div class="greeting-sub">Manage 1,200+ students in bulk via Excel-like grid</div>
+          </div>
+          <div>
+            <input type="file" id="dash-counselor-ingest-file" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="display:none;" onchange="ingestCounselorDocumentFromDash()">
+            <button class="btn-primary" onclick="document.getElementById('dash-counselor-ingest-file').click()">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Auto-Ingest Student Data
+            </button>
+          </div>
+        </div>
+        <div id="dash-counselor-ingest-status" style="margin-bottom:16px; font-size:0.9rem; font-weight:600; display:none; color:var(--accent);"></div>
+        
+        <div class="excel-grid-container">
+          <div class="excel-toolbar">
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">Students Master Roster</div>
+            <div style="display:flex; gap:12px;">
+              <select style="border-radius:6px; border:1px solid var(--border); padding:6px 12px; outline:none; font-family:var(--sans);">
+                <option>Filter by Grade</option>
+                <option>Grade 12</option>
+                <option>Grade 11</option>
+              </select>
+              <button class="btn-outline" style="padding:6px 12px; font-size:0.8rem; border-radius:6px;">Export CSV</button>
+            </div>
+          </div>
+          <div class="excel-table-wrap">
+            <table class="excel-table">
+              <thead>
+                <tr>
+                  <th>Student ID</th>
+                  <th>Full Name</th>
+                  <th>Board</th>
+                  <th>Grade</th>
+                  <th>Predicted %</th>
+                  <th>SAT Score</th>
+                  <th>Targets</th>
+                  <th>Match Status</th>
+                </tr>
+              </thead>
+              <tbody id="student-excel-body">
+                <tr><td colspan="8" style="text-align:center;">Loading students...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═══ UNIVERSITIES & BENCHMARKING ═══ -->
+      <main id="view-predictor" class="hidden">
+        <div class="dash-header">
+          <div>
+            <div class="greeting">University Benchmarking</div>
+            <div class="greeting-sub">Reach/Target/Likely column buckets & financial aid fit</div>
+          </div>
+        </div>
+        <div class="dash-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px;">
+          <!-- Reach -->
+          <div class="kanban-col" style="background:var(--surface); border-radius:12px; border:1px solid var(--border); overflow:hidden;">
+            <h3 style="padding:16px; font-weight:700; color:var(--text-1); border-bottom:2px solid var(--red);">Reach</h3>
+            <div class="card" style="margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;">
+              <h4 style="font-size:1rem; margin-bottom:8px;">Stanford University</h4>
+              <div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: 15% | FinAid: Low</div>
+              <div style="font-size:0.8rem; color:var(--text-2);">Missing: High SAT, Tier 1 Portfolio</div>
+            </div>
+          </div>
+          <!-- Target -->
+          <div class="kanban-col" style="background:var(--surface); border-radius:12px; border:1px solid var(--border); overflow:hidden;">
+            <h3 style="padding:16px; font-weight:700; color:var(--text-1); border-bottom:2px solid var(--amber);">Target</h3>
+            <div class="card" style="margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;">
+              <h4 style="font-size:1rem; margin-bottom:8px;">UCLA</h4>
+              <div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: 65% | FinAid: Med</div>
+              <div style="font-size:0.8rem; color:var(--text-2);">Missing: None</div>
+            </div>
+          </div>
+          <!-- Likely -->
+          <div class="kanban-col" style="background:var(--surface); border-radius:12px; border:1px solid var(--border); overflow:hidden;">
+            <h3 style="padding:16px; font-weight:700; color:var(--text-1); border-bottom:2px solid var(--green);">Likely</h3>
+            <div class="card" style="margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;">
+              <h4 style="font-size:1rem; margin-bottom:8px;">Purdue University</h4>
+              <div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: 95% | FinAid: High</div>
+              <div style="font-size:0.8rem; color:var(--text-2);">Missing: None</div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:24px;">
+           <h3 style="font-size:1rem; margin-bottom:16px;">Comparison Across Schools</h3>
+           <div style="height:200px; background:var(--bg); border-radius:8px; display:flex; align-items:flex-end; padding:20px; gap:20px; justify-content:space-around;">
+             <div style="width:40px; height:80%; background:var(--red); border-radius:4px 4px 0 0;" title="Stanford"></div>
+             <div style="width:40px; height:50%; background:var(--amber); border-radius:4px 4px 0 0;" title="UCLA"></div>
+             <div style="width:40px; height:20%; background:var(--green); border-radius:4px 4px 0 0;" title="Purdue"></div>
+           </div>
+        </div>
+      </main>
+
+      <!-- ═══ OPPORTUNITIES ═══ -->
+      <main id="view-shortlist" class="hidden">
+        <div class="dash-header">
+          <div>
+            <div class="greeting">Opportunities & Scholarships</div>
+            <div class="greeting-sub">AI-curated competitions and funding based on cohort profiles</div>
+          </div>
+        </div>
+        <div class="dash-grid" style="grid-template-columns: 1.5fr 1fr;">
+          <!-- Competitions -->
+          <div>
+            <h2 class="section-title">Competitions</h2>
+            <div class="excel-grid-container" style="margin-top:16px;">
+              <table class="excel-table" style="width:100%;">
+                <thead>
+                  <tr><th>Type</th><th>Deadline</th><th>Impact</th><th>AI Reasoning</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>STEM Olympiad</strong><br><span style="font-size:0.75rem;color:var(--text-3);">National</span></td>
+                    <td>Aug 15</td>
+                    <td><span class="badge-risk high" style="background:var(--amber-light);color:#D97706;border:1px solid #FCD34D;">High</span></td>
+                    <td style="font-size:0.8rem;color:var(--text-2);">Matches 12 students with strong physics scores.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Creative Writing</strong><br><span style="font-size:0.75rem;color:var(--text-3);">International</span></td>
+                    <td>Sep 01</td>
+                    <td><span class="badge-risk" style="background:#D1FAE5;color:#047857;border:1px solid #6EE7B7;">Med</span></td>
+                    <td style="font-size:0.8rem;color:var(--text-2);">Good fit for humanities cohort.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Scholarships -->
+          <div>
+            <h2 class="section-title">Scholarships</h2>
+            <div style="margin-top:16px; display:flex; flex-direction:column; gap:16px;">
+              <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:16px;">
+                <div>
+                  <h3 style="font-size:1rem;color:var(--text-1);margin-bottom:4px;">Tata-Cornell Scholarship</h3>
+                  <div style="font-size:0.85rem;color:var(--text-3);">Funding: $25,000/yr</div>
+                  <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+                    <div class="progress-bar" style="width:100px;"><div class="progress-fill" style="width:91%;background:var(--accent);"></div></div>
+                    <span style="font-size:0.8rem;font-weight:600;">91% Match</span>
+                  </div>
+                </div>
+                <button class="btn-outline">Review</button>
               </div>
             </div>
           </div>
         </div>
+      </main>
 
-        <!-- Custom Counselor Notes Area in Document -->
-        <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 24px;">
-          <h3 style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">📢 COUNSELOR OFFICIAL RECOMMENDATIONS & NOTES</h3>
-          <div id="rep-counselor-notes-text" style="font-size: 0.85rem; color: var(--text-2); font-style: italic; white-space: pre-line; background: rgba(200, 255, 0, 0.01); border: 1px dashed var(--border); padding: 16px; border-radius: 4px;">No custom counselor remarks appended. Use the notes panel above to update.</div>
-        </div>
-
-        <!-- Footer -->
-        <div style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.75rem; color: var(--text-3);">
-          <span>unlockED REPORT GENERATOR MODULE · CONFIDENTIAL</span>
-          <span>© 2026 unlockED</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cohort Report Generator -->
-    <div id="report-sec-cohort" class="hidden">
-      <div style="display: flex; gap: 16px; margin-bottom: 24px;">
-        <button class="btn-run" onclick="printCohortReport()">print / save cohort report pdf →</button>
-      </div>
-
-      <div id="cohort-report-doc" class="form-card" style="padding: 40px; background: #0c0c0c; border: 1px solid var(--border); color: var(--text-1); min-height: 800px; line-height: 1.5;">
-        <!-- Header -->
-        <div style="border-bottom: 2px solid var(--text-1); padding-bottom: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
+      <!-- ═══ RADAR ═══ -->
+      <main id="view-radar" class="hidden">
+        <div class="dash-header">
           <div>
-            <div style="font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;">PRISM Compliance Engine</div>
-            <div style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.04em; margin-top: 4px;">COHORT COMPLIANCE & RISK AUDIT REPORT</div>
-          </div>
-          <div style="text-align: right; font-family: var(--mono); font-size: 0.72rem; color: var(--text-3);">
-            <div>GENERATED: <span class="cohort-rep-date">—</span></div>
-            <div>COHORT SIZE: <span id="rep-cohort-size" style="font-weight: 700;">—</span></div>
+            <div class="greeting">Cohort Benchmarking</div>
+            <div class="greeting-sub">National comparison, dimension percentiles, and activity heatmap</div>
           </div>
         </div>
-
-        <!-- Cohort Summary Widgets -->
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px;">
-          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">TOTAL STUDENTS</div>
-            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--text-1); margin-top: 4px;" id="rep-cohort-total">—</div>
-          </div>
-          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">STRONG MATCH (90%+)</div>
-            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--green); margin-top: 4px;" id="rep-cohort-strong">—</div>
-          </div>
-          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">HIGH RISK (45-69%)</div>
-            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--amber); margin-top: 4px;" id="rep-cohort-risk">—</div>
-          </div>
-          <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px;">
-            <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--text-3); text-transform: uppercase;">CRITICAL RISK (&lt;45%)</div>
-            <div style="font-family: var(--mono); font-weight: 800; font-size: 1.6rem; color: var(--red); margin-top: 4px;" id="rep-cohort-critical">—</div>
-          </div>
+        <div class="dash-grid" style="grid-template-columns: 1fr 1fr; gap:24px;">
+           <div class="card">
+             <h3 style="font-size:1rem; margin-bottom:16px;">Dimension Percentiles</h3>
+             <div style="margin-bottom:12px;">
+               <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px;"><span>Academics</span><span>92nd percentile</span></div>
+               <div class="progress-bar" style="width:100%;height:8px;"><div class="progress-fill" style="width:92%;background:var(--accent);"></div></div>
+             </div>
+             <div style="margin-bottom:12px;">
+               <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px;"><span>Extracurriculars</span><span>78th percentile</span></div>
+               <div class="progress-bar" style="width:100%;height:8px;"><div class="progress-fill" style="width:78%;background:var(--accent);"></div></div>
+             </div>
+             <div style="margin-bottom:12px;">
+               <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px;"><span>Leadership</span><span>65th percentile</span></div>
+               <div class="progress-bar" style="width:100%;height:8px;"><div class="progress-fill" style="width:65%;background:var(--amber);"></div></div>
+             </div>
+           </div>
+           <div class="card">
+             <h3 style="font-size:1rem; margin-bottom:16px;">Cohort Activity Heatmap (GitHub-style)</h3>
+             <div style="display:grid; grid-template-columns:repeat(12, 1fr); gap:4px;" id="heatmap-grid">
+             </div>
+           </div>
         </div>
+      </main>
 
-        <!-- Detailed compliance list -->
-        <h3 style="font-family: var(--mono); font-size: 0.75rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">📋 STUDENT COMPLIANCE SUMMARY</h3>
-        
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-bottom: 24px; text-align: left;">
-          <thead>
-            <tr style="border-bottom: 1px solid var(--border); font-family: var(--mono); color: var(--text-3); height: 28px;">
-              <th>ID</th>
-              <th>NAME</th>
-              <th>BOARD</th>
-              <th>TARGET PATHWAYS</th>
-              <th style="text-align: right;">MIN MATCH SCORE</th>
-              <th style="text-align: right;">STATUS</th>
-            </tr>
-          </thead>
-          <tbody id="cohort-report-table-body">
-            <!-- Populated via Javascript -->
-          </tbody>
-        </table>
-
-        <!-- Top Gap Breakdown -->
-        <h3 style="font-family: var(--mono); font-size: 0.75rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 16px;">⚠️ DETECTED PREREQUISITE GAP FREQUENCIES</h3>
-        <div id="cohort-report-gaps-summary" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;"></div>
-
-        <!-- Footer -->
-        <div style="margin-top: 48px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 0.65rem; color: var(--text-3);">
-          <span>PRISM REPORT GENERATOR MODULE · COHORT SUMMARY</span>
-          <span>© 2026 PRISM PATHWAYS</span>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- ═══ OPPORTUNITY RADAR VIEW ═══ -->
-  <main id="view-radar" class="hidden">
-    <div class="page-title-row">
-      <h1>Opportunity Radar</h1>
-      <p class="subtitle">match students to elite competitions, science fairs, and essay deadlines</p>
-    </div>
-
-    <!-- Student Selector & Scraper Card -->
-    <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
-      <div class="form-section-title">select student & manage opportunities</div>
-      <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
-        <div class="field" style="flex: 1; min-width: 240px; margin-bottom: 0;">
-          <label>Student Profile</label>
-          <select id="radar-student-select" onchange="onRadarStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
-        </div>
-        <div class="field" style="flex: 2; min-width: 320px; margin-bottom: 0;">
-          <label>Scrape & Import Competition from CompeteMap URL</label>
-          <input type="text" id="radar-import-url" placeholder="https://competemap.com/competitions/..." style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;" />
-        </div>
-        <button class="btn-run" onclick="importCompetition()" style="padding: 10px 20px;">import & scan →</button>
-      </div>
-      <div id="radar-import-status" style="font-family: var(--mono); font-size: 0.72rem; margin-top: 8px; display: none;"></div>
-    </div>
-
-    <!-- Matches Table -->
-    <section class="student-list">
-      <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 2fr;">
-        <span class="lh-col">Opportunity</span>
-        <span class="lh-col">Deadline Status</span>
-        <span class="lh-col">Match Score</span>
-        <span class="lh-col">Rationale (Why)</span>
-      </div>
-      <div id="radar-matches-list" class="rows-container">
-        <div class="loading-row"><span class="blink">▌</span> loading opportunity list…</div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ═══ SHORTLISTING VIEW ═══ -->
-  <main id="view-shortlist" class="hidden">
-    <div class="page-title-row">
-      <h1>College Shortlisting</h1>
-      <p class="subtitle">search, explore, and build student college shortlists globally</p>
-    </div>
-
-    <!-- Student Selector -->
-    <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
-      <div style="display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap;">
-        <div class="field" style="flex: 1; min-width: 240px; margin-bottom: 0;">
-          <label>Active Student Profile</label>
-          <select id="shortlist-student-select" onchange="onShortlistStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
-        </div>
-        <div class="field" style="flex: 2; min-width: 320px; margin-bottom: 0;">
-          <label>Search Colleges</label>
-          <input type="text" id="shortlist-search" placeholder="Type college name, course, or country (e.g. Cambridge, India)..." oninput="filterCollegesList()" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;" />
-        </div>
-      </div>
-    </div>
-
-    <!-- Colleges List Grid -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;" id="colleges-grid-container">
-      <!-- Populated via Javascript -->
-    </div>
-  </main>
-
-  <!-- ═══ CALENDAR VIEW ═══ -->
-  <main id="view-calendar" class="hidden">
-    <div class="page-title-row">
-      <h1>Deadlines Calendar</h1>
-      <p class="subtitle">chronological application deadlines, standardized exams (TMUA, SAT, JEE) & competitions</p>
-    </div>
-
-    <!-- Controls -->
-    <div class="form-card" style="margin-bottom: 24px; padding: 18px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div class="field" style="min-width: 240px; margin-bottom: 0;">
-          <label>Active Student Profile</label>
-          <select id="calendar-student-select" onchange="onCalendarStudentChange(this.value)" style="width: 100%; padding: 8px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); font-family: var(--mono); font-size: 0.8rem; border-radius: 4px;"></select>
-        </div>
-        <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: 0.72rem;">
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="cal-filter-college" checked onchange="filterCalendarEvents()"/> <span style="color:var(--red);">■ College Deadlines</span></label>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="cal-filter-exam" checked onchange="filterCalendarEvents()"/> <span style="color:var(--amber);">■ Entrance Exams</span></label>
-          <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;"><input type="checkbox" id="cal-filter-competition" checked onchange="filterCalendarEvents()"/> <span style="color:var(--green);">■ Competitions</span></label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Calendar Main Grid & Timeline Split Layout -->
-    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start;">
-      
-      <!-- Interactive Grid Card -->
-      <div class="form-card" style="padding: 16px; margin: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <button class="btn-reset" onclick="navigateCalendarMonth(-1)" style="padding: 4px 10px; font-size: 0.8rem;">◀</button>
-          <strong id="calendar-month-label" style="font-family: var(--mono); font-size: 0.85rem; text-transform: uppercase;">July 2026</strong>
-          <button class="btn-reset" onclick="navigateCalendarMonth(1)" style="padding: 4px 10px; font-size: 0.8rem;">▶</button>
-        </div>
-        
-        <!-- Days of Week Header -->
-        <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-family: var(--mono); font-size: 0.6rem; color: var(--text-3); margin-bottom: 8px;">
-          <span>SU</span><span>MO</span><span>TU</span><span>WE</span><span>TH</span><span>FR</span><span>SA</span>
-        </div>
-        
-        <!-- Grid Cells -->
-        <div id="calendar-grid-cells" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
-          <!-- Populated dynamically -->
-        </div>
-      </div>
-      
-      <!-- Detail List of Deadlines for the Month -->
-      <div class="student-list" style="margin: 0;">
-        <div class="list-header" style="grid-template-columns: 100px 2fr 120px 2fr; padding: 12px 24px; border-bottom: 1px solid var(--border); background: var(--surface); gap: 16px; font-size: 0.9rem;">
-          <span class="lh-col">Date</span>
-          <span class="lh-col">Deadline Event</span>
-          <span class="lh-col">Type</span>
-          <span class="lh-col">Description</span>
-        </div>
-        <div id="calendar-events-list" class="rows-container">
-          <div class="loading-row"><span class="blink">▌</span> select a student to load calendar grid…</div>
-        </div>
-      </div>
-      
-    </div>
-  </main>
-
-  <!-- ═══ NEW STUDENT PROFILE VIEW ═══ -->
-  <main id="view-student-profile" class="hidden">
-    <div class="profile-layout">
-      
-      <!-- Left Panel -->
-      <div class="left-panel">
-        <div class="action-buttons">
-          <button class="btn-outline" onclick="const sName=document.getElementById('sp-name').innerText; document.getElementById('cc-command-input').value='Schedule a meeting with ' + sName; switchView('dashboard'); runCounselorAgentCommand();">🗓 Schedule Meeting</button>
-          <button class="btn-primary" onclick="if(window.currentProfileId){document.getElementById('report-student-select').value=window.currentProfileId;} switchView('reports'); switchReportSubView('student');">📄 Generate Report</button>
-        </div>
-        
-        <div class="details-card">
-          <div class="dc-title">Student Details</div>
-          <div class="dc-row"><span class="dc-label">Email</span><span class="dc-value" id="sp-email">priya.sharma@gmail.com</span></div>
-          <div class="dc-row"><span class="dc-label">Phone</span><span class="dc-value" id="sp-phone">+1 (555) 019-2834</span></div>
-          <div class="dc-row"><span class="dc-label">GPA</span><span class="dc-value" id="sp-gpa">3.8 / 4.0</span></div>
-          <div class="dc-row"><span class="dc-label">SAT Score</span><span class="dc-value" id="sp-sat">1420</span></div>
-          <div class="dc-row"><span class="dc-label">IELTS Academic</span><span class="dc-value" id="sp-ielts">7.5</span></div>
-        </div>
-
-        <div class="ai-insights">
-          <div class="ai-insights-title">✨ AI Insights & Suggestions</div>
-          <div class="ai-text">Excellent match score (96%) for Stanford Computer Science program based on tech-focused SOP draft.</div>
-          <div class="ai-text">Consider scheduling an essay review session for Georgia Tech. The early action deadline is fast approaching.</div>
-        </div>
-
-        <div class="notes-card">
-          <div class="dc-title">Counsellor Notes</div>
-          <div class="nc-date">Oct 29, 2026</div>
-          <div class="nc-text">Priya is highly motivated in AI research. Discussed adding more Data Science options.</div>
-          <div class="nc-date">Oct 15, 2026</div>
-          <div class="nc-text">Met with parent. Recommended SAT focus to improve CS prospects.</div>
-          <button class="btn-outline-sm" style="width: 100%; margin-top: 8px;">+ Add Note</button>
-        </div>
-      </div>
-
-      <!-- Right Panel (Matches) -->
-      <div class="right-panel">
-        <div class="matches-header">
+      <!-- ═══ REPORTS ═══ -->
+      <main id="view-reports" class="hidden">
+        <div class="dash-header">
           <div>
-            <div class="page-title">AI University Recommendations</div>
-            <div class="page-subtitle">Curated list of institution suggestions for <span id="sp-name">Priya Sharma</span>.</div>
-          </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;color:var(--text-3);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <select id="sp-student-select" onchange="openStudentProfile(this.value)" style="padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-family: var(--sans); font-size: 0.85rem; font-weight: 500; color: var(--text-1);">
-            </select>
+            <div class="greeting">Reports & Exports</div>
+            <div class="greeting-sub">Generate PDF packets and AI summaries</div>
           </div>
         </div>
-
-        <div class="filters-row">
-          <div class="pills">
-            <div class="pill active" onclick="filterMatches('all', this)">All Matches</div>
-            <div class="pill" onclick="filterMatches('best-fit', this)">Best Fit</div>
-            <div class="pill" onclick="filterMatches('Safety', this)">Safety</div>
-            <div class="pill" onclick="filterMatches('Target', this)">Target</div>
-            <div class="pill" onclick="filterMatches('Reach', this)">Reach</div>
-          </div>
-          <div class="sort-by">
-            Sort by: <strong>Match Score</strong> ▾
-          </div>
+        <div class="card" style="text-align:center; padding:60px;">
+          <svg width="48" height="48" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <h2 style="font-size:1.5rem; color:var(--text-1); margin-bottom:8px;">End-of-Year Cohort Report</h2>
+          <p style="color:var(--text-3); max-width:400px; margin:0 auto 24px;">AI will compile match rates, scholarship wins, and benchmarking data into a 30-page PDF report for the school board.</p>
+          <button class="btn-primary" style="margin:0 auto;" onclick="alert('Generating PDF Report... This may take a few minutes.')">Generate AI Report</button>
         </div>
+      </main>
 
-        <div class="matches-grid" id="sp-matches-grid">
-          <!-- Populated by JS -->
-        </div>
-      </div>
-
+      <!-- Maintain other hidden views just so app.js doesn't crash if it looks for them -->
+      <main id="view-calendar" class="hidden"></main>
+      <main id="view-student-profile" class="hidden"></main>
     </div>
-  </main>
+  </div>
 
-  <!-- Keep drawer html elements for legacy compatibility if JS errors -->
-  <div class="drawer-backdrop hidden" id="drawer-backdrop" onclick="closeDrawer()"></div>
-  <aside class="drawer hidden" id="drawer">
-    <div class="drawer-content" id="drawer-scroll">
-      <div id="d-gaps"></div>
-      <div id="d-rem" class="hidden"></div>
-      <div id="d-sim" class="hidden">
-        <div class="sim-checks" id="sim-checks"></div>
-      </div>
-    </div>
-  </aside>
-
-    </div> <!-- end content-wrapper -->
-  </div> <!-- end app-container -->
-
-  <script src="/static/app.js?v=4"></script>
+  <script src="/static/app.js?v=6"></script>
 </body>
 </html>

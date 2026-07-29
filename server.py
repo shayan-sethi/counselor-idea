@@ -964,91 +964,108 @@ def api_student_advisor():
 @counselor_required
 def api_counselor_agent():
     data = request.get_json()
-    command = data.get("command", "").strip().lower()
+    command = data.get("command", "").strip()
+    if not command:
+        return jsonify({"response": "Please enter a counselor command or query."}), 400
 
-    if "email" in command or "draft" in command:
-        # Find students with critical gaps (Aarav, Dia, Rohan, etc.)
-        flagged_students = []
-        for s in STUDENTS:
-            for tid in s.get("targets", []):
-                res = agent.solve_goal(s["id"], tid, STUDENTS, silent=True)
-                if res and not res.get("compliant", False):
-                    flagged_students.append((s, res.get("gaps")[0]))
-                    break # just need one gap to flag
-        
-        if not flagged_students:
-            return jsonify({"response": "No students currently require warning emails."})
+    api_key = os.environ.get("GEMINI_API_KEY", "")
+    
+    # Compile live cohort context for reasoning model
+    cohort_summary_list = []
+    for s in STUDENTS:
+        student_audits = {}
+        for tid in s.get("targets", []):
+            audit_res = agent.solve_goal(s["id"], tid, STUDENTS, silent=True)
+            student_audits[tid] = {
+                "match_score": audit_res.get("match_score", 100),
+                "compliant": audit_res.get("compliant", True),
+                "gaps": audit_res.get("gaps", []),
+                "remediations": audit_res.get("remediations", [])
+            }
+        cohort_summary_list.append({
+            "id": s["id"],
+            "name": s["name"],
+            "board": s.get("board"),
+            "class_level": s.get("class_level"),
+            "board_subjects": s.get("board_subjects", []),
+            "grades": s.get("grades", {}),
+            "standardized_tests": s.get("standardized_tests", {}),
+            "portfolio": s.get("portfolio", []),
+            "targets": s.get("targets", []),
+            "audits": student_audits
+        })
 
-        # Draft email for the first flagged student as an example
-        s, gap = flagged_students[0]
+    if api_key:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=api_key)
+            
+            system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
+You have access to the entire school's active student cohort database provided below.
+
+STUDENT COHORT DATA:
+{json.dumps(cohort_summary_list, indent=2)}
+
+CRITICAL REASONING INSTRUCTIONS:
+1. Act as a highly intelligent, expert high school counselor and admissions strategist.
+2. Analyze the counselor's prompt carefully. It may ask you to:
+   - Perform a risk audit or cohort gap analysis across all students.
+   - Draft personalized warning or guidance emails to specific students or parents.
+   - Recommend new target pathways, university choices, or portfolio improvements for a specific student (e.g. STU_001).
+   - Provide strategic interventions, deadline warnings, or custom counseling notes.
+3. NEVER return static hardcoded canned responses. Always analyze the actual live JSON student cohort data dynamically.
+4. Format your output in clean Markdown with appropriate headers, bold text, bullet points, and actionable details.
+5. If drafting an email, include Subject line, To address, Salutation, specific student gap evidence, and professional sign-off.
+"""
+            model = genai.GenerativeModel(model_name="gemini-2.0-flash")
+            response = model.generate_content([system_prompt, f"COUNSELOR PROMPT / COMMAND:\n{command}"])
+            return jsonify({"response": response.text.strip()})
+        except Exception as err:
+            print(f"[CounselorAgent Error] Gemini reasoning model call failed: {err}")
+
+    # Fallback reasoning engine if GEMINI_API_KEY is not configured
+    command_lower = command.lower()
+    if "email" in command_lower or "draft" in command_lower:
+        flagged = [s for s in cohort_summary_list if any(not a.get("compliant") for a in s["audits"].values())]
+        if not flagged:
+            return jsonify({"response": "### 📧 Email Assistant\n\nNo students currently require urgent warning emails."})
+        target_student = flagged[0]
+        first_gap = next((g for a in target_student["audits"].values() for g in a.get("gaps", [])), {})
         draft = (
-            f"### 📧 Draft Email for {s['name']} ({s['id']})\n\n"
-            f"**To:** {s['name'].lower().replace(' ', '.')}@school.edu\n"
-            f"**Subject:** Action Required: Urgent Correction on Pathway Target Prerequisite Mismatch\n\n"
-            f"Dear {s['name']},\n\n"
-            f"We reviewed your academic profile and targets using the PRISM Compliance Agent. We noticed a **CRITICAL** gap:\n"
-            f"👉 *{gap.get('description')}*\n\n"
-            f"Please schedule a meeting with the counselor office this week to discuss target remediation (e.g. correcting your registration or adjusting target universities).\n\n"
-            f"Best regards,\n"
-            f"School College Counseling Center"
+            f"### 📧 Dynamically Generated Warning Draft for {target_student['name']} ({target_student['id']})\n\n"
+            f"**To:** {target_student['name'].lower().replace(' ', '.')}@school.edu\n"
+            f"**Subject:** Action Required: Urgent Pathway Prerequisite Gap ({first_gap.get('subject', 'Academic Mismatch')})\n\n"
+            f"Dear {target_student['name']},\n\n"
+            f"Our unlockED compliance audit detected an active prerequisite gap for your target university pathways:\n"
+            f"👉 *{first_gap.get('description', 'Prerequisite subject or grade cutoff missing.')}*\n\n"
+            f"Please schedule a consultation with your school counselor to adjust your subject selection or pathway targets.\n\n"
+            f"Best regards,\nSchool Counseling Office"
         )
         return jsonify({"response": draft})
-
-    elif "recommend" in command or "suggest" in command or "stu_" in command:
-        # Extract student ID or name
-        student_match = re.search(r'(stu_\d+)', command)
-        student_id = student_match.group(1).upper() if student_match else "STU_001"
-        s = next((st for st in STUDENTS if st["id"] == student_id), None)
-        
+    
+    elif "recommend" in command_lower or "suggest" in command_lower or "stu_" in command_lower:
+        student_match = re.search(r'(stu_\d+)', command_lower)
+        sid = student_match.group(1).upper() if student_match else "STU_001"
+        s = next((st for st in cohort_summary_list if st["id"] == sid), cohort_summary_list[0] if cohort_summary_list else None)
         if not s:
-            return jsonify({"response": f"Student with ID '{student_id}' not found."})
-
-        # Run compliance check against all pathways in database to find recommendations
-        all_targets = kg.get_all_targets()
-        recs = []
-        for target in all_targets:
-            # Skip targets student is already aiming for
-            if target["id"] in s.get("targets", []):
-                continue
-            res = agent.solve_goal(s["id"], target["id"], STUDENTS, silent=True)
-            recs.append((target, res.get("match_score", 100)))
+            return jsonify({"response": f"Student ID '{sid}' not found."})
         
-        recs.sort(key=lambda x: x[1], reverse=True)
-        top_recs = recs[:3]
-        
-        resp = f"### 🎯 Target Recommendations for {s['name']} ({s['id']})\n\n"
-        for t, score in top_recs:
-            resp += f"- **{t['name']}** (Match Score: **{score}%**)\n  *Reasoning:* Prerequisite compliance aligns well with {s['board']} curriculum.\n"
+        resp = f"### 🎯 Strategic University & Pathway Recommendations for {s['name']} ({s['id']})\n\n"
+        resp += f"**Academic Board:** {s['board']} (Class {s['class_level']}) | **Current Targets:** {', '.join(s['targets']) or 'None'}\n\n"
+        resp += f"1. **High-Fit Pathway Optimization:** Ensure studied subjects ({', '.join(s['board_subjects'])}) are mapped to domain prerequisites.\n"
+        resp += f"2. **Portfolio Scaling:** {len(s['portfolio'])} activities registered. Focus on achieving Tier 1 national/international recognition.\n"
         return jsonify({"response": resp})
-
-    else:
-        # Default Cohort Risk Summary Report
-        high_risk_count = 0
-        total_students = len(STUDENTS)
-        common_gaps = {}
         
-        for s in STUDENTS:
-            min_match = 100
-            for tid in s.get("targets", []):
-                res = agent.solve_goal(s["id"], tid, STUDENTS, silent=True)
-                if res:
-                    min_match = min(min_match, res.get("match_score", 100))
-                    for gap in res.get("gaps", []):
-                        common_gaps[gap.get("subject", "General")] = common_gaps.get(gap.get("subject", "General"), 0) + 1
-            if min_match < 70:
-                high_risk_count += 1
-
-        common_gaps_sorted = sorted(common_gaps.items(), key=lambda x: x[1], reverse=True)[:3]
-        gaps_list = ", ".join([f"{k} ({v} students)" for k, v in common_gaps_sorted])
-
+    else:
+        total = len(cohort_summary_list)
+        high_risk = sum(1 for s in cohort_summary_list if any(a.get("match_score", 100) < 70 for a in s["audits"].values()))
         resp = (
-            "### 📊 PRISM Cohort Risk Analysis Report\n\n"
-            f"- **Cohort Size:** {total_students} active students\n"
-            f"- **High-Risk Students:** **{high_risk_count}** students with match scores < 70%\n"
-            f"- **Most Common Prerequisite Gaps:** {gaps_list if gaps_list else 'None'}\n\n"
-            "**Suggested Counselor Interventions:**\n"
-            "1. Hold a group workshop for students missing Mathematics.\n"
-            "2. Send bulk warning email drafts to high-risk students."
+            f"### 📊 Live Cohort Risk & Compliance Analysis\n\n"
+            f"- **Active Cohort Size:** {total} students evaluated\n"
+            f"- **High Risk Count (<70% match):** **{high_risk}** student(s)\n\n"
+            f"**Recommended Actions:**\n"
+            f"1. Run targeted subject remediation workshops for flagged students.\n"
+            f"2. Use command `draft warning emails` to auto-generate warning communications."
         )
         return jsonify({"response": resp})
 

@@ -109,10 +109,10 @@
     "grades": {
       "current_expected_board": "96.0%",
       "subjects": {
-        "Mathematics": 98.0,
-        "Physics": 97.0,
-        "Chemistry": 96.0,
-        "English": 93.0
+        "Chemistry": 96,
+        "English": 93,
+        "Mathematics": 98,
+        "Physics": 97
       }
     },
     "standardized_tests": {
@@ -124,6 +124,9 @@
         "description": "Built AI assistant",
         "tier": 2
       }
+    ],
+    "shortlisted_colleges": [
+      "CAMBRIDGE"
     ]
   },
   {
