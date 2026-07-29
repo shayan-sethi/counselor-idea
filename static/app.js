@@ -1586,100 +1586,83 @@ window.ingestCounselorDocument = ingestCounselorDocument;
 
 let currentExtractedStudentData = null;
 
-async function ingestCounselorDocumentFromDash() {
-  const fileInput = document.getElementById('dash-counselor-ingest-file');
-  const files = fileInput ? fileInput.files : [];
+window.pendingBulkStudents = [];
+
+window.handleBulkIngestFile = async function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
   const statusEl = document.getElementById('dash-counselor-ingest-status');
-
-  if (!files || files.length === 0) return;
-
-  if (statusEl) {
-    statusEl.style.display = 'block';
-    statusEl.style.color = 'var(--amber)';
-    statusEl.innerHTML = '<span class="blink">▌</span> Extracting parameters via unlockED AI...';
-  }
-
+  statusEl.style.display = 'block';
+  statusEl.innerHTML = '<span class="blink">▌</span> Uploading and mapping CSV via AI...';
+  
   const formData = new FormData();
-  for (let i = 0; i < files.length; i++) {
-    formData.append('files', files[i]);
-  }
-  formData.append('auto_save', 'false');
-
+  formData.append("file", file);
+  
   try {
-    const res = await fetch('/api/ingest_documents', {
-      method: 'POST',
+    const res = await fetch("/api/bulk_ingest_preview", {
+      method: "POST",
       body: formData
     });
+    
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed to ingest document.');
-
-    const s = data.student || {};
-    currentExtractedStudentData = s;
-
-    // Populate review modal fields
-    document.getElementById('ir-name').value = s.name || '';
-    document.getElementById('ir-board').value = s.board || 'CBSE';
-    document.getElementById('ir-class').value = s.class_level || 12;
+    if (!res.ok) throw new Error(data.error || "Failed to parse spreadsheet");
     
-    let gExp = '';
-    if (s.grades && s.grades.current_expected_board !== undefined) {
-      gExp = s.grades.current_expected_board;
-    }
-    document.getElementById('ir-gexp').value = gExp;
+    window.pendingBulkStudents = data.previews;
     
-    let satVal = '';
-    if (s.standardized_tests && s.standardized_tests.SAT) {
-      satVal = s.standardized_tests.SAT;
-    }
-    document.getElementById('ir-sat').value = satVal;
-
-    let subjs = s.board_subjects || [];
-    document.getElementById('ir-subjects').value = Array.isArray(subjs) ? subjs.join(', ') : subjs;
-
-    let cuets = s.cuet_subjects || [];
-    document.getElementById('ir-cuet').value = Array.isArray(cuets) ? cuets.join(', ') : cuets;
-
-    let portf = s.portfolio || [];
-    if (Array.isArray(portf)) {
-      document.getElementById('ir-portfolio').value = portf.map(p => {
-        if (typeof p === 'object') return `${p.activity || ''} (Tier ${p.tier || 3}): ${p.description || ''}`.trim();
-        return p;
-      }).join('\n');
-    }
-
-    if (s.grades) {
-      document.getElementById('ir-g10-board').value = s.grades.g10_board || '';
-      let g10s = s.grades.g10_subjects || s.grades.subjects || {};
-      if (typeof g10s === 'object' && !Array.isArray(g10s)) {
-        let g10Arr = [];
-        for (const [k, v] of Object.entries(g10s)) {
-          g10Arr.push(`${k}:${v}`);
-        }
-        document.getElementById('ir-g10-subjects').value = g10Arr.join(', ');
-      }
-    }
-
-    document.getElementById('ir-targets').value = Array.isArray(s.targets) ? s.targets.join(', ') : '';
-
-    document.getElementById('ir-source-filename').textContent = `Extracted from ${data.extracted_from ? data.extracted_from.join(', ') : 'uploaded files'}`;
-
-    if (statusEl) {
-      statusEl.style.color = 'var(--green)';
-      statusEl.innerHTML = `✔ Extracted parameters for <strong>${s.name || 'Student'}</strong>. Review in modal!`;
-      setTimeout(() => statusEl.style.display = 'none', 4000);
-    }
-
-    // Open Modal
-    document.getElementById('modal-ingest-review').style.display = 'flex';
-
+    document.getElementById('modal-bulk-ingest').style.display = 'flex';
+    document.getElementById('bulk-ingest-status').innerHTML = `✔ AI mapped columns successfully! Found ${data.previews.length} students.`;
+    
+    const tbody = document.getElementById('bulk-ingest-table-body');
+    tbody.innerHTML = '';
+    
+    data.previews.forEach(s => {
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--border)';
+      tr.innerHTML = `
+        <td style="padding:8px;">${s.name || '-'}</td>
+        <td style="padding:8px;">${s.class_level || '-'}</td>
+        <td style="padding:8px;">${s.board || '-'}</td>
+        <td style="padding:8px; font-size:0.75rem;">${(s.board_subjects || []).join(', ')}</td>
+        <td style="padding:8px; font-size:0.75rem;">${(s.targets || []).join(', ')}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    
   } catch (err) {
-    if (statusEl) {
-      statusEl.style.color = 'var(--red)';
-      statusEl.innerHTML = `Ingestion error: ${err.message}`;
-    }
+    statusEl.innerHTML = `<span style="color:var(--red);">Error: ${err.message}</span>`;
+  }
+  
+  event.target.value = "";
+}
+
+window.confirmBulkIngest = async function() {
+  const btn = document.getElementById('btn-confirm-bulk');
+  btn.innerHTML = 'Importing...';
+  btn.disabled = true;
+  
+  try {
+    const res = await fetch("/api/bulk_ingest_save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ students: window.pendingBulkStudents })
+    });
+    
+    if (!res.ok) throw new Error("Failed to save");
+    
+    document.getElementById('modal-bulk-ingest').style.display = 'none';
+    const statusEl = document.getElementById('dash-counselor-ingest-status');
+    statusEl.innerHTML = `✔ Successfully imported ${window.pendingBulkStudents.length} students!`;
+    setTimeout(() => { statusEl.style.display = 'none'; }, 5000);
+    
+    fetchStudents();
+  } catch (err) {
+    alert("Error saving: " + err.message);
+  } finally {
+    btn.innerHTML = 'Confirm & Import Students';
+    btn.disabled = false;
   }
 }
-window.ingestCounselorDocumentFromDash = ingestCounselorDocumentFromDash;
 
 async function confirmIngestSaveStudent() {
   const name = document.getElementById('ir-name').value.trim();
@@ -2845,7 +2828,7 @@ function renderManageListFull() {
   if (statsBody) {
     statsBody.innerHTML = '';
     if (students.length === 0) {
-      statsBody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text-3);">No students found</td></tr>';
+      statsBody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-3);">No students found</td></tr>';
     } else {
       students.forEach(s => {
         const hasG10   = !!s.grade_10_aggregate;
@@ -2854,16 +2837,22 @@ function renderManageListFull() {
         const hasACT   = !!s.act_score;
         const hasCUET  = !!(s.cuet_subjects && s.cuet_subjects.length > 0);
         const hasPf    = !!(s.portfolio && s.portfolio.length > 0);
-        const hasEC    = !!(s.extracurriculars && s.extracurriculars.length > 0);
         const hasTgt   = !!(s.targets && Object.keys(s.targets).length > 0);
 
-        const fields = [hasG10, hasG12, hasSAT || hasACT, hasCUET, hasPf, hasEC, hasTgt];
+        const fields = [hasG10, hasG12, hasSAT || hasACT, hasCUET, hasPf, hasTgt];
         const filled  = fields.filter(Boolean).length;
         const total   = fields.length;
         const pct     = Math.round((filled / total) * 100);
-
-        const tick  = v => v ? '<span style="color:var(--green);font-weight:700;">✓</span>' : '<span style="color:var(--text-3);">—</span>';
         const bar_c = pct >= 80 ? '#059669' : pct >= 50 ? '#D97706' : '#DC2626';
+
+        const valG10  = hasG10 ? s.grade_10_aggregate + (String(s.grade_10_aggregate).includes('%') ? '' : '%') : '—';
+        const valG12  = hasG12 ? s.predicted_aggregate + (String(s.predicted_aggregate).includes('%') ? '' : '%') : '—';
+        const valSAT  = s.sat_score ? `SAT ${s.sat_score}` : (s.act_score ? `ACT ${s.act_score}` : '—');
+        const valCUET = hasCUET ? `${s.cuet_subjects.length} Subj` : '—';
+        const valPf   = hasPf ? `${s.portfolio.length} Items` : '—';
+        const valTgt  = hasTgt ? `${Object.keys(s.targets).length} Targets` : '—';
+
+        const formatVal  = v => v !== '—' ? `<span style="color:var(--text-1);font-weight:600;">${v}</span>` : '<span style="color:var(--text-3);">—</span>';
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -2876,20 +2865,18 @@ function renderManageListFull() {
               <span style="font-weight:700;font-size:0.85rem;">${pct}%</span>
             </div>
           </td>
-          <td style="text-align:center;">${tick(hasG10)}</td>
-          <td style="text-align:center;">${tick(hasG12)}</td>
-          <td style="text-align:center;">${tick(hasSAT || hasACT)}</td>
-          <td style="text-align:center;">${tick(hasCUET)}</td>
-          <td style="text-align:center;">${tick(hasPf)}</td>
-          <td style="text-align:center;">${tick(hasEC)}</td>
-          <td style="text-align:center;">${tick(hasTgt)}</td>
+          <td style="text-align:center;">${formatVal(valG10)}</td>
+          <td style="text-align:center;">${formatVal(valG12)}</td>
+          <td style="text-align:center;">${formatVal(valSAT)}</td>
+          <td style="text-align:center;">${formatVal(valCUET)}</td>
+          <td style="text-align:center;">${formatVal(valPf)}</td>
+          <td style="text-align:center;">${formatVal(valTgt)}</td>
           <td style="font-size:0.78rem;color:var(--red);">${[
             !hasG10  ? 'G10' : '',
             !hasG12  ? 'G12' : '',
             !(hasSAT||hasACT) ? 'SAT/ACT' : '',
             !hasCUET ? 'CUET' : '',
-            !hasPf   ? 'Portfolio' : '',
-            !hasEC   ? 'Extracurriculars' : '',
+            !hasPf   ? 'Portfolio/ECs' : '',
             !hasTgt  ? 'Targets' : ''
           ].filter(Boolean).join(', ') || '—'}</td>
         `;

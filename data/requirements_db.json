@@ -1,6 +1,6 @@
 {
-  "JEE_MAIN": {
-    "id": "JEE_MAIN",
+  "JEE Main Engineering": {
+    "id": "JEE Main Engineering",
     "name": "JEE Main (Joint Entrance Examination)",
     "track": "India",
     "type": "Exam",
@@ -53,8 +53,8 @@
       }
     ]
   },
-  "NEET_UG": {
-    "id": "NEET_UG",
+  "NEET Medical": {
+    "id": "NEET Medical",
     "name": "NEET UG (National Eligibility cum Entrance Test)",
     "track": "India",
     "type": "Exam",
@@ -112,8 +112,8 @@
       }
     ]
   },
-  "CUET_DU_CS": {
-    "id": "CUET_DU_CS",
+  "Delhi University Computer Science": {
+    "id": "Delhi University Computer Science",
     "name": "Delhi University - B.Sc (Hons) Computer Science",
     "track": "India",
     "type": "UniversityCourse",
@@ -168,8 +168,8 @@
       }
     ]
   },
-  "CUET_DU_ECO": {
-    "id": "CUET_DU_ECO",
+  "Delhi University Economics": {
+    "id": "Delhi University Economics",
     "name": "Delhi University - B.A (Hons) Economics",
     "track": "India",
     "type": "UniversityCourse",
@@ -224,8 +224,8 @@
       }
     ]
   },
-  "CAMBRIDGE_CS": {
-    "id": "CAMBRIDGE_CS",
+  "Cambridge Computer Science": {
+    "id": "Cambridge Computer Science",
     "name": "University of Cambridge - B.A (Hons) Computer Science",
     "track": "UK",
     "type": "UniversityCourse",
@@ -285,8 +285,8 @@
       }
     ]
   },
-  "IMPERIAL_CS": {
-    "id": "IMPERIAL_CS",
+  "Imperial College Computer Science": {
+    "id": "Imperial College Computer Science",
     "name": "Imperial College London - MEng Computing",
     "track": "UK",
     "type": "UniversityCourse",
@@ -341,8 +341,8 @@
       }
     ]
   },
-  "MIT_STEM": {
-    "id": "MIT_STEM",
+  "MIT STEM": {
+    "id": "MIT STEM",
     "name": "MIT (Massachusetts Institute of Technology) - Undergrad STEM",
     "track": "US",
     "type": "UniversityCourse",
@@ -408,8 +408,8 @@
       }
     ]
   },
-  "STANFORD_CS": {
-    "id": "STANFORD_CS",
+  "Stanford Computer Science": {
+    "id": "Stanford Computer Science",
     "name": "Stanford University - Undergrad Computer Science",
     "track": "US",
     "type": "UniversityCourse",
@@ -469,8 +469,8 @@
       }
     ]
   },
-  "CUSTOM_IMPERIAL_COLLEGE___BSC_COMPUTING": {
-    "id": "CUSTOM_IMPERIAL_COLLEGE___BSC_COMPUTING",
+  "Imperial College BSc Computing": {
+    "id": "Imperial College BSc Computing",
     "name": "Imperial College - BSc Computing",
     "track": "UK",
     "type": "UniversityCourse",
@@ -493,8 +493,8 @@
     "portfolio_tier": 2,
     "citations": []
   },
-  "CUSTOM_ENGINEERING": {
-    "id": "CUSTOM_ENGINEERING",
+  "Engineering": {
+    "id": "Engineering",
     "name": "Engineering",
     "track": "UK",
     "type": "UniversityCourse",
@@ -527,8 +527,8 @@
     "portfolio_tier": 3,
     "citations": []
   },
-  "CUSTOM_ENGINEERING_1": {
-    "id": "CUSTOM_ENGINEERING_1",
+  "Engineering 1": {
+    "id": "Engineering 1",
     "name": "Engineering",
     "track": "UK",
     "type": "UniversityCourse",
@@ -561,8 +561,8 @@
     "portfolio_tier": 1,
     "citations": []
   },
-  "CUSTOM_COMPUTER_SCIENCE": {
-    "id": "CUSTOM_COMPUTER_SCIENCE",
+  "Computer Science": {
+    "id": "Computer Science",
     "name": "Computer Science",
     "track": "UK",
     "type": "UniversityCourse",
@@ -574,8 +574,8 @@
     "portfolio_tier": 3,
     "citations": []
   },
-  "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE": {
-    "id": "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE",
+  "Mathematics and CS": {
+    "id": "Mathematics and CS",
     "name": "Mathematics and Computer Science",
     "track": "UK",
     "type": "UniversityCourse",
@@ -608,8 +608,8 @@
     "portfolio_tier": 1,
     "citations": []
   },
-  "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE__3_OR_4_YEARS_": {
-    "id": "CUSTOM_MATHEMATICS_AND_COMPUTER_SCIENCE__3_OR_4_YEARS_",
+  "Mathematics and CS (3/4 Yrs)": {
+    "id": "Mathematics and CS (3/4 Yrs)",
     "name": "Mathematics and Computer Science (3 or 4 years)",
     "track": "UK",
     "type": "UniversityCourse",
@@ -637,8 +637,8 @@
     "portfolio_tier": 1,
     "citations": []
   },
-  "CUSTOM_COMPUTING": {
-    "id": "CUSTOM_COMPUTING",
+  "Computing": {
+    "id": "Computing",
     "name": "Computing",
     "track": "UK",
     "type": "UniversityCourse",
@@ -650,8 +650,8 @@
     "portfolio_tier": 3,
     "citations": []
   },
-  "CUSTOM_COMPUTING_1": {
-    "id": "CUSTOM_COMPUTING_1",
+  "Computing 1": {
+    "id": "Computing 1",
     "name": "Computing",
     "track": "UK",
     "type": "UniversityCourse",
@@ -663,8 +663,8 @@
     "portfolio_tier": 3,
     "citations": []
   },
-  "CUSTOM_COMPUTER_GAMES_ART": {
-    "id": "CUSTOM_COMPUTER_GAMES_ART",
+  "Computer Games Art": {
+    "id": "Computer Games Art",
     "name": "Computer Games Art",
     "track": "UK",
     "type": "UniversityCourse",
@@ -676,8 +676,8 @@
     "portfolio_tier": 3,
     "citations": []
   },
-  "CUSTOM_COMPUTER_SCIENCE_1": {
-    "id": "CUSTOM_COMPUTER_SCIENCE_1",
+  "Computer Science 1": {
+    "id": "Computer Science 1",
     "name": "Computer Science",
     "track": "UK",
     "type": "UniversityCourse",
@@ -700,8 +700,8 @@
     "portfolio_tier": 3,
     "citations": []
   },
-  "CUSTOM_ENGINEERING_2": {
-    "id": "CUSTOM_ENGINEERING_2",
+  "Engineering 2": {
+    "id": "Engineering 2",
     "name": "Engineering",
     "track": "UK",
     "type": "UniversityCourse",
@@ -713,8 +713,8 @@
     "portfolio_tier": 1,
     "citations": []
   },
-  "CUSTOM_UNDERGRADUATE_BACHELORS_PROGRAM": {
-    "id": "CUSTOM_UNDERGRADUATE_BACHELORS_PROGRAM",
+  "Undergraduate Bachelors": {
+    "id": "Undergraduate Bachelors",
     "name": "Undergraduate Bachelors Program",
     "track": "US",
     "type": "UniversityCourse",

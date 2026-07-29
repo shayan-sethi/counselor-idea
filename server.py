@@ -428,11 +428,10 @@ def api_create_target():
     if not name:
         return jsonify({"error": "Target name is required"}), 400
 
-    # Auto-generate a clean uppercase ID
-    target_id = data.get("id", "").strip().upper()
+    # Use natural name as ID
+    target_id = data.get("id", "").strip()
     if not target_id:
-        clean_name = "".join(c if c.isalnum() else "_" for c in name).upper()
-        target_id = f"CUSTOM_{clean_name}"
+        target_id = name
     
     # Simple deduplication
     original_id = target_id
@@ -1360,9 +1359,9 @@ def api_evaluate_shortlist():
         try:
             import requests, re
             ollama_prompt = f"""You are a university ranking expert. Classify "{name}" into exactly one tier number (1, 2, 3, or 4).
-1 = Elite (Oxford, Harvard, MIT, etc.)
-2 = Top (UCL, Cornell, UCLA, NYU, etc.)
-3 = Strong (Purdue, UT Austin, etc.)
+1 = Elite (Oxford, Harvard, MIT, IIT Bombay, AIIMS, etc.)
+2 = Top (UCL, Cornell, UCLA, NYU, BITS Pilani, etc.)
+3 = Strong (Purdue, UT Austin, Delhi University, etc.)
 4 = Standard (Regional/others)
 Output ONLY a single integer (1, 2, 3, or 4)."""
             res = requests.post("http://127.0.0.1:11434/api/generate", json={
@@ -1381,9 +1380,9 @@ Output ONLY a single integer (1, 2, 3, or 4)."""
         except Exception as e:
             # Complete fallback to hardcoded list if Ollama fails
             print(f"[Ollama Fallback Error] {e}")
-            ELITE = ["harvard", "yale", "stanford", "mit", "princeton", "caltech", "cambridge", "oxford", "imperial", "eth zurich", "lse", "chicago", "columbia"]
-            TOP = ["cornell", "ucl", "ucla", "uc berkeley", "michigan", "nyu", "toronto", "melbourne", "edinburgh", "duke", "johns hopkins"]
-            STRONG = ["purdue", "umass", "ut austin", "ohio state", "penn state", "arizona state", "illinois", "wisconsin", "georgia tech"]
+            ELITE = ["harvard", "yale", "stanford", "mit", "princeton", "caltech", "cambridge", "oxford", "imperial", "eth zurich", "lse", "chicago", "columbia", "iit bombay", "iit delhi", "iit madras", "iisc", "aiims"]
+            TOP = ["cornell", "ucl", "ucla", "uc berkeley", "michigan", "nyu", "toronto", "melbourne", "edinburgh", "duke", "johns hopkins", "bits pilani", "iit kanpur", "iit kharagpur", "iit roorkee"]
+            STRONG = ["purdue", "umass", "ut austin", "ohio state", "penn state", "arizona state", "illinois", "wisconsin", "georgia tech", "ashoka", "du srcc", "st stephens"]
             
             if any(x in name for x in ELITE):
                 tier = 1
@@ -1602,7 +1601,7 @@ def api_shortlist_scholarship(student_id):
         student["shortlisted_scholarships"].append(scholarship_id)
         added = True
         
-    save_students()
+    save_students(STUDENTS)
     return jsonify({"success": True, "added": added, "shortlisted": student["shortlisted_scholarships"]})
 
 @app.route("/api/import_scholarship", methods=["POST"])
@@ -1685,6 +1684,126 @@ def api_draft_recommendation():
     except Exception as e:
         print(f"[Recommendation Error] Ollama failed: {e}")
         return jsonify({"error": "Engine failed to generate draft."}), 500
+
+# ── Bulk Ingestion ──
+
+@app.route("/api/bulk_ingest_preview", methods=["POST"])
+def api_bulk_ingest_preview():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+    
+    file = request.files["file"]
+    if not file.filename:
+        return jsonify({"error": "Empty filename"}), 400
+
+    import csv
+    import io
+    
+    try:
+        content = file.read().decode('utf-8')
+        reader = csv.reader(io.StringIO(content))
+        rows = list(reader)
+        if len(rows) < 2:
+            return jsonify({"error": "File must have a header row and at least one data row"}), 400
+            
+        headers = [h.strip() for h in rows[0]]
+        data_rows = rows[1:]
+        
+        # 1. Ask Ollama to map the headers
+        import requests
+        system_prompt = '''You are a data mapper. The user has uploaded a spreadsheet of high school students.
+You will be given the column headers of the spreadsheet.
+Map them to the following JSON keys:
+- "name_col" (string, the column with the student's full name)
+- "class_col" (string, the column with their class/grade level)
+- "board_col" (string, the column with their academic board, e.g. CBSE/IB)
+- "subjects_col" (string, the column with their studied subjects)
+- "targets_col" (string, the column with their target colleges/universities)
+- "portfolio_col" (string, the column with their extracurriculars/achievements)
+
+Respond ONLY with a valid JSON object containing exactly these keys. If a concept is missing from the headers, set its value to null. Do not include markdown formatting like ```json.'''
+        
+        mapping = {}
+        try:
+            ollama_res = requests.post("http://127.0.0.1:11434/api/generate", json={
+                "model": "llama3.2",
+                "prompt": f"{system_prompt}\n\nHEADERS: {json.dumps(headers)}",
+                "stream": False,
+                "options": {"temperature": 0.1}
+            }, timeout=30)
+            
+            if ollama_res.status_code == 200:
+                raw = ollama_res.json().get("response", "").strip()
+                import re
+                match = re.search(r"\{.*\}", raw, re.DOTALL)
+                if match:
+                    mapping = json.loads(match.group(0))
+                else:
+                    mapping = json.loads(raw)
+        except Exception as e:
+            print(f"[BulkIngest] AI header mapping failed: {e}")
+            return jsonify({"error": "Failed to map columns using AI engine."}), 500
+
+        # Create mapped previews
+        previews = []
+        for i, row in enumerate(data_rows):
+            def get_val(col_name):
+                if not col_name or col_name not in headers: return ""
+                idx = headers.index(col_name)
+                return row[idx] if idx < len(row) else ""
+            
+            p_name = get_val(mapping.get("name_col"))
+            if not p_name: continue # skip empty rows
+            
+            p_class = get_val(mapping.get("class_col"))
+            try:
+                p_class_int = int(p_class) if p_class.isdigit() else 12
+            except:
+                p_class_int = 12
+                
+            p_board = get_val(mapping.get("board_col"))
+            
+            p_subjects_raw = get_val(mapping.get("subjects_col"))
+            p_subjects = [s.strip() for s in p_subjects_raw.split(',')] if p_subjects_raw else []
+            
+            p_targets_raw = get_val(mapping.get("targets_col"))
+            p_targets = [t.strip() for t in p_targets_raw.split(',')] if p_targets_raw else []
+            
+            p_portfolio_raw = get_val(mapping.get("portfolio_col"))
+            p_portfolio = [{"activity": p.strip(), "description": "", "tier": 3} for p in p_portfolio_raw.split('\n') if p.strip()] if p_portfolio_raw else []
+            
+            previews.append({
+                "name": p_name,
+                "class_level": p_class_int,
+                "board": p_board,
+                "board_subjects": p_subjects,
+                "targets": p_targets,
+                "portfolio": p_portfolio,
+                "grades": {},
+                "standardized_tests": {},
+                "shortlisted_colleges": []
+            })
+            
+        return jsonify({"mapping": mapping, "previews": previews})
+    except Exception as e:
+        return jsonify({"error": f"Failed to parse CSV: {str(e)}"}), 500
+
+@app.route("/api/bulk_ingest_save", methods=["POST"])
+@counselor_required
+def api_bulk_ingest_save():
+    data = request.get_json()
+    students_to_add = data.get("students", [])
+    
+    if not students_to_add:
+        return jsonify({"error": "No students provided"}), 400
+        
+    for st in students_to_add:
+        st["id"] = next_student_id()
+        st["status"] = {"cuet_form_submitted": False, "tmua_registered": False, "sat_score": None}
+        STUDENTS.append(st)
+        
+    save_students(STUDENTS)
+    return jsonify({"success": True, "count": len(students_to_add)})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)

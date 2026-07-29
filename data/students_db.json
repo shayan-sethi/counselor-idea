@@ -12,10 +12,10 @@
       "Psychology"
     ],
     "targets": [
-      "VIT",
-      "DU_ST_STEPHENS",
-      "IIT_BOMBAY",
-      "CAMBRIDGE_MED"
+      "Vellore Institute of Technology",
+      "Delhi University St. Stephens",
+      "IIT Bombay",
+      "Cambridge Medicine"
     ],
     "grades": {
       "current_expected_board": "72.7%",
@@ -44,7 +44,8 @@
     ],
     "shortlisted_colleges": [
       "NYU",
-      "KING'S_COLLEGE_LONDON"
+      "KING'S_COLLEGE_LONDON",
+      "IIT Bombay"
     ]
   },
   {
@@ -60,8 +61,8 @@
       "English"
     ],
     "targets": [
-      "DU_SRCC",
-      "IIT_BOMBAY"
+      "Delhi University SRCC",
+      "IIT Bombay"
     ],
     "grades": {
       "current_expected_board": "90.7%",
@@ -98,8 +99,8 @@
       "Economics"
     ],
     "targets": [
-      "DU_SRCC",
-      "OXBRIDGE"
+      "Delhi University SRCC",
+      "Oxford / Cambridge"
     ],
     "grades": {
       "current_expected_board": "79.9%",
@@ -133,8 +134,8 @@
       "Psychology"
     ],
     "targets": [
-      "STANFORD_CS",
-      "LSE_ECON",
+      "Stanford Computer Science",
+      "LSE Economics",
       "AIIMS"
     ],
     "grades": {
@@ -181,7 +182,7 @@
       "Economics"
     ],
     "targets": [
-      "UCLA_PREMED"
+      "UCLA Pre-Med"
     ],
     "grades": {
       "current_expected_board": "85.1%",
@@ -224,8 +225,8 @@
       "English"
     ],
     "targets": [
-      "STANFORD_CS",
-      "IVY_LEAGUE"
+      "Stanford Computer Science",
+      "Ivy League"
     ],
     "grades": {
       "current_expected_board": "92.6%",
@@ -268,9 +269,9 @@
     ],
     "targets": [
       "AIIMS",
-      "BITS_PILANI",
-      "IIT_BOMBAY",
-      "ASHOKA_UNIV"
+      "BITS Pilani",
+      "IIT Bombay",
+      "Ashoka University"
     ],
     "grades": {
       "current_expected_board": "90.4%",
@@ -316,10 +317,10 @@
       "Computer Science"
     ],
     "targets": [
-      "LSE_ECON",
-      "IVY_LEAGUE",
-      "DU_ST_STEPHENS",
-      "BITS_PILANI"
+      "LSE Economics",
+      "Ivy League",
+      "Delhi University St. Stephens",
+      "BITS Pilani"
     ],
     "grades": {
       "current_expected_board": "33/45",
@@ -362,9 +363,9 @@
     ],
     "targets": [
       "AIIMS",
-      "VIT",
-      "DU_SRCC",
-      "UCLA_PREMED"
+      "Vellore Institute of Technology",
+      "Delhi University SRCC",
+      "UCLA Pre-Med"
     ],
     "grades": {
       "current_expected_board": "83.4%",
@@ -410,8 +411,8 @@
       "Economics"
     ],
     "targets": [
-      "ASHOKA_UNIV",
-      "IIT_BOMBAY"
+      "Ashoka University",
+      "IIT Bombay"
     ],
     "grades": {
       "current_expected_board": "78.9%",
@@ -455,10 +456,10 @@
       "Psychology"
     ],
     "targets": [
-      "IVY_LEAGUE",
-      "ASHOKA_UNIV",
-      "BITS_PILANI",
-      "STANFORD_CS"
+      "Ivy League",
+      "Ashoka University",
+      "BITS Pilani",
+      "Stanford Computer Science"
     ],
     "grades": {
       "current_expected_board": "44/45",
@@ -500,10 +501,10 @@
       "English"
     ],
     "targets": [
-      "UCLA_PREMED",
-      "LSE_ECON",
-      "DU_ST_STEPHENS",
-      "CAMBRIDGE_MED"
+      "UCLA Pre-Med",
+      "LSE Economics",
+      "Delhi University St. Stephens",
+      "Cambridge Medicine"
     ],
     "grades": {
       "current_expected_board": "90.6%",
@@ -547,10 +548,10 @@
       "Psychology"
     ],
     "targets": [
-      "IVY_LEAGUE",
-      "IIT_BOMBAY",
-      "BITS_PILANI",
-      "OXBRIDGE"
+      "Ivy League",
+      "IIT Bombay",
+      "BITS Pilani",
+      "Oxford / Cambridge"
     ],
     "grades": {
       "current_expected_board": "99.3%",
@@ -596,9 +597,9 @@
       "English"
     ],
     "targets": [
-      "OXBRIDGE",
+      "Oxford / Cambridge",
       "AIIMS",
-      "DU_SRCC"
+      "Delhi University SRCC"
     ],
     "grades": {
       "current_expected_board": "75.6%",
@@ -643,10 +644,10 @@
       "Economics"
     ],
     "targets": [
-      "LSE_ECON",
+      "LSE Economics",
       "AIIMS",
-      "UCLA_PREMED",
-      "ASHOKA_UNIV"
+      "UCLA Pre-Med",
+      "Ashoka University"
     ],
     "grades": {
       "current_expected_board": "93.9%",
@@ -689,9 +690,9 @@
       "Psychology"
     ],
     "targets": [
-      "BITS_PILANI",
-      "DU_ST_STEPHENS",
-      "LSE_ECON"
+      "BITS Pilani",
+      "Delhi University St. Stephens",
+      "LSE Economics"
     ],
     "grades": {
       "current_expected_board": "38/45",
@@ -729,9 +730,9 @@
       "English"
     ],
     "targets": [
-      "IVY_LEAGUE",
-      "CAMBRIDGE_MED",
-      "BITS_PILANI"
+      "Ivy League",
+      "Cambridge Medicine",
+      "BITS Pilani"
     ],
     "grades": {
       "current_expected_board": "91.3%",
@@ -773,7 +774,7 @@
       "English"
     ],
     "targets": [
-      "STANFORD_CS"
+      "Stanford Computer Science"
     ],
     "grades": {
       "current_expected_board": "74.3%",
@@ -818,8 +819,8 @@
       "Computer Science"
     ],
     "targets": [
-      "DU_SRCC",
-      "ASHOKA_UNIV"
+      "Delhi University SRCC",
+      "Ashoka University"
     ],
     "grades": {
       "current_expected_board": "80.6%",
@@ -854,10 +855,10 @@
       "Psychology"
     ],
     "targets": [
-      "STANFORD_CS",
-      "CAMBRIDGE_MED",
-      "LSE_ECON",
-      "DU_SRCC"
+      "Stanford Computer Science",
+      "Cambridge Medicine",
+      "LSE Economics",
+      "Delhi University SRCC"
     ],
     "grades": {
       "current_expected_board": "75.8%",
@@ -1060,7 +1061,6 @@
         "description": "Scuba Diving: interested in aquatic exploration and wildlife photography"
       }
     ],
-    "targets": [],
-    }
+    "targets": []
   }
 ]
