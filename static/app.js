@@ -1512,6 +1512,140 @@ async function ingestCounselorDocument() {
 }
 window.ingestCounselorDocument = ingestCounselorDocument;
 
+let currentExtractedStudentData = null;
+
+async function ingestCounselorDocumentFromDash() {
+  const fileInput = document.getElementById('dash-counselor-ingest-file');
+  const files = fileInput ? fileInput.files : [];
+  const statusEl = document.getElementById('dash-counselor-ingest-status');
+
+  if (!files || files.length === 0) return;
+
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--amber)';
+    statusEl.innerHTML = '<span class="blink">▌</span> Extracting parameters via PRISM AI...';
+  }
+
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+  formData.append('auto_save', 'false');
+
+  try {
+    const res = await fetch('/api/ingest_documents', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to ingest document.');
+
+    const s = data.student || {};
+    currentExtractedStudentData = s;
+
+    // Populate review modal fields
+    document.getElementById('ir-name').value = s.name || '';
+    document.getElementById('ir-board').value = s.board || 'CBSE';
+    document.getElementById('ir-class').value = s.class_level || 12;
+    
+    let gExp = '';
+    if (s.grades && s.grades.current_expected_board !== undefined) {
+      gExp = s.grades.current_expected_board;
+    }
+    document.getElementById('ir-gexp').value = gExp;
+    
+    let satVal = '';
+    if (s.standardized_tests && s.standardized_tests.SAT) {
+      satVal = s.standardized_tests.SAT;
+    }
+    document.getElementById('ir-sat').value = satVal;
+
+    let subjs = s.board_subjects || [];
+    document.getElementById('ir-subjects').value = Array.isArray(subjs) ? subjs.join(', ') : subjs;
+
+    let cuets = s.cuet_subjects || [];
+    document.getElementById('ir-cuet').value = Array.isArray(cuets) ? cuets.join(', ') : cuets;
+
+    let portf = s.portfolio || [];
+    document.getElementById('ir-portfolio').value = Array.isArray(portf) ? portf.join('\n') : portf;
+
+    document.getElementById('ir-source-filename').textContent = `Extracted from ${data.extracted_from ? data.extracted_from.join(', ') : 'uploaded files'}`;
+
+    if (statusEl) {
+      statusEl.style.color = 'var(--green)';
+      statusEl.innerHTML = `✔ Extracted parameters for <strong>${s.name || 'Student'}</strong>. Review in modal!`;
+      setTimeout(() => statusEl.style.display = 'none', 4000);
+    }
+
+    // Open Modal
+    document.getElementById('modal-ingest-review').style.display = 'flex';
+
+  } catch (err) {
+    if (statusEl) {
+      statusEl.style.color = 'var(--red)';
+      statusEl.innerHTML = `Ingestion error: ${err.message}`;
+    }
+  }
+}
+window.ingestCounselorDocumentFromDash = ingestCounselorDocumentFromDash;
+
+async function confirmIngestSaveStudent() {
+  const name = document.getElementById('ir-name').value.trim();
+  if (!name) {
+    alert('Please enter student name.');
+    return;
+  }
+
+  const board = document.getElementById('ir-board').value;
+  const class_level = parseInt(document.getElementById('ir-class').value, 10);
+  const gexp = parseFloat(document.getElementById('ir-gexp').value) || 90;
+  const satScore = parseInt(document.getElementById('ir-sat').value, 10) || null;
+
+  const rawSubjs = document.getElementById('ir-subjects').value;
+  const board_subjects = rawSubjs ? rawSubjs.split(',').map(x => x.trim()).filter(Boolean) : ["Physics", "Chemistry", "Mathematics"];
+
+  const rawCuet = document.getElementById('ir-cuet').value;
+  const cuet_subjects = rawCuet ? rawCuet.split(',').map(x => x.trim()).filter(Boolean) : [];
+
+  const rawPort = document.getElementById('ir-portfolio').value;
+  const portfolio = rawPort ? rawPort.split('\n').map(x => x.trim()).filter(Boolean) : [];
+
+  const studentPayload = {
+    name: name,
+    board: board,
+    class_level: class_level,
+    board_subjects: board_subjects,
+    cuet_subjects: cuet_subjects,
+    grades: { current_expected_board: gexp },
+    standardized_tests: satScore ? { SAT: satScore } : {},
+    portfolio: portfolio,
+    targets: (currentExtractedStudentData && currentExtractedStudentData.targets) ? currentExtractedStudentData.targets : ["t1", "t2"]
+  };
+
+  try {
+    const res = await fetch('/api/students', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(studentPayload)
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || 'Failed to save student.');
+    }
+
+    alert(`Successfully saved ${name} to the database!`);
+    document.getElementById('modal-ingest-review').style.display = 'none';
+    
+    // Refresh master roster
+    await refreshData();
+  } catch (err) {
+    alert(`Error saving student: ${err.message}`);
+  }
+}
+window.confirmIngestSaveStudent = confirmIngestSaveStudent;
+
 // ══════════════════════════════════════════════
 //  REPORTS
 // ══════════════════════════════════════════════

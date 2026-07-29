@@ -909,6 +909,79 @@
 
       </div>
     </div>
+  <!-- ═══ INGESTION REVIEW MODAL ═══ -->
+  <div class="modal-overlay" id="modal-ingest-review" style="display:none;" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content" style="max-width:640px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; color:var(--text-1); margin:0;">Review Ingested Student Data</h2>
+          <div style="font-size:0.8rem; color:var(--text-3);" id="ir-source-filename">Extracted by PRISM AI</div>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('modal-ingest-review').style.display='none'">✕</button>
+      </div>
+      <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+        <div style="font-size:0.85rem; color:var(--accent); background:rgba(107,98,210,0.08); padding:10px 14px; border-radius:8px; font-weight:500;">
+          ✔ PRISM AI has parsed your document! Review and modify the extracted parameters below before saving to database.
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Full Name</label>
+            <input type="text" id="ir-name" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Board</label>
+            <select id="ir-board" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+              <option value="CBSE">CBSE</option>
+              <option value="IB">IB</option>
+              <option value="IGCSE">IGCSE</option>
+              <option value="A-Levels">A-Levels</option>
+              <option value="ICSE">ICSE</option>
+              <option value="State Board">State Board</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Class Level</label>
+            <select id="ir-class" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+              <option value="12">Class 12</option>
+              <option value="11">Class 11</option>
+              <option value="10">Class 10</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">G12 Pred. / Board %</label>
+            <input type="number" id="ir-gexp" placeholder="e.g. 95" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">SAT Score</label>
+            <input type="number" id="ir-sat" placeholder="e.g. 1520" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Board / Class Subjects (Comma separated)</label>
+          <input type="text" id="ir-subjects" placeholder="e.g. Physics, Chemistry, Mathematics, English" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">CUET Subjects (Comma separated)</label>
+          <input type="text" id="ir-cuet" placeholder="e.g. General Test, Physics" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Portfolio / Extracurricular Achievements (One per line)</label>
+          <textarea id="ir-portfolio" rows="3" placeholder="e.g. National Olympiad Winner&#10;School Captain" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem; font-family:var(--sans);"></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:8px;">
+          <button class="btn-outline" onclick="document.getElementById('modal-ingest-review').style.display='none'">Cancel</button>
+          <button class="btn-primary" onclick="confirmIngestSaveStudent()">Save Student to Database</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="/static/app.js?v=13"></script>
