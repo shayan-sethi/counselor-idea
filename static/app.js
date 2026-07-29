@@ -4023,9 +4023,27 @@ window.fetchAIRecommendations = fetchAIRecommendations;
 
 // ── Recommendation Studio Logic ──
 
+let quillEditor = null;
+
 function initRecommendationsView() {
   const select = document.getElementById('rec-student-select');
   if (!select) return;
+  
+  if (!quillEditor) {
+    quillEditor = new Quill('#rec-editor-container', {
+      theme: 'snow',
+      placeholder: 'Start typing the letter of recommendation here...',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'align': [] }],
+          ['clean']
+        ]
+      }
+    });
+  }
   
   // Populate dropdown if empty (except for placeholder)
   if (select.options.length <= 1) {
@@ -4118,8 +4136,9 @@ window.generateAIRecommendation = async function() {
     return;
   }
   
-  const editor = document.getElementById('rec-editor');
-  editor.value = "Unlocked Engine drafting recommendation letter...\n\n";
+  if (!quillEditor) return;
+  
+  quillEditor.setText("Unlocked Engine drafting recommendation letter...\n\n");
   
   try {
     const res = await fetch('/api/draft_recommendation', {
@@ -4130,30 +4149,49 @@ window.generateAIRecommendation = async function() {
     
     if (!res.ok) {
       const err = await res.json();
-      editor.value = "Error generating draft: " + (err.error || "Unknown error");
+      quillEditor.setText("Error generating draft: " + (err.error || "Unknown error"));
       return;
     }
     
     const reader = res.body.getReader();
     const decoder = new TextDecoder("utf-8");
-    editor.value = ""; 
+    quillEditor.setText("");
     
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       const chunk = decoder.decode(value, { stream: true });
-      editor.value += chunk;
-      editor.scrollTop = editor.scrollHeight; 
+      const length = quillEditor.getLength();
+      quillEditor.insertText(length - 1, chunk);
     }
   } catch (err) {
     console.error("Draft generation error:", err);
-    editor.value = "Error connecting to Unlocked Engine.";
+    quillEditor.setText("Error connecting to Unlocked Engine.");
   }
 }
 
 window.copyRecText = function() {
-  const editor = document.getElementById('rec-editor');
-  editor.select();
-  document.execCommand('copy');
-  alert("Copied to clipboard!");
+  if (!quillEditor) return;
+  const html = quillEditor.root.innerHTML;
+  const text = quillEditor.getText();
+  
+  try {
+    if (navigator.clipboard && window.ClipboardItem) {
+      const clipboardItem = new ClipboardItem({
+        'text/plain': new Blob([text], { type: 'text/plain' }),
+        'text/html': new Blob([html], { type: 'text/html' })
+      });
+      navigator.clipboard.write([clipboardItem]).then(() => {
+        alert("Copied formatted text to clipboard!");
+      }).catch(err => {
+        navigator.clipboard.writeText(text);
+        alert("Copied plain text to clipboard!");
+      });
+    } else {
+      navigator.clipboard.writeText(text);
+      alert("Copied plain text to clipboard!");
+    }
+  } catch (e) {
+    alert("Failed to copy. Please manually copy the text.");
+  }
 }
