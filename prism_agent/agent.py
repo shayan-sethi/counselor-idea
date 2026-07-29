@@ -252,8 +252,8 @@ Write a sentence explaining your thought before calling each tool.
             response = chat.send_message(prompt)
         except Exception as api_err:
             if not silent:
-                print(f"[Agent Warning] Gemini API call failed: {api_err}. Falling back to rule engine.")
-            return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
+                print(f"[Agent Warning] Gemini API call failed: {api_err}. Falling back to LOCAL Ollama reasoning engine.")
+            return self._solve_goal_ollama_fallback(student_id, target_id, students_list, prompt, silent)
 
         for _ in range(15):
             parts = response.candidates[0].content.parts
@@ -340,6 +340,63 @@ Write a sentence explaining your thought before calling each tool.
             final_data["difficulty_label"] = self.reasoner._classify_difficulty(student, target, match_score, gaps)
 
         return final_data
+
+    def _solve_goal_ollama_fallback(self, student_id, target_id, students_list, prompt, silent):
+        """Uses the local Ollama LLM to reason through the problem when the Gemini API is rate-limited."""
+        import requests
+        import json
+        import re
+        student = next((s for s in students_list if s["id"] == student_id), None)
+        target = self.kg.get_course_or_exam(target_id)
+        
+        fallback_prompt = f"""
+You are an AI admissions counselor. Evaluate student {student_id} for target {target_id}.
+Student Profile: {json.dumps(student)}
+Target Requirements: {json.dumps(target)}
+
+Output ONLY valid JSON matching this schema exactly. Do not output anything else.
+{{
+  "target_name": "{target['name'] if target else 'Target'}",
+  "track": "{target['track'] if target else 'Unknown'}",
+  "compliant": true/false,
+  "urgency_score": <0-100 integer>,
+  "match_score": <0-100 integer>,
+  "risk_level": "Strong Match" / "At Risk" / "Critical Risk",
+  "difficulty_label": "Safety" / "Target" / "Reach",
+  "gaps": [ {{"field": "grades", "issue": "describe gap"}} ],
+  "remediations": [ {{"field": "grades", "action": "describe action"}} ]
+}}
+"""
+        try:
+            res = requests.post("http://127.0.0.1:11434/api/generate", json={
+                "model": "llama3.2",
+                "prompt": fallback_prompt,
+                "stream": False,
+                "options": {"temperature": 0.0}
+            }, timeout=30)
+            text = res.json().get("response", "")
+            
+            # Clean up potential markdown fences
+            text = re.sub(r'^```json\s*', '', text.strip())
+            text = re.sub(r'\s*```$', '', text.strip())
+            
+            parsed = json.loads(text)
+            # Ensure safe fallback keys
+            parsed["target_name"] = parsed.get("target_name", target["name"] if target else "Target")
+            parsed["track"] = parsed.get("track", target["track"] if target else "Unknown")
+            parsed["compliant"] = bool(parsed.get("compliant", False))
+            parsed["match_score"] = int(parsed.get("match_score", 50))
+            parsed["risk_level"] = parsed.get("risk_level", "At Risk")
+            parsed["urgency_score"] = int(parsed.get("urgency_score", 50))
+            parsed["gaps"] = parsed.get("gaps", [])
+            parsed["remediations"] = parsed.get("remediations", [])
+            parsed["difficulty_label"] = parsed.get("difficulty_label", "Reach")
+            
+            return parsed
+        except Exception as e:
+            if not silent:
+                print(f"[Ollama Error] {e}. Falling back to hardcoded rule engine.")
+            return self._solve_goal_fallback(student_id, target_id, students_list, None)
 
     def _solve_goal_fallback(self, student_id, target_id, students_list, simulated_subjects):
         student = next((s for s in students_list if s["id"] == student_id), None)

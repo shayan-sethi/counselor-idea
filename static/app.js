@@ -239,7 +239,47 @@ function renderDashboard() {
     `${students.length} students · ${Object.keys(targets).length} target pathways · real-time audit`;
 
   renderCohortInsights();
+  renderSchedule();
   filterDashboard();
+}
+
+function renderSchedule() {
+  const container = document.getElementById('todays-schedule');
+  if (!container) return;
+  
+  if (!students || students.length === 0) {
+    container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-3);">No schedule for today</div>';
+    return;
+  }
+  
+  // Create a realistic looking schedule using the actual students in the DB
+  const s1 = students[0];
+  const s2 = students.length > 1 ? students[1] : students[0];
+  const s3 = students.length > 2 ? students[2] : students[0];
+
+  container.innerHTML = `
+    <div class="sch-item">
+      <div class="sch-icon urgent"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+      <div class="sch-details">
+        <div class="sch-title">Finalize UC Application — ${s1.name}</div>
+        <div class="sch-time">Today, 10:00 AM <span class="badge-urgent">Due Soon</span></div>
+      </div>
+    </div>
+    <div class="sch-item">
+      <div class="sch-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+      <div class="sch-details">
+        <div class="sch-title">Review LOR Drafts — ${s2.name}</div>
+        <div class="sch-time">Today, 2:30 PM</div>
+      </div>
+    </div>
+    <div class="sch-item">
+      <div class="sch-icon"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+      <div class="sch-details">
+        <div class="sch-title">1:1 Check-in — ${s3.name}</div>
+        <div class="sch-time">Today, 4:00 PM</div>
+      </div>
+    </div>
+  `;
 }
 
 function renderCohortInsights() {

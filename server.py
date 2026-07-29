@@ -841,18 +841,33 @@ def api_evaluate_cohort():
             "targets": {}
         }
         for tid in student.get("targets", []):
-            agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
-            if agent_res:
+            try:
+                agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
+                if agent_res:
+                    result["targets"][tid] = {
+                        "target_name": agent_res.get("target_name", "Target"),
+                        "track": agent_res.get("track", "UK"),
+                        "compliant": agent_res.get("compliant", False),
+                        "match_score": agent_res.get("match_score", 100),
+                        "risk_level": agent_res.get("risk_level", "Strong Match"),
+                        "urgency_score": agent_res.get("urgency_score", 0),
+                        "gaps": agent_res.get("gaps", []),
+                        "remediations": agent_res.get("remediations", []),
+                        "difficulty_label": agent_res.get("difficulty_label", "Target")
+                    }
+            except Exception as e:
+                # If Gemini hits a rate limit or errors, provide a safe fallback so the dashboard doesn't crash
+                print(f"Error evaluating {student['id']} for {tid}: {e}")
                 result["targets"][tid] = {
-                    "target_name": agent_res.get("target_name", "Target"),
-                    "track": agent_res.get("track", "UK"),
-                    "compliant": agent_res.get("compliant", False),
-                    "match_score": agent_res.get("match_score", 100),
-                    "risk_level": agent_res.get("risk_level", "Strong Match"),
-                    "urgency_score": agent_res.get("urgency_score", 0),
-                    "gaps": agent_res.get("gaps", []),
-                    "remediations": agent_res.get("remediations", []),
-                    "difficulty_label": agent_res.get("difficulty_label", "Target")
+                    "target_name": "API Rate Limit / Engine Unavailable",
+                    "track": "Unknown",
+                    "compliant": False,
+                    "match_score": 0,
+                    "risk_level": "Engine Offline",
+                    "urgency_score": 0,
+                    "gaps": [{"field": "System", "issue": "Gemini API rate limit exceeded. Please wait a minute and refresh."}],
+                    "remediations": [],
+                    "difficulty_label": "Unknown"
                 }
         results[student["id"]] = result
     return jsonify(results)
@@ -1295,18 +1310,42 @@ def api_evaluate_shortlist():
     tier = tier_cache.get(name)
 
     if tier is None:
-        ELITE = ["harvard", "yale", "stanford", "mit", "princeton", "caltech", "cambridge", "oxford", "imperial", "eth zurich", "lse", "chicago", "columbia"]
-        TOP = ["cornell", "ucl", "ucla", "uc berkeley", "michigan", "nyu", "toronto", "melbourne", "edinburgh", "duke", "johns hopkins"]
-        STRONG = ["purdue", "umass", "ut austin", "ohio state", "penn state", "arizona state", "illinois", "wisconsin", "georgia tech"]
-        
-        if any(x in name for x in ELITE):
-            tier = 1
-        elif any(x in name for x in TOP):
-            tier = 2
-        elif any(x in name for x in STRONG):
-            tier = 3
-        else:
-            tier = 4
+        try:
+            import requests, re
+            ollama_prompt = f"""You are a university ranking expert. Classify "{name}" into exactly one tier number (1, 2, 3, or 4).
+1 = Elite (Oxford, Harvard, MIT, etc.)
+2 = Top (UCL, Cornell, UCLA, NYU, etc.)
+3 = Strong (Purdue, UT Austin, etc.)
+4 = Standard (Regional/others)
+Output ONLY a single integer (1, 2, 3, or 4)."""
+            res = requests.post("http://127.0.0.1:11434/api/generate", json={
+                "model": "llama3.2",
+                "prompt": ollama_prompt,
+                "stream": False,
+                "options": {"temperature": 0.0}
+            }, timeout=5)
+            text = res.json().get("response", "").strip()
+            # Extract the first digit found
+            match = re.search(r'\d', text)
+            if match:
+                tier = int(match.group(0))
+            else:
+                raise ValueError("No digit in Ollama response")
+        except Exception as e:
+            # Complete fallback to hardcoded list if Ollama fails
+            print(f"[Ollama Fallback Error] {e}")
+            ELITE = ["harvard", "yale", "stanford", "mit", "princeton", "caltech", "cambridge", "oxford", "imperial", "eth zurich", "lse", "chicago", "columbia"]
+            TOP = ["cornell", "ucl", "ucla", "uc berkeley", "michigan", "nyu", "toronto", "melbourne", "edinburgh", "duke", "johns hopkins"]
+            STRONG = ["purdue", "umass", "ut austin", "ohio state", "penn state", "arizona state", "illinois", "wisconsin", "georgia tech"]
+            
+            if any(x in name for x in ELITE):
+                tier = 1
+            elif any(x in name for x in TOP):
+                tier = 2
+            elif any(x in name for x in STRONG):
+                tier = 3
+            else:
+                tier = 4
 
     # Classify Reach / Target / Safety based on Tier
     if tier == 1: # Elite
