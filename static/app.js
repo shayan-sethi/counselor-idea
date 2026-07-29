@@ -1851,9 +1851,18 @@ async function onReportStudentChange(studentId) {
   document.getElementById('rep-portfolio-tier').innerHTML = `Tier ${pTier} (${s.portfolio && s.portfolio.length ? s.portfolio.length : 0} activities)`;
 
   // Fetch compliance & gaps from cohortAudit
+  const listCont = document.getElementById('rep-compliance-body');
+  if (!listCont) return;
+  
   const audit = cohortAudit[s.id];
-  const listCont = document.getElementById('rep-targets-list');
   listCont.innerHTML = '';
+  
+  if (!audit || !audit._ai_evaluated) {
+    // Show AI Generation Button
+    const btnContainer = document.createElement('div');
+    btnContainer.innerHTML = `<button onclick="generateAICompliance('${s.id}')" style="width:100%; margin-bottom:15px; background:var(--accent); color:#fff; border:none; padding:10px; border-radius:6px; cursor:pointer; font-family:var(--sans); font-weight:700; font-size:0.85rem; letter-spacing:0.05em; transition:0.2s opacity;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">Generate status using unlockED agent</button>`;
+    listCont.appendChild(btnContainer);
+  }
   
   let overallCompliant = true;
   let minMatchScore = 100;
@@ -2893,6 +2902,7 @@ switchView = function(v) {
   _origSwitchView(v);
   if (v === 'manage') renderManageListFull();
   if (v === 'predictor') renderPredictorView();
+  if (v === 'reports') renderReportsViewFull();
 };
 window.switchView = switchView;
 
@@ -4195,3 +4205,34 @@ window.copyRecText = function() {
     alert("Failed to copy. Please manually copy the text.");
   }
 }
+
+window.generateAICompliance = async function(studentId) {
+  const listCont = document.getElementById('rep-compliance-body');
+  const s = students.find(x => x.id === studentId);
+  if (!listCont || !s) return;
+  
+  listCont.innerHTML = `
+    <div style="padding:16px; border:1px solid var(--accent); border-radius:6px; background:rgba(0,180,216,0.05); text-align:center; color:var(--text-1); font-size:0.85rem;">
+      <span class="spinner" style="display:inline-block; margin-right:8px;"></span>
+      Analyzing compliance for ${s.name} using unlockED agent...
+    </div>`;
+    
+  try {
+    const res = await fetch('/api/evaluate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: studentId })
+    });
+    if (res.ok) {
+      const aiAudit = await res.json();
+      aiAudit._ai_evaluated = true;
+      cohortAudit[studentId] = aiAudit;
+      onReportStudentChange(studentId); // Re-render with new data
+    } else {
+      listCont.innerHTML = `<div style="color:red; padding:10px;">Error generating AI status. HTTP ${res.status}</div>`;
+    }
+  } catch (err) {
+    console.warn("Failed to fetch AI evaluation:", err);
+    listCont.innerHTML = `<div style="color:red; padding:10px;">Failed to connect to API.</div>`;
+  }
+};
