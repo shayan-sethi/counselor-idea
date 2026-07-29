@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>unlockED - AI Admissions Copilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #E1E1CD;
+      --surface: #F5F5ED;
+      --border: #CBD5E1;
+      --accent: #2D3A2E;
+      --text: #0F172A;
+      --text-muted: #475569;
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Nav */
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 0 60px;
+    }
+
+    .logo {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 1.4rem;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+    }
+
+    .logo sup {
+      color: #475569;
+      font-size: 0.9rem;
+      margin-left: 2px;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 20px 0;
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1 {
+      font-size: 3.8rem;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      color: #0F172A;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #E1E1CD;
+      border: none;
+      padding: 14px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary:hover {
+      background: #1E281F;
+    }
+    
+    .login-link {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .login-link a {
+      color: #a5b4fc;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .login-link a:hover {
+      color: #c7d2fe;
+    }
+
+    /* Features Card */
+    .features-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 60px;
+      text-align: left;
+    }
+
+    .features-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .feature-item:last-child {
+      margin-bottom: 0;
+    }
+    .feature-icon {
+      color: var(--accent);
+      background: rgba(45, 58, 46, 0.05);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .feature-text h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #0F172A;
+    }
+    .feature-text p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Wizard Section */
+    #wizard {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      flex: 1;
+    }
+
+    .wizard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+
+    .back-btn {
+      color: var(--text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-sans);
+    }
+    .back-btn:hover { color: var(--text); }
+
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .dot {
+      width: 24px;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .dot.active { background: var(--accent); }
+    .dot.completed { background: #4f46e5; }
+
+    .step {
+      display: none;
+      width: 100%;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+    .step.active { display: block; }
+
+    .step h2 {
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      color: var(--text);
+      font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option:hover {
+      border-color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.02);
+    }
+    
+    .option.selected {
+      border-color: var(--accent);
+      background: rgba(45, 58, 46, 0.05);
+    }
+
+    .option-radio {
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--text-muted);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .option.selected .option-radio {
+      border-color: var(--accent);
+    }
+    .option.selected .option-radio::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+
+    /* Loader */
+    .loader-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 40vh;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 2px solid rgba(45,58,46,0.1);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="main-view">
+    <nav>
+      <div class="logo">unlockED<sup>+</sup></div>
+    </nav>
+
+    <div class="hero">
+      <h1>Where you stand —<br>and how to get in.</h1>
+      <p>An AI that scores your profile like an admissions officer would, then shows you exactly where people with your numbers got in — your whole plan in about a minute.</p>
+      
+      <button class="btn-primary" onclick="startWizard()">
+        Build my plan 
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+
+      <div class="login-link">
+        Already have an account? <a href="/static/login.html">Sign in</a>
+      </div>
+
+      <div class="features-card">
+        <div class="features-title">What we build for you</div>
+        <div class="feature-item">
+          <div class="feature-icon">1</div>
+          <div class="feature-text">
+            <h3>AI Profile Review</h3>
+            <p>Scored like a top-tier admissions officer would.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">2</div>
+          <div class="feature-text">
+            <h3>Admissions Roadmap</h3>
+            <p>Your full strategy, sequenced by impact.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">3</div>
+          <div class="feature-text">
+            <h3>Target College List</h3>
+            <p>Built from your real chances and academic goals.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="wizard">
+    <div class="wizard-header">
+      <button class="back-btn" onclick="prevStep()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Back
+      </button>
+      <div class="logo">unlockED<sup>+</sup></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step active" id="step-1">
+      <h2>What grade are you in?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 1)">
+          <div class="option-radio"></div> 9th Grade
+        </div>
+        <div class="option" onclick="selectOption(this, 1)">
+          <div class="option-radio"></div> 10th Grade
+        </div>
+        <div class="option" onclick="selectOption(this, 1)">
+          <div class="option-radio"></div> 11th Grade
+        </div>
+        <div class="option" onclick="selectOption(this, 1)">
+          <div class="option-radio"></div> 12th Grade
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step" id="step-2">
+      <h2>What board are you in?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 2)">
+          <div class="option-radio"></div> CBSE
+        </div>
+        <div class="option" onclick="selectOption(this, 2)">
+          <div class="option-radio"></div> ICSE
+        </div>
+        <div class="option" onclick="selectOption(this, 2)">
+          <div class="option-radio"></div> State Board
+        </div>
+        <div class="option" onclick="selectOption(this, 2)">
+          <div class="option-radio"></div> IGCSE
+        </div>
+        <div class="option" onclick="selectOption(this, 2)">
+          <div class="option-radio"></div> IB MYP
+        </div>
+        <div class="option" onclick="selectOption(this, 2)">
+          <div class="option-radio"></div> IB DP
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step" id="step-3">
+      <h2>What are your grades like?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 3)">
+          <div class="option-radio"></div> 95% - 100%
+        </div>
+        <div class="option" onclick="selectOption(this, 3)">
+          <div class="option-radio"></div> 90% - 95%
+        </div>
+        <div class="option" onclick="selectOption(this, 3)">
+          <div class="option-radio"></div> 80% - 90%
+        </div>
+        <div class="option" onclick="selectOption(this, 3)">
+          <div class="option-radio"></div> Below 80%
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step" id="step-4">
+      <h2>What's your SAT looking like?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 4)">
+          <div class="option-radio"></div> 1500 or higher
+        </div>
+        <div class="option" onclick="selectOption(this, 4)">
+          <div class="option-radio"></div> 1300 – 1490
+        </div>
+        <div class="option" onclick="selectOption(this, 4)">
+          <div class="option-radio"></div> Below 1300
+        </div>
+        <div class="option" onclick="selectOption(this, 4)">
+          <div class="option-radio"></div> Haven't taken it
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step" id="step-5">
+      <h2>How strong are your extracurriculars?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 5)">
+          <div class="option-radio"></div> National/International recognition
+        </div>
+        <div class="option" onclick="selectOption(this, 5)">
+          <div class="option-radio"></div> State/Regional awards & leadership
+        </div>
+        <div class="option" onclick="selectOption(this, 5)">
+          <div class="option-radio"></div> School level involvement
+        </div>
+        <div class="option" onclick="selectOption(this, 5)">
+          <div class="option-radio"></div> Just getting started
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 6 -->
+    <div class="step" id="step-6">
+      <h2>What is your intended major?</h2>
+      <div style="display: flex; flex-direction: column; gap: 16px; align-items: center;">
+        <select id="major-select" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; outline: none; font-family: var(--font-sans);">
+          <option value="" disabled selected>Select a major...</option>
+          <option value="Computer Science">Computer Science</option>
+          <option value="Engineering">Engineering</option>
+          <option value="Business & Finance">Business & Finance</option>
+          <option value="Pre-Med & Healthcare">Pre-Med & Healthcare</option>
+          <option value="Law & Legal Studies">Law & Legal Studies</option>
+          <option value="Humanities">Humanities</option>
+          <option value="Arts & Design">Arts & Design</option>
+          <option value="Architecture">Architecture</option>
+          <option value="Social Sciences">Social Sciences</option>
+          <option value="Undecided">Undecided</option>
+        </select>
+        <button class="btn-primary" onclick="submitDropdown(6, 'major-select')" style="margin: 0; width: 100%; justify-content: center;">Next Step</button>
+      </div>
+    </div>
+
+    <!-- Step 7 -->
+    <div class="step" id="step-7">
+      <h2>What's your financial aid situation?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 7)">
+          <div class="option-radio"></div> ₹10 Lakhs - ₹20 Lakhs / year
+        </div>
+        <div class="option" onclick="selectOption(this, 7)">
+          <div class="option-radio"></div> ₹20 Lakhs - ₹40 Lakhs / year
+        </div>
+        <div class="option" onclick="selectOption(this, 7)">
+          <div class="option-radio"></div> ₹40 Lakhs - ₹80 Lakhs / year
+        </div>
+        <div class="option" onclick="selectOption(this, 7)">
+          <div class="option-radio"></div> ₹80+ Lakhs / year
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 8 -->
+    <div class="step" id="step-8">
+      <h2>What is your residency status?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 8)">
+          <div class="option-radio"></div> US Citizen / Permanent Resident
+        </div>
+        <div class="option" onclick="selectOption(this, 8)">
+          <div class="option-radio"></div> International Student
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 9 -->
+    <div class="step" id="step-9">
+      <h2>Where do you want to study?</h2>
+      <div class="option-list">
+        <div class="option" onclick="selectOption(this, 9)">
+          <div class="option-radio"></div> India
+        </div>
+        <div class="option" onclick="selectOption(this, 9)">
+          <div class="option-radio"></div> UK
+        </div>
+        <div class="option" onclick="selectOption(this, 9)">
+          <div class="option-radio"></div> US
+        </div>
+        <div class="option" onclick="selectOption(this, 9)">
+          <div class="option-radio"></div> Europe
+        </div>
+        <div class="option" onclick="selectOption(this, 9)">
+          <div class="option-radio"></div> Southeast Asia
+        </div>
+      </div>
+    </div>
+
+    <!-- Tease Screen -->
+    <div class="loader-view" id="tease-screen" style="display: none; height: auto; text-align: center; margin-top: 60px;">
+      <h2 style="font-size: 2rem; margin-bottom: 20px; color: var(--text);">Your AI Roadmap is ready.</h2>
+      <p style="color: var(--text-muted); margin-bottom: 30px; line-height: 1.5; font-size: 1.1rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+        Use your report to unlock your report. You have to log in.
+      </p>
+      <a href="/static/login.html?signup=true" class="btn-primary" style="text-decoration: none;">Sign up to unlock</a>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+    const totalSteps = 9;
+    const wizardData = {};
+
+    function startWizard() {
+      document.getElementById('main-view').style.display = 'none';
+      document.getElementById('wizard').style.display = 'flex';
+    }
+
+    function selectOption(element, stepNum) {
+      // clear others
+      const siblings = element.parentElement.children;
+      for(let el of siblings) el.classList.remove('selected');
+      element.classList.add('selected');
+
+      // store data
+      wizardData[`step_${stepNum}`] = element.innerText.trim();
+
+      // wait a tiny bit then auto-advance
+      setTimeout(() => {
+        nextStep(stepNum);
+      }, 350);
+    }
+
+    function submitDropdown(stepNum, selectId) {
+      const select = document.getElementById(selectId);
+      if (!select.value) return;
+      wizardData[`step_${stepNum}`] = select.value;
+      nextStep(stepNum);
+    }
+
+    function nextStep(stepNum) {
+      document.getElementById(`step-${stepNum}`).classList.remove('active');
+      if (stepNum < totalSteps) {
+        currentStep++;
+        document.getElementById(`step-${currentStep}`).classList.add('active');
+      } else {
+        // Finished wizard
+        localStorage.setItem('wizardData', JSON.stringify(wizardData));
+        document.querySelector('.wizard-header').style.display = 'none';
+        document.getElementById('tease-screen').style.display = 'block';
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        document.getElementById(`step-${currentStep}`).classList.remove('active');
+        currentStep--;
+        document.getElementById(`step-${currentStep}`).classList.add('active');
+      } else {
+        document.getElementById('wizard').style.display = 'none';
+        document.getElementById('main-view').style.display = 'flex';
+      }
+    }
+  </script>
+</body>
+</html>

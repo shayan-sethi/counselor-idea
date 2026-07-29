@@ -102,7 +102,8 @@ async function checkUserSession() {
     const res = await fetch('/api/user_session');
     const data = await res.json();
     if (!data.authenticated) {
-      window.location.href = '/static/login.html';
+      alert('checkAuth: not authenticated');
+      // window.location.href = '/static/login.html';
       return false;
     }
     currentUserRole = data.role;
@@ -170,7 +171,9 @@ async function loadExistingStudentProfile(studentId) {
     const res = await fetch(`/api/student/${studentId}`);
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
-        window.location.href = '/static/login.html';
+        alert('loadProfile: 401/403');
+        // window.location.href = '/static/login.html';
+        return;
       }
       return;
     }
@@ -341,15 +344,17 @@ function updateSubjectsGrid() {
 
   // Compulsory subjects check-grid for custom targets
   const compEl = document.getElementById('sf-target-compulsory');
-  compEl.innerHTML = '';
-  subjects.forEach(sub => {
-    const lbl = document.createElement('label');
-    lbl.className = 'sc-label';
-    lbl.innerHTML = `<input type="checkbox" value="${sub}" /><span>${sub}</span>`;
-    const cb = lbl.querySelector('input');
-    cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
-    compEl.appendChild(lbl);
-  });
+  if (compEl) {
+    compEl.innerHTML = '';
+    subjects.forEach(sub => {
+      const lbl = document.createElement('label');
+      lbl.className = 'sc-label';
+      lbl.innerHTML = `<input type="checkbox" value="${sub}" /><span>${sub}</span>`;
+      const cb = lbl.querySelector('input');
+      cb.addEventListener('change', () => lbl.classList.toggle('checked', cb.checked));
+      compEl.appendChild(lbl);
+    });
+  }
 
   // Reset/update subject grades UI when board/subjects change
   updateSubjectGradesUI();
@@ -758,6 +763,7 @@ window.animateAgentTrace = animateAgentTrace;
 
 function renderSelectedTargets() {
   const listEl = document.getElementById('sf-selected-targets-list');
+  if (!listEl) return;
   listEl.innerHTML = '';
   if (selectedTargetIds.length === 0) {
     listEl.innerHTML = '<div style="color:var(--text-3); font-family:var(--mono); font-size:0.75rem; padding:8px 0;">No target pathways added yet.</div>';
@@ -845,11 +851,9 @@ async function submitProfile(e) {
 
   const subjectCbs = document.querySelectorAll('#sf-subjects input:checked');
   const boardSubjects = [...subjectCbs].map(cb => cb.value);
-  const tgts = selectedTargetIds;
 
   if (!name) return alert('Please enter your name');
   if (boardSubjects.length === 0) return alert('Please select at least one subject');
-  if (tgts.length === 0) return alert('Please select at least one target pathway');
 
   const cuetRaw = document.getElementById('sf-cuet').value.trim();
   const cuetSubjects = cuetRaw ? cuetRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -907,7 +911,7 @@ async function submitProfile(e) {
       board_subjects: boardSubjects,
       cuet_subjects: cuetSubjects,
       grades, standardized_tests: tests,
-      portfolio, targets: tgts
+      portfolio, targets: []
     };
 
     if (createdStudentId) {
@@ -917,10 +921,10 @@ async function submitProfile(e) {
         body: JSON.stringify(payload)
       });
       if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          window.location.href = '/static/login.html';
-          return;
-        }
+        let errStr;
+        try { errStr = await res.text(); } catch(e) { errStr = res.statusText; }
+        alert(`Error from server (PUT ${res.status}): ${errStr}`);
+        return;
         const data = await res.json();
         alert(`Error from server: ${data.error || JSON.stringify(data)}`);
         return;
@@ -933,10 +937,10 @@ async function submitProfile(e) {
         body: JSON.stringify(payload)
       });
       if (!res.ok) {
-        if (res.status === 401 || res.status === 403) {
-          window.location.href = '/static/login.html';
-          return;
-        }
+        let errStr;
+        try { errStr = await res.text(); } catch(e) { errStr = res.statusText; }
+        alert(`Error from server (POST ${res.status}): ${errStr}`);
+        return;
         const data = await res.json();
         alert(`Error from server: ${data.error || JSON.stringify(data)}`);
         return;
@@ -952,11 +956,10 @@ async function submitProfile(e) {
       body: JSON.stringify({ student_id: createdStudentId })
     });
     if (!evalRes.ok) {
-      if (evalRes.status === 401 || evalRes.status === 403) {
-        window.location.href = '/static/login.html';
-        return;
-      }
-      throw new Error('Evaluation failed');
+      let errStr;
+      try { errStr = await evalRes.text(); } catch(e) { errStr = evalRes.statusText; }
+      alert(`Error during evaluation (${evalRes.status}): ${errStr}`);
+      return;
     }
     const data = await evalRes.json();
 
@@ -1338,14 +1341,7 @@ async function renderStudentRadar() {
     }
 
     let html = `
-      <section class="student-list" style="margin-top:20px;">
-        <div class="list-header" style="grid-template-columns: 2fr 1fr 1fr 2fr; padding: 10px 20px; border-bottom: 1px solid var(--border); background: var(--surface);">
-          <span class="lh-col">Opportunity</span>
-          <span class="lh-col">Deadline Status</span>
-          <span class="lh-col">Match Score</span>
-          <span class="lh-col">Rationale (Why)</span>
-        </div>
-        <div class="rows-container">
+      <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 20px;">
     `;
 
     matches.forEach(m => {
@@ -1355,7 +1351,7 @@ async function renderStudentRadar() {
           if (m.days_remaining < 0) {
             dlHtml = `<span style="color:var(--text-3);">Closed</span>`;
           } else {
-            dlHtml = `<span style="color:${m.is_urgent ? 'var(--red)' : 'var(--text-2)'}; font-weight:600;">${m.competition.deadline}<br/><small style="font-family:var(--mono); font-size:0.6rem;">(${m.days_remaining} days left)</small></span>`;
+            dlHtml = `<span style="color:${m.is_urgent ? 'var(--red)' : 'var(--text-2)'}; font-weight:600;">${m.competition.deadline}<br/><small style="color:var(--text-3); font-size:0.7rem;">(${m.days_remaining} days left)</small></span>`;
           }
         } else {
           dlHtml = `<span>${m.competition.deadline}</span>`;
@@ -1365,25 +1361,24 @@ async function renderStudentRadar() {
       const scoreColor = m.match_score >= 90 ? 'var(--green)' : m.match_score >= 70 ? 'var(--amber)' : 'var(--red)';
 
       html += `
-        <div class="stu-row" style="grid-template-columns: 2fr 1fr 1fr 2fr; cursor: default;">
-          <div style="display:flex; flex-direction:column; gap:4px;">
-            <strong style="font-size:0.85rem; color:var(--text-1);">${m.competition.name}</strong>
-            <span style="font-size:0.68rem; color:var(--text-3); font-family:var(--mono);">${m.competition.type} · ${m.competition.fee}</span>
+        <div style="background: var(--surface); border: 1px solid var(--border); padding: 20px; border-radius: 12px; display: grid; grid-template-columns: 2fr 1fr 1fr 2.5fr; gap: 20px; align-items: start;">
+          <div>
+            <strong style="font-size:1rem; color:var(--text-1); display:block; margin-bottom:4px;">${m.competition.name}</strong>
+            <span style="font-size:0.8rem; color:var(--text-3);">${m.competition.type} · ${m.competition.fee}</span>
           </div>
-          <div style="font-size:0.75rem;">${dlHtml}</div>
-          <div style="font-family:var(--mono); font-weight:700; color:${scoreColor}; font-size:0.85rem;">${m.match_score}% Match</div>
-          <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">
+          <div style="font-size:0.85rem;">${dlHtml}</div>
+          <div style="font-weight:600; color:${scoreColor}; font-size:0.95rem;">${m.match_score}% Match</div>
+          <div style="font-size:0.85rem; color:var(--text-2); line-height:1.5;">
             ${m.why}
-            <div style="color:var(--text-3); font-size:0.68rem; margin-top:4px; line-height:1.3;">${m.competition.description}</div>
-            ${m.competition.url ? `<a href="${m.competition.url}" target="_blank" class="student-link" style="display:inline-block; margin-top:6px; font-size:0.68rem; font-family:var(--mono);">visit official link ↗</a>` : ''}
+            <div style="color:var(--text-3); font-size:0.8rem; margin-top:6px;">${m.competition.description}</div>
+            ${m.competition.url ? `<a href="${m.competition.url}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.8rem; color: var(--accent); font-weight: 500; text-decoration: none;">View official link →</a>` : ''}
           </div>
         </div>
       `;
     });
 
     html += `
-        </div>
-      </section>
+      </div>
     `;
     body.innerHTML = html;
   } catch (err) {
@@ -1401,7 +1396,7 @@ let studentCollegesList = [];
 let studentCalendarEvents = [];
 
 async function renderStudentShortlist() {
-  const container = document.getElementById('student-colleges-grid');
+  const container = document.getElementById('student-colleges-list');
   if (!container) return;
 
   if (!createdStudentId) {
@@ -1423,11 +1418,25 @@ async function renderStudentShortlist() {
 window.renderStudentShortlist = renderStudentShortlist;
 
 async function filterStudentColleges() {
-  const container = document.getElementById('student-colleges-grid');
+  const container = document.getElementById('student-colleges-list');
   if (!container) return;
 
   const query = document.getElementById('student-shortlist-search').value.toLowerCase().trim();
   container.innerHTML = '';
+
+  if (!createdStudentId) {
+    container.innerHTML = '<div class="loading-row"><span class="blink">▌</span> submit your profile first to view college options</div>';
+    return;
+  }
+
+  if (studentCollegesList.length === 0) {
+    try {
+      const res = await fetch('/api/colleges');
+      studentCollegesList = await res.json();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   try {
     const sRes = await fetch(`/api/students/${createdStudentId}`);
@@ -1504,6 +1513,8 @@ async function filterStudentColleges() {
       `;
       container.appendChild(card);
     }
+    
+    renderPinnedShortlist(student);
 
   } catch (err) {
     console.error(err);
@@ -1519,10 +1530,25 @@ async function toggleStudentShortlist(collegeId) {
     const sRes = await fetch(`/api/students/${createdStudentId}`);
     const student = await sRes.json();
     let shortlisted = [...(student.shortlisted_colleges || [])];
+    if (!student.shortlist_categories) student.shortlist_categories = {};
+    
     if (shortlisted.includes(collegeId)) {
       shortlisted = shortlisted.filter(id => id !== collegeId);
+      delete student.shortlist_categories[collegeId];
     } else {
       shortlisted.push(collegeId);
+      // Fetch AI Category
+      try {
+        const evRes = await fetch('/api/evaluate_shortlist', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ student_id: createdStudentId, college_id: collegeId })
+        });
+        const evData = await evRes.json();
+        student.shortlist_categories[collegeId] = evData.category || 'Target';
+      } catch (e) {
+        student.shortlist_categories[collegeId] = 'Target';
+      }
     }
 
     const res = await fetch(`/api/students/${createdStudentId}`, {
@@ -1538,6 +1564,70 @@ async function toggleStudentShortlist(collegeId) {
   } catch (err) {
     console.error(err);
   }
+}
+
+async function updateCategory(collegeId, newCat) {
+  if (!createdStudentId) return;
+  try {
+    const sRes = await fetch(`/api/students/${createdStudentId}`);
+    const student = await sRes.json();
+    if (!student.shortlist_categories) student.shortlist_categories = {};
+    student.shortlist_categories[collegeId] = newCat;
+    
+    const res = await fetch(`/api/students/${createdStudentId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(student)
+    });
+    if (res.ok) {
+      filterStudentColleges();
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function renderPinnedShortlist(student) {
+  const container = document.getElementById('pinned-shortlist-container');
+  if(!container) return;
+  
+  const shortlisted = student.shortlisted_colleges || [];
+  if (shortlisted.length === 0) {
+    container.innerHTML = '<span style="color: var(--text-3); font-size: 0.85rem;">You haven\'t shortlisted any colleges yet. Search and add them to see your AI predictions.</span>';
+    return;
+  }
+  
+  let html = '';
+  shortlisted.forEach(cid => {
+    const c = studentCollegesList.find(x => x.id === cid);
+    if(!c) return;
+    
+    const cat = (student.shortlist_categories && student.shortlist_categories[cid]) ? student.shortlist_categories[cid] : 'Target';
+    const catColors = {
+      'Reach': 'var(--red)',
+      'Target': 'var(--amber)',
+      'Safety': 'var(--green)'
+    };
+    
+    html += `
+      <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-1); margin: 0;">${c.name}</h4>
+          <button onclick="toggleStudentShortlist('${cid}')" style="background: none; border: none; cursor: pointer; font-size: 0.9rem;">❌</button>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem;">
+          <span style="color: var(--text-2);">AI Prediction:</span>
+          <select onchange="updateCategory('${cid}', this.value)" style="padding: 4px; font-weight: 600; color: ${catColors[cat] || 'var(--amber)'}; background: transparent; border: 1px dashed var(--border); border-radius: 4px;">
+            <option value="Reach" ${cat==='Reach'?'selected':''} style="color:var(--red);">Reach</option>
+            <option value="Target" ${cat==='Target'?'selected':''} style="color:var(--amber);">Target</option>
+            <option value="Safety" ${cat==='Safety'?'selected':''} style="color:var(--green);">Safety</option>
+          </select>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
 }
 window.toggleStudentShortlist = toggleStudentShortlist;
 

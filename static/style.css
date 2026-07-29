@@ -7,24 +7,24 @@
 
 /* ── Tokens ── */
 :root {
-  --bg:       #F8FAFC;
-  --surface:  #FFFFFF;
-  --border:   #E2E8F0;
-  --border-h: #CBD5E1;
+  --bg:       #E1E1CD;
+  --surface:  #F5F5ED;
+  --border:   #CBD5E1;
+  --border-h: #94A3B8;
   --text-1:   #0F172A;
-  --text-2:   #475569;
-  --text-3:   #64748B;
-  --accent:   #2563EB;
-  --accent-hover: #1D4ED8;
-  --accent-light: #EFF6FF;
+  --text-2:   #334155;
+  --text-3:   #475569;
+  --accent:   #2D3A2E;
+  --accent-hover: #1E281F;
+  --accent-light: rgba(45, 58, 46, 0.1);
   
   --red:      #EF4444;
-  --red-light: #FEF2F2;
+  --red-light: rgba(239, 68, 68, 0.1);
   --green:    #10B981;
-  --green-light: #DCFCE7;
-  --green-text: #166534;
+  --green-light: rgba(16, 185, 129, 0.1);
+  --green-text: #047857;
   --amber:    #F59E0B;
-  --amber-light: #FEF3C7;
+  --amber-light: rgba(245, 158, 11, 0.1);
   
   --mono:     'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
   --sans:     'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -353,8 +353,8 @@ body {
 .btn-primary {
   background: var(--accent);
   border: 1px solid var(--accent);
-  color: white;
-  font-weight: 500;
+  color: #E1E1CD;
+  font-weight: 600;
   font-size: 0.85rem;
   padding: 10px;
   border-radius: 8px;
@@ -366,8 +366,8 @@ body {
 .btn-primary-sm {
   background: var(--accent);
   border: 1px solid var(--accent);
-  color: white;
-  font-weight: 500;
+  color: #E1E1CD;
+  font-weight: 600;
   font-size: 0.75rem;
   padding: 6px 12px;
   border-radius: 6px;

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to unlockED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #E1E1CD;
+      --surface: #F5F5ED;
+      --border: #CBD5E1;
+      --accent: #2D3A2E;
+      --text: #0F172A;
+      --text-muted: #475569;
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .intro-container {
+      max-width: 600px;
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      margin-bottom: 24px;
+      color: var(--accent);
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #E1E1CD;
+      border: none;
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .btn-primary:hover {
+      background: #1E281F;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="intro-container">
+    <h1>Welcome to unlockED.</h1>
+    <p id="welcome-text">Your AI roadmap is securely saved. We're ready to help you navigate your admissions journey.</p>
+    <button class="btn-primary" onclick="proceed()">
+      Proceed to Dashboard
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <script>
+    function proceed() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const role = urlParams.get('role');
+      if (role === 'counselor') {
+        window.location.href = '/dashboard';
+      } else {
+        window.location.href = '/student';
+      }
+    }
+    
+    // Optional: personalize greeting based on saved data
+    window.onload = () => {
+      const saved = localStorage.getItem('wizardData');
+      if(saved) {
+        try {
+          const data = JSON.parse(saved);
+          if (data.step_5 && data.step_8) {
+             document.getElementById('welcome-text').innerText = `Your AI roadmap for studying ${data.step_5} in ${data.step_8} is securely saved. We're ready to help you navigate your admissions journey.`;
+          }
+        } catch(e) {}
+      }
+    }
+  </script>
+</body>
+</html>

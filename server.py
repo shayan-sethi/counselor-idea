@@ -117,6 +117,10 @@ def load_users():
             return json.load(f)
     return []
 
+def save_users(users):
+    with open(USERS_PATH, "w") as f:
+        json.dump(users, f, indent=2)
+
 def hash_password(password):
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
@@ -197,6 +201,148 @@ def api_login():
         "username": user["username"]
     })
 
+@app.route("/api/signup", methods=["POST"])
+def api_signup():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing data"}), 400
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+    wizardData = data.get("wizardData")
+    
+    if not username or not password:
+        return jsonify({"error": "Username and password required"}), 400
+        
+    users = load_users()
+    if any(u["username"].lower() == username.lower() for u in users):
+        return jsonify({"error": "Username already exists"}), 400
+        
+    new_student_id = next_student_id()
+    
+    new_user = {
+        "username": username,
+        "password_hash": hash_password(password),
+        "role": "student",
+        "student_id": new_student_id
+    }
+    users.append(new_user)
+    save_users(users)
+    
+    # Create student profile from wizardData
+    student_name = username
+    class_level = 12
+    board = "CBSE"
+    board_subjects = ["Physics", "Chemistry", "Mathematics", "English"]
+    cuet_subjects = ["Physics", "Chemistry", "Mathematics", "English"]
+    grades = {}
+    standardized_tests = {}
+    portfolio = []
+    targets = []
+    shortlisted_colleges = []
+    
+    if wizardData:
+        # 1. Map Grade Level (step_1)
+        grade_str = wizardData.get("step_1", "")
+        if "9th" in grade_str: class_level = 9
+        elif "10th" in grade_str: class_level = 10
+        elif "11th" in grade_str: class_level = 11
+        elif "12th" in grade_str: class_level = 12
+        
+        # 2. Map Board (step_2)
+        board = wizardData.get("step_2", "CBSE")
+        
+        # 3. Map Grades (step_3)
+        g_str = wizardData.get("step_3", "")
+        if g_str:
+            grades = {
+                "class_10_aggregate": g_str,
+                "class_11_aggregate": g_str,
+                "current_expected_board": g_str,
+                "subjects": {}
+            }
+            
+        # 4. Map SAT (step_4)
+        sat_str = wizardData.get("step_4", "")
+        if "1500" in sat_str:
+            standardized_tests["SAT"] = 1520
+        elif "1300" in sat_str:
+            standardized_tests["SAT"] = 1380
+        elif "Below 1300" in sat_str:
+            standardized_tests["SAT"] = 1200
+            
+        # 5. Map Extracurriculars (step_5)
+        ec_str = wizardData.get("step_5", "")
+        if ec_str:
+            portfolio.append({
+                "activity": "Extracurricular Focus",
+                "description": ec_str
+            })
+            
+        # 6. Map Intended Major (step_6)
+        major = wizardData.get("step_6", "")
+        if major in ["Computer Science", "Engineering"]:
+            board_subjects = ["Physics", "Chemistry", "Computer Science", "English"]
+            cuet_subjects = ["Physics", "Chemistry", "Mathematics", "English"]
+        elif major == "Pre-Med & Healthcare":
+            board_subjects = ["Physics", "Chemistry", "Biology", "English"]
+            cuet_subjects = ["Physics", "Chemistry", "Biology", "English"]
+        elif major in ["Business & Finance", "Economics"]:
+            board_subjects = ["Economics", "Mathematics", "Business Studies", "English"]
+            cuet_subjects = ["Economics", "Mathematics", "Business Studies", "English"]
+        else:
+            board_subjects = ["History", "Political Science", "Economics", "English"]
+            cuet_subjects = ["History", "Political Science", "Economics", "English"]
+            
+        # 7. Map Target Colleges (step_9)
+        country = wizardData.get("step_9", "")
+        if "US" in country:
+            shortlisted_colleges = ["MIT", "STANFORD"]
+        elif "UK" in country:
+            shortlisted_colleges = ["CAMBRIDGE", "OXFORD", "IMPERIAL"]
+        elif "India" in country:
+            shortlisted_colleges = ["DU", "ASHOKA"]
+            if major in ["Computer Science", "Engineering"]:
+                targets = ["CUET_DU_CS"]
+            else:
+                targets = ["CUET_DU_ECO"]
+        else:
+            shortlisted_colleges = ["MIT", "CAMBRIDGE", "ASHOKA"]
+            
+        if "UK" in country and major in ["Computer Science", "Engineering"]:
+            targets = ["CAMBRIDGE_CS"]
+        
+    new_student = {
+        "id": new_student_id,
+        "name": student_name,
+        "class_level": class_level,
+        "board": board,
+        "board_subjects": board_subjects,
+        "cuet_subjects": cuet_subjects,
+        "grades": grades,
+        "standardized_tests": standardized_tests,
+        "portfolio": portfolio,
+        "targets": targets,
+        "shortlisted_colleges": shortlisted_colleges,
+        "status": {
+            "cuet_form_submitted": False,
+            "tmua_registered": False,
+            "sat_score": None
+        }
+    }
+    STUDENTS.append(new_student)
+    save_students(STUDENTS)
+    
+    session["username"] = new_user["username"]
+    session["role"] = new_user["role"]
+    session["student_id"] = new_user["student_id"]
+    
+    return jsonify({
+        "message": "Signup successful",
+        "role": new_user["role"],
+        "student_id": new_user["student_id"],
+        "username": new_user["username"]
+    })
+
 @app.route("/api/logout", methods=["POST", "GET"])
 def api_logout():
     session.clear()
@@ -216,7 +362,11 @@ def api_user_session():
 # ── Page routes ──
 
 @app.route("/")
-def index():
+def landing_page():
+    return send_from_directory("static", "landing.html")
+
+@app.route("/dashboard")
+def counselor_dashboard():
     if "username" not in session:
         return redirect("/static/login.html")
     if session.get("role") != "counselor":
@@ -1038,6 +1188,71 @@ def load_exams():
 @login_required
 def api_colleges():
     return jsonify(load_colleges())
+
+@app.route("/api/evaluate_shortlist", methods=["POST"])
+@login_required
+def api_evaluate_shortlist():
+    data = request.json
+    student_id = data.get("student_id")
+    college_id = data.get("college_id")
+
+    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+        
+    colleges = load_colleges()
+    college = next((c for c in colleges if c["id"] == college_id), None)
+    
+    if not college:
+        return jsonify({"category": "Target"})
+
+    grades_dict = student.get("grades", {})
+    grade = grades_dict.get("current_expected_board") or grades_dict.get("class_12_aggregate") or grades_dict.get("class_10_aggregate") or "80"
+    
+    grade_str = str(grade).replace('%','').strip()
+    if '-' in grade_str:
+        parts = grade_str.split('-')
+        try:
+            grade_val = sum(float(p.strip()) for p in parts) / len(parts)
+        except:
+            grade_val = 80.0
+    else:
+        try:
+            grade_val = float(grade_str)
+        except:
+            grade_val = 80.0
+        
+    tests_dict = student.get("standardized_tests", {})
+    sat = tests_dict.get("SAT") or tests_dict.get("sat")
+    try:
+        sat_val = int(sat)
+    except:
+        sat_val = 0
+
+    name = college.get("name", "").lower()
+    
+    is_top_tier = any(x in name for x in ["harvard", "yale", "stanford", "mit", "princeton", "cambridge", "oxford", "caltech"])
+    is_mid_tier = any(x in name for x in ["ucla", "michigan", "nyu", "toronto", "imperial", "ucl", "cornell", "berkeley"])
+
+    if is_top_tier:
+        if grade_val >= 96 and sat_val >= 1530:
+            category = "Target"
+        else:
+            category = "Reach"
+    elif is_mid_tier:
+        if grade_val >= 92 and (sat_val >= 1450 or sat_val == 0):
+            category = "Safety"
+        elif grade_val >= 88:
+            category = "Target"
+        else:
+            category = "Reach"
+    else:
+        if grade_val >= 85:
+            category = "Safety"
+        else:
+            category = "Target"
+
+    return jsonify({"category": category})
 
 @app.route("/api/exams")
 @login_required

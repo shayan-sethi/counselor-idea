@@ -1173,5 +1173,49 @@
       "tmua_registered": false,
       "sat_score": null
     }
+  },
+  {
+    "id": "STU_023",
+    "name": "stu21",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Computer Science"
+    ],
+    "cuet_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English"
+    ],
+    "grades": {
+      "class_10_aggregate": "95% - 100%",
+      "class_10_subjects": {},
+      "class_11_aggregate": "95% - 100%",
+      "current_expected_board": "95% - 100%",
+      "g10_board": "CBSE",
+      "subjects": {}
+    },
+    "standardized_tests": {
+      "SAT": 1520
+    },
+    "portfolio": [
+      {
+        "activity": "Extracurricular Focus",
+        "description": "National/International recognition"
+      }
+    ],
+    "targets": [],
+    "shortlisted_colleges": [
+      "US_166027",
+      "UK_OXFORDBROOKESUNIVERSITY"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "sat_score": null,
+      "tmua_registered": false
+    }
   }
 ]

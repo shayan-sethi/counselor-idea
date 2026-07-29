@@ -9,15 +9,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --border: #E2E8F0;
-      --accent: #2563EB;
-      --accent-glow: rgba(37, 99, 235, 0.15);
-      --text: #0F172A;
-      --text-muted: #64748B;
+      --bg: #0a0d15;
+      --surface: #0f1219;
+      --border: rgba(225, 225, 205, 0.15);
+      --accent: #E1E1CD;
+      --accent-glow: rgba(225, 225, 205, 0.15);
+      --text: #E1E1CD;
+      --text-muted: rgba(225, 225, 205, 0.6);
       --error: #ef4444;
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
 
@@ -114,13 +114,13 @@
 
     input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+      box-shadow: 0 0 12px var(--accent-glow);
     }
 
     .btn-login {
       width: 100%;
-      background: linear-gradient(135deg, var(--accent), #4f46e5);
-      color: #ffffff;
+      background: var(--accent);
+      color: #0a0d15;
       border: none;
       border-radius: 8px;
       padding: 14px;
@@ -129,13 +129,14 @@
       letter-spacing: 1px;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      box-shadow: 0 4px 12px var(--accent-glow);
       margin-top: 10px;
     }
 
     .btn-login:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 6px 20px var(--accent-glow);
+      background: #ffffff;
     }
 
     .btn-login:active {
@@ -175,6 +176,25 @@
       border-radius: 4px;
       color: #a5b4fc;
     }
+
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      color: var(--text);
+      border-bottom: 2px solid var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -187,7 +207,12 @@
 
     <div class="error-banner" id="error-box">Invalid credentials</div>
 
-    <form onsubmit="handleLogin(event)">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="setMode('login')">Sign In</div>
+      <div class="auth-tab" id="tab-signup" onclick="setMode('signup')">Create Account</div>
+    </div>
+
+    <form onsubmit="handleAuth(event)">
       <div class="form-group">
         <label for="username">Username</label>
         <input type="text" id="username" placeholder="e.g. counselor or STU_001" required autocomplete="username">
@@ -195,6 +220,10 @@
       <div class="form-group" style="margin-bottom: 28px;">
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <div class="form-group" id="confirm-group" style="margin-bottom: 28px; display: none;">
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" placeholder="••••••••" autocomplete="new-password">
       </div>
 
       <button type="submit" class="btn-login" id="btn-submit">Sign In →</button>
@@ -208,7 +237,23 @@
   </div>
 
   <script>
-    async function handleLogin(e) {
+    let mode = 'login';
+
+    function setMode(newMode) {
+      mode = newMode;
+      document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+      document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+      document.getElementById('confirm-group').style.display = mode === 'signup' ? 'block' : 'none';
+      document.getElementById('btn-submit').textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
+      document.getElementById('error-box').style.display = 'none';
+      if (mode === 'signup') {
+        document.getElementById('confirm-password').setAttribute('required', 'true');
+      } else {
+        document.getElementById('confirm-password').removeAttribute('required');
+      }
+    }
+
+    async function handleAuth(e) {
       e.preventDefault();
       const errBox = document.getElementById('error-box');
       const btn = document.getElementById('btn-submit');
@@ -220,29 +265,53 @@
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
 
+      if (mode === 'signup') {
+        const confirm = document.getElementById('confirm-password').value;
+        if (password !== confirm) {
+          errBox.textContent = "Passwords do not match";
+          errBox.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = 'Create Account →';
+          return;
+        }
+      }
+
+      let wizardData = null;
+      if (mode === 'signup') {
+        const saved = localStorage.getItem('wizardData');
+        if (saved) {
+          try { wizardData = JSON.parse(saved); } catch(e) {}
+        }
+      }
+
+      const endpoint = mode === 'signup' ? '/api/signup' : '/api/login';
+
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
+          body: JSON.stringify({ username, password, wizardData })
         });
         const data = await res.json();
-
+        
         if (!res.ok) {
-          throw new Error(data.error || 'Authentication failed');
-        }
-
-        // Redirect based on role
-        if (data.role === 'counselor') {
-          window.location.href = '/';
+          errBox.textContent = data.error || 'Authentication failed';
+          errBox.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
         } else {
-          window.location.href = '/student';
+          if (mode === 'signup') localStorage.removeItem('wizardData');
+          if (data.role === 'counselor') {
+            window.location.href = '/static/intro.html?role=counselor';
+          } else {
+            window.location.href = '/static/intro.html?role=student';
+          }
         }
       } catch (err) {
         errBox.textContent = err.message;
         errBox.style.display = 'block';
         btn.disabled = false;
-        btn.textContent = 'Sign In →';
+        btn.textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
       }
     }
   </script>
