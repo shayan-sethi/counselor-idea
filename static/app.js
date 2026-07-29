@@ -1528,7 +1528,7 @@ async function ingestCounselorDocument() {
   if (statusEl) {
     statusEl.style.display = 'block';
     statusEl.style.color = 'var(--amber)';
-    statusEl.innerHTML = 'Parsing files... Auto-populating student form via PRISM AI.';
+    statusEl.innerHTML = 'Parsing files... Auto-populating student form via unlockED AI.';
   }
 
   const formData = new FormData();
@@ -1583,6 +1583,201 @@ async function ingestCounselorDocument() {
   }
 }
 window.ingestCounselorDocument = ingestCounselorDocument;
+
+let currentExtractedStudentData = null;
+
+async function ingestCounselorDocumentFromDash() {
+  const fileInput = document.getElementById('dash-counselor-ingest-file');
+  const files = fileInput ? fileInput.files : [];
+  const statusEl = document.getElementById('dash-counselor-ingest-status');
+
+  if (!files || files.length === 0) return;
+
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.style.color = 'var(--amber)';
+    statusEl.innerHTML = '<span class="blink">▌</span> Extracting parameters via unlockED AI...';
+  }
+
+  const formData = new FormData();
+  for (let i = 0; i < files.length; i++) {
+    formData.append('files', files[i]);
+  }
+  formData.append('auto_save', 'false');
+
+  try {
+    const res = await fetch('/api/ingest_documents', {
+      method: 'POST',
+      body: formData
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to ingest document.');
+
+    const s = data.student || {};
+    currentExtractedStudentData = s;
+
+    // Populate review modal fields
+    document.getElementById('ir-name').value = s.name || '';
+    document.getElementById('ir-board').value = s.board || 'CBSE';
+    document.getElementById('ir-class').value = s.class_level || 12;
+    
+    let gExp = '';
+    if (s.grades && s.grades.current_expected_board !== undefined) {
+      gExp = s.grades.current_expected_board;
+    }
+    document.getElementById('ir-gexp').value = gExp;
+    
+    let satVal = '';
+    if (s.standardized_tests && s.standardized_tests.SAT) {
+      satVal = s.standardized_tests.SAT;
+    }
+    document.getElementById('ir-sat').value = satVal;
+
+    let subjs = s.board_subjects || [];
+    document.getElementById('ir-subjects').value = Array.isArray(subjs) ? subjs.join(', ') : subjs;
+
+    let cuets = s.cuet_subjects || [];
+    document.getElementById('ir-cuet').value = Array.isArray(cuets) ? cuets.join(', ') : cuets;
+
+    let portf = s.portfolio || [];
+    if (Array.isArray(portf)) {
+      document.getElementById('ir-portfolio').value = portf.map(p => {
+        if (typeof p === 'object') return `${p.activity || ''} (Tier ${p.tier || 3}): ${p.description || ''}`.trim();
+        return p;
+      }).join('\n');
+    }
+
+    if (s.grades) {
+      document.getElementById('ir-g10-board').value = s.grades.g10_board || '';
+      let g10s = s.grades.g10_subjects || s.grades.subjects || {};
+      if (typeof g10s === 'object' && !Array.isArray(g10s)) {
+        let g10Arr = [];
+        for (const [k, v] of Object.entries(g10s)) {
+          g10Arr.push(`${k}:${v}`);
+        }
+        document.getElementById('ir-g10-subjects').value = g10Arr.join(', ');
+      }
+    }
+
+    document.getElementById('ir-targets').value = Array.isArray(s.targets) ? s.targets.join(', ') : '';
+
+    document.getElementById('ir-source-filename').textContent = `Extracted from ${data.extracted_from ? data.extracted_from.join(', ') : 'uploaded files'}`;
+
+    if (statusEl) {
+      statusEl.style.color = 'var(--green)';
+      statusEl.innerHTML = `✔ Extracted parameters for <strong>${s.name || 'Student'}</strong>. Review in modal!`;
+      setTimeout(() => statusEl.style.display = 'none', 4000);
+    }
+
+    // Open Modal
+    document.getElementById('modal-ingest-review').style.display = 'flex';
+
+  } catch (err) {
+    if (statusEl) {
+      statusEl.style.color = 'var(--red)';
+      statusEl.innerHTML = `Ingestion error: ${err.message}`;
+    }
+  }
+}
+window.ingestCounselorDocumentFromDash = ingestCounselorDocumentFromDash;
+
+async function confirmIngestSaveStudent() {
+  const name = document.getElementById('ir-name').value.trim();
+  if (!name) {
+    alert('Please enter student name.');
+    return;
+  }
+
+  const board = document.getElementById('ir-board').value;
+  const class_level = parseInt(document.getElementById('ir-class').value, 10);
+  const gexp = parseFloat(document.getElementById('ir-gexp').value) || 90;
+  const satScore = parseInt(document.getElementById('ir-sat').value, 10) || null;
+
+  const rawSubjs = document.getElementById('ir-subjects').value;
+  const board_subjects = rawSubjs ? rawSubjs.split(',').map(x => x.trim()).filter(Boolean) : ["Physics", "Chemistry", "Mathematics"];
+
+  const rawCuet = document.getElementById('ir-cuet').value;
+  const cuet_subjects = rawCuet ? rawCuet.split(',').map(x => x.trim()).filter(Boolean) : [];
+
+  const rawPort = document.getElementById('ir-portfolio').value;
+  const portfolio = rawPort ? rawPort.split('\n').map(x => {
+    let p = x.trim();
+    if (!p) return null;
+    let tier = 3;
+    let activity = p;
+    let desc = "";
+    
+    // basic parsing for "(Tier X):"
+    const m = p.match(/^(.*?)\s*\(Tier\s*(\d)\):\s*(.*)$/);
+    if (m) {
+      activity = m[1].trim();
+      tier = parseInt(m[2], 10);
+      desc = m[3].trim();
+    }
+    
+    return {
+      activity: activity,
+      tier: tier,
+      description: desc
+    };
+  }).filter(Boolean) : [];
+
+  const g10Board = document.getElementById('ir-g10-board').value.trim();
+  const rawG10 = document.getElementById('ir-g10-subjects').value;
+  let g10Subjects = {};
+  if (rawG10) {
+    rawG10.split(',').forEach(part => {
+      const p = part.split(':');
+      if (p.length === 2) {
+        let gradeVal = p[1].trim();
+        let numVal = parseFloat(gradeVal);
+        if (!isNaN(numVal) && String(numVal) === gradeVal) gradeVal = numVal;
+        g10Subjects[p[0].trim()] = gradeVal;
+      }
+    });
+  }
+
+  const rawTargets = document.getElementById('ir-targets').value;
+  const targets = rawTargets ? rawTargets.split(',').map(x => x.trim()).filter(Boolean) : (currentExtractedStudentData && currentExtractedStudentData.targets ? currentExtractedStudentData.targets : []);
+
+  const studentPayload = {
+    name: name,
+    board: board,
+    class_level: class_level,
+    board_subjects: board_subjects,
+    cuet_subjects: cuet_subjects,
+    grades: { 
+      current_expected_board: gexp,
+      g10_board: g10Board || null,
+      g10_subjects: g10Subjects
+    },
+    standardized_tests: satScore ? { SAT: satScore } : {},
+    portfolio: portfolio,
+    targets: targets
+  };
+
+  try {
+    const res = await fetch('/api/students', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(studentPayload)
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.error || 'Failed to save student.');
+    }
+
+    alert(`Successfully saved ${name} to the database!`);
+    document.getElementById('modal-ingest-review').style.display = 'none';
+    
+    // Refresh master roster
+    await refreshData();
+  } catch (err) {
+    alert(`Error saving student: ${err.message}`);
+  }
+}
+window.confirmIngestSaveStudent = confirmIngestSaveStudent;
 
 // ══════════════════════════════════════════════
 //  REPORTS
@@ -1743,7 +1938,7 @@ async function onReportStudentChange(studentId) {
       let remHtml = '';
       if (t.remediations && t.remediations.length > 0) {
         remHtml = `<div style="margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
-          <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">PRISMA REMEDIATION ADVICE:</div>`;
+          <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">unlockED REMEDIATION ADVICE:</div>`;
         t.remediations.forEach(r => {
           const feasColor = r.feasibility === 'HIGH' ? 'var(--green)' : r.feasibility === 'MEDIUM' ? 'var(--amber)' : 'var(--red)';
           remHtml += `
