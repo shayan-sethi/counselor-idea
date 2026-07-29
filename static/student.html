@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>unlockED — Student Portal</title>
+  <title>unlockED - Student Portal</title>
   <meta name="description"
     content="unlockED Student Portal: Enter your academic profile and get instant compliance analysis." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,7 +42,7 @@
   <div class="app-container">
     <header class="topbar">
       <a href="/" class="btn-outline-sm" id="counselor-view-link" style="text-decoration:none; color:var(--text-2);">← Counselor View</a>
-      <div class="btn-icon" onclick="logout()" style="color: #ef4444;" title="Logout">🚪</div>
+      <div class="btn-icon" onclick="logout()" style="color: #ef4444;" title="Logout"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
     </header>
     <div class="content-wrapper">
 
@@ -63,7 +63,7 @@
           onclick="document.getElementById('ingest-file-input').click()">
           <input type="file" id="ingest-file-input" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg"
             style="display: none;" onchange="handleFileSelect(event)" />
-          <div style="font-size: 2.5rem; margin-bottom: 12px;">📄</div>
+          <div style="font-size: 2.5rem; margin-bottom: 12px; display: flex; justify-content: center;"><svg width="40" height="40" fill="none" stroke="var(--accent)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
           <div style="font-weight: 700; font-size: 1.2rem; color: var(--text-1);">Click to browse files</div>
           <div style="font-size: 0.9rem; color: var(--text-3); margin-top: 8px;">Supports PDFs, Marksheets, Resumes</div>
         </div>
@@ -72,7 +72,7 @@
         
         <button type="button" id="btn-auto-ingest" class="btn-primary" onclick="uploadAndIngestDocuments()"
           style="margin-top: 24px; font-size: 1.2rem; padding: 16px 32px; border-radius: 30px; box-shadow: var(--shadow-md);">
-          ✨ Extract & Populate Profile
+          Extract & Populate Profile
         </button>
         <div id="ingest-status" style="margin-top: 16px; font-size: 0.9rem; color: var(--text-2); display: none;"></div>
       </div>
@@ -267,7 +267,7 @@
     <div id="ai-advisor-card" class="form-card hidden"
       style="margin-top: 24px; border: 1px solid var(--border); padding: 16px; background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(10px); border-radius: 8px;">
       <div class="form-section-title" style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 1.1rem;">🤖</span> prism ai pathway advisor
+        prism ai pathway advisor
       </div>
       <p class="field-hint" style="margin-bottom: 12px;">Get agentic advice on how to improve your match score or
         address critical gaps.</p>

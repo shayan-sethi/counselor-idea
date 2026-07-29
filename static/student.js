@@ -676,13 +676,13 @@ async function animateAgentTrace(traceMap, callback) {
 
   // Tool name to human-readable description mapping
   const TOOL_LABELS = {
-    'fetch_student': '📋 Loading your profile...',
-    'fetch_requirements': '🎯 Analyzing target requirements...',
-    'check_subjects': '📚 Checking subject prerequisites...',
-    'check_grades': '📊 Verifying academic scores...',
-    'check_timeline': '📅 Checking application deadlines...',
-    'check_portfolio': '🏆 Evaluating your extracurriculars...',
-    'draft_remediations': '💡 Generating improvement suggestions...'
+    'fetch_student': 'Loading your profile...',
+    'fetch_requirements': 'Analyzing target requirements...',
+    'check_subjects': 'Checking subject prerequisites...',
+    'check_grades': 'Verifying academic scores...',
+    'check_timeline': 'Checking application deadlines...',
+    'check_portfolio': 'Evaluating your extracurriculars...',
+    'draft_remediations': 'Generating improvement suggestions...'
   };
 
   function humanizeObservation(obs) {
@@ -1099,7 +1099,7 @@ function renderAuditResults(student, audit) {
     if (verified) {
       const freshness = document.createElement('div');
       freshness.style.cssText = 'font-size: 0.7rem; color: var(--text-3); margin-top: 10px; font-style: italic;';
-      freshness.textContent = `⚠️ Requirements data last verified: ${verified}`;
+      freshness.textContent = `Requirements data last verified: ${verified}`;
       bdy.appendChild(freshness);
     }
 
@@ -1193,7 +1193,7 @@ function handleFileSelect(event) {
     if (files.length === 0) {
       listEl.innerHTML = '';
     } else {
-      listEl.innerHTML = '📁 Selected Files: ' + files.map(f => `<strong>${f.name}</strong> (${(f.size / 1024).toFixed(1)} KB)`).join(', ');
+      listEl.innerHTML = 'Selected Files: ' + files.map(f => `<strong>${f.name}</strong> (${(f.size / 1024).toFixed(1)} KB)`).join(', ');
     }
   }
 }
@@ -1468,7 +1468,7 @@ async function filterStudentColleges() {
       c.deadlines.forEach(dl => {
         deadlinesHtml += `
           <div style="font-size:0.72rem; color:var(--text-2); margin-top:4px;">
-            📅 <strong>${dl.label}:</strong> ${dl.date} <br/>
+            <strong>${dl.label}:</strong> ${dl.date} <br/>
             <span style="font-size:0.65rem; color:var(--text-3);">${dl.description}</span>
           </div>`;
       });
@@ -1613,7 +1613,7 @@ function renderPinnedShortlist(student) {
       <div style="background: var(--surface); border: 1px solid var(--border); padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <h4 style="font-size: 0.95rem; font-weight: 600; color: var(--text-1); margin: 0;">${c.name}</h4>
-          <button onclick="toggleStudentShortlist('${cid}')" style="background: none; border: none; cursor: pointer; font-size: 0.9rem;">❌</button>
+          <button onclick="toggleStudentShortlist('${cid}')" style="background: none; border: none; cursor: pointer; font-size: 0.9rem; color: var(--text-3);" title="Remove">✕</button>
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem;">
           <span style="color: var(--text-2);">AI Prediction:</span>

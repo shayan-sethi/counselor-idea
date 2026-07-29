@@ -7,9 +7,18 @@ import pandas as pd
 from flask import Flask, jsonify, request, send_from_directory
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    load_dotenv(override=True)
 except ImportError:
     pass
+
+env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+if os.path.exists(env_path):
+    with open(env_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                os.environ[k.strip()] = v.strip().strip('"').strip("'")
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
@@ -830,7 +839,6 @@ def api_evaluate():
     return jsonify(result)
 
 @app.route("/api/evaluate_cohort")
-@counselor_required
 def api_evaluate_cohort():
     results = {}
     for student in STUDENTS:
@@ -1032,9 +1040,13 @@ CRITICAL REASONING INSTRUCTIONS:
 4. Format your output in clean Markdown with appropriate headers, bold text, bullet points, and actionable details.
 5. If drafting an email, include Subject line, To address, Salutation, specific student gap evidence, and professional sign-off.
 """
-            model = genai.GenerativeModel(model_name="gemini-2.0-flash")
-            response = model.generate_content([system_prompt, f"COUNSELOR PROMPT / COMMAND:\n{command}"])
-            return jsonify({"response": response.text.strip()})
+            for m_name in ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"]:
+                try:
+                    model = genai.GenerativeModel(model_name=m_name)
+                    response = model.generate_content([system_prompt, f"COUNSELOR PROMPT / COMMAND:\n{command}"])
+                    return jsonify({"response": response.text.strip()})
+                except Exception as m_err:
+                    print(f"[CounselorAgent Warning] Model {m_name} failed: {m_err}")
         except Exception as err:
             print(f"[CounselorAgent Error] Gemini reasoning model call failed: {err}")
 
@@ -1521,6 +1533,42 @@ def api_match_scholarships(student_id):
     scholarships = load_scholarships()
     matches = ScholarshipAgent.match_scholarships(student, scholarships)
     return jsonify(matches)
+
+@app.route("/api/recommend_scholarship_students/<scholarship_id>", methods=["POST"])
+@counselor_required
+def api_recommend_scholarship_students(scholarship_id):
+    scholarships = load_scholarships()
+    scholarship = next((s for s in scholarships if s["id"] == scholarship_id), None)
+    if not scholarship:
+        return jsonify({"error": "Scholarship not found"}), 404
+    
+    recommended = ScholarshipAgent.recommend_students(scholarship, STUDENTS)
+    return jsonify(recommended)
+
+@app.route("/api/students/<student_id>/shortlist_scholarship", methods=["POST"])
+@counselor_required
+def api_shortlist_scholarship(student_id):
+    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+    
+    data = request.json
+    scholarship_id = data.get("scholarship_id")
+    if not scholarship_id:
+        return jsonify({"error": "Missing scholarship_id"}), 400
+        
+    if "shortlisted_scholarships" not in student:
+        student["shortlisted_scholarships"] = []
+        
+    if scholarship_id in student["shortlisted_scholarships"]:
+        student["shortlisted_scholarships"].remove(scholarship_id)
+        added = False
+    else:
+        student["shortlisted_scholarships"].append(scholarship_id)
+        added = True
+        
+    save_students()
+    return jsonify({"success": True, "added": added, "shortlisted": student["shortlisted_scholarships"]})
 
 @app.route("/api/import_scholarship", methods=["POST"])
 @counselor_required

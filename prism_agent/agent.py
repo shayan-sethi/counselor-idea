@@ -243,7 +243,7 @@ Write a sentence explaining your thought before calling each tool.
 
         try:
             model = genai.GenerativeModel(
-                model_name="gemini-2.0-flash",
+                model_name="gemini-3.6-flash",
                 tools=tools,
                 generation_config={"temperature": 0.0}
             )

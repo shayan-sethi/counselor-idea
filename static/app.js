@@ -155,13 +155,14 @@ async function init() {
     // Fetch slow AI evaluate cohort asynchronously in background
     fetch('/api/evaluate_cohort').then(res => {
       if (res.ok) return res.json();
-      throw new Error("Engine offline");
+      return {};
     }).then(data => {
-      cohortAudit = data;
-      renderDashboard(); // Re-render with full AI data once complete
+      if (data && typeof data === 'object') {
+        cohortAudit = data;
+        renderDashboard(); // Re-render with full AI data once complete
+      }
     }).catch(e => {
-      const el = document.getElementById('student-rows');
-      if(el) el.innerHTML = '<div class="loading-row" style="color:var(--red)">✕ failed to connect to engine</div>';
+      console.warn("Evaluate cohort background fetch:", e);
     });
     initManageForm();
 
@@ -383,11 +384,12 @@ function filterDashboard() {
 
 function renderStudentRows(list) {
   const rows = document.getElementById('student-rows');
+  if (!rows) return;
   rows.innerHTML = '';
-  rows.className = 'dashboard-grid'; // Use new grid layout
+  rows.className = 'priority-list';
 
   if (list.length === 0) {
-    rows.innerHTML = '<div style="padding: 20px; color: var(--text-3);">No students match your filters</div>';
+    rows.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--text-3);">No students match your filters</div>';
     return;
   }
 
@@ -395,21 +397,44 @@ function renderStudentRows(list) {
     const info = getStudentMatchInfo(s.id);
     const { minMatch, names, riskLevel } = info;
 
-    const row = document.createElement('div');
-    row.className = 'student-row';
-    row.onclick = () => openStudentProfile(s.id);
-    row.innerHTML = `
-      <div>
-        <div class="sr-name">${s.name}</div>
-        <div class="sr-id">${s.id} · ${s.board} Class ${s.class_level}</div>
+    const initial = (s.name || 'S')[0].toUpperCase();
+    const avatarBg = minMatch >= 90 ? '#059669' : minMatch >= 70 ? '#D97706' : '#DC2626';
+    let badgeHtml = '';
+    if (minMatch >= 90) {
+      badgeHtml = '<span class="badge-risk" style="background:rgba(5,150,105,0.1); color:#059669; border-color:#A7F3D0;">' + riskLevel + '</span>';
+    } else if (minMatch >= 70) {
+      badgeHtml = '<span class="badge-risk high">' + riskLevel + '</span>';
+    } else {
+      badgeHtml = '<span class="badge-risk critical">' + riskLevel + '</span>';
+    }
+
+    const item = document.createElement('div');
+    item.className = 'pq-item';
+    item.style.cursor = 'pointer';
+    item.onclick = () => openStudentProfile(s.id);
+
+    const targetStr = names && names.length > 0 ? names.join(', ') : 'None';
+
+    item.innerHTML = `
+      <div class="pq-avatar" style="background: ${avatarBg};">${initial}</div>
+      <div class="pq-info">
+        <div class="pq-name-row">
+          <span class="pq-name">${s.name}</span>
+          ${badgeHtml}
+        </div>
+        <div class="pq-meta">${s.id} · ${s.board || 'CBSE'} Class ${s.class_level || 12} &nbsp;|&nbsp; <strong>Targets:</strong> ${targetStr}</div>
       </div>
-      <div class="sr-metric"><strong>Targets:</strong> ${names.join(', ')}</div>
-      <div class="sr-metric"><strong>Match:</strong> ${minMatch}%</div>
-      <div class="sr-metric" style="color: ${minMatch >= 90 ? 'var(--green)' : minMatch >= 70 ? 'var(--amber)' : 'var(--red)'}; font-weight: 500;">
-        ${riskLevel}
+      <div class="pq-progress">
+        <span class="progress-label">${minMatch}% Match</span>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${minMatch}%; background: ${avatarBg};"></div>
+        </div>
       </div>
+      <button class="btn-circle" title="View Profile" onclick="event.stopPropagation(); openStudentProfile('${s.id}')">
+        &rsaquo;
+      </button>
     `;
-    rows.appendChild(row);
+    rows.appendChild(item);
   });
 }
 
@@ -1021,46 +1046,16 @@ async function deleteStudent(sid, name) {
 let currentAuditData = null; // Store audit data to allow filtering without refetching
 
 async function openStudentProfile(sid) {
-  currentStudent = students.find(s => s.id === sid);
-  if (!currentStudent) return;
-  simSubjects = [...(currentStudent.board_subjects || [])];
-
-  // Populate basic student details
-  document.getElementById('sp-name').textContent = currentStudent.name;
-  
-  const sel = document.getElementById('sp-student-select');
-  if (sel && sel.options.length === 0) {
-    students.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.id;
-      opt.textContent = s.name;
-      sel.appendChild(opt);
-    });
+  switchView('reports');
+  const sel = document.getElementById('report-student-select');
+  if (sel) {
+    sel.value = sid;
+    if (typeof onReportStudentChange === 'function') {
+      onReportStudentChange(sid);
+    }
   }
-  if (sel) sel.value = sid;
-  window.currentProfileId = sid;
-  
-  document.getElementById('sp-email').textContent = `${currentStudent.name.toLowerCase().replace(' ', '.')}@gmail.com`; // Mock email
-  
-  // Switch view to student profile
-  switchView('student-profile');
-  
-  // Update sidebar active tab
-  document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-  document.getElementById('tab-student-profile').classList.add('active');
-
-  document.getElementById('sp-matches-grid').innerHTML = '<div style="padding: 20px; color: var(--text-3);">Analyzing profile and calculating matches...</div>';
-
-  // Fetch compliance/evaluation data
-  const body = { student_id: sid };
-  const res = await fetch('/api/evaluate', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-  });
-  currentAuditData = await res.json();
-  
-  // Render grid
-  renderMatchesGrid('all');
 }
+
 
 function filterMatches(filterType, element) {
   if (element) {
@@ -1676,7 +1671,7 @@ async function onReportStudentChange(studentId) {
       let remHtml = '';
       if (t.remediations && t.remediations.length > 0) {
         remHtml = `<div style="margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
-          <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">⚡ PRISMA REMEDIATION ADVICE:</div>`;
+          <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">PRISMA REMEDIATION ADVICE:</div>`;
         t.remediations.forEach(r => {
           const feasColor = r.feasibility === 'HIGH' ? 'var(--green)' : r.feasibility === 'MEDIUM' ? 'var(--amber)' : 'var(--red)';
           remHtml += `
@@ -1715,7 +1710,7 @@ async function onReportStudentChange(studentId) {
     let showCuet = s.track === 'India' || (audit && Object.values(audit.targets).some(t => t.track === 'India'));
     checklistCont.innerHTML = `
       <div style="border: 1px solid var(--border); padding: 16px; background: var(--surface); margin-bottom: 24px;">
-        <div style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; margin-bottom: 12px; font-weight: 700; letter-spacing: 0.05em;">📌 PATHWAY READINESS CHECKLIST</div>
+        <div style="font-family: var(--mono); font-size: 0.72rem; color: var(--text-3); text-transform: uppercase; margin-bottom: 12px; font-weight: 700; letter-spacing: 0.05em;">PATHWAY READINESS CHECKLIST</div>
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 20px;">
           <!-- Board Subjects -->
           <div style="display: flex; gap: 10px; align-items: flex-start;">
@@ -2112,15 +2107,6 @@ async function renderShortlistView() {
     sel.value = students[0].id;
   }
   
-  if (collegesList.length === 0) {
-    try {
-      const res = await fetch('/api/colleges');
-      collegesList = await res.json();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  
   if (sel.value) {
     onShortlistStudentChange(sel.value);
   }
@@ -2128,126 +2114,33 @@ async function renderShortlistView() {
 window.renderShortlistView = renderShortlistView;
 
 function onShortlistStudentChange(studentId) {
-  filterCollegesList();
+  if (typeof onRadarStudentChangeFixed === 'function') {
+    onRadarStudentChangeFixed(studentId);
+  }
 }
 window.onShortlistStudentChange = onShortlistStudentChange;
 
 function filterCollegesList() {
-  const sel = document.getElementById('shortlist-student-select');
-  if (!sel || !sel.value) return;
-  const studentId = sel.value;
-  const student = students.find(s => s.id === studentId);
-  if (!student) return;
+  const query = (document.getElementById('shortlist-search') || {}).value || '';
+  const q = query.toLowerCase().trim();
   
-  const query = document.getElementById('shortlist-search').value.toLowerCase().trim();
-  const container = document.getElementById('colleges-grid-container');
-  container.innerHTML = '';
+  const tbody = document.getElementById('competitions-tbody');
+  if (!tbody) return;
   
-  const shortlisted = student.shortlisted_colleges || [];
-  let renderCount = 0;
-  for (let i = 0; i < collegesList.length; i++) {
-    const c = collegesList[i];
-    const matchQuery = !query || 
-      c.name.toLowerCase().includes(query) || 
-      c.country.toLowerCase().includes(query) ||
-      c.courses.some(crs => crs.toLowerCase().includes(query));
-      
-    if (!matchQuery) continue;
-    
-    const isShortlisted = shortlisted.includes(c.id);
-    if (!isShortlisted && renderCount >= 50) continue;
-    
-    renderCount++;
-    const card = document.createElement('div');
-    card.className = 'form-card';
-    card.style.padding = '18px';
-    card.style.background = isShortlisted ? 'rgba(200,255,0,0.02)' : 'var(--surface)';
-    card.style.border = isShortlisted ? '1px solid var(--accent)' : '1px solid var(--border)';
-    card.style.margin = '0';
-    
-    let deadlinesHtml = '';
-    c.deadlines.forEach(dl => {
-      deadlinesHtml += `
-        <div style="font-size:0.72rem; color:var(--text-2); margin-top:4px;">
-          📅 <strong>${dl.label}:</strong> ${dl.date} <br/>
-          <span style="font-size:0.65rem; color:var(--text-3);">${dl.description}</span>
-        </div>`;
-    });
-    
-    card.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-        <div>
-          <h3 style="font-size:1rem; font-weight:700; color:var(--text-1);">${c.name}</h3>
-          <span style="font-family:var(--mono); font-size:0.68rem; color:var(--text-3); text-transform:uppercase;">${c.country}</span>
-        </div>
-        <button class="${isShortlisted ? 'btn-reset' : 'btn-run'}" onclick="toggleShortlistCollege('${c.id}')" style="padding:6px 14px; font-size:0.72rem;">
-          ${isShortlisted ? 'remove shortlist' : 'shortlist college'}
-        </button>
-      </div>
-      
-      <div style="margin-bottom:10px; font-size:0.75rem;">
-        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Popular Courses:</strong>
-        <span style="color:var(--text-2);">${c.courses.join(', ')}</span>
-      </div>
-      
-      ${c.subject_requirements ? `
-      <div style="margin-bottom:10px; font-size:0.75rem;">
-        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Subject Requirements:</strong>
-        <span style="color:var(--text-2);">${c.subject_requirements.join(', ')}</span>
-      </div>` : ''}
-      
-      <div style="margin-bottom:10px; font-size:0.75rem;">
-        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Required Exams:</strong>
-        <span style="font-family:var(--mono); font-weight:700; color:var(--amber);">${c.required_exams.join(', ')}</span>
-      </div>
-
-      ${c.expected_sat && c.expected_sat !== "N/A" && c.expected_sat !== "nan" ? `
-      <div style="margin-bottom:10px; font-size:0.75rem;">
-        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Expected SAT:</strong>
-        <span style="font-family:var(--mono); font-weight:700; color:var(--green);">${c.expected_sat}</span>
-      </div>` : ''}
-
-      <div style="border-top:1px dashed var(--border); padding-top:8px;">
-        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:4px;">Admissions Deadlines:</strong>
-        ${deadlinesHtml}
-      </div>
-    `;
-    container.appendChild(card);
-  }
+  const rows = tbody.querySelectorAll('tr');
+  rows.forEach(tr => {
+    if (tr.cells.length === 1 && tr.cells[0].colSpan === 4) return;
+    const text = tr.cells[0].textContent.toLowerCase();
+    if (!q || text.includes(q)) {
+      tr.style.display = '';
+    } else {
+      tr.style.display = 'none';
+    }
+  });
 }
 window.filterCollegesList = filterCollegesList;
 
-async function toggleShortlistCollege(collegeId) {
-  const sel = document.getElementById('shortlist-student-select');
-  if (!sel || !sel.value) return;
-  const studentId = sel.value;
-  const student = students.find(s => s.id === studentId);
-  if (!student) return;
-  
-  let shortlisted = [...(student.shortlisted_colleges || [])];
-  if (shortlisted.includes(collegeId)) {
-    shortlisted = shortlisted.filter(id => id !== collegeId);
-  } else {
-    shortlisted.push(collegeId);
-  }
-  
-  try {
-    const res = await fetch(`/api/students/${studentId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...student, shortlisted_colleges: shortlisted })
-    });
-    if (res.ok) {
-      student.shortlisted_colleges = shortlisted;
-      filterCollegesList();
-      await refreshData();
-    } else {
-      alert("Failed to update shortlist.");
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
+function toggleShortlistCollege(collegeId) {}
 window.toggleShortlistCollege = toggleShortlistCollege;
 
 let currentCalYear = 2026;
@@ -2702,7 +2595,7 @@ function renderManageListFull() {
         const total   = fields.length;
         const pct     = Math.round((filled / total) * 100);
 
-        const tick  = v => v ? '✅' : '❌';
+        const tick  = v => v ? '<span style="color:var(--green);font-weight:700;">✓</span>' : '<span style="color:var(--text-3);">—</span>';
         const bar_c = pct >= 80 ? '#059669' : pct >= 50 ? '#D97706' : '#DC2626';
 
         const tr = document.createElement('tr');
@@ -3034,7 +2927,7 @@ function handleExtracurricularCsvUpload(event) {
       tr.innerHTML = `<td style="color:var(--text-3);">${i}</td>` + cols.map(c => `<td>${c}</td>`).join('');
       tbody.appendChild(tr);
     }
-    if (statusEl) statusEl.textContent = `✅ Loaded ${lines.length - 1} activities from ${file.name}`;
+    if (statusEl) statusEl.textContent = `Loaded ${lines.length - 1} activities from ${file.name}`;
   };
   reader.readAsText(file);
 }
@@ -3162,7 +3055,7 @@ async function renderExtracurricularsView() {
   }
 
   renderExtracurricularsTable(allCompetitionsDB);
-  if (status) { status.style.display = 'block'; status.textContent = `✅ ${allCompetitionsDB.length} activities loaded from database`; }
+  if (status) { status.style.display = 'block'; status.textContent = `${allCompetitionsDB.length} activities loaded from database`; }
 }
 window.renderExtracurricularsView = renderExtracurricularsView;
 
@@ -3231,7 +3124,7 @@ function handleExtracurricularCsvUpload(event) {
       tr.innerHTML = `<td style="color:var(--text-3);">${i}</td>` + cols.map(c => `<td>${c}</td>`).join('');
       tbody.appendChild(tr);
     }
-    if (status) status.textContent = `✅ ${lines.length - 1} rows loaded from ${file.name}`;
+    if (status) status.textContent = `${lines.length - 1} rows loaded from ${file.name}`;
   };
   reader.readAsText(file);
 }
@@ -3426,99 +3319,178 @@ async function renderPredictorViewFull() {
   const sel = document.getElementById('predictor-student-select');
   if (sel) {
     const curVal = sel.value;
-    sel.innerHTML = '';
+    sel.innerHTML = '<option value="">Select Student...</option>';
     students.forEach(s => {
       const opt = document.createElement('option');
-      opt.value = s.id; opt.textContent = `${s.name} (${s.id})`;
+      opt.value = s.id;
+      opt.textContent = `${s.name} (${s.id})`;
       sel.appendChild(opt);
     });
-    if (curVal && students.some(s => s.id === curVal)) sel.value = curVal;
-    else if (students.length > 0) sel.value = students[0].id;
+    if (curVal && students.some(s => s.id === curVal)) {
+      sel.value = curVal;
+    } else if (students.length > 0) {
+      sel.value = students[0].id;
+    }
   }
 
-  const tbody = document.getElementById('predictor-uni-body');
-  const countEl = document.getElementById('uni-result-count');
-  if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">Loading university database…</td></tr>';
-
-  try {
-    if (allUniversities.length === 0) {
+  const container = document.getElementById('colleges-grid-container');
+  if (container && allUniversities.length === 0) {
+    container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-3); grid-column:1/-1;">Loading college database…</div>';
+    try {
       const res = await fetch('/api/colleges');
       allUniversities = await res.json();
+    } catch(err) {
+      container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--red); grid-column:1/-1;">Failed to load colleges: ${err.message}</div>`;
+      return;
     }
-    renderPredictorTableFull(allUniversities);
-    if (countEl) countEl.textContent = `${allUniversities.length.toLocaleString()} universities loaded`;
-    // Populate kanban from existing shortlist
-    populateKanbanFromShortlist();
-  } catch(err) {
-    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--red);">Failed to load: ${err.message}</td></tr>`;
   }
+
+  filterPredictorListFixed();
 }
 window.renderPredictorView = renderPredictorViewFull;
 
-function renderPredictorTableFull(list) {
-  const tbody = document.getElementById('predictor-uni-body');
-  if (!tbody) return;
-  tbody.innerHTML = '';
+function filterPredictorListFixed() {
+  const container = document.getElementById('colleges-grid-container');
+  if (!container) return;
 
-  const studentId = (document.getElementById('predictor-student-select') || {}).value || '';
+  const sel = document.getElementById('predictor-student-select');
+  const studentId = sel ? sel.value : '';
   const student = students.find(s => s.id === studentId);
   const shortlisted = student && student.shortlisted_colleges ? student.shortlisted_colleges : [];
 
-  const visible = list.slice(0, 300);
-  const countEl = document.getElementById('uni-result-count');
-  if (countEl) countEl.textContent = `Showing ${visible.length} of ${list.length}`;
+  const query = (document.getElementById('predictor-uni-search') || {}).value || '';
+  const q = query.toLowerCase().trim();
 
-  if (!visible.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);">No results.</td></tr>';
+  let list = allUniversities;
+  if (q) {
+    list = allUniversities.filter(u => 
+      (u.name && u.name.toLowerCase().includes(q)) ||
+      (u.country && u.country.toLowerCase().includes(q)) ||
+      (u.courses && u.courses.some(crs => crs.toLowerCase().includes(q)))
+    );
+  }
+
+  container.innerHTML = '';
+  if (!list.length) {
+    container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-3); grid-column:1/-1;">No colleges found matching your search query.</div>';
     return;
   }
 
-  visible.forEach(u => {
-    const uid = u.id || u.name;
-    const isShortlisted = shortlisted.includes(uid);
-    const deadline = u.deadlines && u.deadlines.length
-      ? (typeof u.deadlines[0] === 'string' ? u.deadlines[0] : u.deadlines[0].label || u.deadlines[0].date || '—')
-      : '—';
+  const visible = list.slice(0, 60);
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="font-weight:600;">${u.name}</td>
-      <td>${u.country || '—'}</td>
-      <td>${u.expected_sat || '—'}</td>
-      <td style="font-size:0.8rem;color:var(--text-3);">${deadline}</td>
-      <td>
-        <button
-          data-college-id="${uid}"
-          onclick="toggleShortlistFixed('${uid.replace(/'/g,"\\'")}', '${u.name.replace(/'/g,"\\'")}', this)"
-          style="padding:4px 10px; font-size:0.75rem; border-radius:6px; border:1px solid var(--border); background:none; cursor:pointer; color:${isShortlisted ? 'var(--accent)' : 'var(--text-2)'}; font-weight:${isShortlisted ? '700' : '400'}; font-family:var(--sans);">
-          ${isShortlisted ? '★ Shortlisted' : '☆ Shortlist'}
-        </button>
-      </td>
+  visible.forEach(c => {
+    const cid = c.id || c.name;
+    const isShortlisted = shortlisted.includes(cid);
+
+    const card = document.createElement('div');
+    card.className = 'form-card';
+    card.style.cssText = `padding: 18px; margin: 0; background: ${isShortlisted ? '#F0F9FF' : 'var(--surface)'}; border: ${isShortlisted ? '1px solid #3B82F6' : '1px solid var(--border)'}; border-radius: 12px; transition: all 0.2s ease; display: flex; flex-direction: column; justify-content: space-between;`;
+
+    let deadlinesHtml = '';
+    if (c.deadlines && c.deadlines.length) {
+      c.deadlines.forEach(dl => {
+        const lbl = typeof dl === 'string' ? dl : (dl.label || 'Deadline');
+        const dt = typeof dl === 'string' ? '' : (dl.date || '');
+        const desc = typeof dl === 'string' ? '' : (dl.description || '');
+        deadlinesHtml += `
+          <div style="font-size:0.72rem; color:var(--text-2); margin-top:4px;">
+            <strong>${lbl}${dt ? ': ' + dt : ''}</strong>
+            ${desc ? `<br/><span style="font-size:0.65rem; color:var(--text-3);">${desc}</span>` : ''}
+          </div>`;
+      });
+    }
+
+    card.innerHTML = `
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap: 8px;">
+          <div>
+            <h3 style="font-size:1rem; font-weight:700; color:var(--text-1); line-height: 1.3;">${c.name}</h3>
+            <span style="font-family:var(--mono); font-size:0.68rem; color:var(--text-3); text-transform:uppercase;">${c.country || 'Global'}</span>
+          </div>
+          <button class="btn-shortlist-action ${isShortlisted ? 'shortlisted' : ''}" 
+            onclick="toggleShortlistCollegeFixed('${cid.replace(/'/g,"\\'")}', this)">
+            ${isShortlisted ? 'Remove Shortlist' : 'Shortlist'}
+          </button>
+        </div>
+        
+        ${c.courses && c.courses.length ? `
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Popular Courses:</strong>
+          <span style="color:var(--text-2);">${c.courses.join(', ')}</span>
+        </div>` : ''}
+        
+        ${c.subject_requirements && c.subject_requirements.length ? `
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Subject Requirements:</strong>
+          <span style="color:var(--text-2);">${c.subject_requirements.join(', ')}</span>
+        </div>` : ''}
+        
+        ${c.required_exams && c.required_exams.length ? `
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Required Exams:</strong>
+          <span style="font-family:var(--mono); font-weight:700; color:var(--amber);">${c.required_exams.join(', ')}</span>
+        </div>` : ''}
+
+        ${c.expected_sat && c.expected_sat !== "N/A" && c.expected_sat !== "nan" ? `
+        <div style="margin-bottom:10px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Expected SAT:</strong>
+          <span style="font-family:var(--mono); font-weight:700; color:var(--green);">${c.expected_sat}</span>
+        </div>` : ''}
+      </div>
+
+      ${deadlinesHtml ? `
+      <div style="border-top:1px dashed var(--border); padding-top:8px; margin-top: 10px;">
+        <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Admissions Deadlines:</strong>
+        ${deadlinesHtml}
+      </div>` : ''}
     `;
-    tbody.appendChild(tr);
+    container.appendChild(card);
   });
-}
-window.renderPredictorTableFull = renderPredictorTableFull;
-
-function filterPredictorListFixed() {
-  const q = (document.getElementById('predictor-uni-search') || {}).value || '';
-  if (!q.trim()) { renderPredictorTableFull(allUniversities); return; }
-  const filtered = allUniversities.filter(u => u.name.toLowerCase().includes(q.toLowerCase()));
-  renderPredictorTableFull(filtered);
 }
 window.filterPredictorList = filterPredictorListFixed;
 
 function onPredictorStudentChangeFixed(studentId) {
-  // Reset kanban
-  ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = '<div data-placeholder style="padding:12px;text-align:center;color:var(--text-3);font-size:0.8rem;">No data yet</div>';
-  });
-  renderPredictorTableFull(allUniversities);
-  populateKanbanFromShortlist();
+  filterPredictorListFixed();
 }
 window.onPredictorStudentChange = onPredictorStudentChangeFixed;
+
+async function toggleShortlistCollegeFixed(collegeId, btn) {
+  const sel = document.getElementById('predictor-student-select');
+  if (!sel || !sel.value) {
+    alert('Please select a student from the dropdown first.');
+    return;
+  }
+  const studentId = sel.value;
+  try {
+    const res = await fetch(`/api/shortlist/${studentId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ college_id: collegeId })
+    });
+    if (res.ok) {
+      const d = await res.json();
+      const added = d.added;
+
+      const student = students.find(s => s.id === studentId);
+      if (student) {
+        student.shortlisted_colleges = student.shortlisted_colleges || [];
+        if (added) {
+          if (!student.shortlisted_colleges.includes(collegeId)) {
+            student.shortlisted_colleges.push(collegeId);
+          }
+        } else {
+          student.shortlisted_colleges = student.shortlisted_colleges.filter(c => c !== collegeId);
+        }
+      }
+
+      filterPredictorListFixed();
+    }
+  } catch (err) {
+    console.error("Error toggling shortlist:", err);
+  }
+}
+window.toggleShortlistCollegeFixed = toggleShortlistCollegeFixed;
+window.toggleShortlistCollege = toggleShortlistCollegeFixed;
 
 async function populateKanbanFromShortlist() {
   const sel = document.getElementById('predictor-student-select');
@@ -3606,3 +3578,191 @@ function onKanbanStudentChange(studentId) {
 }
 window.renderUniversityDashboard = renderUniversityDashboard;
 window.onKanbanStudentChange = onKanbanStudentChange;
+
+// ══════════════════════════════════════════════
+//  SCHOLARSHIPS DATABASE
+// ══════════════════════════════════════════════
+
+let globalScholarships = [];
+let selectedScholarshipIdForAction = null;
+
+async function renderScholarshipsView() {
+  const tbody = document.getElementById('scholarships-table-body');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch('/api/scholarships');
+    globalScholarships = await res.json();
+    
+    // Update count
+    const countEl = document.getElementById('schol-result-count');
+    if (countEl) countEl.textContent = `${globalScholarships.length} scholarships available`;
+    
+    filterScholarshipsTable();
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--red);">Failed to load: ${err.message}</td></tr>`;
+  }
+}
+window.renderScholarshipsView = renderScholarshipsView;
+
+function filterScholarshipsTable() {
+  const query = (document.getElementById('search-scholarships') || {}).value || '';
+  const q = query.toLowerCase().trim();
+  
+  const tbody = document.getElementById('scholarships-table-body');
+  if (!tbody) return;
+  
+  tbody.innerHTML = '';
+  
+  if (globalScholarships.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-3);">No scholarships found.</td></tr>';
+    return;
+  }
+
+  let count = 0;
+  globalScholarships.forEach(schol => {
+    const textToMatch = `${schol.name} ${schol.provider} ${schol.type} ${schol.tags ? schol.tags.join(' ') : ''}`.toLowerCase();
+    if (q && !textToMatch.includes(q)) return;
+    
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <strong>${schol.name}</strong>
+        ${schol.url ? `<br><a href="${schol.url}" target="_blank" style="font-size:0.75rem; color:var(--accent);">View Website ↗</a>` : ''}
+      </td>
+      <td>
+        <span style="font-weight:600; color:var(--text-1);">${schol.provider || 'N/A'}</span><br>
+        <span style="font-size:0.75rem; color:var(--text-3);">${schol.type || 'Grant'}</span>
+      </td>
+      <td style="font-size:0.8rem; color:var(--text-2); max-width:300px;">
+        ${schol.eligibility_criteria}
+      </td>
+      <td>
+        <span style="font-weight:600; color:var(--green);">${schol.award_value || 'Varies'}</span><br>
+        <span style="font-size:0.75rem; color:var(--red);">Due: ${schol.deadline || 'N/A'}</span>
+      </td>
+      <td>
+        <button class="btn-outline" style="font-size:0.75rem; padding:6px 12px;" onclick="openScholarshipActionModal('${schol.id}', '${schol.name.replace(/'/g, "\\'")}')">
+          Shortlist / Recommend
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    count++;
+  });
+  
+  if (count === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-3);">No matches found for your search.</td></tr>';
+  }
+}
+window.filterScholarshipsTable = filterScholarshipsTable;
+
+function openScholarshipActionModal(scholarshipId, scholarshipName) {
+  selectedScholarshipIdForAction = scholarshipId;
+  const modal = document.getElementById('modal-scholarship-action');
+  if (!modal) return;
+  
+  document.getElementById('sa-schol-title').textContent = scholarshipName;
+  
+  // Populate manual student select
+  const sel = document.getElementById('sa-student-select');
+  sel.innerHTML = '<option value="">Select Student...</option>';
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${s.id})`;
+    sel.appendChild(opt);
+  });
+  
+  document.getElementById('sa-manual-msg').style.display = 'none';
+  document.getElementById('sa-ai-results').style.display = 'none';
+  document.getElementById('sa-ai-list').style.display = 'none';
+  document.getElementById('sa-ai-list').innerHTML = '';
+  document.getElementById('btn-sa-recommend').disabled = false;
+  
+  modal.style.display = 'flex';
+}
+window.openScholarshipActionModal = openScholarshipActionModal;
+
+async function handleManualScholarshipShortlist() {
+  const sel = document.getElementById('sa-student-select');
+  if (!sel || !sel.value) return;
+  const studentId = sel.value;
+  
+  if (!selectedScholarshipIdForAction) return;
+  
+  try {
+    const res = await fetch(`/api/students/${studentId}/shortlist_scholarship`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scholarship_id: selectedScholarshipIdForAction })
+    });
+    const data = await res.json();
+    if (data.success) {
+      const msg = document.getElementById('sa-manual-msg');
+      msg.textContent = data.added ? "Successfully added to shortlist!" : "Removed from shortlist.";
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 3000);
+      refreshData();
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+window.handleManualScholarshipShortlist = handleManualScholarshipShortlist;
+
+async function fetchAIRecommendations() {
+  if (!selectedScholarshipIdForAction) return;
+  
+  const btn = document.getElementById('btn-sa-recommend');
+  btn.disabled = true;
+  
+  const resultsDiv = document.getElementById('sa-ai-results');
+  const loadingDiv = document.getElementById('sa-ai-loading');
+  const listDiv = document.getElementById('sa-ai-list');
+  
+  resultsDiv.style.display = 'flex';
+  loadingDiv.style.display = 'block';
+  listDiv.style.display = 'none';
+  
+  try {
+    const res = await fetch(`/api/recommend_scholarship_students/${selectedScholarshipIdForAction}`, { method: 'POST' });
+    const recs = await res.json();
+    
+    loadingDiv.style.display = 'none';
+    listDiv.innerHTML = '';
+    
+    if (!recs || recs.length === 0 || recs.error) {
+      listDiv.innerHTML = '<div style="color:var(--text-3); font-size:0.85rem;">No recommendations available.</div>';
+    } else {
+      recs.forEach(r => {
+        // Find student details
+        const s = students.find(x => x.id === r.student_id);
+        const sName = s ? s.name : r.student_id;
+        
+        const card = document.createElement('div');
+        card.style.background = 'var(--bg)';
+        card.style.border = '1px solid var(--accent)';
+        card.style.borderRadius = '6px';
+        card.style.padding = '12px';
+        
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <div style="font-weight:700; color:var(--text-1);">${sName}</div>
+            <div style="font-weight:700; color:var(--green);">${r.score}% Match</div>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-2);">${r.reason}</div>
+        `;
+        listDiv.appendChild(card);
+      });
+    }
+    listDiv.style.display = 'flex';
+    
+  } catch (err) {
+    loadingDiv.style.display = 'none';
+    listDiv.innerHTML = `<div style="color:var(--red); font-size:0.85rem;">Failed to load recommendations: ${err.message}</div>`;
+    listDiv.style.display = 'flex';
+    btn.disabled = false;
+  }
+}
+window.fetchAIRecommendations = fetchAIRecommendations;

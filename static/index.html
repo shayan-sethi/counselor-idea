@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Unlocked — AI Career Co-Pilot</title>
+  <title>unlockED - AI Career Co-Pilot</title>
   <meta name="description" content="Unlocked: AI-powered compliance dashboard for education counselors." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css?v=3" />
 </head>
+
 <body>
 
   <!-- ═══ SIDEBAR & MAIN LAYOUT ═══ -->
@@ -17,7 +19,7 @@
       <svg viewBox="0 0 100 80" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
         <path d="M 50 15 L 85 28 L 50 41 L 15 28 Z" fill="#6B62D2" />
         <path d="M 27 34 L 27 50 C 27 58, 73 58, 73 50 L 73 34 Z" fill="#584FC1" />
-        <line x1="22" y1="30" x2="22" y2="48" stroke="#584FC1" stroke-width="2"/>
+        <line x1="22" y1="30" x2="22" y2="48" stroke="#584FC1" stroke-width="2" />
         <circle cx="22" cy="50" r="2.5" fill="#584FC1" />
         <polygon points="50,21 52,26 57,26 53,29.5 54.5,35 50,32 45.5,35 47,29.5 43,26 48,26" fill="#FFFFFF" />
       </svg>
@@ -25,46 +27,84 @@
     </div>
     <nav class="nav-links">
       <button class="nav-item active" id="tab-dash" onclick="switchView('dashboard')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
         Dashboard
       </button>
       <button class="nav-item" id="tab-manage" onclick="switchView('manage')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
         Students
       </button>
       <button class="nav-item" id="tab-shortlist" onclick="switchView('shortlist')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
         Opportunities
       </button>
       <button class="nav-item" id="tab-university-dashboard" onclick="switchView('university-dashboard')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h7"></path></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M4 6h16M4 12h16M4 18h7"></path>
+        </svg>
         Universities
       </button>
       <button class="nav-item" id="tab-predictor" onclick="switchView('predictor')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
         College Database
       </button>
       <button class="nav-item" id="tab-extracurriculars" onclick="switchView('extracurriculars')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+          </polygon>
+        </svg>
         Extracurriculars
       </button>
       <button class="nav-item" id="tab-scholarships" onclick="switchView('scholarships')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
         Scholarships
       </button>
       <button class="nav-item" id="tab-reports" onclick="switchView('reports')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
         Reports
       </button>
       <button class="nav-item" id="tab-calendar" onclick="switchView('calendar')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
         Deadlines
       </button>
     </nav>
     <div class="counselor-profile">
-      <div class="cp-avatar">A</div>
+      <div class="cp-avatar">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
       <div class="cp-info">
-        <span class="cp-name">Mr. Rathi</span>
+        <span class="cp-name">Mr Rathi</span>
         <span class="cp-role">School Counsellor</span>
       </div>
     </div>
@@ -73,35 +113,49 @@
   <div class="app-container">
     <header class="topbar">
       <div class="search-container">
-        <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <input type="text" class="search-bar" id="dash-search" oninput="filterDashboard()" placeholder="Search students, opportunities.">
+        <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" class="search-bar" id="dash-search" oninput="filterDashboard()"
+          placeholder="Search students, opportunities.">
       </div>
       <div class="topbar-right">
         <div class="header-pill">
-          <span style="font-weight:700" id="m-cohort-header">—</span> students · <span style="color:var(--red)" id="m-risk-header">— high-risk</span>
+          <span style="font-weight:700" id="m-cohort-header">—</span> students · <span style="color:var(--red)"
+            id="m-risk-header">— high-risk</span>
         </div>
         <div class="btn-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
         </div>
       </div>
     </header>
 
     <div class="content-wrapper">
-      
+
       <!-- ═══ DASHBOARD ═══ -->
       <main id="view-dashboard">
         <div class="dash-header">
           <div>
-            <div class="greeting">Good morning, Mr. Rathi 👋</div>
+            <div class="greeting">Good morning, Mr. Rathi</div>
             <div class="greeting-sub" id="dash-subtitle">Loading cohort data…</div>
           </div>
           <div style="display:flex; gap: 12px;">
             <button class="btn-outline" onclick="switchView('manage')">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
               New Student
             </button>
             <button class="btn-primary" onclick="document.getElementById('cc-command-input').focus()">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
               AI Insights
             </button>
           </div>
@@ -110,7 +164,9 @@
         <div class="ai-alert-banner">
           <div class="ai-alert-content">
             <div class="ai-alert-icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
             </div>
             <div class="ai-alert-text">
               <strong>AI detected new scholarship opportunities matching students this week.</strong>
@@ -123,7 +179,11 @@
         <div class="kpi-grid">
           <div class="kpi-card">
             <div class="kpi-top">
-              <div class="kpi-icon" style="background:#E0E7FF; color:#4F46E5;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div>
+              <div class="kpi-icon" style="background:#E0E7FF; color:#4F46E5;"><svg width="20" height="20" fill="none"
+                  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                </svg></div>
               <div class="kpi-trend up" id="kpi-cohort-trend">+0</div>
             </div>
             <div class="kpi-value" id="m-cohort">—</div>
@@ -131,7 +191,13 @@
           </div>
           <div class="kpi-card">
             <div class="kpi-top">
-              <div class="kpi-icon" style="background:#FEE2E2; color:#DC2626;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></div>
+              <div class="kpi-icon" style="background:#FEE2E2; color:#DC2626;"><svg width="20" height="20" fill="none"
+                  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                  </path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg></div>
               <div class="kpi-trend" style="color:var(--text-3)" id="kpi-risk-trend">—</div>
             </div>
             <div class="kpi-value" id="m-risk">—</div>
@@ -139,7 +205,11 @@
           </div>
           <div class="kpi-card">
             <div class="kpi-top">
-              <div class="kpi-icon" style="background:#D1FAE5; color:#059669;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg></div>
+              <div class="kpi-icon" style="background:#D1FAE5; color:#059669;"><svg width="20" height="20" fill="none"
+                  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                  <polyline points="17 6 23 6 23 12"></polyline>
+                </svg></div>
               <div class="kpi-trend up" id="kpi-pass-trend">—</div>
             </div>
             <div class="kpi-value" id="m-pass">—</div>
@@ -147,7 +217,10 @@
           </div>
           <div class="kpi-card">
             <div class="kpi-top">
-              <div class="kpi-icon" style="background:#FEF3C7; color:#D97706;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></div>
+              <div class="kpi-icon" style="background:#FEF3C7; color:#D97706;"><svg width="20" height="20" fill="none"
+                  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg></div>
               <div class="kpi-trend up" id="kpi-gaps-trend">—</div>
             </div>
             <div class="kpi-value" id="m-gaps">—</div>
@@ -155,7 +228,11 @@
           </div>
           <div class="kpi-card">
             <div class="kpi-top">
-              <div class="kpi-icon" style="background:#ECFEFF; color:#0891B2;"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+              <div class="kpi-icon" style="background:#ECFEFF; color:#0891B2;"><svg width="20" height="20" fill="none"
+                  stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg></div>
               <div class="kpi-trend down" style="color:var(--text-3)">upcoming</div>
             </div>
             <div class="kpi-value" id="kpi-deadlines">—</div>
@@ -176,16 +253,20 @@
             <div class="priority-list" id="student-rows">
               <div style="padding:24px; text-align:center; color:var(--text-3);">Loading AI Priority Queue...</div>
             </div>
-            
+
             <!-- AI Command Center -->
             <div class="ai-cmd-center">
               <h2 class="section-title" style="display:flex;align-items:center;gap:8px;">
-                <svg width="20" height="20" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <svg width="20" height="20" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
                 Counselor Co-Pilot
               </h2>
-              <p class="section-subtitle">Execute counselor commands (e.g. "draft warning emails", "recommend pathways for STU_001")</p>
+              <p class="section-subtitle">Execute counselor commands (e.g. "draft warning emails", "recommend pathways
+                for STU_001")</p>
               <div class="cmd-input-wrap">
-                <input type="text" id="cc-command-input" class="cmd-input" placeholder="Ask AI to analyze the cohort..." onkeydown="if(event.key==='Enter') runCounselorAgentCommand()">
+                <input type="text" id="cc-command-input" class="cmd-input" placeholder="Ask AI to analyze the cohort..."
+                  onkeydown="if(event.key==='Enter') runCounselorAgentCommand()">
                 <button type="button" class="btn-primary" onclick="runCounselorAgentCommand()">Run</button>
               </div>
               <div id="cc-agent-response"></div>
@@ -196,7 +277,11 @@
           <div>
             <div class="section-header">
               <h2 class="section-title">Today's Schedule</h2>
-              <div class="btn-circle"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+              <div class="btn-circle"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg></div>
             </div>
             <div class="schedule-card" id="todays-schedule">
               <div style="padding:20px; text-align:center; color:var(--text-3);">Loading schedule…</div>
@@ -213,19 +298,29 @@
             <div class="greeting-sub">Manage all students · click a name to open their full profile</div>
           </div>
           <div>
-            <input type="file" id="dash-counselor-ingest-file" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg" style="display:none;" onchange="ingestCounselorDocumentFromDash()">
+            <input type="file" id="dash-counselor-ingest-file" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg"
+              style="display:none;" onchange="ingestCounselorDocumentFromDash()">
             <button class="btn-primary" onclick="document.getElementById('dash-counselor-ingest-file').click()">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
               Auto-Ingest Student Data
             </button>
           </div>
         </div>
-        <div id="dash-counselor-ingest-status" style="margin-bottom:16px; font-size:0.9rem; font-weight:600; display:none; color:var(--accent);"></div>
-        
+        <div id="dash-counselor-ingest-status"
+          style="margin-bottom:16px; font-size:0.9rem; font-weight:600; display:none; color:var(--accent);"></div>
+
         <!-- Sub-tabs -->
         <div style="display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:20px;">
-          <button id="stu-tab-roster" style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid var(--accent); color:var(--text-1); cursor:pointer;" onclick="showStudentSubTab('roster')">Master Roster</button>
-          <button id="stu-tab-stats" style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-3); cursor:pointer;" onclick="showStudentSubTab('stats')">Profile Completion Stats</button>
+          <button id="stu-tab-roster"
+            style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid var(--accent); color:var(--text-1); cursor:pointer;"
+            onclick="showStudentSubTab('roster')">Master Roster</button>
+          <button id="stu-tab-stats"
+            style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-3); cursor:pointer;"
+            onclick="showStudentSubTab('stats')">Profile Completion Stats</button>
         </div>
 
         <!-- Master Roster -->
@@ -234,14 +329,17 @@
             <div class="excel-toolbar">
               <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">Students Master Roster</div>
               <div style="display:flex; gap:12px;">
-                <input type="text" id="roster-search" placeholder="Search by name or ID…" oninput="filterRoster()" style="border-radius:6px; border:1px solid var(--border); padding:6px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
-                <select id="roster-grade-filter" onchange="filterRoster()" style="border-radius:6px; border:1px solid var(--border); padding:6px 12px; outline:none; font-family:var(--sans); background:var(--surface); color:var(--text-1);">
+                <input type="text" id="roster-search" placeholder="Search by name or ID…" oninput="filterRoster()"
+                  style="border-radius:6px; border:1px solid var(--border); padding:6px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+                <select id="roster-grade-filter" onchange="filterRoster()"
+                  style="border-radius:6px; border:1px solid var(--border); padding:6px 12px; outline:none; font-family:var(--sans); background:var(--surface); color:var(--text-1);">
                   <option value="">All Grades</option>
                   <option value="10">Class 10</option>
                   <option value="11">Class 11</option>
                   <option value="12">Class 12</option>
                 </select>
-                <button class="btn-outline" style="padding:6px 12px; font-size:0.8rem; border-radius:6px;" onclick="exportRosterCsv()">Export CSV</button>
+                <button class="btn-outline" style="padding:6px 12px; font-size:0.8rem; border-radius:6px;"
+                  onclick="exportRosterCsv()">Export CSV</button>
               </div>
             </div>
             <div class="excel-table-wrap">
@@ -264,7 +362,10 @@
                   </tr>
                 </thead>
                 <tbody id="student-excel-body">
-                  <tr><td colspan="13" style="text-align:center; padding:20px; color:var(--text-3);">Loading students…</td></tr>
+                  <tr>
+                    <td colspan="13" style="text-align:center; padding:20px; color:var(--text-3);">Loading students…
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -294,7 +395,9 @@
                   </tr>
                 </thead>
                 <tbody id="student-stats-body">
-                  <tr><td colspan="10" style="text-align:center; padding:20px; color:var(--text-3);">Loading…</td></tr>
+                  <tr>
+                    <td colspan="10" style="text-align:center; padding:20px; color:var(--text-3);">Loading…</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -307,51 +410,52 @@
         <div class="dash-header">
           <div>
             <div class="greeting">Opportunities &amp; Competitions</div>
-            <div class="greeting-sub">AI-matched competitions and scholarships based on student profiles</div>
+            <div class="greeting-sub">AI-matched competitions and opportunity radar based on student profiles</div>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <select id="shortlist-student-select" onchange="onShortlistStudentChange(this.value)" style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+            <select id="shortlist-student-select" onchange="onShortlistStudentChange(this.value)"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
               <option>Loading students…</option>
             </select>
           </div>
         </div>
 
-        <div style="display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:20px;">
-          <button id="opp-tab-comp" style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid var(--accent); color:var(--text-1); cursor:pointer;" onclick="showOppSubTab('comp')">Competitions</button>
-          <button id="opp-tab-colleges" style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-3); cursor:pointer;" onclick="showOppSubTab('colleges')">College Shortlist</button>
-        </div>
-
-        <!-- Competitions sub-tab -->
+        <!-- Competitions view -->
         <div id="opp-comp-view">
           <div class="excel-grid-container">
             <div class="excel-toolbar">
               <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">AI-Matched Competitions</div>
               <div style="display:flex; gap:12px; align-items:center;">
-                <input type="text" id="shortlist-search" placeholder="Filter competitions…" oninput="filterCollegesList()" style="border-radius:6px; border:1px solid var(--border); padding:6px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+                <input type="text" id="shortlist-search" placeholder="Filter competitions…"
+                  oninput="filterCollegesList()"
+                  style="border-radius:6px; border:1px solid var(--border); padding:6px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
                 <div style="display:flex; gap:8px; align-items:center;">
-                  <input type="text" id="radar-import-url" placeholder="CompeteMap URL to import…" style="width:240px; border-radius:6px; border:1px solid var(--border); padding:6px 12px; font-family:var(--sans); font-size:0.8rem; background:var(--surface); color:var(--text-1);">
+                  <input type="text" id="radar-import-url" placeholder="CompeteMap URL to import…"
+                    style="width:240px; border-radius:6px; border:1px solid var(--border); padding:6px 12px; font-family:var(--sans); font-size:0.8rem; background:var(--surface); color:var(--text-1);">
                   <button class="btn-outline" style="font-size:0.8rem;" onclick="importCompetition()">Import</button>
                 </div>
               </div>
             </div>
-            <div id="radar-import-status" style="display:none; padding:8px 16px; font-size:0.85rem; font-weight:600;"></div>
+            <div id="radar-import-status" style="display:none; padding:8px 16px; font-size:0.85rem; font-weight:600;">
+            </div>
             <div class="excel-table-wrap">
               <table class="excel-table" style="width:100%;">
                 <thead>
-                  <tr><th>Competition</th><th>Deadline</th><th>Match</th><th>AI Reasoning</th></tr>
+                  <tr>
+                    <th>Competition</th>
+                    <th>Deadline</th>
+                    <th>Match</th>
+                    <th>AI Reasoning</th>
+                  </tr>
                 </thead>
                 <tbody id="competitions-tbody">
-                  <tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-3);">Select a student to see matched competitions.</td></tr>
+                  <tr>
+                    <td colspan="4" style="text-align:center; padding:20px; color:var(--text-3);">Select a student to
+                      see matched competitions.</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-
-        <!-- College Shortlist sub-tab -->
-        <div id="opp-colleges-view" style="display:none;">
-          <div id="colleges-grid-container" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap:16px; padding-top:8px;">
-            <div style="padding:20px; text-align:center; color:var(--text-3);">Select a student to see their college shortlist.</div>
           </div>
         </div>
       </main>
@@ -364,7 +468,8 @@
             <div class="greeting-sub" id="kanban-subtitle">Profile match analysis sorted by fit score</div>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <select id="kanban-student-select" onchange="onKanbanStudentChange(this.value)" style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+            <select id="kanban-student-select" onchange="onKanbanStudentChange(this.value)"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
               <option>Loading students…</option>
             </select>
           </div>
@@ -372,15 +477,29 @@
 
         <div style="display:flex; gap:20px; align-items:center; margin-bottom:16px;">
           <div style="flex:1; display:flex; gap:12px; align-items:center;">
-            <h3 style="font-weight:700; font-size:1.1rem; color:var(--text-1); margin:0; display:flex; align-items:center; gap:8px;"><div style="width:12px; height:12px; border-radius:50%; background:#EF4444;"></div> Reach <span style="color:var(--text-3); font-weight:400; font-size:0.9rem;">(<span id="count-reach">0</span>)</span></h3>
+            <h3
+              style="font-weight:700; font-size:1.1rem; color:var(--text-1); margin:0; display:flex; align-items:center; gap:8px;">
+              <div style="width:12px; height:12px; border-radius:50%; background:#EF4444;"></div> Reach <span
+                style="color:var(--text-3); font-weight:400; font-size:0.9rem;">(<span id="count-reach">0</span>)</span>
+            </h3>
             <span style="font-size:0.85rem; color:var(--text-3); margin-left:auto;">&lt; 15% acceptance</span>
           </div>
           <div style="flex:1; display:flex; gap:12px; align-items:center;">
-            <h3 style="font-weight:700; font-size:1.1rem; color:var(--text-1); margin:0; display:flex; align-items:center; gap:8px;"><div style="width:12px; height:12px; border-radius:50%; background:#F59E0B;"></div> Target <span style="color:var(--text-3); font-weight:400; font-size:0.9rem;">(<span id="count-target">0</span>)</span></h3>
+            <h3
+              style="font-weight:700; font-size:1.1rem; color:var(--text-1); margin:0; display:flex; align-items:center; gap:8px;">
+              <div style="width:12px; height:12px; border-radius:50%; background:#F59E0B;"></div> Target <span
+                style="color:var(--text-3); font-weight:400; font-size:0.9rem;">(<span
+                  id="count-target">0</span>)</span>
+            </h3>
             <span style="font-size:0.85rem; color:var(--text-3); margin-left:auto;">15–35% acceptance</span>
           </div>
           <div style="flex:1; display:flex; gap:12px; align-items:center;">
-            <h3 style="font-weight:700; font-size:1.1rem; color:var(--text-1); margin:0; display:flex; align-items:center; gap:8px;"><div style="width:12px; height:12px; border-radius:50%; background:#10B981;"></div> Likely <span style="color:var(--text-3); font-weight:400; font-size:0.9rem;">(<span id="count-likely">0</span>)</span></h3>
+            <h3
+              style="font-weight:700; font-size:1.1rem; color:var(--text-1); margin:0; display:flex; align-items:center; gap:8px;">
+              <div style="width:12px; height:12px; border-radius:50%; background:#10B981;"></div> Likely <span
+                style="color:var(--text-3); font-weight:400; font-size:0.9rem;">(<span
+                  id="count-likely">0</span>)</span>
+            </h3>
             <span style="font-size:0.85rem; color:var(--text-3); margin-left:auto;">&gt; 35% acceptance</span>
           </div>
         </div>
@@ -389,17 +508,23 @@
         <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:24px;">
           <div>
             <div id="kanban-reach" style="min-height:120px; display:flex; flex-direction:column; gap:16px;">
-              <div style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No data yet</div>
+              <div
+                style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">
+                No data yet</div>
             </div>
           </div>
           <div>
             <div id="kanban-target" style="min-height:120px; display:flex; flex-direction:column; gap:16px;">
-              <div style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No data yet</div>
+              <div
+                style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">
+                No data yet</div>
             </div>
           </div>
           <div>
             <div id="kanban-likely" style="min-height:120px; display:flex; flex-direction:column; gap:16px;">
-              <div style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No data yet</div>
+              <div
+                style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">
+                No data yet</div>
             </div>
           </div>
         </div>
@@ -410,35 +535,22 @@
         <div class="dash-header">
           <div>
             <div class="greeting">College Database</div>
-            <div class="greeting-sub">Browse and search all universities</div>
+            <div class="greeting-sub">Browse, search, and shortlist colleges for students</div>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <input type="text" id="predictor-uni-search" placeholder="Search universities…" oninput="filterPredictorList()" style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+            <select id="predictor-student-select" onchange="onPredictorStudentChange(this.value)"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+              <option value="">Loading students…</option>
+            </select>
+            <input type="text" id="predictor-uni-search" placeholder="Search colleges by name, country, courses…"
+              oninput="filterPredictorList()"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1); min-width: 260px;">
           </div>
         </div>
 
-        <!-- University search results table -->
-        <div class="excel-grid-container">
-          <div class="excel-toolbar">
-            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">University Database</div>
-            <div style="font-size:0.8rem; color:var(--text-3);" id="uni-result-count">Loading…</div>
-          </div>
-          <div class="excel-table-wrap">
-            <table class="excel-table" style="width:100%;">
-              <thead>
-                <tr>
-                  <th>University</th>
-                  <th>Country</th>
-                  <th>Avg SAT</th>
-                  <th>Deadline</th>
-                  <th>Shortlist</th>
-                </tr>
-              </thead>
-              <tbody id="predictor-uni-body">
-                <tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-3);">Loading universities…</td></tr>
-              </tbody>
-            </table>
-          </div>
+        <div id="colleges-grid-container"
+          style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:16px; padding-top:8px;">
+          <div style="padding:20px; text-align:center; color:var(--text-3); grid-column: 1 / -1;">Select a student to view and shortlist colleges.</div>
         </div>
       </main>
 
@@ -449,29 +561,36 @@
             <div class="greeting">Scholarships Database</div>
             <div class="greeting-sub">Browse, search, and manage global financial aid opportunities</div>
           </div>
-          <div>
-            <div class="search-bar">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="search-scholarships" placeholder="Search scholarships..." onkeyup="filterScholarshipsTable()">
-            </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <input type="text" id="search-scholarships" placeholder="Search scholarships by name, country..."
+              oninput="filterScholarshipsTable()"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1); min-width: 260px;">
           </div>
         </div>
 
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Scholarship Name</th>
-                <th>Provider / Country</th>
-                <th>Eligibility Criteria</th>
-                <th>Amount</th>
-                <th>Link</th>
-              </tr>
-            </thead>
-            <tbody id="scholarships-table-body">
-              <tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-3);">Loading scholarships...</td></tr>
-            </tbody>
-          </table>
+        <div class="excel-grid-container">
+          <div class="excel-toolbar">
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">Available Scholarships</div>
+            <div style="font-size:0.8rem; color:var(--text-3);" id="schol-result-count">Loading…</div>
+          </div>
+          <div class="excel-table-wrap">
+            <table class="excel-table" style="width:100%;">
+              <thead>
+                <tr>
+                  <th>Scholarship Name</th>
+                  <th>Type & Provider</th>
+                  <th>Eligibility Criteria</th>
+                  <th>Value & Deadline</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="scholarships-table-body">
+                <tr>
+                  <td colspan="5" style="text-align:center; padding:30px; color:var(--text-3);">Loading scholarships...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </main>
 
@@ -483,18 +602,25 @@
             <div class="greeting-sub">Upload your CSV to manage and match extracurricular opportunities</div>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <input type="file" id="ec-csv-upload" accept=".csv" style="display:none;" onchange="handleExtracurricularCsvUpload(event)">
+            <input type="file" id="ec-csv-upload" accept=".csv" style="display:none;"
+              onchange="handleExtracurricularCsvUpload(event)">
             <button class="btn-primary" onclick="document.getElementById('ec-csv-upload').click()">
-              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
               Upload CSV
             </button>
           </div>
         </div>
-        <div id="ec-status" style="margin-bottom:12px; font-size:0.9rem; font-weight:600; display:none; color:var(--accent);"></div>
+        <div id="ec-status"
+          style="margin-bottom:12px; font-size:0.9rem; font-weight:600; display:none; color:var(--accent);"></div>
         <div class="excel-grid-container" style="margin-top:8px;">
           <div class="excel-toolbar">
             <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">Activities &amp; Competitions</div>
-            <div style="font-size:0.8rem; color:var(--text-3);">Expected CSV columns: Activity Name, Category, Impact Level, Requirements</div>
+            <div style="font-size:0.8rem; color:var(--text-3);">Expected CSV columns: Activity Name, Category, Impact
+              Level, Requirements</div>
           </div>
           <div class="excel-table-wrap">
             <table class="excel-table">
@@ -508,7 +634,10 @@
                 </tr>
               </thead>
               <tbody id="ec-tbody">
-                <tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-3);">No data loaded. Click <strong>Upload CSV</strong> above to import your extracurriculars list.</td></tr>
+                <tr>
+                  <td colspan="5" style="text-align:center; padding:30px; color:var(--text-3);">No data loaded. Click
+                    <strong>Upload CSV</strong> above to import your extracurriculars list.</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -523,7 +652,8 @@
             <div class="greeting-sub">Generate per-student compliance packets and cohort summaries</div>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <select id="report-student-select" onchange="onReportStudentChange(this.value)" style="border-radius:8px; border:1px solid var(--border); padding:8px 16px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+            <select id="report-student-select" onchange="onReportStudentChange(this.value)"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 16px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
               <option>Loading students…</option>
             </select>
           </div>
@@ -531,22 +661,29 @@
 
         <!-- Report sub-tabs -->
         <div style="display:flex; gap:0; border-bottom:1px solid var(--border); margin-bottom:20px;">
-          <button id="btn-report-sub-student" style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid var(--accent); color:var(--text-1); cursor:pointer;" onclick="switchReportSubView('student')">Student Report</button>
-          <button id="btn-report-sub-cohort" style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-3); cursor:pointer;" onclick="switchReportSubView('cohort')">Cohort Summary</button>
+          <button id="btn-report-sub-student"
+            style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid var(--accent); color:var(--text-1); cursor:pointer;"
+            onclick="switchReportSubView('student')">Student Report</button>
+          <button id="btn-report-sub-cohort"
+            style="padding:10px 20px; font-weight:600; font-size:0.85rem; background:none; border:none; border-bottom:2px solid transparent; color:var(--text-3); cursor:pointer;"
+            onclick="switchReportSubView('cohort')">Cohort Summary</button>
         </div>
 
         <!-- Student Report -->
         <div id="report-sec-student">
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
             <div class="card" style="padding:20px;">
-              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">STUDENT PROFILE</div>
+              <div
+                style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">
+                STUDENT PROFILE</div>
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:0.85rem;">
                 <div><span style="color:var(--text-3);">Date</span><br><strong id="rep-date">—</strong></div>
                 <div><span style="color:var(--text-3);">ID</span><br><strong id="rep-id">—</strong></div>
                 <div><span style="color:var(--text-3);">Name</span><br><strong id="rep-name">—</strong></div>
                 <div><span style="color:var(--text-3);">Board</span><br><strong id="rep-board">—</strong></div>
                 <div><span style="color:var(--text-3);">Current Grade</span><br><strong id="rep-grade">—</strong></div>
-                <div><span style="color:var(--text-3);">Portfolio Tier</span><br><strong id="rep-portfolio-tier">—</strong></div>
+                <div><span style="color:var(--text-3);">Portfolio Tier</span><br><strong
+                    id="rep-portfolio-tier">—</strong></div>
               </div>
               <hr style="border:none; border-top:1px solid var(--border); margin:14px 0;">
               <div style="font-size:0.8rem; color:var(--text-3); margin-bottom:4px;">Board Subjects</div>
@@ -557,18 +694,28 @@
               </div>
             </div>
             <div class="card" style="padding:20px;">
-              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">COMPLIANCE STATUS</div>
+              <div
+                style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">
+                COMPLIANCE STATUS</div>
               <div id="rep-compliance-body" style="font-size:0.85rem; color:var(--text-2);">Loading…</div>
             </div>
           </div>
           <div class="card" style="padding:20px; margin-top:20px;">
-            <div style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">COUNSELOR NOTES</div>
-            <textarea id="report-notes-input" style="width:100%; min-height:80px; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:10px; color:var(--text-1); font-family:var(--sans); font-size:0.85rem; resize:vertical;" placeholder="Add counselor notes…" onchange="saveReportNotes()"></textarea>
-            <div style="font-size:0.8rem; color:var(--text-3); margin-top:8px;" id="rep-counselor-notes-text">No custom counselor remarks.</div>
+            <div
+              style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">
+              COUNSELOR NOTES</div>
+            <textarea id="report-notes-input"
+              style="width:100%; min-height:80px; background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:10px; color:var(--text-1); font-family:var(--sans); font-size:0.85rem; resize:vertical;"
+              placeholder="Add counselor notes…" onchange="saveReportNotes()"></textarea>
+            <div style="font-size:0.8rem; color:var(--text-3); margin-top:8px;" id="rep-counselor-notes-text">No custom
+              counselor remarks.</div>
           </div>
           <div style="margin-top:20px; display:flex; gap:12px;">
             <button class="btn-primary" onclick="generateStudentPdf()">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
               Generate PDF Report
             </button>
             <button class="btn-outline" onclick="sendReportEmail()">Send to Student</button>
@@ -579,28 +726,50 @@
         <div id="report-sec-cohort" class="hidden">
           <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:20px; margin-bottom:20px;">
             <div class="kpi-card">
-              <div class="kpi-top"><div class="kpi-icon" style="background:#E0E7FF;color:#4F46E5;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg></div></div>
+              <div class="kpi-top">
+                <div class="kpi-icon" style="background:#E0E7FF;color:#4F46E5;"><svg width="18" height="18" fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                  </svg></div>
+              </div>
               <div class="kpi-value" id="cohort-rep-total">—</div>
               <div class="kpi-label">Total Students</div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-top"><div class="kpi-icon" style="background:#D1FAE5;color:#059669;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div>
+              <div class="kpi-top">
+                <div class="kpi-icon" style="background:#D1FAE5;color:#059669;"><svg width="18" height="18" fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg></div>
+              </div>
               <div class="kpi-value" id="cohort-rep-strong">—</div>
               <div class="kpi-label">Strong Match</div>
             </div>
             <div class="kpi-card">
-              <div class="kpi-top"><div class="kpi-icon" style="background:#FEE2E2;color:#DC2626;"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path></svg></div></div>
+              <div class="kpi-top">
+                <div class="kpi-icon" style="background:#FEE2E2;color:#DC2626;"><svg width="18" height="18" fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
+                  </svg></div>
+              </div>
               <div class="kpi-value" id="cohort-rep-risk">—</div>
               <div class="kpi-label">High Risk</div>
             </div>
           </div>
           <div class="card" style="padding:20px;">
-            <div style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:16px;">COHORT COMPLIANCE TABLE</div>
+            <div
+              style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:16px;">
+              COHORT COMPLIANCE TABLE</div>
             <div id="cohort-report-table-wrap">Loading…</div>
           </div>
           <div style="margin-top:20px;">
             <button class="btn-primary" onclick="generateCohortPdf()">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
               Generate Cohort PDF
             </button>
           </div>
@@ -612,28 +781,38 @@
         <div class="dash-header">
           <div>
             <div class="greeting">Deadlines Calendar</div>
-            <div class="greeting-sub">College applications, entrance exams &amp; competition deadlines — per student</div>
+            <div class="greeting-sub">College applications, entrance exams &amp; competition deadlines — per student
+            </div>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <select id="calendar-student-select" onchange="onCalendarStudentChange(this.value)" style="border-radius:8px; border:1px solid var(--border); padding:8px 16px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+            <select id="calendar-student-select" onchange="onCalendarStudentChange(this.value)"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 16px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
               <option>Loading students…</option>
             </select>
           </div>
         </div>
 
         <!-- Filter pills -->
-        <div style="display:flex; gap:16px; align-items:center; margin-bottom:20px; padding:12px 16px; background:var(--surface); border-radius:10px; border:1px solid var(--border);">
-          <span style="font-size:0.8rem; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em;">Show:</span>
-          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem; color:var(--text-1);">
-            <input type="checkbox" id="cal-filter-college" checked onchange="updateCalendarUI()" style="accent-color:#DC2626;">
+        <div
+          style="display:flex; gap:16px; align-items:center; margin-bottom:20px; padding:12px 16px; background:var(--surface); border-radius:10px; border:1px solid var(--border);">
+          <span
+            style="font-size:0.8rem; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:0.05em;">Show:</span>
+          <label
+            style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem; color:var(--text-1);">
+            <input type="checkbox" id="cal-filter-college" checked onchange="updateCalendarUI()"
+              style="accent-color:#DC2626;">
             <span style="color:#DC2626; font-weight:600;">● College Deadlines</span>
           </label>
-          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem; color:var(--text-1);">
-            <input type="checkbox" id="cal-filter-exam" checked onchange="updateCalendarUI()" style="accent-color:#D97706;">
+          <label
+            style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem; color:var(--text-1);">
+            <input type="checkbox" id="cal-filter-exam" checked onchange="updateCalendarUI()"
+              style="accent-color:#D97706;">
             <span style="color:#D97706; font-weight:600;">● Entrance Exams</span>
           </label>
-          <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem; color:var(--text-1);">
-            <input type="checkbox" id="cal-filter-competition" checked onchange="updateCalendarUI()" style="accent-color:#059669;">
+          <label
+            style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:0.85rem; color:var(--text-1);">
+            <input type="checkbox" id="cal-filter-competition" checked onchange="updateCalendarUI()"
+              style="accent-color:#059669;">
             <span style="color:#059669; font-weight:600;">● Competitions</span>
           </label>
         </div>
@@ -642,13 +821,20 @@
           <!-- Calendar grid -->
           <div class="card" style="padding:0; overflow:hidden;">
             <!-- Month nav -->
-            <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border);">
-              <button onclick="navigateCalendarMonth(-1)" style="background:none; border:none; cursor:pointer; color:var(--text-1); font-size:1.2rem; padding:4px 8px; border-radius:6px; transition:background 0.15s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='none'">‹</button>
-              <span id="calendar-month-label" style="font-weight:700; font-size:0.95rem; color:var(--text-1);">Loading…</span>
-              <button onclick="navigateCalendarMonth(1)" style="background:none; border:none; cursor:pointer; color:var(--text-1); font-size:1.2rem; padding:4px 8px; border-radius:6px; transition:background 0.15s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='none'">›</button>
+            <div
+              style="display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border);">
+              <button onclick="navigateCalendarMonth(-1)"
+                style="background:none; border:none; cursor:pointer; color:var(--text-1); font-size:1.2rem; padding:4px 8px; border-radius:6px; transition:background 0.15s;"
+                onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='none'">‹</button>
+              <span id="calendar-month-label"
+                style="font-weight:700; font-size:0.95rem; color:var(--text-1);">Loading…</span>
+              <button onclick="navigateCalendarMonth(1)"
+                style="background:none; border:none; cursor:pointer; color:var(--text-1); font-size:1.2rem; padding:4px 8px; border-radius:6px; transition:background 0.15s;"
+                onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='none'">›</button>
             </div>
             <!-- Day-of-week headers -->
-            <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:1px; padding:8px 12px 4px; background:var(--surface);">
+            <div
+              style="display:grid; grid-template-columns:repeat(7,1fr); gap:1px; padding:8px 12px 4px; background:var(--surface);">
               <div style="text-align:center; font-size:0.65rem; font-weight:700; color:var(--text-3);">Sun</div>
               <div style="text-align:center; font-size:0.65rem; font-weight:700; color:var(--text-3);">Mon</div>
               <div style="text-align:center; font-size:0.65rem; font-weight:700; color:var(--text-3);">Tue</div>
@@ -658,14 +844,19 @@
               <div style="text-align:center; font-size:0.65rem; font-weight:700; color:var(--text-3);">Sat</div>
             </div>
             <!-- Day cells -->
-            <div id="calendar-grid-cells" style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; padding:4px 12px 12px;"></div>
+            <div id="calendar-grid-cells"
+              style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; padding:4px 12px 12px;"></div>
           </div>
 
           <!-- Events list -->
           <div>
-            <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-3); margin-bottom:12px;">Events This Month</div>
-            <div id="calendar-events-list" style="display:flex; flex-direction:column; gap:10px; max-height:480px; overflow-y:auto;">
-              <div style="text-align:center; color:var(--text-3); padding:20px;">Select a student to load deadlines.</div>
+            <div
+              style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-3); margin-bottom:12px;">
+              Events This Month</div>
+            <div id="calendar-events-list"
+              style="display:flex; flex-direction:column; gap:10px; max-height:480px; overflow-y:auto;">
+              <div style="text-align:center; color:var(--text-3); padding:20px;">Select a student to load deadlines.
+              </div>
             </div>
           </div>
         </div>
@@ -676,6 +867,51 @@
     </div>
   </div>
 
+  <!-- ═══ SCHOLARSHIP ACTION MODAL ═══ -->
+  <div class="modal-overlay" id="modal-scholarship-action" style="display:none;" onclick="if(event.target===this) this.style.display='none'">
+    <div class="modal-content" style="max-width:560px;">
+      <div class="modal-header">
+        <h2 id="sa-schol-title" style="font-size:1.25rem; font-weight:700; color:var(--text-1);">Scholarship Action</h2>
+        <button class="modal-close" onclick="document.getElementById('modal-scholarship-action').style.display='none'">✕</button>
+      </div>
+      <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:20px;">
+        
+        <!-- Manual Shortlist Section -->
+        <div>
+          <h3 style="font-size:0.9rem; font-weight:700; color:var(--text-2); margin-bottom:8px;">Manual Shortlist</h3>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <select id="sa-student-select" style="flex:1; border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+              <option value="">Select Student...</option>
+            </select>
+            <button class="btn-primary" onclick="handleManualScholarshipShortlist()">Save to Shortlist</button>
+          </div>
+          <div id="sa-manual-msg" style="margin-top:8px; font-size:0.8rem; color:var(--green); display:none;">Successfully saved!</div>
+        </div>
+
+        <hr style="border:none; border-top:1px dashed var(--border);">
+
+        <!-- AI Recommendation Section -->
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <h3 style="font-size:0.9rem; font-weight:700; color:var(--text-2); margin:0;">AI Recommendation</h3>
+            <button class="btn-outline" onclick="fetchAIRecommendations()" id="btn-sa-recommend">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              Find Best Matches
+            </button>
+          </div>
+          <div id="sa-ai-results" style="display:none; flex-direction:column; gap:12px; background:var(--surface); padding:16px; border-radius:8px; border:1px solid var(--border);">
+            <div id="sa-ai-loading" style="font-size:0.85rem; color:var(--text-3); text-align:center;">
+              <span class="blink">▌</span> Analyzing student profiles against criteria...
+            </div>
+            <div id="sa-ai-list" style="display:none; flex-direction:column; gap:12px;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <script src="/static/app.js?v=13"></script>
 </body>
+
 </html>
