@@ -1021,12 +1021,9 @@ def api_counselor_agent():
             "audits": student_audits
         })
 
-    if api_key:
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=api_key)
-            
-            system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
+    groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+
+    system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
 You have access to the entire school's active student cohort database provided below.
 
 STUDENT COHORT DATA:
@@ -1043,16 +1040,31 @@ CRITICAL REASONING INSTRUCTIONS:
 4. Format your output in clean Markdown with appropriate headers, bold text, bullet points, and actionable details.
 5. If drafting an email, include Subject line, To address, Salutation, specific student gap evidence, and professional sign-off.
 """
-            for m_name in ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]:
-                try:
-                    model = genai.GenerativeModel(model_name=m_name)
-                    response = model.generate_content([system_prompt, f"COUNSELOR PROMPT / COMMAND:\n{command}"])
-                    if response and response.text:
-                        return jsonify({"response": response.text.strip()})
-                except Exception as m_err:
-                    print(f"[CounselorAgent Warning] Model {m_name} rate limited/failed: {m_err}. Trying next candidate...")
-        except Exception as err:
-            print(f"[CounselorAgent Error] Gemini reasoning model call failed: {err}")
+
+    if groq_key:
+        import requests
+        try:
+            print("[CounselorAgent] Calling Groq API (llama-3.3-70b-versatile)...")
+            res = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                json={
+                    "model": "llama-3.3-70b-versatile",
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": f"COUNSELOR PROMPT / COMMAND:\n{command}"}
+                    ],
+                    "temperature": 0.2
+                },
+                timeout=30
+            )
+            if res.status_code == 200:
+                text_out = res.json()["choices"][0]["message"]["content"]
+                return jsonify({"response": text_out.strip()})
+            else:
+                print(f"[CounselorAgent Warning] Groq returned HTTP {res.status_code}: {res.text}")
+        except Exception as g_err:
+            print(f"[CounselorAgent Warning] Groq reasoning call failed: {g_err}")
 
     # Fallback reasoning engine if GEMINI_API_KEY is not configured
     command_lower = command.lower()

@@ -708,6 +708,9 @@ body {
   border-radius: 12px;
   width: 100%;
   max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 }
@@ -718,6 +721,14 @@ body {
   align-items: center;
   justify-content: space-between;
   background: var(--surface);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.modal-body {
+  overflow-y: auto;
+  max-height: calc(85vh - 70px);
 }
 .modal-close {
   background: none; border: none; cursor: pointer;

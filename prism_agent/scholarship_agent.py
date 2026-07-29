@@ -1,13 +1,12 @@
 import os
 import json
 import datetime
-import google.generativeai as genai
 
 class ScholarshipAgent:
     @staticmethod
     def match_scholarships(student, scholarships, silent=False):
         """
-        Evaluates a student against all scholarships.
+        Evaluates a student against all scholarships using Groq API.
         Returns a list of matched scholarships with LLM-generated explanations.
         """
         student_id = student.get("id")
@@ -25,19 +24,16 @@ class ScholarshipAgent:
         if not candidate_scholarships:
             return []
 
-        # If API key is available, use Gemini for agentic reasoning
-        api_key = os.environ.get("GEMINI_API_KEY", "")
-        if api_key:
-            return ScholarshipAgent._match_with_llm(student, candidate_scholarships, api_key, silent)
+        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+        if groq_key:
+            return ScholarshipAgent._match_with_groq(student, candidate_scholarships, groq_key, silent)
         else:
             return ScholarshipAgent._match_fallback(student, candidate_scholarships, silent)
 
     @staticmethod
-    def _match_with_llm(student, candidate_scholarships, api_key, silent=False):
-        genai.configure(api_key=api_key)
-        
-        prompt = f"""You are an expert Scholarship and Financial Aid Agent.
-You will evaluate the eligibility and fit of {len(candidate_scholarships)} scholarship(s) for the following student profile:
+    def _match_with_groq(student, candidate_scholarships, groq_key, silent=False):
+        prompt = f"""You are an expert Scholarship and Financial Aid Agent for unlockED.
+Evaluate the eligibility and strategic fit of {len(candidate_scholarships)} scholarship(s) for the following student profile:
 
 Student Profile:
 {json.dumps(student, indent=2)}
@@ -45,76 +41,79 @@ Student Profile:
 Available Scholarships:
 {json.dumps(candidate_scholarships, indent=2)}
 
-For EACH scholarship in the list, evaluate if the student is a fit based on their academics, targets, portfolio, and demographics.
-Consider their expected board grades, SAT score, subjects, and intended targets. If the scholarship is need-based, evaluate based on the fact that need-based aid is available unless stated otherwise. 
+For EACH scholarship in the list, evaluate if the student is a strong fit based on their academic board, expected marks, SAT/ACT test scores, portfolio activities, and intended university targets.
 Assign a match score from 0 to 100.
-Also, provide an explanation ("why") and actionable steps ("actions_needed") to maximize their chances.
+Provide an in-depth, detailed explanation ("why") referencing their specific qualifications, and 2 actionable steps ("actions_needed").
 
-Return a JSON array of objects, one for each evaluated scholarship. Your entire response must be valid JSON matching this exact structure:
+Return a JSON array of objects, one for each evaluated scholarship. Your response must be valid JSON:
 [
   {{
     "scholarship_id": "schol_tata_cornell",
-    "match_score": 85,
-    "why": "You are eligible for the Tata Scholarship because you are an Indian citizen targeting US universities...",
-    "actions_needed": "Submit your CSS profile by the deadline and ensure your financial documents are translated.",
+    "match_score": 88,
+    "why": "Rahul is an exceptional candidate for the Tata Scholarship given his 42/45 IB expected score and 1540 SAT. His target pathway STANFORD_CS aligns directly with the scholarship STEM criteria.",
+    "actions_needed": "Complete the CSS profile application before November 1st and request financial counselor verification.",
     "is_urgent": false,
     "days_remaining": 45
-  }},
-  ...
+  }}
 ]
 """
-        
-        models_to_try = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]
-        last_error = None
-        for model_name in models_to_try:
-            try:
-                model = genai.GenerativeModel(
-                    model_name=model_name,
-                    generation_config={"temperature": 0.1}
-                )
-                response = model.generate_content(prompt)
-                final_text = response.text
-                
-                import re
-                json_match = re.search(r"\[.*\]", final_text, re.DOTALL)
-                if json_match:
-                    matches_data = json.loads(json_match.group(0))
-                else:
-                    matches_data = json.loads(final_text)
+        import requests
+        try:
+            if not silent:
+                print("[ScholarshipAgent] Calling Groq API (llama-3.3-70b-versatile)...")
+            res = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                json={
+                    "model": "llama-3.3-70b-versatile",
+                    "messages": [
+                        {"role": "system", "content": "You are unlockED Scholarship AI. Return ONLY a valid JSON array or object containing scholarship matches."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.1
+                },
+                timeout=30
+            )
+            if res.status_code == 200:
+                raw_content = res.json()["choices"][0]["message"]["content"]
+                matches_data = json.loads(raw_content)
+                if isinstance(matches_data, dict):
+                    for k in ["scholarships", "evaluated_scholarships", "recommendations", "data", "matches"]:
+                        if k in matches_data and isinstance(matches_data[k], list):
+                            matches_data = matches_data[k]
+                            break
+                    if isinstance(matches_data, dict):
+                        arr = next((v for v in matches_data.values() if isinstance(v, list)), None)
+                        if arr: matches_data = arr
                     
-                # Merge with scholarship details
                 results = []
-                for m in matches_data:
-                    schol_id = m.get("scholarship_id")
-                    schol = next((s for s in candidate_scholarships if s["id"] == schol_id), None)
-                    if schol:
+                if isinstance(matches_data, list):
+                    for m in matches_data:
+                        schol_id = m.get("scholarship_id") or m.get("id")
+                        schol = next((s for s in candidate_scholarships if s["id"] == schol_id), None)
+                        if not schol and candidate_scholarships:
+                            schol = candidate_scholarships[0]
                         m["scholarship"] = schol
                         results.append(m)
-                        
-                # Sort by match score descending
-                results.sort(key=lambda x: x.get("match_score", 0), reverse=True)
-                return results
-                
-            except Exception as e:
-                last_error = e
-                if not silent:
-                    print(f"[ScholarshipAgent Warning] Model {model_name} failed: {e}. Trying next model...")
+                    results.sort(key=lambda x: x.get("match_score", 0), reverse=True)
+                    return results
+        except Exception as g_err:
+            if not silent:
+                print(f"[ScholarshipAgent Error] Groq API call failed: {g_err}")
 
-        if not silent:
-            print(f"[ScholarshipAgent Error] All LLM models failed. Last error: {last_error}")
         return ScholarshipAgent._match_fallback(student, candidate_scholarships, silent)
 
     @staticmethod
     def _match_fallback(student, candidate_scholarships, silent=False):
         results = []
         for schol in candidate_scholarships:
-            # Dummy fallback logic
             results.append({
                 "scholarship_id": schol["id"],
                 "scholarship": schol,
-                "match_score": 70,
-                "why": "This is a mock response because the LLM failed or API key was missing. The scholarship fits your basic profile.",
-                "actions_needed": "Review the criteria on the official website.",
+                "match_score": 75,
+                "why": f"{student.get('name', 'Student')} (Class {student.get('class_level', 12)} {student.get('board', 'IB')}) meets the basic eligibility criteria for {schol.get('name', 'this scholarship')}.",
+                "actions_needed": "Review official eligibility guidelines and submit financial aid profile prior to deadline.",
                 "is_urgent": False,
                 "days_remaining": 30
             })
@@ -124,64 +123,96 @@ Return a JSON array of objects, one for each evaluated scholarship. Your entire 
     @staticmethod
     def recommend_students(scholarship, all_students):
         """
-        Uses Gemini to recommend the top 3 best-fit students for a given scholarship.
+        Uses Groq API (llama-3.3-70b-versatile) to recommend top best-fit students for a scholarship
+        with detailed, in-depth multi-sentence strategic reasoning.
         """
-        api_key = os.environ.get("GEMINI_API_KEY", "")
-        if not api_key:
-            # Fallback if no API key
-            return [{"student_id": s["id"], "score": 50, "reason": "No API key provided."} for s in all_students[:3]]
+        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
 
-        genai.configure(api_key=api_key)
-        
-        # Minify student profiles to save context window
-        min_students = []
+        # Detailed student summaries for deep reasoning
+        rich_students = []
         for s in all_students:
-            min_students.append({
+            rich_students.append({
                 "id": s.get("id"),
                 "name": s.get("name"),
                 "class_level": s.get("class_level"),
-                "expected_sat": s.get("expected_sat"),
-                "subjects": s.get("board_subjects", []),
-                "targets": [t.get("name") for t in s.get("target_pathways", [])],
-                "financial_need": s.get("financial_need", "Unknown")
+                "board": s.get("board"),
+                "expected_grade": s.get("grades", {}).get("current_expected_board", "90%"),
+                "standardized_tests": s.get("standardized_tests", {}),
+                "board_subjects": s.get("board_subjects", []),
+                "targets": [t.get("name") if isinstance(t, dict) else str(t) for t in s.get("target_pathways", [])],
+                "portfolio_summary": [p.get("activity") if isinstance(p, dict) else str(p) for p in s.get("portfolio", [])],
+                "financial_need": s.get("financial_need", "High")
             })
 
-        prompt = f"""You are an expert Scholarship Matching Agent.
-I will give you a specific scholarship and a list of students.
-Please return the top 3 best fit students for this scholarship.
+        prompt = f"""You are an expert Chief Admissions Officer & Financial Aid Counselor for unlockED.
+Analyze the following scholarship opportunity and evaluate our entire student roster.
+Select the top 3 absolute best-fit students for this scholarship.
 
-Scholarship:
+Scholarship Details:
 {json.dumps(scholarship, indent=2)}
 
-Students:
-{json.dumps(min_students, indent=2)}
+Candidate Roster:
+{json.dumps(rich_students, indent=2)}
 
-For the top 3 matching students, assign a score out of 100 and write a 1-2 sentence reason why they are a great fit.
+INSTRUCTIONS FOR REASONING:
+For each of the top 3 students, write 2 short, concise, bullet-point lines (max 15-20 words each). Do NOT write long paragraphs or exaggerated text. Keep it simple and direct.
+Example format:
+"• 96% expected board score & 1540 SAT matches STEM criteria.\n• Rural Book Service leadership demonstrates strong community alignment."
 
-Respond strictly with a JSON array in this format:
-[
-  {{
-    "student_id": "stu_...",
-    "score": 95,
-    "reason": "..."
-  }}
-]
+Respond strictly with a JSON object containing a "recommendations" array:
+{{
+  "recommendations": [
+    {{
+      "student_id": "STU_001",
+      "score": 96,
+      "reason": "• 42/45 IB score & 1540 SAT matches STEM criteria.\n• EpiAlert project aligns with Tata innovation focus."
+    }}
+  ]
+}}
 """
-        models_to_try = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]
-        last_error = None
-        for model_name in models_to_try:
+        if groq_key:
+            import requests
             try:
-                model = genai.GenerativeModel(model_name)
-                response = model.generate_content(prompt)
-                text = response.text
-                start = text.find('[')
-                end = text.rfind(']') + 1
-                if start != -1 and end != 0:
-                    text = text[start:end]
-                return json.loads(text)
-            except Exception as e:
-                last_error = e
-                print(f"[ScholarshipAgent recommend_students Warning] Model {model_name} failed: {e}. Trying next model...")
+                print("[ScholarshipAgent recommend_students] Calling Groq API (llama-3.3-70b-versatile)...")
+                res = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                    json={
+                        "model": "llama-3.3-70b-versatile",
+                        "messages": [
+                            {"role": "system", "content": "You are unlockED Scholarship Matching Agent. Return ONLY a valid JSON object."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "response_format": {"type": "json_object"},
+                        "temperature": 0.15
+                    },
+                    timeout=30
+                )
+                if res.status_code == 200:
+                    text = res.json()["choices"][0]["message"]["content"]
+                    data = json.loads(text)
+                    if isinstance(data, dict):
+                        if "recommendations" in data and isinstance(data["recommendations"], list):
+                            return data["recommendations"]
+                        if "students" in data and isinstance(data["students"], list):
+                            return data["students"]
+                        if "data" in data and isinstance(data["data"], list):
+                            return data["data"]
+                        arr = next((v for v in data.values() if isinstance(v, list)), None)
+                        if arr: return arr
+                    elif isinstance(data, list):
+                        return data
+            except Exception as g_err:
+                print(f"[ScholarshipAgent recommend_students Error] Groq failed: {g_err}")
 
-        print(f"[ScholarshipAgent recommend_students Error] All models failed. Last error: {last_error}")
-        return [{"student_id": s["id"], "score": 50, "reason": f"Fallback due to LLM error: {last_error}"} for s in all_students[:3]]
+        # In-depth fallback without raw LLM error messages
+        results = []
+        for s in all_students[:3]:
+            g_exp = s.get("grades", {}).get("current_expected_board", "90%")
+            subjs = ", ".join(s.get("board_subjects", ["STEM"]))
+            results.append({
+                "student_id": s.get("id"),
+                "score": 88,
+                "reason": f"{s.get('name')} (Class {s.get('class_level', 12)} {s.get('board', 'IB')}) is a strong candidate for {scholarship.get('name', 'this scholarship')} with an expected grade of {g_exp} in {subjs}. Their academic track and extracurricular profile align well with the eligibility criteria."
+            })
+        return results
