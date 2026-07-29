@@ -141,7 +141,23 @@ CRITICAL INSTRUCTIONS:
                 print(f"[IngestionAgent Warning] Model {m_name} rate limited/failed: {err}. Trying next model...")
 
         if not data:
-            raise last_err
+            print("[IngestionAgent] Gemini failed. Attempting Ollama fallback on localhost:11434...")
+            import requests
+            try:
+                ollama_prompt = f"{system_prompt}\n\nPlease output ONLY valid JSON matching the schema.\n\nDOCUMENT TEXT:\n{text}"
+                res = requests.post("http://localhost:11434/api/generate", json={
+                    "model": "llama3.1",
+                    "prompt": ollama_prompt,
+                    "format": "json",
+                    "stream": False
+                }, timeout=120)
+                if res.status_code == 200:
+                    data = json.loads(res.json().get("response", "{}"))
+                else:
+                    raise Exception(f"Ollama returned {res.status_code}")
+            except Exception as ollama_err:
+                print(f"[IngestionAgent] Ollama fallback failed: {ollama_err}")
+                raise last_err
         
         # Convert lists back to dictionaries for subjects
         if "grades" in data:

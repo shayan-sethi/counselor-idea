@@ -117,6 +117,7 @@ from functools import wraps
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
 app.secret_key = "prism-secure-secret-key-12345"
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 USERS_PATH = os.path.join(BASE_DIR, "data", "users_db.json")
 

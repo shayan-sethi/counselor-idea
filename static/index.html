@@ -8,7 +8,7 @@
   <meta name="description" content="Unlocked: AI-powered compliance dashboard for education counselors." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/style.css?v=3" />
+  <link rel="stylesheet" href="/static/style.css?v=5" />
 </head>
 
 <body>
@@ -963,6 +963,17 @@
           </div>
         </div>
 
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:12px;">
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Grade 10 Board</label>
+            <input type="text" id="ir-g10-board" placeholder="e.g. IGCSE, CBSE" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Grade 10 Subjects & Marks (Format: Subj:Mark, Subj:Mark)</label>
+            <input type="text" id="ir-g10-subjects" placeholder="e.g. Math:A*, Physics:90" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+          </div>
+        </div>
+
         <div>
           <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Board / Class Subjects (Comma separated)</label>
           <input type="text" id="ir-subjects" placeholder="e.g. Physics, Chemistry, Mathematics, English" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
@@ -971,6 +982,11 @@
         <div>
           <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">CUET Subjects (Comma separated)</label>
           <input type="text" id="ir-cuet" placeholder="e.g. General Test, Physics" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
+        </div>
+
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:var(--text-2); display:block; margin-bottom:4px;">Target Pathways (Comma separated IDs)</label>
+          <input type="text" id="ir-targets" placeholder="e.g. MIT_STEM, CUET_DU_CS" style="width:100%; border-radius:6px; border:1px solid var(--border); padding:8px 12px; background:var(--surface); color:var(--text-1); font-size:0.85rem;">
         </div>
 
         <div>
@@ -986,7 +1002,7 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=13"></script>
+  <script src="/static/app.js?v=14"></script>
 </body>
 
 </html>

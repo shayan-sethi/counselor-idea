@@ -1568,7 +1568,26 @@ async function ingestCounselorDocumentFromDash() {
     document.getElementById('ir-cuet').value = Array.isArray(cuets) ? cuets.join(', ') : cuets;
 
     let portf = s.portfolio || [];
-    document.getElementById('ir-portfolio').value = Array.isArray(portf) ? portf.join('\n') : portf;
+    if (Array.isArray(portf)) {
+      document.getElementById('ir-portfolio').value = portf.map(p => {
+        if (typeof p === 'object') return `${p.activity || ''} (Tier ${p.tier || 3}): ${p.description || ''}`.trim();
+        return p;
+      }).join('\n');
+    }
+
+    if (s.grades) {
+      document.getElementById('ir-g10-board').value = s.grades.g10_board || '';
+      let g10s = s.grades.g10_subjects || s.grades.subjects || {};
+      if (typeof g10s === 'object' && !Array.isArray(g10s)) {
+        let g10Arr = [];
+        for (const [k, v] of Object.entries(g10s)) {
+          g10Arr.push(`${k}:${v}`);
+        }
+        document.getElementById('ir-g10-subjects').value = g10Arr.join(', ');
+      }
+    }
+
+    document.getElementById('ir-targets').value = Array.isArray(s.targets) ? s.targets.join(', ') : '';
 
     document.getElementById('ir-source-filename').textContent = `Extracted from ${data.extracted_from ? data.extracted_from.join(', ') : 'uploaded files'}`;
 
@@ -1609,7 +1628,45 @@ async function confirmIngestSaveStudent() {
   const cuet_subjects = rawCuet ? rawCuet.split(',').map(x => x.trim()).filter(Boolean) : [];
 
   const rawPort = document.getElementById('ir-portfolio').value;
-  const portfolio = rawPort ? rawPort.split('\n').map(x => x.trim()).filter(Boolean) : [];
+  const portfolio = rawPort ? rawPort.split('\n').map(x => {
+    let p = x.trim();
+    if (!p) return null;
+    let tier = 3;
+    let activity = p;
+    let desc = "";
+    
+    // basic parsing for "(Tier X):"
+    const m = p.match(/^(.*?)\s*\(Tier\s*(\d)\):\s*(.*)$/);
+    if (m) {
+      activity = m[1].trim();
+      tier = parseInt(m[2], 10);
+      desc = m[3].trim();
+    }
+    
+    return {
+      activity: activity,
+      tier: tier,
+      description: desc
+    };
+  }).filter(Boolean) : [];
+
+  const g10Board = document.getElementById('ir-g10-board').value.trim();
+  const rawG10 = document.getElementById('ir-g10-subjects').value;
+  let g10Subjects = {};
+  if (rawG10) {
+    rawG10.split(',').forEach(part => {
+      const p = part.split(':');
+      if (p.length === 2) {
+        let gradeVal = p[1].trim();
+        let numVal = parseFloat(gradeVal);
+        if (!isNaN(numVal) && String(numVal) === gradeVal) gradeVal = numVal;
+        g10Subjects[p[0].trim()] = gradeVal;
+      }
+    });
+  }
+
+  const rawTargets = document.getElementById('ir-targets').value;
+  const targets = rawTargets ? rawTargets.split(',').map(x => x.trim()).filter(Boolean) : (currentExtractedStudentData && currentExtractedStudentData.targets ? currentExtractedStudentData.targets : []);
 
   const studentPayload = {
     name: name,
@@ -1617,10 +1674,14 @@ async function confirmIngestSaveStudent() {
     class_level: class_level,
     board_subjects: board_subjects,
     cuet_subjects: cuet_subjects,
-    grades: { current_expected_board: gexp },
+    grades: { 
+      current_expected_board: gexp,
+      g10_board: g10Board || null,
+      g10_subjects: g10Subjects
+    },
     standardized_tests: satScore ? { SAT: satScore } : {},
     portfolio: portfolio,
-    targets: (currentExtractedStudentData && currentExtractedStudentData.targets) ? currentExtractedStudentData.targets : ["t1", "t2"]
+    targets: targets
   };
 
   try {
