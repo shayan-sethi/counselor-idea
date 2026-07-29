@@ -1027,11 +1027,8 @@ def api_counselor_agent():
             "audits": student_audits
         })
 
-<<<<<<< HEAD
-=======
     groq_key = os.environ.get("GROQ_API_KEY", "").strip()
 
->>>>>>> groq-testing
     system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
 You have access to the entire school's active student cohort database provided below.
 
