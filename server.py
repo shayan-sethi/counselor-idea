@@ -153,10 +153,22 @@ def counselor_required(f):
     def decorated_function(*args, **kwargs):
         if "username" not in session:
             return jsonify({"error": "Unauthorized. Please log in."}), 401
-        if session.get("role") != "counselor":
+        if session.get("role") not in ["counselor", "admin"]:
             return jsonify({"error": "Forbidden. Counselor role required."}), 403
         return f(*args, **kwargs)
     return decorated_function
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            return jsonify({"error": "Unauthorized. Please log in."}), 401
+        if session.get("role") != "admin":
+            return jsonify({"error": "Forbidden. Admin role required."}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ── End Auth Decorators ──
 
 def student_self_only(f):
     @wraps(f)
@@ -188,6 +200,72 @@ def add_security_headers(response):
     response.headers['X-XSS-Protection'] = '1; mode=block'
     response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self';"
     return response
+
+# ── Admin Endpoints ──
+
+@app.route("/api/admin/users", methods=["GET"])
+@admin_required
+def api_admin_get_users():
+    users = load_users()
+    safe_users = [{"username": u["username"], "role": u["role"], "student_id": u.get("student_id")} for u in users]
+    return jsonify(safe_users)
+
+@app.route("/api/admin/users", methods=["POST"])
+@admin_required
+def api_admin_create_user():
+    data = request.get_json()
+    username = data.get("username", "").strip()
+    password = data.get("password", "").strip()
+    role = data.get("role", "student").strip()
+    student_id = data.get("student_id")
+    if not student_id:
+        student_id = None
+
+    if not username or not password:
+        return jsonify({"error": "Username and password required"}), 400
+
+    users = load_users()
+    if any(u["username"].lower() == username.lower() for u in users):
+        return jsonify({"error": "Username already exists"}), 400
+
+    new_user = {
+        "username": username,
+        "password_hash": hash_password(password),
+        "role": role,
+        "student_id": student_id
+    }
+    users.append(new_user)
+    save_users(users)
+    return jsonify({"success": True, "message": "User created successfully"})
+
+@app.route("/api/admin/users/<username>", methods=["DELETE"])
+@admin_required
+def api_admin_delete_user(username):
+    if username.lower() == "admin":
+        return jsonify({"error": "Cannot delete the default admin account"}), 400
+    users = load_users()
+    new_users = [u for u in users if u["username"].lower() != username.lower()]
+    if len(users) == len(new_users):
+        return jsonify({"error": "User not found"}), 404
+    save_users(new_users)
+    return jsonify({"success": True})
+
+@app.route("/api/admin/users/<username>/password", methods=["PUT"])
+@admin_required
+def api_admin_reset_password(username):
+    data = request.get_json()
+    new_password = data.get("password", "").strip()
+    if not new_password:
+        return jsonify({"error": "New password required"}), 400
+
+    users = load_users()
+    user = next((u for u in users if u["username"].lower() == username.lower()), None)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    user["password_hash"] = hash_password(new_password)
+    save_users(users)
+    return jsonify({"success": True, "message": "Password updated successfully"})
 
 # ── Auth Endpoints ──
 

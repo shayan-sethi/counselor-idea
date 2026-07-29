@@ -1,5 +1,11 @@
 [
   {
+    "username": "admin",
+    "password_hash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+    "role": "admin",
+    "student_id": null
+  },
+  {
     "username": "counselor",
     "password_hash": "5efd3d99ffa5347945cb96ce0cfc994d55d76a10ed702336aae44f7919db98a2",
     "role": "counselor",

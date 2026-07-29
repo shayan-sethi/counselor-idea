@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - unlockED</title>
+  <meta name="description" content="Administration console for unlockED." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css?v=6" />
+  <style>
+    .badge-admin { background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .badge-counselor { background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .badge-student { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ SIDEBAR & MAIN LAYOUT ═══ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg viewBox="0 0 100 80" width="44" height="44" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 50 15 L 85 28 L 50 41 L 15 28 Z" fill="#6B62D2" />
+        <path d="M 27 34 L 27 50 C 27 58, 73 58, 73 50 L 73 34 Z" fill="#584FC1" />
+        <line x1="22" y1="30" x2="22" y2="48" stroke="#584FC1" stroke-width="2" />
+        <circle cx="22" cy="50" r="2.5" fill="#584FC1" />
+        <polygon points="50,21 52,26 57,26 53,29.5 54.5,35 50,32 45.5,35 47,29.5 43,26 48,26" fill="#FFFFFF" />
+      </svg>
+      <div class="brand-name">unlock<span style="text-transform: uppercase;">ED</span></div>
+    </div>
+    <nav class="nav-links">
+      <button class="nav-item active" id="tab-users" onclick="switchView('users')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        User Management
+      </button>
+      <button class="nav-item" id="tab-ingestion" onclick="switchView('ingestion')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        Bulk Ingestion
+      </button>
+    </nav>
+    <div class="counselor-profile">
+      <div class="cp-avatar">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </div>
+      <div class="cp-info">
+        <span class="cp-name" id="profile-admin-name">Admin</span>
+        <span class="cp-role">System Administrator</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="app-container">
+    <header class="topbar">
+      <div class="search-container">
+        <!-- Optional search bar placeholder -->
+      </div>
+      <div class="topbar-right">
+        <button class="btn-outline" onclick="logout()" style="font-size:0.8rem; padding:6px 12px;">Log Out</button>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+
+      <!-- ═══ USER MANAGEMENT VIEW ═══ -->
+      <main id="view-users">
+        <div class="dash-header">
+          <div>
+            <div class="greeting">User Management</div>
+            <div class="greeting-sub">Manage counselors, students, and administrators</div>
+          </div>
+          <div>
+            <button class="btn-primary" onclick="openAddModal()">
+              + Add User
+            </button>
+          </div>
+        </div>
+
+        <div class="excel-grid-container" style="background:var(--surface);">
+          <div class="excel-toolbar">
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">System Users</div>
+          </div>
+          <div class="excel-table-wrapper" style="overflow-x:auto;">
+            <table class="excel-table">
+              <thead>
+                <tr>
+                  <th style="text-align:left;">Username</th>
+                  <th style="text-align:left;">Role</th>
+                  <th style="text-align:left;">Student ID</th>
+                  <th style="text-align:left;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="user-table-body">
+                <tr><td colspan="4" style="text-align: center; padding: 20px;">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═══ BULK INGESTION VIEW ═══ -->
+      <main id="view-ingestion" class="hidden">
+        <div class="dash-header">
+          <div>
+            <div class="greeting">Bulk Data Ingestion</div>
+            <div class="greeting-sub">Upload a CSV/Excel file to bulk import new students</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface); border:1px dashed var(--border); border-radius:12px; padding:40px; text-align:center; max-width:600px; margin: 40px auto;">
+          <svg width="48" height="48" fill="none" stroke="var(--text-3)" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom:16px;">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <div style="font-size:1.1rem; font-weight:600; color:var(--text-1); margin-bottom:8px;">Import Student Data</div>
+          <div style="font-size:0.9rem; color:var(--text-2); margin-bottom:24px;">Upload a spreadsheet containing student profiles, curriculum data, and extracurriculars. AI will automatically map the columns.</div>
+          
+          <input type="file" id="admin-ingest-file" accept=".csv,.xlsx" style="display:none;" onchange="handleBulkIngestFile(event)">
+          <button class="btn-primary" onclick="document.getElementById('admin-ingest-file').click()" style="padding:12px 24px;">Select File</button>
+          
+          <div id="admin-ingest-status" style="margin-top:16px; font-size:0.9rem; font-weight:600; display:none; color:var(--accent);"></div>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ═══ ADD USER MODAL ═══ -->
+  <div class="modal-overlay" id="add-modal" style="display:none;" onclick="if(event.target===this) closeModals()">
+    <div class="modal-content" style="max-width:400px;">
+      <div class="modal-header">
+        <h2 style="font-size:1.25rem; font-weight:700; color:var(--text-1); margin:0;">Add New User</h2>
+        <button class="modal-close" onclick="closeModals()">✕</button>
+      </div>
+      <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.85rem; font-weight:600; color:var(--text-2);">Username</label>
+          <input type="text" id="add-username" placeholder="e.g. counselor_smith" style="padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-1);">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.85rem; font-weight:600; color:var(--text-2);">Password</label>
+          <input type="password" id="add-password" placeholder="••••••••" style="padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-1);">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.85rem; font-weight:600; color:var(--text-2);">Role</label>
+          <select id="add-role" onchange="toggleStudentId()" style="padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-1);">
+            <option value="student">Student</option>
+            <option value="counselor">Counselor</option>
+            <option value="admin">Administrator</option>
+          </select>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:6px;" id="student-id-group">
+          <label style="font-size:0.85rem; font-weight:600; color:var(--text-2);">Student ID (Required for Student role)</label>
+          <input type="text" id="add-studentid" placeholder="STU_100" style="padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-1);">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:8px;">
+          <button class="btn-outline" onclick="closeModals()">Cancel</button>
+          <button class="btn-primary" onclick="submitAddUser()">Create User</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RESET PASSWORD MODAL ═══ -->
+  <div class="modal-overlay" id="reset-modal" style="display:none;" onclick="if(event.target===this) closeModals()">
+    <div class="modal-content" style="max-width:400px;">
+      <div class="modal-header">
+        <h2 style="font-size:1.25rem; font-weight:700; color:var(--text-1); margin:0;">Reset Password</h2>
+        <button class="modal-close" onclick="closeModals()">✕</button>
+      </div>
+      <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+        <div style="font-size:0.9rem; color:var(--text-2);">Set a new password for <strong id="reset-target-user" style="color:var(--text-1);"></strong>.</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <label style="font-size:0.85rem; font-weight:600; color:var(--text-2);">New Password</label>
+          <input type="password" id="reset-password" placeholder="••••••••" style="padding:10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); color:var(--text-1);">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:8px;">
+          <button class="btn-outline" onclick="closeModals()">Cancel</button>
+          <button class="btn-primary" onclick="submitResetPassword()">Save Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ BULK INGEST REVIEW MODAL ═══ -->
+  <div class="modal-overlay" id="modal-bulk-ingest" style="display:none;" onclick="if(event.target===this) document.getElementById('modal-bulk-ingest').style.display='none'">
+    <div class="modal-content" style="max-width:900px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header">
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:700; color:var(--text-1); margin:0;">Review Bulk Import</h2>
+          <div style="font-size:0.8rem; color:var(--text-3);">AI has mapped the columns in your spreadsheet. Please review the extracted data before importing.</div>
+        </div>
+        <button class="modal-close" onclick="document.getElementById('modal-bulk-ingest').style.display='none'">✕</button>
+      </div>
+      <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+        <div style="font-size:0.85rem; color:var(--accent); background:rgba(107,98,210,0.08); padding:10px 14px; border-radius:8px; font-weight:500;" id="bulk-ingest-status">
+          Loading preview...
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="excel-table">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Name</th>
+                <th style="text-align:left;">Class</th>
+                <th style="text-align:left;">Board</th>
+                <th style="text-align:left;">Subjects</th>
+                <th style="text-align:left;">Targets</th>
+              </tr>
+            </thead>
+            <tbody id="bulk-ingest-table-body">
+              <!-- Rows populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:8px;">
+          <button class="btn-outline" onclick="document.getElementById('modal-bulk-ingest').style.display='none'">Cancel</button>
+          <button class="btn-primary" id="btn-confirm-bulk" onclick="confirmBulkIngest()">Confirm & Import Students</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/admin.js"></script>
+</body>
+</html>

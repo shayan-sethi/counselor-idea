@@ -301,6 +301,7 @@
 
     <div class="hint-area">
       <strong>Demo Accounts:</strong><br>
+      Admin: <code>admin</code> / <code>admin123</code><br>
       Counselor: <code>counselor</code> / <code>counselor123</code><br>
       Student: <code>STU_001</code> / <code>student123</code>
     </div>
@@ -371,7 +372,9 @@
           btn.textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
         } else {
           if (mode === 'signup') localStorage.removeItem('wizardData');
-          if (data.role === 'counselor') {
+          if (data.role === 'admin') {
+            window.location.href = '/static/admin.html';
+          } else if (data.role === 'counselor') {
             window.location.href = '/static/intro.html?role=counselor';
           } else {
             window.location.href = '/static/intro.html?role=student';
