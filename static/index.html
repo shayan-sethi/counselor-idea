@@ -95,6 +95,16 @@
         </svg>
         Deadlines
       </button>
+      <button class="nav-item" id="tab-recommendations" onclick="switchView('recommendations')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Recommendation Studio
+      </button>
     </nav>
     <div class="counselor-profile">
       <div class="cp-avatar">
@@ -251,7 +261,11 @@
               <a href="#" class="view-all" onclick="switchView('manage')">View All &rsaquo;</a>
             </div>
             <div class="priority-list" id="student-rows">
-              <div style="padding:24px; text-align:center; color:var(--text-3);">Loading AI Priority Queue...</div>
+              <div style="padding:40px 24px; text-align:center; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:16px;">
+                <div class="spinner" style="width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite;"></div>
+                <div>Unlocked Engine analyzing cohort data...</div>
+                <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+              </div>
             </div>
 
             <!-- AI Command Center -->
@@ -863,6 +877,47 @@
       </main>
 
       <!-- Hidden stub -->
+      <main id="view-recommendations" class="hidden">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Recommendation Studio</h1>
+            <p class="section-subtitle">Draft and manage Letters of Recommendation</p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <select id="rec-student-select" class="form-input" style="width: 250px;">
+              <option value="">Select a student...</option>
+            </select>
+            <button class="btn-primary" onclick="generateAIRecommendation()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Auto-Draft with AI
+            </button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 24px; height: calc(100vh - 180px);">
+          
+          <!-- Left: Editor -->
+          <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--bg-1);">
+              <button class="btn-secondary" style="padding: 4px 12px; font-size: 12px;" onclick="copyRecText()">Copy to Clipboard</button>
+            </div>
+            <textarea id="rec-editor" style="flex:1; width: 100%; border: none; padding: 32px 40px; font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.7; resize: none; background: transparent; outline: none; color: var(--text-1);" placeholder="Start typing the letter of recommendation here..."></textarea>
+          </div>
+
+          <!-- Right: Brag Sheet Sidebar -->
+          <div class="card" style="overflow-y: auto; height: 100%; background: var(--bg-2);">
+            <div style="padding: 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-2); z-index: 10;">
+              <h3 style="margin:0; font-size: 14px; color: var(--text-1); font-weight: 600;">Student Context (Brag Sheet)</h3>
+            </div>
+            <div id="rec-sidebar-content" style="padding: 16px; display: flex; flex-direction: column; gap: 16px; font-size: 13px; color: var(--text-2);">
+              <div style="text-align: center; color: var(--text-3); padding: 40px 20px;">
+                Select a student to load their profile context.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </main>
+
       <main id="view-student-profile" class="hidden"></main>
     </div>
   </div>
@@ -911,7 +966,7 @@
     </div>
   </div>
 
-  <script src="/static/app.js?v=13"></script>
+  <script src="/static/app.js?v=17"></script>
 </body>
 
 </html>

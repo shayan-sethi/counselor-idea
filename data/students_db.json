@@ -1,165 +1,262 @@
 [
   {
-    "id": "STU_001",
-    "name": "Aarav Sharma",
-    "class_level": 12,
-    "board": "CBSE",
-    "board_subjects": [
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "English"
-    ],
-    "cuet_subjects": [
-      "Physics",
-      "Chemistry",
-      "Mathematics",
-      "English"
-    ],
-    "targets": [
-      "CUET_DU_CS"
-    ],
-    "grades": {
-      "current_expected_board": "88.0%",
-      "subjects": {
-        "Chemistry": 86,
-        "Computer Science": 92,
-        "English": 90,
-        "Physics": 85
-      }
-    },
-    "standardized_tests": {},
-    "portfolio": [],
-    "shortlisted_colleges": [
-      "MIT",
-      "CAMBRIDGE",
-      "OXFORD",
-      "IND_PLAKSHA",
-      "IMPERIAL",
-      "IND_SNU",
-      "US_166027"
-    ]
-  },
-  {
-    "id": "STU_002",
-    "name": "Dia Mehta",
+    "id": "STU_101",
+    "name": "Kavya Patel",
     "class_level": 10,
-    "board": "CBSE",
-    "planned_class_11_subjects": [
-      "Economics",
-      "Commerce",
-      "Accountancy",
-      "English"
-    ],
-    "targets": [
-      "CUET_DU_ECO"
-    ],
-    "grades": {
-      "current_expected_board": "90.0%"
-    },
-    "standardized_tests": {},
-    "portfolio": []
-  },
-  {
-    "id": "STU_003",
-    "name": "Rohan Verma",
-    "class_level": 12,
-    "board": "CBSE",
+    "board": "IGCSE",
     "board_subjects": [
       "Physics",
       "Chemistry",
-      "Mathematics",
-      "English"
+      "Biology",
+      "English",
+      "Psychology"
     ],
     "targets": [
-      "CAMBRIDGE_CS"
+      "VIT",
+      "DU_ST_STEPHENS",
+      "IIT_BOMBAY",
+      "CAMBRIDGE_MED"
     ],
     "grades": {
-      "current_expected_board": "95.0%",
+      "current_expected_board": "72.7%",
       "subjects": {
-        "Chemistry": 94,
-        "English": 92,
-        "Mathematics": 95,
-        "Physics": 96
-      }
-    },
-    "standardized_tests": {},
-    "portfolio": [],
-    "shortlisted_colleges": [
-      "CAMBRIDGE",
-      "OXFORD",
-      "IMPERIAL",
-      "MIT",
-      "DU",
-      "STANFORD"
-    ]
-  },
-  {
-    "id": "STU_004",
-    "name": "Ananya Iyer",
-    "class_level": 12,
-    "board": "CBSE",
-    "board_subjects": [
-      "Physics",
-      "Chemistry",
-      "Mathematics",
-      "English"
-    ],
-    "targets": [
-      "MIT_STEM"
-    ],
-    "grades": {
-      "current_expected_board": "96.0%",
-      "subjects": {
-        "Chemistry": 96,
-        "English": 93,
-        "Mathematics": 98,
-        "Physics": 97
+        "Physics": 75,
+        "Chemistry": 69,
+        "Biology": 74,
+        "English": 68,
+        "Psychology": 77
       }
     },
     "standardized_tests": {
-      "SAT": 1480
+      "SAT": 1420
     },
     "portfolio": [
       {
-        "activity": "State Hackathon Winner",
-        "description": "Built AI assistant",
-        "tier": 2
+        "activity": "MUN Best Delegate",
+        "description": "Won at Harvard MUN",
+        "tier": 1
+      },
+      {
+        "activity": "NGO Volunteer",
+        "description": "Taught English",
+        "tier": 3
       }
     ],
     "shortlisted_colleges": [
-      "CAMBRIDGE"
+      "NYU",
+      "KING'S_COLLEGE_LONDON"
     ]
   },
   {
-    "id": "STU_005",
-    "name": "Kabir Singh",
-    "class_level": 12,
+    "id": "STU_102",
+    "name": "Arjun Ahuja",
+    "class_level": 11,
     "board": "CBSE",
+    "board_subjects": [
+      "History",
+      "Political Science",
+      "Geography",
+      "Economics",
+      "English"
+    ],
+    "targets": [
+      "DU_SRCC",
+      "IIT_BOMBAY"
+    ],
+    "grades": {
+      "current_expected_board": "90.7%",
+      "subjects": {
+        "History": 94,
+        "Political Science": 86,
+        "Geography": 94,
+        "Economics": 94,
+        "English": 86
+      }
+    },
+    "standardized_tests": {
+      "ACT": 26
+    },
+    "portfolio": [
+      {
+        "activity": "School Choir Lead",
+        "description": "Lead Singer",
+        "tier": 3
+      }
+    ],
+    "shortlisted_colleges": []
+  },
+  {
+    "id": "STU_103",
+    "name": "Aadhya Sharma",
+    "class_level": 10,
+    "board": "State Board",
     "board_subjects": [
       "Physics",
       "Chemistry",
       "Mathematics",
-      "English"
+      "English",
+      "Economics"
     ],
     "targets": [
-      "JEE_MAIN"
+      "DU_SRCC",
+      "OXBRIDGE"
     ],
     "grades": {
-      "current_expected_board": "72.0%",
+      "current_expected_board": "79.9%",
       "subjects": {
-        "Mathematics": 70.0,
-        "Physics": 73.0,
-        "Chemistry": 73.0,
-        "English": 72.0
+        "Physics": 84,
+        "Chemistry": 77,
+        "Mathematics": 83,
+        "English": 74,
+        "Economics": 79
+      }
+    },
+    "standardized_tests": {
+      "ACT": 31
+    },
+    "portfolio": [],
+    "shortlisted_colleges": [
+      "NYU",
+      "BITS_PILANI"
+    ]
+  },
+  {
+    "id": "STU_104",
+    "name": "Avni Bose",
+    "class_level": 10,
+    "board": "IGCSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "English",
+      "Psychology"
+    ],
+    "targets": [
+      "STANFORD_CS",
+      "LSE_ECON",
+      "AIIMS"
+    ],
+    "grades": {
+      "current_expected_board": "94.1%",
+      "subjects": {
+        "Physics": 95,
+        "Chemistry": 95,
+        "Biology": 95,
+        "English": 91,
+        "Psychology": 93
       }
     },
     "standardized_tests": {},
-    "portfolio": []
+    "portfolio": [
+      {
+        "activity": "MUN Best Delegate",
+        "description": "Won at Harvard MUN",
+        "tier": 1
+      },
+      {
+        "activity": "NGO Volunteer",
+        "description": "Taught English",
+        "tier": 3
+      }
+    ],
+    "shortlisted_colleges": [
+      "ASHOKA_UNIV",
+      "MIT",
+      "OXFORD",
+      "LSE",
+      "UCL"
+    ]
   },
   {
-    "id": "STU_006",
-    "name": "Meera Patel",
+    "id": "STU_105",
+    "name": "Varun Singh",
+    "class_level": 11,
+    "board": "ICSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Economics"
+    ],
+    "targets": [
+      "UCLA_PREMED"
+    ],
+    "grades": {
+      "current_expected_board": "85.1%",
+      "subjects": {
+        "Physics": 81,
+        "Chemistry": 88,
+        "Mathematics": 85,
+        "English": 81,
+        "Economics": 84
+      }
+    },
+    "standardized_tests": {
+      "ACT": 32
+    },
+    "portfolio": [
+      {
+        "activity": "School Choir Lead",
+        "description": "Lead Singer",
+        "tier": 3
+      }
+    ],
+    "shortlisted_colleges": [
+      "UCL",
+      "KING'S_COLLEGE_LONDON",
+      "UC_BERKELEY",
+      "ASHOKA_UNIV",
+      "OXFORD"
+    ]
+  },
+  {
+    "id": "STU_106",
+    "name": "Shaurya Trivedi",
+    "class_level": 11,
+    "board": "CBSE",
+    "board_subjects": [
+      "Economics",
+      "Accounts",
+      "Commerce",
+      "Mathematics",
+      "English"
+    ],
+    "targets": [
+      "STANFORD_CS",
+      "IVY_LEAGUE"
+    ],
+    "grades": {
+      "current_expected_board": "92.6%",
+      "subjects": {
+        "Economics": 88,
+        "Accounts": 90,
+        "Commerce": 96,
+        "Mathematics": 88,
+        "English": 96
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "Research Paper",
+        "description": "Published paper on ML in Healthcare",
+        "tier": 1
+      },
+      {
+        "activity": "Math Olympiad",
+        "description": "Gold Medal",
+        "tier": 1
+      }
+    ],
+    "shortlisted_colleges": [
+      "BITS_PILANI"
+    ]
+  },
+  {
+    "id": "STU_107",
+    "name": "Siddharth Ahuja",
     "class_level": 12,
     "board": "CBSE",
     "board_subjects": [
@@ -169,1058 +266,627 @@
       "English",
       "Economics"
     ],
-    "cuet_subjects": [
+    "targets": [
+      "AIIMS",
+      "BITS_PILANI",
+      "IIT_BOMBAY",
+      "ASHOKA_UNIV"
+    ],
+    "grades": {
+      "current_expected_board": "90.4%",
+      "subjects": {
+        "Physics": 91,
+        "Chemistry": 89,
+        "Mathematics": 94,
+        "English": 89,
+        "Economics": 92
+      }
+    },
+    "standardized_tests": {
+      "ACT": 33
+    },
+    "portfolio": [
+      {
+        "activity": "Research Paper",
+        "description": "Published paper on ML in Healthcare",
+        "tier": 1
+      },
+      {
+        "activity": "Math Olympiad",
+        "description": "Gold Medal",
+        "tier": 1
+      }
+    ],
+    "shortlisted_colleges": [
+      "LSE",
+      "VIT",
+      "KING'S_COLLEGE_LONDON"
+    ]
+  },
+  {
+    "id": "STU_108",
+    "name": "Oman Mehta",
+    "class_level": 10,
+    "board": "IB",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
       "Mathematics",
+      "English",
+      "Computer Science"
+    ],
+    "targets": [
+      "LSE_ECON",
+      "IVY_LEAGUE",
+      "DU_ST_STEPHENS",
+      "BITS_PILANI"
+    ],
+    "grades": {
+      "current_expected_board": "33/45",
+      "subjects": {
+        "Physics": 71,
+        "Chemistry": 72,
+        "Mathematics": 73,
+        "English": 76,
+        "Computer Science": 69
+      }
+    },
+    "standardized_tests": {},
+    "portfolio": [
+      {
+        "activity": "Debate Club",
+        "description": "Secretary",
+        "tier": 2
+      },
+      {
+        "activity": "Finance Blog",
+        "description": "10k readers",
+        "tier": 3
+      }
+    ],
+    "shortlisted_colleges": [
+      "CAMBRIDGE"
+    ]
+  },
+  {
+    "id": "STU_109",
+    "name": "Arjun Singh",
+    "class_level": 10,
+    "board": "State Board",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Economics"
+    ],
+    "targets": [
+      "AIIMS",
+      "VIT",
+      "DU_SRCC",
+      "UCLA_PREMED"
+    ],
+    "grades": {
+      "current_expected_board": "83.4%",
+      "subjects": {
+        "Physics": 81,
+        "Chemistry": 88,
+        "Mathematics": 84,
+        "English": 82,
+        "Economics": 85
+      }
+    },
+    "standardized_tests": {
+      "ACT": 32
+    },
+    "portfolio": [
+      {
+        "activity": "Debate Club",
+        "description": "Secretary",
+        "tier": 2
+      },
+      {
+        "activity": "Finance Blog",
+        "description": "10k readers",
+        "tier": 3
+      }
+    ],
+    "shortlisted_colleges": [
+      "OXFORD",
+      "DU",
+      "BITS_PILANI"
+    ]
+  },
+  {
+    "id": "STU_110",
+    "name": "Aryan Ahuja",
+    "class_level": 10,
+    "board": "CBSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Economics"
+    ],
+    "targets": [
+      "ASHOKA_UNIV",
+      "IIT_BOMBAY"
+    ],
+    "grades": {
+      "current_expected_board": "78.9%",
+      "subjects": {
+        "Physics": 77,
+        "Chemistry": 80,
+        "Mathematics": 76,
+        "English": 83,
+        "Economics": 76
+      }
+    },
+    "standardized_tests": {
+      "ACT": 35
+    },
+    "portfolio": [
+      {
+        "activity": "Research Paper",
+        "description": "Published paper on ML in Healthcare",
+        "tier": 1
+      },
+      {
+        "activity": "Math Olympiad",
+        "description": "Gold Medal",
+        "tier": 1
+      }
+    ],
+    "shortlisted_colleges": [
+      "KING'S_COLLEGE_LONDON"
+    ]
+  },
+  {
+    "id": "STU_111",
+    "name": "Rohan Verma",
+    "class_level": 12,
+    "board": "IB",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "English",
+      "Psychology"
+    ],
+    "targets": [
+      "IVY_LEAGUE",
+      "ASHOKA_UNIV",
+      "BITS_PILANI",
+      "STANFORD_CS"
+    ],
+    "grades": {
+      "current_expected_board": "44/45",
+      "subjects": {
+        "Physics": 95,
+        "Chemistry": 95,
+        "Biology": 100,
+        "English": 94,
+        "Psychology": 98
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1420
+    },
+    "portfolio": [
+      {
+        "activity": "MUN Best Delegate",
+        "description": "Won at Harvard MUN",
+        "tier": 1
+      },
+      {
+        "activity": "NGO Volunteer",
+        "description": "Taught English",
+        "tier": 3
+      }
+    ],
+    "shortlisted_colleges": []
+  },
+  {
+    "id": "STU_112",
+    "name": "Anya Menon",
+    "class_level": 12,
+    "board": "State Board",
+    "board_subjects": [
+      "Economics",
+      "Accounts",
+      "Commerce",
+      "Mathematics",
+      "English"
+    ],
+    "targets": [
+      "UCLA_PREMED",
+      "LSE_ECON",
+      "DU_ST_STEPHENS",
+      "CAMBRIDGE_MED"
+    ],
+    "grades": {
+      "current_expected_board": "90.6%",
+      "subjects": {
+        "Economics": 95,
+        "Accounts": 94,
+        "Commerce": 93,
+        "Mathematics": 93,
+        "English": 87
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1310
+    },
+    "portfolio": [
+      {
+        "activity": "Research Paper",
+        "description": "Published paper on ML in Healthcare",
+        "tier": 1
+      },
+      {
+        "activity": "Math Olympiad",
+        "description": "Gold Medal",
+        "tier": 1
+      }
+    ],
+    "shortlisted_colleges": [
+      "BITS_PILANI"
+    ]
+  },
+  {
+    "id": "STU_113",
+    "name": "Diya Gupta",
+    "class_level": 10,
+    "board": "ICSE",
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Biology",
+      "English",
+      "Psychology"
+    ],
+    "targets": [
+      "IVY_LEAGUE",
+      "IIT_BOMBAY",
+      "BITS_PILANI",
+      "OXBRIDGE"
+    ],
+    "grades": {
+      "current_expected_board": "99.3%",
+      "subjects": {
+        "Physics": 102,
+        "Chemistry": 94,
+        "Biology": 97,
+        "English": 103,
+        "Psychology": 96
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1320
+    },
+    "portfolio": [
+      {
+        "activity": "Debate Club",
+        "description": "Secretary",
+        "tier": 2
+      },
+      {
+        "activity": "Finance Blog",
+        "description": "10k readers",
+        "tier": 3
+      }
+    ],
+    "shortlisted_colleges": [
+      "BITS_PILANI",
+      "VIT",
+      "IMPERIAL"
+    ]
+  },
+  {
+    "id": "STU_114",
+    "name": "Varun Kapoor",
+    "class_level": 12,
+    "board": "State Board",
+    "board_subjects": [
+      "History",
+      "Political Science",
+      "Geography",
       "Economics",
       "English"
     ],
     "targets": [
-      "STANFORD_CS",
-      "CUET_DU_ECO"
+      "OXBRIDGE",
+      "AIIMS",
+      "DU_SRCC"
     ],
     "grades": {
-      "current_expected_board": "98.0%",
+      "current_expected_board": "75.6%",
       "subjects": {
-        "Mathematics": 99.0,
-        "Physics": 98.0,
-        "Chemistry": 97.0,
-        "English": 95.0,
-        "Economics": 98.0
+        "History": 73,
+        "Political Science": 72,
+        "Geography": 72,
+        "Economics": 79,
+        "English": 79
       }
     },
-    "standardized_tests": {
-      "SAT": 1570
-    },
+    "standardized_tests": {},
     "portfolio": [
       {
-        "activity": "IMO Gold Medal",
-        "description": "International Mathematical Olympiad Winner",
-        "tier": 1
+        "activity": "Debate Club",
+        "description": "Secretary",
+        "tier": 2
+      },
+      {
+        "activity": "Finance Blog",
+        "description": "10k readers",
+        "tier": 3
       }
+    ],
+    "shortlisted_colleges": [
+      "UCL",
+      "VIT",
+      "ASHOKA_UNIV",
+      "UC_BERKELEY"
     ]
   },
   {
-    "name": "Aarav Mehta",
+    "id": "STU_115",
+    "name": "Riya Nair",
     "class_level": 12,
-    "board": "CBSE",
+    "board": "IGCSE",
     "board_subjects": [
-      "Mathematics",
       "Physics",
       "Chemistry",
-      "Biology",
-      "Computer Science",
-      "English",
-      "Geography",
-      "Literature",
-      "History"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "g10_subjects": {},
-      "subjects": {
-        "Biology": 92,
-        "Chemistry": 95,
-        "English": 91,
-        "Geography": 90,
-        "History": 89,
-        "Literature": 94,
-        "Mathematics": 96,
-        "Physics": 93
-      }
-    },
-    "standardized_tests": {},
-    "portfolio": [
-      {
-        "activity": "Coding Club",
-        "description": "Coding Club",
-        "tier": 3
-      },
-      {
-        "activity": "Active member of the school Coding Club",
-        "description": "Active member of the school Coding Club",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in two inter-school hackath",
-        "description": "Participated in two inter-school hackathons",
-        "tier": 3
-      },
-      {
-        "activity": "Developed small Python and Java projects",
-        "description": "Developed small Python and Java projects Robotics",
-        "tier": 3
-      },
-      {
-        "activity": "Member of the Robotics Society",
-        "description": "Member of the Robotics Society",
-        "tier": 3
-      },
-      {
-        "activity": "Assisted in designing and programming li",
-        "description": "Assisted in designing and programming line-following robots",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in district-level robotics ",
-        "description": "Participated in district-level robotics competition Debate",
-        "tier": 3
-      },
-      {
-        "activity": "Represented school in two inter-school d",
-        "description": "Represented school in two inter-school debate competitions",
-        "tier": 3
-      },
-      {
-        "activity": "Finalist in one regional debate event Co",
-        "description": "Finalist in one regional debate event Community Service",
-        "tier": 2
-      },
-      {
-        "activity": "Volunteered at a local NGO teaching basi",
-        "description": "Volunteered at a local NGO teaching basic computer literacy",
-        "tier": 3
-      },
-      {
-        "activity": "Contributed over 35 volunteer hours Scho",
-        "description": "Contributed over 35 volunteer hours School Magazine",
-        "tier": 3
-      },
-      {
-        "activity": "Student contributor for the Technology s",
-        "description": "Student contributor for the Technology section",
-        "tier": 3
-      },
-      {
-        "activity": "Published three articles on AI and emerg",
-        "description": "Published three articles on AI and emerging technologies",
-        "tier": 3
-      },
-      {
-        "activity": "Member of the school badminton team",
-        "description": "Member of the school badminton team",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in annual inter-house tourn",
-        "description": "Participated in annual inter-house tournaments",
-        "tier": 3
-      },
-      {
-        "activity": "Class Representative (Grade 10)",
-        "description": "Class Representative (Grade 10)",
-        "tier": 3
-      },
-      {
-        "activity": "Organizing committee member for the scho",
-        "description": "Organizing committee member for the school's annual Technology Fest",
-        "tier": 3
-      },
-      {
-        "activity": "ONLINE COURSES",
-        "description": "ONLINE COURSES",
-        "tier": 3
-      },
-      {
-        "activity": "Introduction to Python Programming",
-        "description": "Introduction to Python Programming",
-        "tier": 3
-      },
-      {
-        "activity": "Foundations of Data Science",
-        "description": "Foundations of Data Science",
-        "tier": 3
-      },
-      {
-        "activity": "CS50",
-        "description": "CS50: Introduction to Computer Science (Completed selected modules)",
-        "tier": 3
-      },
-      {
-        "activity": "Microsoft Excel",
-        "description": "Microsoft Excel",
-        "tier": 3
-      },
-      {
-        "activity": "GitHub (Basic)",
-        "description": "GitHub (Basic)",
-        "tier": 3
-      },
-      {
-        "activity": "Public Speaking",
-        "description": "Public Speaking",
-        "tier": 3
-      },
-      {
-        "activity": "Top 10% in school academic ranking (Grad",
-        "description": "Top 10% in school academic ranking (Grade 10)",
-        "tier": 3
-      },
-      {
-        "activity": "Qualified for district-level Robotics Co",
-        "description": "Qualified for district-level Robotics Competition",
-        "tier": 3
-      },
-      {
-        "activity": "Merit Certificate in School Mathematics ",
-        "description": "Merit Certificate in School Mathematics Olympiad",
-        "tier": 1
-      },
-      {
-        "activity": "Best Delegate (Honourable Mention) \u2013 Sch",
-        "description": "Best Delegate (Honourable Mention) \u2013 School Model United Nations",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_012",
-    "status": {
-      "cuet_form_submitted": false,
-      "sat_score": null,
-      "tmua_registered": false
-    },
-    "counselor_notes": "Aarav needs to add target pathways and register for relevant CUET exams."
-  },
-  {
-    "name": "Aarav Mehta",
-    "class_level": 12,
-    "board": "CBSE",
-    "board_subjects": [
       "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Biology",
-      "Computer Science",
       "English",
-      "Geography",
-      "Literature",
-      "History"
+      "Economics"
     ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
+    "targets": [
+      "LSE_ECON",
+      "AIIMS",
+      "UCLA_PREMED",
+      "ASHOKA_UNIV"
+    ],
     "grades": {
-      "current_expected_board": "90.0%",
+      "current_expected_board": "93.9%",
       "subjects": {
-        "Mathematics": 96.0,
-        "Physics": 93.0,
-        "Chemistry": 95.0,
-        "Biology": 92.0,
-        "English": 91.0,
-        "Geography": 90.0,
-        "Literature": 94.0,
-        "History": 89.0
-      },
-      "g10_subjects": {}
+        "Physics": 96,
+        "Chemistry": 97,
+        "Mathematics": 94,
+        "English": 92,
+        "Economics": 90
+      }
     },
-    "standardized_tests": {},
+    "standardized_tests": {
+      "SAT": 1480
+    },
     "portfolio": [
       {
-        "activity": "Coding Club",
-        "description": "Coding Club",
-        "tier": 3
-      },
-      {
-        "activity": "Active member of the school Coding Club",
-        "description": "Active member of the school Coding Club",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in two inter-school hackath",
-        "description": "Participated in two inter-school hackathons",
-        "tier": 3
-      },
-      {
-        "activity": "Developed small Python and Java projects",
-        "description": "Developed small Python and Java projects Robotics",
-        "tier": 3
-      },
-      {
-        "activity": "Member of the Robotics Society",
-        "description": "Member of the Robotics Society",
-        "tier": 3
-      },
-      {
-        "activity": "Assisted in designing and programming li",
-        "description": "Assisted in designing and programming line-following robots",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in district-level robotics ",
-        "description": "Participated in district-level robotics competition Debate",
-        "tier": 3
-      },
-      {
-        "activity": "Represented school in two inter-school d",
-        "description": "Represented school in two inter-school debate competitions",
-        "tier": 3
-      },
-      {
-        "activity": "Finalist in one regional debate event Co",
-        "description": "Finalist in one regional debate event Community Service",
-        "tier": 2
-      },
-      {
-        "activity": "Volunteered at a local NGO teaching basi",
-        "description": "Volunteered at a local NGO teaching basic computer literacy",
-        "tier": 3
-      },
-      {
-        "activity": "Contributed over 35 volunteer hours Scho",
-        "description": "Contributed over 35 volunteer hours School Magazine",
-        "tier": 3
-      },
-      {
-        "activity": "Student contributor for the Technology s",
-        "description": "Student contributor for the Technology section",
-        "tier": 3
-      },
-      {
-        "activity": "Published three articles on AI and emerg",
-        "description": "Published three articles on AI and emerging technologies",
-        "tier": 3
-      },
-      {
-        "activity": "Member of the school badminton team",
-        "description": "Member of the school badminton team",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in annual inter-house tourn",
-        "description": "Participated in annual inter-house tournaments",
-        "tier": 3
-      },
-      {
-        "activity": "Class Representative (Grade 10)",
-        "description": "Class Representative (Grade 10)",
-        "tier": 3
-      },
-      {
-        "activity": "Organizing committee member for the scho",
-        "description": "Organizing committee member for the school's annual Technology Fest",
-        "tier": 3
-      },
-      {
-        "activity": "ONLINE COURSES",
-        "description": "ONLINE COURSES",
-        "tier": 3
-      },
-      {
-        "activity": "Introduction to Python Programming",
-        "description": "Introduction to Python Programming",
-        "tier": 3
-      },
-      {
-        "activity": "Foundations of Data Science",
-        "description": "Foundations of Data Science",
-        "tier": 3
-      },
-      {
-        "activity": "CS50",
-        "description": "CS50: Introduction to Computer Science (Completed selected modules)",
-        "tier": 3
-      },
-      {
-        "activity": "Microsoft Excel",
-        "description": "Microsoft Excel",
-        "tier": 3
-      },
-      {
-        "activity": "GitHub (Basic)",
-        "description": "GitHub (Basic)",
-        "tier": 3
-      },
-      {
-        "activity": "Public Speaking",
-        "description": "Public Speaking",
-        "tier": 3
-      },
-      {
-        "activity": "Top 10% in school academic ranking (Grad",
-        "description": "Top 10% in school academic ranking (Grade 10)",
-        "tier": 3
-      },
-      {
-        "activity": "Qualified for district-level Robotics Co",
-        "description": "Qualified for district-level Robotics Competition",
-        "tier": 3
-      },
-      {
-        "activity": "Merit Certificate in School Mathematics ",
-        "description": "Merit Certificate in School Mathematics Olympiad",
-        "tier": 1
-      },
-      {
-        "activity": "Best Delegate (Honourable Mention) \u2013 Sch",
-        "description": "Best Delegate (Honourable Mention) \u2013 School Model United Nations",
+        "activity": "School Choir Lead",
+        "description": "Lead Singer",
         "tier": 3
       }
     ],
-    "targets": [],
-    "id": "STU_013",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
+    "shortlisted_colleges": [
+      "STANFORD",
+      "IMPERIAL",
+      "BITS_PILANI",
+      "VIT",
+      "MIT"
+    ]
   },
   {
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
+    "id": "STU_116",
+    "name": "Riaan Patel",
+    "class_level": 10,
     "board": "IB",
     "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "g10_subjects": {
-        "Chemistry": 95,
-        "Computer Science": 95,
-        "English": 95,
-        "Environmental Management": 95,
-        "Geography": 95,
-        "Literature": 95,
-        "Mathematics": 95,
-        "Physics": 95,
-        "Spanish": 95
-      },
-      "subjects": {}
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "EpiAlert EpiAlert is an innovative devic",
-        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
-        "tier": 1
-      },
-      {
-        "activity": "Device has been recognized nationally, with t",
-        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
-        "tier": 1
-      },
-      {
-        "activity": "Pollution Alert To reduce the widespread",
-        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
-        "tier": 1
-      },
-      {
-        "activity": "Technology",
-        "description": "Technology: Python programming, ML development, avid tech quizzer",
-        "tier": 3
-      },
-      {
-        "activity": "Sports",
-        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
-        "tier": 1
-      },
-      {
-        "activity": "Science",
-        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
-        "tier": 1
-      },
-      {
-        "activity": "Maths",
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
-        "tier": 1
-      },
-      {
-        "activity": "Scuba Diving",
-        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_015",
-    "status": {
-      "cuet_form_submitted": false,
-      "sat_score": null,
-      "tmua_registered": false
-    },
-    "shortlisted_colleges": [
-      "MIT",
-      "OXFORD",
-      "US_166027",
-      "STANFORD",
-      "US_211440"
-    ]
-  },
-  {
-    "name": "Aarav Mehta",
-    "class_level": 12,
-    "board": "CBSE",
-    "board_subjects": [
-      "Mathematics",
       "Physics",
       "Chemistry",
       "Biology",
-      "Computer Science",
       "English",
-      "Geography",
-      "Literature",
-      "History"
+      "Psychology"
     ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
+    "targets": [
+      "BITS_PILANI",
+      "DU_ST_STEPHENS",
+      "LSE_ECON"
+    ],
     "grades": {
-      "current_expected_board": "90.0%",
+      "current_expected_board": "38/45",
       "subjects": {
-        "Mathematics": 96.0,
-        "Physics": 93.0,
-        "Chemistry": 95.0,
-        "Biology": 92.0,
-        "English": 91.0,
-        "Geography": 90.0,
-        "Literature": 94.0,
-        "History": 89.0
-      },
-      "g10_subjects": {}
+        "Physics": 86,
+        "Chemistry": 86,
+        "Biology": 86,
+        "English": 87,
+        "Psychology": 87
+      }
     },
     "standardized_tests": {},
     "portfolio": [
       {
-        "activity": "Coding Club",
-        "description": "Coding Club",
-        "tier": 3
-      },
-      {
-        "activity": "Active member of the school Coding Club",
-        "description": "Active member of the school Coding Club",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in two inter-school hackath",
-        "description": "Participated in two inter-school hackathons",
-        "tier": 3
-      },
-      {
-        "activity": "Developed small Python and Java projects",
-        "description": "Developed small Python and Java projects Robotics",
-        "tier": 3
-      },
-      {
-        "activity": "Member of the Robotics Society",
-        "description": "Member of the Robotics Society",
-        "tier": 3
-      },
-      {
-        "activity": "Assisted in designing and programming li",
-        "description": "Assisted in designing and programming line-following robots",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in district-level robotics ",
-        "description": "Participated in district-level robotics competition Debate",
-        "tier": 3
-      },
-      {
-        "activity": "Represented school in two inter-school d",
-        "description": "Represented school in two inter-school debate competitions",
-        "tier": 3
-      },
-      {
-        "activity": "Finalist in one regional debate event Co",
-        "description": "Finalist in one regional debate event Community Service",
-        "tier": 2
-      },
-      {
-        "activity": "Volunteered at a local NGO teaching basi",
-        "description": "Volunteered at a local NGO teaching basic computer literacy",
-        "tier": 3
-      },
-      {
-        "activity": "Contributed over 35 volunteer hours Scho",
-        "description": "Contributed over 35 volunteer hours School Magazine",
-        "tier": 3
-      },
-      {
-        "activity": "Student contributor for the Technology s",
-        "description": "Student contributor for the Technology section",
-        "tier": 3
-      },
-      {
-        "activity": "Published three articles on AI and emerg",
-        "description": "Published three articles on AI and emerging technologies",
-        "tier": 3
-      },
-      {
-        "activity": "Member of the school badminton team",
-        "description": "Member of the school badminton team",
-        "tier": 3
-      },
-      {
-        "activity": "Participated in annual inter-house tourn",
-        "description": "Participated in annual inter-house tournaments",
-        "tier": 3
-      },
-      {
-        "activity": "Class Representative (Grade 10)",
-        "description": "Class Representative (Grade 10)",
-        "tier": 3
-      },
-      {
-        "activity": "Organizing committee member for the scho",
-        "description": "Organizing committee member for the school's annual Technology Fest",
-        "tier": 3
-      },
-      {
-        "activity": "ONLINE COURSES",
-        "description": "ONLINE COURSES",
-        "tier": 3
-      },
-      {
-        "activity": "Introduction to Python Programming",
-        "description": "Introduction to Python Programming",
-        "tier": 3
-      },
-      {
-        "activity": "Foundations of Data Science",
-        "description": "Foundations of Data Science",
-        "tier": 3
-      },
-      {
-        "activity": "CS50",
-        "description": "CS50: Introduction to Computer Science (Completed selected modules)",
-        "tier": 3
-      },
-      {
-        "activity": "Microsoft Excel",
-        "description": "Microsoft Excel",
-        "tier": 3
-      },
-      {
-        "activity": "GitHub (Basic)",
-        "description": "GitHub (Basic)",
-        "tier": 3
-      },
-      {
-        "activity": "Public Speaking",
-        "description": "Public Speaking",
-        "tier": 3
-      },
-      {
-        "activity": "Top 10% in school academic ranking (Grad",
-        "description": "Top 10% in school academic ranking (Grade 10)",
-        "tier": 3
-      },
-      {
-        "activity": "Qualified for district-level Robotics Co",
-        "description": "Qualified for district-level Robotics Competition",
-        "tier": 3
-      },
-      {
-        "activity": "Merit Certificate in School Mathematics ",
-        "description": "Merit Certificate in School Mathematics Olympiad",
-        "tier": 1
-      },
-      {
-        "activity": "Best Delegate (Honourable Mention) \u2013 Sch",
-        "description": "Best Delegate (Honourable Mention) \u2013 School Model United Nations",
+        "activity": "School Choir Lead",
+        "description": "Lead Singer",
         "tier": 3
       }
     ],
-    "targets": [],
-    "id": "STU_016",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
+    "shortlisted_colleges": [
+      "BITS_PILANI",
+      "DU"
+    ]
   },
   {
-    "id": "STU_017",
-    "name": "Aarav Sharma",
+    "id": "STU_117",
+    "name": "Kavya Jain",
     "class_level": 12,
     "board": "CBSE",
     "board_subjects": [
-      "Mathematics",
+      "History",
+      "Political Science",
+      "Geography",
+      "Economics",
+      "English"
+    ],
+    "targets": [
+      "IVY_LEAGUE",
+      "CAMBRIDGE_MED",
+      "BITS_PILANI"
+    ],
+    "grades": {
+      "current_expected_board": "91.3%",
+      "subjects": {
+        "History": 88,
+        "Political Science": 89,
+        "Geography": 90,
+        "Economics": 92,
+        "English": 89
+      }
+    },
+    "standardized_tests": {
+      "ACT": 33
+    },
+    "portfolio": [
+      {
+        "activity": "Research Paper",
+        "description": "Published paper on ML in Healthcare",
+        "tier": 1
+      },
+      {
+        "activity": "Math Olympiad",
+        "description": "Gold Medal",
+        "tier": 1
+      }
+    ],
+    "shortlisted_colleges": []
+  },
+  {
+    "id": "STU_118",
+    "name": "Riaan Iyer",
+    "class_level": 12,
+    "board": "ICSE",
+    "board_subjects": [
+      "History",
+      "Political Science",
+      "Geography",
+      "Economics",
+      "English"
+    ],
+    "targets": [
+      "STANFORD_CS"
+    ],
+    "grades": {
+      "current_expected_board": "74.3%",
+      "subjects": {
+        "History": 71,
+        "Political Science": 76,
+        "Geography": 76,
+        "Economics": 70,
+        "English": 70
+      }
+    },
+    "standardized_tests": {
+      "ACT": 33
+    },
+    "portfolio": [
+      {
+        "activity": "State Hackathon Winner",
+        "description": "Built AI assistant",
+        "tier": 1
+      },
+      {
+        "activity": "Varsity Soccer",
+        "description": "Captain",
+        "tier": 2
+      }
+    ],
+    "shortlisted_colleges": [
+      "UCLA",
+      "UCL"
+    ]
+  },
+  {
+    "id": "STU_119",
+    "name": "Avni Agarwal",
+    "class_level": 11,
+    "board": "ICSE",
+    "board_subjects": [
       "Physics",
       "Chemistry",
+      "Mathematics",
+      "English",
       "Computer Science"
     ],
-    "cuet_subjects": [],
+    "targets": [
+      "DU_SRCC",
+      "ASHOKA_UNIV"
+    ],
     "grades": {
-      "class_10_aggregate": "95",
-      "class_11_aggregate": "91",
-      "current_expected_board": "96",
-      "class_10_subjects": {
-        "Mathematics": 96,
-        "Science": 95,
-        "Social Science": 92,
-        "English": 94,
-        "Hindi / Second Language": 90
-      },
+      "current_expected_board": "80.6%",
       "subjects": {
-        "Mathematics": 97,
-        "Physics": 96,
-        "Chemistry": 95,
-        "Computer Science": 98
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1540,
-      "AP_CALCULUS_BC": 5,
-      "AP_COMPUTER_SCIENCE_A": 5
-    },
-    "portfolio": [
-      {
-        "activity": "Founder, Rural Book Service Project",
-        "description": "Distributing books to rural kids (15 hrs/wk, 40 wks/yr)",
-        "tier": 2
-      },
-      {
-        "activity": "Captain, High School Debate Team",
-        "description": "Won regional championships (10 hrs/wk, 30 wks/yr)",
-        "tier": 2
-      }
-    ],
-    "targets": [
-      "CUSTOM_COMPUTER_SCIENCE_1"
-    ],
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "id": "STU_018",
-    "name": "ABCD EFGH",
-    "class_level": 11,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics Analysis & Approaches (HL/SL)",
-      "Physics (HL/SL)",
-      "Chemistry (HL/SL)",
-      "English A Literature (HL/SL)",
-      "Economics (HL/SL)"
-    ],
-    "cuet_subjects": [],
-    "grades": {
-      "class_10_aggregate": "95",
-      "class_10_subjects": {
-        "Mathematics": 95,
-        "Science": 75,
-        "Social Science": 80,
+        "Physics": 81,
+        "Chemistry": 75,
+        "Mathematics": 78,
         "English": 75,
-        "Hindi / Second Language": 70
-      },
-      "subjects": {}
-    },
-    "standardized_tests": {
-      "SAT": 1420
-    },
-    "portfolio": [
-      {
-        "activity": "Math Olympiad",
-        "description": "Gold Medal",
-        "tier": 1
+        "Computer Science": 81
       }
-    ],
-    "targets": [
-      "CUSTOM_ENGINEERING_2"
-    ],
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "id": "STU_019",
-    "name": "ABCD EFGH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics Analysis & Approaches (HL/SL)",
-      "Physics (HL/SL)",
-      "Chemistry (HL/SL)",
-      "English A Literature (HL/SL)",
-      "Economics (HL/SL)"
-    ],
-    "cuet_subjects": [],
-    "grades": {
-      "class_10_aggregate": "95",
-      "class_10_subjects": {
-        "Mathematics": 95,
-        "Science": 75,
-        "Social Science": 80,
-        "English": 75,
-        "Hindi / Second Language": 70
-      },
-      "subjects": {}
-    },
-    "standardized_tests": {
-      "SAT": 1420
-    },
-    "portfolio": [
-      {
-        "activity": "Math Olympiad",
-        "description": "Gold Medal",
-        "tier": 1
-      }
-    ],
-    "targets": [
-      "CUSTOM_ENGINEERING_2"
-    ],
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "subjects": {},
-      "g10_subjects": {
-        "Mathematics": 95.0,
-        "Physics": 95.0,
-        "Chemistry": 95.0,
-        "Computer Science": 95.0,
-        "English": 95.0,
-        "Spanish": 95.0,
-        "Geography": 95.0,
-        "Environmental Management": 95.0,
-        "Literature": 95.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "EpiAlert EpiAlert is an innovative devic",
-        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
-        "tier": 1
-      },
-      {
-        "activity": "Device has been recognized nationally, with t",
-        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
-        "tier": 1
-      },
-      {
-        "activity": "Pollution Alert To reduce the widespread",
-        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
-        "tier": 1
-      },
-      {
-        "activity": "Technology",
-        "description": "Technology: Python programming, ML development, avid tech quizzer",
-        "tier": 3
-      },
-      {
-        "activity": "Sports",
-        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
-        "tier": 1
-      },
-      {
-        "activity": "Science",
-        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
-        "tier": 1
-      },
-      {
-        "activity": "Maths",
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
-        "tier": 1
-      },
-      {
-        "activity": "Scuba Diving",
-        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_020",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "subjects": {},
-      "g10_subjects": {
-        "Mathematics": 95.0,
-        "Physics": 95.0,
-        "Chemistry": 95.0,
-        "Computer Science": 95.0,
-        "English": 95.0,
-        "Spanish": 95.0,
-        "Geography": 95.0,
-        "Environmental Management": 95.0,
-        "Literature": 95.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "EpiAlert EpiAlert is an innovative devic",
-        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
-        "tier": 1
-      },
-      {
-        "activity": "Device has been recognized nationally, with t",
-        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
-        "tier": 1
-      },
-      {
-        "activity": "Pollution Alert To reduce the widespread",
-        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
-        "tier": 1
-      },
-      {
-        "activity": "Technology",
-        "description": "Technology: Python programming, ML development, avid tech quizzer",
-        "tier": 3
-      },
-      {
-        "activity": "Sports",
-        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
-        "tier": 1
-      },
-      {
-        "activity": "Science",
-        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
-        "tier": 1
-      },
-      {
-        "activity": "Maths",
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
-        "tier": 1
-      },
-      {
-        "activity": "Scuba Diving",
-        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_021",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
-  },
-  {
-    "id": "STU_022",
-    "name": "Saiansh Tapuriah",
-    "class_level": 12,
-    "board": "CBSE",
-    "board_subjects": [
-      "Mathematics",
-      "Sociology"
-    ],
-    "cuet_subjects": [],
-    "grades": {
-      "g10_board": "CBSE",
-      "class_10_subjects": {},
-      "subjects": {}
     },
     "standardized_tests": {},
     "portfolio": [],
-    "targets": [
-      "CUSTOM_UNDERGRADUATE_BACHELORS_PROGRAM"
-    ],
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    }
+    "shortlisted_colleges": [
+      "STANFORD",
+      "CAMBRIDGE",
+      "VIT",
+      "KING'S_COLLEGE_LONDON",
+      "UCL"
+    ]
   },
   {
-    "id": "STU_023",
-    "name": "stu21",
-    "class_level": 12,
-    "board": "CBSE",
+    "id": "STU_120",
+    "name": "Rahul Patel",
+    "class_level": 10,
+    "board": "State Board",
     "board_subjects": [
       "Physics",
       "Chemistry",
-      "Computer Science"
+      "Biology",
+      "English",
+      "Psychology"
     ],
-    "cuet_subjects": [
-      "Physics",
-      "Chemistry",
-      "Mathematics",
-      "English"
+    "targets": [
+      "STANFORD_CS",
+      "CAMBRIDGE_MED",
+      "LSE_ECON",
+      "DU_SRCC"
     ],
     "grades": {
-      "class_10_aggregate": "95% - 100%",
-      "class_10_subjects": {},
-      "class_11_aggregate": "95% - 100%",
-      "current_expected_board": "95% - 100%",
-      "g10_board": "CBSE",
-      "subjects": {}
+      "current_expected_board": "75.8%",
+      "subjects": {
+        "Physics": 79,
+        "Chemistry": 75,
+        "Biology": 73,
+        "English": 80,
+        "Psychology": 72
+      }
     },
     "standardized_tests": {
-      "SAT": 1520
+      "SAT": 1410
     },
     "portfolio": [
       {
-        "activity": "Extracurricular Focus",
-        "description": "National/International recognition"
+        "activity": "Debate Club",
+        "description": "Secretary",
+        "tier": 2
+      },
+      {
+        "activity": "Finance Blog",
+        "description": "10k readers",
+        "tier": 3
       }
     ],
-    "targets": [],
     "shortlisted_colleges": [
-      "US_166027",
-      "UK_OXFORDBROOKESUNIVERSITY"
-    ],
-    "status": {
-      "cuet_form_submitted": false,
-      "sat_score": null,
-      "tmua_registered": false
-    }
+      "KING'S_COLLEGE_LONDON",
+      "VIT"
+    ]
   }
 ]

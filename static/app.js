@@ -175,8 +175,10 @@ async function init() {
       g10BoardSelect.addEventListener('change', updateManageG10Placeholders);
     }
   } catch (e) {
-    document.getElementById('student-rows').innerHTML =
-      '<div class="loading-row" style="color:var(--red)">✕ failed to connect to engine</div>';
+    const rows = document.getElementById('student-rows');
+    if (rows) {
+      rows.innerHTML = '<div class="loading-row" style="color:var(--text-3);">Unlocked Engine is currently asleep. Please ensure the backend server is running.</div>';
+    }
   }
 }
 
@@ -207,7 +209,7 @@ async function refreshData() {
 
 // ── View switching ──
 function switchView(v) {
-  ['dashboard', 'manage', 'predictor', 'university-dashboard', 'reports', 'extracurriculars', 'scholarships', 'shortlist', 'calendar', 'student-profile'].forEach(id => {
+  ['dashboard', 'manage', 'predictor', 'university-dashboard', 'reports', 'extracurriculars', 'scholarships', 'shortlist', 'calendar', 'student-profile', 'recommendations'].forEach(id => {
     const el = document.getElementById(`view-${id}`);
     if (el) el.classList.toggle('hidden', id !== v);
     const tabMap = { 
@@ -215,7 +217,7 @@ function switchView(v) {
       'university-dashboard': 'university-dashboard',
       'reports': 'reports', 'shortlist': 'shortlist', 'calendar': 'calendar',
       'student-profile': 'student-profile', 'extracurriculars': 'extracurriculars',
-      'scholarships': 'scholarships'
+      'scholarships': 'scholarships', 'recommendations': 'recommendations'
     };
     const tabEl = document.getElementById(`tab-${tabMap[id]}`);
     if (tabEl) tabEl.classList.toggle('active', id === v);
@@ -228,6 +230,7 @@ function switchView(v) {
   if (v === 'calendar')        renderCalendarView();
   if (v === 'scholarships')    renderScholarshipsView();
   if (v === 'extracurriculars') { /* CSV-driven, no render needed */ }
+  if (v === 'recommendations') initRecommendationsView();
 }
 
 // ══════════════════════════════════════════════
@@ -333,16 +336,32 @@ function renderCohortInsights() {
 }
 
 function getStudentMatchInfo(sid) {
+  const s = students.find(x => x.id === sid);
   const a = cohortAudit[sid];
-  if (!a) return { minMatch: 100, maxUrg: 0, hasGap: false, names: [], riskLevel: 'Strong Match' };
-  let minMatch = 100, maxUrg = 0, hasGap = false;
+  
   const names = [];
+  if (a && a.targets && Object.keys(a.targets).length > 0) {
+    for (const t in a.targets) {
+      const r = a.targets[t];
+      names.push(r.target_name || t);
+    }
+  } else if (s && s.targets && Array.isArray(s.targets)) {
+    s.targets.forEach(tid => {
+      const tObj = targets[tid];
+      names.push(tObj ? (tObj.name || tObj.target_name || tid) : tid);
+    });
+  }
+
+  if (!a || !a.targets || Object.keys(a.targets).length === 0) {
+    return { minMatch: 100, maxUrg: 0, hasGap: false, names, riskLevel: 'Pending AI' };
+  }
+
+  let minMatch = 100, maxUrg = 0, hasGap = false;
   for (const t in a.targets) {
     const r = a.targets[t];
     const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50);
     minMatch = Math.min(minMatch, ms);
     maxUrg = Math.max(maxUrg, r.urgency_score || 0);
-    names.push(r.target_name);
     if (!r.compliant) hasGap = true;
   }
   let riskLevel = 'Strong Match';
@@ -355,7 +374,7 @@ function getStudentMatchInfo(sid) {
 function filterDashboard() {
   const searchVal = (document.getElementById('dash-search')?.value || '').toLowerCase();
   const filterVal = document.getElementById('dash-filter')?.value || 'all';
-  const sortVal = document.getElementById('dash-sort')?.value || 'name-asc';
+  const sortVal = document.getElementById('dash-sort')?.value || 'match-asc';
 
   let filtered = students.filter(s => {
     if (searchVal && !s.name.toLowerCase().includes(searchVal)) return false;
@@ -385,6 +404,10 @@ function filterDashboard() {
 function renderStudentRows(list) {
   const rows = document.getElementById('student-rows');
   if (!rows) return;
+
+  // Don't overwrite the loading spinner if AI hasn't finished loading the audit
+  if (Object.keys(cohortAudit).length === 0) return;
+
   rows.innerHTML = '';
   rows.className = 'priority-list';
 
@@ -398,9 +421,11 @@ function renderStudentRows(list) {
     const { minMatch, names, riskLevel } = info;
 
     const initial = (s.name || 'S')[0].toUpperCase();
-    const avatarBg = minMatch >= 90 ? '#059669' : minMatch >= 70 ? '#D97706' : '#DC2626';
+    const avatarBg = riskLevel === 'Pending AI' ? '#6366F1' : (minMatch >= 90 ? '#059669' : minMatch >= 70 ? '#D97706' : '#DC2626');
     let badgeHtml = '';
-    if (minMatch >= 90) {
+    if (riskLevel === 'Pending AI') {
+      badgeHtml = '<span class="badge-risk" style="background:rgba(99,102,241,0.1); color:#6366F1; border-color:rgba(99,102,241,0.3);">Ready</span>';
+    } else if (minMatch >= 90) {
       badgeHtml = '<span class="badge-risk" style="background:rgba(5,150,105,0.1); color:#059669; border-color:#A7F3D0;">' + riskLevel + '</span>';
     } else if (minMatch >= 70) {
       badgeHtml = '<span class="badge-risk high">' + riskLevel + '</span>';
@@ -693,20 +718,62 @@ function renderManageList() {
           minMatch = 0;
         }
         
-        let matchStatusHtml = minMatch >= 90 ? '<span class="badge-risk" style="background:#D1FAE5;color:#047857;border:1px solid #6EE7B7;">Strong</span>' :
-                              minMatch >= 70 ? '<span class="badge-risk" style="background:var(--amber-light);color:#D97706;border:1px solid #FCD34D;">Med</span>' :
-                              '<span class="badge-risk high" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;">Risk</span>';
+        let matchStatusHtml = minMatch >= 90 ? '<span class="badge-risk" style="background:#D1FAE5;color:#047857;border:1px solid #6EE7B7;">Strong Match</span>' :
+                              minMatch >= 70 ? '<span class="badge-risk" style="background:var(--amber-light);color:#D97706;border:1px solid #FCD34D;">Med Risk</span>' :
+                              '<span class="badge-risk high" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;">High Risk</span>';
+                              
+        const avatarColor = `hsl(${(s.name.charCodeAt(0) * 137) % 360}, 70%, 40%)`;
+        
+        // Academics formatting
+        const grades = s.grades && s.grades.current_expected_board ? s.grades.current_expected_board : 'N/A';
+        const stdTests = s.standardized_tests || {};
+        const satAct = stdTests.SAT ? `SAT: ${stdTests.SAT}` : (stdTests.ACT ? `ACT: ${stdTests.ACT}` : 'No SAT/ACT');
+        
+        // Portfolio summary
+        const portCount = s.portfolio ? s.portfolio.length : 0;
+        const highestTier = portCount > 0 ? Math.min(...s.portfolio.map(p => p.tier || 3)) : 'N/A';
+        let tierHtml = '';
+        if (highestTier === 1) tierHtml = '<span style="color:#059669; font-weight:700;">Tier 1</span>';
+        else if (highestTier === 2) tierHtml = '<span style="color:#D97706; font-weight:700;">Tier 2</span>';
+        else if (highestTier === 3) tierHtml = '<span style="color:#4B5563; font-weight:500;">Tier 3</span>';
+        
+        const targetCount = s.targets ? s.targets.length : 0;
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><strong>${s.id}</strong></td>
-          <td style="font-weight:600; cursor:pointer; color:var(--accent);" onclick="openStudentProfile('${s.id}')">${s.name}</td>
-          <td>${s.board}</td>
-          <td>Class ${s.class_level}</td>
-          <td>${s.predicted_aggregate || 'N/A'}</td>
-          <td>${s.sat_score || 'N/A'}</td>
-          <td>${s.targets ? Object.keys(s.targets).length : 0}</td>
-          <td>${matchStatusHtml}</td>
+          <td>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:${avatarColor}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1rem; flex-shrink:0;">${s.name.charAt(0)}</div>
+              <div>
+                <div style="font-weight:600; cursor:pointer; color:var(--text-1); font-size:0.95rem; line-height:1.2;" onclick="openStudentProfile('${s.id}')" class="hover-underline">${s.name}</div>
+                <div style="font-size:0.75rem; color:var(--text-3); font-family:monospace; margin-top:2px;">${s.id}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="display:flex; gap:6px; align-items:center;">
+                <span style="background:var(--surface); border:1px solid var(--border); padding:2px 6px; border-radius:4px; font-size:0.7rem; font-weight:600; color:var(--text-2);">${s.board}</span>
+                <span style="font-size:0.8rem; color:var(--text-1); font-weight:500;">Class ${s.class_level}</span>
+              </div>
+              <div style="font-size:0.8rem; color:var(--text-2);">
+                <strong style="color:var(--text-1);">${grades}</strong> expected · ${satAct}
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="font-size:0.85rem; color:var(--text-1); font-weight:500;">${portCount} Activities</div>
+            <div style="font-size:0.75rem; color:var(--text-3); margin-top:2px;">Highest: ${tierHtml || 'None'}</div>
+          </td>
+          <td>
+            <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
+              <div style="font-size:0.85rem; font-weight:600; color:var(--text-1);">${targetCount} Pathways</div>
+              ${targetCount > 0 ? matchStatusHtml : '<span style="font-size:0.75rem; color:var(--text-3);">No targets set</span>'}
+            </div>
+          </td>
+          <td style="text-align:right;">
+            <button onclick="openStudentProfile('${s.id}')" style="background:var(--surface); border:1px solid var(--border); padding:6px 12px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer; color:var(--text-2);" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-2)'">View Profile</button>
+          </td>
         `;
         masterBody.appendChild(tr);
       });
@@ -721,16 +788,21 @@ function renderManageList() {
       statsBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No students found</td></tr>';
     } else {
       students.forEach(s => {
-        let completion = 100;
+        let score = 20; // Base score
         let missing = [];
-        if (!s.grade_10_aggregate) missing.push("10th Grade");
-        if (!s.predicted_aggregate) missing.push("12th Pred");
-        if (!s.sat_score && !s.act_score) missing.push("Standardized Tests");
-        if (!s.targets || Object.keys(s.targets).length === 0) missing.push("Targets");
-        if (!s.extracurriculars || s.extracurriculars.length === 0) missing.push("Extracurriculars");
+        if (s.grade_10_aggregate) score += 15; else missing.push("10th Grade");
+        if (s.predicted_aggregate) score += 15; else missing.push("12th Pred");
+        if (s.sat_score || s.act_score) score += 10; else missing.push("Standardized Tests");
+        if (s.targets && Object.keys(s.targets).length > 0) score += 10; else missing.push("Targets");
+        if (s.board_subjects && s.board_subjects.length >= 3) score += 10; else missing.push("Subjects");
         
-        completion = 100 - (missing.length * 20);
-        if (completion < 0) completion = 0;
+        if (s.extracurriculars && s.extracurriculars.length > 0) {
+            score += Math.min(20, s.extracurriculars.length * 5);
+        } else {
+            missing.push("Extracurriculars");
+        }
+        
+        let completion = Math.min(100, score);
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -3766,3 +3838,140 @@ async function fetchAIRecommendations() {
   }
 }
 window.fetchAIRecommendations = fetchAIRecommendations;
+
+// ── Recommendation Studio Logic ──
+
+function initRecommendationsView() {
+  const select = document.getElementById('rec-student-select');
+  if (!select) return;
+  
+  // Populate dropdown if empty (except for placeholder)
+  if (select.options.length <= 1) {
+    const sorted = [...students].sort((a,b) => a.name.localeCompare(b.name));
+    sorted.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = `${s.name} (${s.id})`;
+      select.appendChild(opt);
+    });
+    
+    select.addEventListener('change', (e) => {
+      const sId = e.target.value;
+      renderRecBragSheet(sId);
+    });
+  }
+}
+
+function renderRecBragSheet(sId) {
+  const content = document.getElementById('rec-sidebar-content');
+  if (!sId) {
+    content.innerHTML = '<div style="text-align: center; color: var(--text-3); padding: 40px 20px;">Select a student to load their profile context.</div>';
+    return;
+  }
+  
+  const s = students.find(x => x.id === sId);
+  if (!s) return;
+  
+  let html = `<div style="background: var(--bg-1); padding: 12px; border-radius: 6px; border: 1px solid var(--border);">
+    <strong style="color: var(--text-1); font-size: 14px;">${s.name}</strong><br>
+    Board: ${s.board || 'N/A'} (Class ${s.class_level || 'N/A'})
+  </div>`;
+  
+  // Grades
+  if (s.grades && Object.keys(s.grades).length > 0) {
+    html += `<div><strong style="color:var(--text-1);">Academics & Grades</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
+    for (const [k, v] of Object.entries(s.grades)) {
+      if (k === 'history') continue;
+      if (typeof v === 'object' && v !== null) {
+        html += `<li style="margin-bottom:4px;">${k.replace(/_/g, ' ')}: <ul style="margin:4px 0 0 16px; padding:0;">`;
+        for (const [sub, val] of Object.entries(v)) {
+          html += `<li>${sub}: <b>${val}</b></li>`;
+        }
+        html += `</ul></li>`;
+      } else {
+        html += `<li style="margin-bottom:4px;">${k.replace(/_/g, ' ')}: <b>${v}</b></li>`;
+      }
+    }
+    html += `</ul></div>`;
+  }
+  
+  // Targets
+  if (s.targets && s.targets.length > 0) {
+    html += `<div><strong style="color:var(--text-1);">Target Universities</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
+    s.targets.forEach(t => {
+      const tName = targets[t] ? targets[t].name : t;
+      html += `<li style="margin-bottom:4px;">${tName}</li>`;
+    });
+    html += `</ul></div>`;
+  }
+  
+  // Portfolio
+  if (s.portfolio && s.portfolio.length > 0) {
+    html += `<div><strong style="color:var(--text-1);">Portfolio / Extracurriculars</strong><div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">`;
+    s.portfolio.forEach(p => {
+      const title = p.title || p.activity || 'Activity';
+      const role = p.role || p.position || '';
+      const desc = p.description || p.detail || '';
+      const tier = p.tier ? `<span style="background:var(--primary-light); color:var(--primary); padding:2px 6px; border-radius:4px; font-size:10px; margin-left:6px; font-weight:bold;">T${p.tier}</span>` : '';
+      
+      html += `<div style="background: var(--bg-1); padding: 8px 10px; border-radius: 4px; border: 1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <strong style="color:var(--text-1); line-height:1.2;">${title}</strong>
+          ${tier}
+        </div>
+        ${role ? `<span style="font-size:11px; color:var(--text-3); text-transform:uppercase;">${role}</span><br>` : ''}
+        ${desc ? `<div style="margin-top:4px; font-size:12px;">${desc}</div>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+  
+  content.innerHTML = html;
+}
+
+window.generateAIRecommendation = async function() {
+  const sId = document.getElementById('rec-student-select').value;
+  if (!sId) {
+    alert("Please select a student first.");
+    return;
+  }
+  
+  const editor = document.getElementById('rec-editor');
+  editor.value = "Unlocked Engine drafting recommendation letter...\n\n";
+  
+  try {
+    const res = await fetch('/api/draft_recommendation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: sId })
+    });
+    
+    if (!res.ok) {
+      const err = await res.json();
+      editor.value = "Error generating draft: " + (err.error || "Unknown error");
+      return;
+    }
+    
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    editor.value = ""; 
+    
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      editor.value += chunk;
+      editor.scrollTop = editor.scrollHeight; 
+    }
+  } catch (err) {
+    console.error("Draft generation error:", err);
+    editor.value = "Error connecting to Unlocked Engine.";
+  }
+}
+
+window.copyRecText = function() {
+  const editor = document.getElementById('rec-editor');
+  editor.select();
+  document.execCommand('copy');
+  alert("Copied to clipboard!");
+}

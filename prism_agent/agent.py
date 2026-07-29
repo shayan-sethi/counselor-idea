@@ -3,6 +3,10 @@ import re
 import os
 import json
 try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
+try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
@@ -198,14 +202,19 @@ class PRISMAgent:
         rems = self.planner.get_remediations(temp_analysis)
         return json.dumps(rems.get(target_id, []))
 
-    def solve_goal(self, student_id, target_id, students_list, simulated_subjects=None, silent=False):
+    def solve_goal(self, student_id, target_id, students_list, simulated_subjects=None, silent=False, use_real_engine=False):
         import google.generativeai as genai
         import os
         import json
 
         api_key = os.environ.get("GEMINI_API_KEY", "")
         if not api_key:
-            return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
+            if use_real_engine:
+                if not silent:
+                    print(f"[Agent Info] No Gemini API key found. Routing directly to LOCAL Ollama reasoning engine.")
+                return self._solve_goal_ollama_fallback(student_id, target_id, students_list, None, silent)
+            else:
+                return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
 
         genai.configure(api_key=api_key)
 
@@ -250,66 +259,66 @@ Write a sentence explaining your thought before calling each tool.
 
             chat = model.start_chat()
             response = chat.send_message(prompt)
+
+            for _ in range(15):
+                parts = response.candidates[0].content.parts
+                has_function_calls = False
+                function_responses = []
+
+                for part in parts:
+                    # Record thought if text is generated
+                    if part.text:
+                        trace.append({
+                            "type": "thought",
+                            "message": part.text.strip()
+                        })
+                        if not silent:
+                            self.console.print(f"\n[bold magenta]Thought:[/bold magenta] {part.text.strip()}")
+
+                    if part.function_call:
+                        has_function_calls = True
+                        fc = part.function_call
+                        args_dict = dict(fc.args)
+                        trace.append({
+                            "type": "action",
+                            "message": f"call_tool: {fc.name}",
+                            "detail": json.dumps(args_dict)
+                        })
+                        if not silent:
+                            self.console.print(f"[bold cyan]Action:[/bold cyan] call_tool [yellow]{fc.name}[/yellow] with ({json.dumps(args_dict)})")
+
+                        # Execute tool
+                        tool_func = getattr(self, fc.name, None)
+                        if tool_func:
+                            try:
+                                observation = tool_func(**args_dict)
+                            except Exception as e:
+                                observation = f"Error: {e}"
+                        else:
+                            observation = f"Error: Tool {fc.name} not found."
+
+                        trace.append({
+                            "type": "observation",
+                            "message": observation
+                        })
+                        if not silent:
+                            self.console.print(f"[dim green]Observation: {observation[:200]}...[/dim green]")
+
+                        function_responses.append({
+                            "functionResponse": {
+                                "name": fc.name,
+                                "response": {"result": str(observation)}
+                            }
+                        })
+
+                if has_function_calls:
+                    response = chat.send_message(function_responses)
+                else:
+                    break
         except Exception as api_err:
             if not silent:
                 print(f"[Agent Warning] Gemini API call failed: {api_err}. Falling back to LOCAL Ollama reasoning engine.")
             return self._solve_goal_ollama_fallback(student_id, target_id, students_list, prompt, silent)
-
-        for _ in range(15):
-            parts = response.candidates[0].content.parts
-            has_function_calls = False
-            function_responses = []
-
-            for part in parts:
-                # Record thought if text is generated
-                if part.text:
-                    trace.append({
-                        "type": "thought",
-                        "message": part.text.strip()
-                    })
-                    if not silent:
-                        self.console.print(f"\n[bold magenta]Thought:[/bold magenta] {part.text.strip()}")
-
-                if part.function_call:
-                    has_function_calls = True
-                    fc = part.function_call
-                    args_dict = dict(fc.args)
-                    trace.append({
-                        "type": "action",
-                        "message": f"call_tool: {fc.name}",
-                        "detail": json.dumps(args_dict)
-                    })
-                    if not silent:
-                        self.console.print(f"[bold cyan]Action:[/bold cyan] call_tool [yellow]{fc.name}[/yellow] with ({json.dumps(args_dict)})")
-
-                    # Execute tool
-                    tool_func = getattr(self, fc.name, None)
-                    if tool_func:
-                        try:
-                            observation = tool_func(**args_dict)
-                        except Exception as e:
-                            observation = f"Error: {e}"
-                    else:
-                        observation = f"Error: Tool {fc.name} not found."
-
-                    trace.append({
-                        "type": "observation",
-                        "message": observation
-                    })
-                    if not silent:
-                        self.console.print(f"[dim green]Observation: {observation[:200]}...[/dim green]")
-
-                    function_responses.append(
-                        genai.types.Part.from_function_response(
-                            name=fc.name,
-                            response={"result": observation}
-                        )
-                    )
-
-            if has_function_calls:
-                response = chat.send_message(function_responses)
-            else:
-                break
 
         # Extract final answer
         final_text = response.text
@@ -334,7 +343,7 @@ Write a sentence explaining your thought before calling each tool.
             gaps = final_data.get("gaps", [])
             match_score = final_data.get("match_score")
             if match_score is None:
-                match_score = self.reasoner._calculate_match_score(gaps)
+                match_score = self.reasoner._calculate_match_score(gaps, student, target)
                 final_data["match_score"] = match_score
                 final_data["risk_level"] = self.reasoner._risk_level_label(match_score)
             final_data["difficulty_label"] = self.reasoner._classify_difficulty(student, target, match_score, gaps)
@@ -431,7 +440,7 @@ Output ONLY valid JSON matching this schema exactly. Do not output anything else
             }
         }
         remediations = self.planner.get_remediations(temp_analysis).get(target_id, [])
-        match_score = self.reasoner._calculate_match_score(gaps)
+        match_score = self.reasoner._calculate_match_score(gaps, student, target)
         risk_level = self.reasoner._risk_level_label(match_score)
         return {
             "compliant": len(gaps) == 0,
@@ -530,7 +539,7 @@ Output ONLY valid JSON matching this schema exactly. Do not output anything else
         else:
             trace.append({"type": "thought", "message": "No compliance gaps discovered. Candidate is 100% on track for this target pathway."})
 
-        match_score = self.reasoner._calculate_match_score(gaps)
+        match_score = self.reasoner._calculate_match_score(gaps, student, target)
         risk_level = self.reasoner._risk_level_label(match_score)
         return {
             "compliant": len(gaps) == 0,

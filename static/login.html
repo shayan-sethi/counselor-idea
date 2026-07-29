@@ -9,16 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0d15;
-      --surface: #0f1219;
-      --border: rgba(225, 225, 205, 0.15);
+      --bg-base: #050505;
+      --bg-gradient-1: #4F46E5;
+      --bg-gradient-2: #9333EA;
+      --surface: rgba(15, 18, 25, 0.65);
+      --border: rgba(255, 255, 255, 0.1);
       --accent: #E1E1CD;
-      --accent-glow: rgba(225, 225, 205, 0.15);
-      --text: #E1E1CD;
-      --text-muted: rgba(225, 225, 205, 0.6);
+      --accent-glow: rgba(225, 225, 205, 0.25);
+      --text: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.5);
       --error: #ef4444;
-      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --font-sans: 'Outfit', 'Inter', -apple-system, sans-serif;
+      --font-mono: 'Fira Code', monospace;
     }
 
     * {
@@ -28,7 +30,7 @@
     }
 
     body {
-      background-color: var(--bg);
+      background-color: var(--bg-base);
       color: var(--text);
       font-family: var(--font-sans);
       min-height: 100vh;
@@ -37,27 +39,68 @@
       align-items: center;
       padding: 20px;
       overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Dynamic Animated Background */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      background: radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.12), transparent 40%),
+                  radial-gradient(circle at 85% 30%, rgba(147, 51, 234, 0.12), transparent 40%);
+    }
+
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 20s infinite ease-in-out alternate;
+    }
+
+    .bg-orb-1 {
+      width: 400px;
+      height: 400px;
+      background: rgba(79, 70, 229, 0.15);
+      top: -100px;
+      left: -100px;
+    }
+
+    .bg-orb-2 {
+      width: 500px;
+      height: 500px;
+      background: rgba(147, 51, 234, 0.1);
+      bottom: -150px;
+      right: -100px;
+      animation-delay: -5s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+      100% { transform: translate(100px, 50px) rotate(45deg) scale(1.1); }
     }
 
     .login-container {
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       background: var(--surface);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 80px var(--accent-glow);
+      border-radius: 24px;
+      padding: 48px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
       position: relative;
-      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(20px);
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
+    @keyframes fadeInUp {
       to {
         opacity: 1;
         transform: translateY(0);
@@ -66,77 +109,113 @@
 
     .logo-area {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 36px;
     }
 
     .logo-prism {
-      font-family: var(--font-sans);
       font-weight: 800;
-      font-size: 2.2rem;
-      letter-spacing: -0.02em;
-      color: var(--text);
+      font-size: 2.8rem;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin-bottom: 8px;
+      filter: drop-shadow(0 4px 12px rgba(165, 180, 252, 0.2));
     }
 
     .logo-subtitle {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
+      font-weight: 600;
+    }
+
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 32px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 4px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .auth-tab.active {
+      color: var(--bg-base);
+      background: var(--text);
+      box-shadow: 0 4px 12px rgba(255,255,255,0.2);
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      position: relative;
     }
 
     label {
       display: block;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 1.5px;
       color: var(--text-muted);
-      margin-bottom: 8px;
-      font-weight: 500;
+      margin-bottom: 10px;
+      font-weight: 600;
     }
 
     input {
       width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 16px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 18px;
       color: var(--text);
       font-family: var(--font-sans);
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
+      font-size: 1rem;
+      transition: all 0.3s ease;
       outline: none;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    input::placeholder {
+      color: rgba(255,255,255,0.2);
     }
 
     input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 12px var(--accent-glow);
+      background: rgba(0, 0, 0, 0.4);
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15), inset 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .btn-login {
       width: 100%;
-      background: var(--accent);
-      color: #0a0d15;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #ffffff;
       border: none;
-      border-radius: 8px;
-      padding: 14px;
-      font-size: 0.95rem;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 1rem;
+      font-family: var(--font-sans);
       font-weight: 600;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px var(--accent-glow);
-      margin-top: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.5), inset 0 1px 1px rgba(255,255,255,0.2);
+      margin-top: 8px;
     }
 
     .btn-login:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px var(--accent-glow);
-      background: #ffffff;
+      box-shadow: 0 12px 20px -4px rgba(99, 102, 241, 0.6), inset 0 1px 1px rgba(255,255,255,0.3);
+      filter: brightness(1.1);
     }
 
     .btn-login:active {
@@ -144,60 +223,51 @@
     }
 
     .error-banner {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid var(--error);
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
       color: #fca5a5;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      margin-bottom: 20px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 24px;
       display: none;
-      animation: shake 0.4s ease-in-out;
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
     }
 
     .hint-area {
       text-align: center;
-      margin-top: 24px;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.05);
       font-size: 0.8rem;
       color: var(--text-muted);
-      line-height: 1.4;
+      line-height: 1.6;
     }
 
     .hint-area code {
       font-family: var(--font-mono);
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2px 4px;
-      border-radius: 4px;
-      color: #a5b4fc;
-    }
-
-    .auth-tabs {
-      display: flex;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-    }
-    .auth-tab {
-      flex: 1;
-      text-align: center;
-      padding: 12px;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .auth-tab.active {
-      color: var(--text);
-      border-bottom: 2px solid var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+      padding: 3px 6px;
+      border-radius: 6px;
+      color: #c7d2fe;
+      font-size: 0.75rem;
     }
   </style>
 </head>
 <body>
+  
+  <div class="bg-animation">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+  </div>
 
   <div class="login-container">
     <div class="logo-area">

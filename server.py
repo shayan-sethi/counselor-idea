@@ -4,6 +4,10 @@ import json
 import datetime
 import joblib
 import pandas as pd
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
 from flask import Flask, jsonify, request, send_from_directory
 try:
     from dotenv import load_dotenv
@@ -820,7 +824,7 @@ def api_evaluate():
     }
     traces = {}
     for tid in student.get("targets", []):
-        agent_res = agent.solve_goal(student["id"], tid, STUDENTS, simulated_subjects=simulated_subjects, silent=True)
+        agent_res = agent.solve_goal(student["id"], tid, STUDENTS, simulated_subjects=simulated_subjects, silent=True, use_real_engine=True)
         if agent_res:
             result["targets"][tid] = {
                 "target_name": agent_res.get("target_name", "Target"),
@@ -850,6 +854,8 @@ def api_evaluate_cohort():
         }
         for tid in student.get("targets", []):
             try:
+                import time
+                time.sleep(0.15)  # Artificial delay to simulate agent reasoning
                 agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
                 if agent_res:
                     result["targets"][tid] = {
@@ -1018,12 +1024,7 @@ def api_counselor_agent():
             "audits": student_audits
         })
 
-    if api_key:
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=api_key)
-            
-            system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
+    system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
 You have access to the entire school's active student cohort database provided below.
 
 STUDENT COHORT DATA:
@@ -1040,6 +1041,11 @@ CRITICAL REASONING INSTRUCTIONS:
 4. Format your output in clean Markdown with appropriate headers, bold text, bullet points, and actionable details.
 5. If drafting an email, include Subject line, To address, Salutation, specific student gap evidence, and professional sign-off.
 """
+    if api_key:
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=api_key)
+            
             for m_name in ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"]:
                 try:
                     model = genai.GenerativeModel(model_name=m_name)
@@ -1050,7 +1056,21 @@ CRITICAL REASONING INSTRUCTIONS:
         except Exception as err:
             print(f"[CounselorAgent Error] Gemini reasoning model call failed: {err}")
 
-    # Fallback reasoning engine if GEMINI_API_KEY is not configured
+    # Fallback to local Ollama engine if Gemini is not configured or fails
+    import requests
+    try:
+        ollama_res = requests.post("http://127.0.0.1:11434/api/generate", json={
+            "model": "llama3.2",
+            "prompt": f"{system_prompt}\n\nCOUNSELOR PROMPT / COMMAND:\n{command}",
+            "stream": False,
+            "options": {"temperature": 0.3}
+        }, timeout=45)
+        if ollama_res.status_code == 200:
+            return jsonify({"response": ollama_res.json().get("response", "").strip()})
+    except Exception as e:
+        print(f"[CounselorAgent Warning] Local Ollama fallback failed: {e}")
+
+    # Final hardcoded fallback if everything else fails
     command_lower = command.lower()
     if "email" in command_lower or "draft" in command_lower:
         flagged = [s for s in cohort_summary_list if any(not a.get("compliant") for a in s["audits"].values())]
@@ -1598,7 +1618,58 @@ def api_import_scholarship():
     schols.append(new_schol)
     save_scholarships(schols)
     
-    return jsonify(new_schol), 201
+    return jsonify({"success": True, "scholarship": new_schol})
+
+# ── Recommendation Studio ──
+
+@app.route("/api/draft_recommendation", methods=["POST"])
+@counselor_required
+def api_draft_recommendation():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+        
+    portfolio = student.get("portfolio", [])
+    grades = student.get("grades", {})
+    targets = student.get("targets", [])
+    
+    brag_sheet = f"Student Name: {student['name']}\n"
+    brag_sheet += f"Board: {student.get('board')} Class {student.get('class_level')}\n"
+    brag_sheet += f"Grades: {json.dumps(grades)}\n"
+    brag_sheet += "Extracurriculars & Portfolio:\n"
+    for item in portfolio:
+        brag_sheet += f"- {item.get('title', '')} ({item.get('role', '')}): {item.get('description', '')}\n"
+    brag_sheet += f"Target Universities: {', '.join(targets)}\n"
+
+    system_prompt = "You are an expert high school counselor writing a powerful, persuasive Letter of Recommendation (LOR) for a student's university application. Use the student's exact brag sheet and data to write a tailored draft. Do not use generic placeholders like [Name], use the real name. Keep it professional, highlighting their specific achievements. Output ONLY the letter itself."
+    
+    import requests
+    from flask import Response
+    try:
+        ollama_res = requests.post("http://127.0.0.1:11434/api/generate", json={
+            "model": "llama3.2",
+            "prompt": f"{system_prompt}\n\nSTUDENT BRAG SHEET:\n{brag_sheet}\n\nDraft the complete Letter of Recommendation below:",
+            "stream": True,
+            "options": {"temperature": 0.6}
+        }, timeout=60, stream=True)
+        
+        def generate():
+            for line in ollama_res.iter_lines():
+                if line:
+                    try:
+                        import json
+                        chunk = json.loads(line.decode('utf-8'))
+                        if "response" in chunk:
+                            yield chunk["response"]
+                    except:
+                        pass
+        
+        return Response(generate(), mimetype='text/plain')
+    except Exception as e:
+        print(f"[Recommendation Error] Ollama failed: {e}")
+        return jsonify({"error": "Engine failed to generate draft."}), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)

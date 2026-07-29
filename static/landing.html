@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>unlockED - Institutional B2B Admissions Infrastructure for K-12 & High Schools</title>
+  <title>unlockED - Institutional Admissions Infrastructure for K-12 & High Schools</title>
   <meta name="description" content="AI-powered college counseling & compliance platform for high schools. Empower school counselors or run fully automated AI agentic counseling for schools without dedicated staff." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #E1E1CD;
-      --surface: #F5F5ED;
-      --surface-light: #EFEFE3;
-      --border: #CBD5E1;
-      --accent: #2D3A2E;
-      --accent-hover: #1E281F;
-      --accent-glow: rgba(45, 58, 46, 0.12);
+      --bg: #FAFAFA;
+      --surface: #FFFFFF;
+      --surface-light: #F3F4F6;
+      --border: #E5E7EB;
+      --accent: #0F172A;
+      --accent-hover: #1E293B;
+      --accent-glow: rgba(15, 23, 42, 0.05);
       --text: #0F172A;
-      --text-muted: #475569;
-      --green: #15803D;
-      --purple: #6B21A8;
-      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --text-muted: #64748B;
+      --green: #16A34A;
+      --purple: #7C3AED;
+      --font-sans: 'Geist', 'Outfit', -apple-system, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -51,27 +51,27 @@
       justify-content: space-between;
       align-items: center;
       padding: 32px 0 48px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid var(--border);
       margin-bottom: 40px;
     }
 
     .logo {
-      font-weight: 700;
-      font-size: 1.5rem;
-      letter-spacing: -0.02em;
+      font-weight: 800;
+      font-size: 1.6rem;
+      letter-spacing: -0.03em;
       color: var(--text);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .logo-tag {
-      background: var(--accent-glow);
-      color: var(--accent);
-      border: 1px solid var(--accent);
+      background: var(--surface-light);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
       font-size: 0.65rem;
       text-transform: uppercase;
-      padding: 2px 8px;
+      padding: 3px 10px;
       border-radius: 20px;
       font-weight: 700;
       letter-spacing: 1px;
@@ -94,15 +94,18 @@
 
     .btn-primary-sm {
       background: var(--accent);
-      color: #E1E1CD;
-      padding: 8px 18px;
+      color: #ffffff;
+      padding: 10px 20px;
       border-radius: 20px;
       font-size: 0.88rem;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.2s;
     }
-    .btn-primary-sm:hover { background: var(--accent-hover); color: #E1E1CD; }
+    .btn-primary-sm:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
 
     /* Hero */
     .hero {
@@ -114,27 +117,27 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(45, 58, 46, 0.08);
-      border: 1px solid rgba(45, 58, 46, 0.2);
-      padding: 6px 16px;
+      background: var(--surface-light);
+      border: 1px solid var(--border);
+      padding: 6px 18px;
       border-radius: 30px;
       font-size: 0.85rem;
-      color: var(--accent);
+      color: var(--text);
       margin-bottom: 24px;
       font-weight: 600;
     }
 
     .hero h1 {
       font-size: 3.4rem;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1.15;
       margin-bottom: 24px;
-      color: #0F172A;
+      color: var(--text);
     }
 
     .hero h1 span {
-      color: #2D3A2E;
+      color: #0F172A;
       background: none;
       -webkit-text-fill-color: initial;
     }
@@ -157,8 +160,8 @@
 
     .btn-hero {
       background: var(--accent);
-      color: #E1E1CD;
-      padding: 14px 32px;
+      color: #ffffff;
+      padding: 16px 36px;
       font-size: 1rem;
       font-weight: 700;
       border-radius: 30px;
@@ -168,14 +171,18 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      box-shadow: 0 4px 20px var(--accent-glow);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
     }
-    .btn-hero:hover { background: #1E281F; color: #E1E1CD; transform: translateY(-2px); }
+    .btn-hero:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+    }
 
     .btn-hero-secondary {
-      background: var(--surface-light);
+      background: var(--surface);
       color: var(--text);
-      padding: 14px 28px;
+      padding: 16px 32px;
       font-size: 1rem;
       font-weight: 600;
       border-radius: 30px;
@@ -184,8 +191,12 @@
       align-items: center;
       gap: 8px;
       border: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     }
-    .btn-hero-secondary:hover { background: var(--border); }
+    .btn-hero-secondary:hover {
+      background: var(--surface-light);
+      border-color: #D1D5DB;
+    }
 
     /* Features Grid */
     .section-title {
@@ -193,7 +204,7 @@
       font-size: 0.8rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: var(--accent);
+      color: var(--text-muted);
       margin-bottom: 12px;
       font-weight: 700;
     }
@@ -204,6 +215,7 @@
       font-weight: 700;
       margin-bottom: 40px;
       letter-spacing: -0.02em;
+      color: var(--text);
     }
 
     .features-grid {
@@ -216,22 +228,25 @@
     .feature-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
+      border-radius: 20px;
+      padding: 32px;
       transition: all 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
     }
 
     .feature-card:hover {
-      border-color: var(--accent);
+      border-color: #9CA3AF;
       transform: translateY(-4px);
+      box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
     }
 
     .feature-icon-badge {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--accent-glow);
-      color: var(--accent);
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--surface-light);
+      color: var(--text);
+      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -243,7 +258,7 @@
       font-size: 1.2rem;
       font-weight: 600;
       margin-bottom: 10px;
-      color: #0F172A;
+      color: var(--text);
     }
 
     .feature-card p {
@@ -372,8 +387,8 @@
   <div class="container">
     <nav>
       <div class="logo">
-        unlockED <span>SaaS</span>
-        <span class="logo-tag">B2B Institutional</span>
+        unlockED
+        <span class="logo-tag">Institutional</span>
       </div>
       <div class="nav-actions">
         <a href="/static/login.html" class="btn-nav">School Sign In</a>
@@ -385,7 +400,7 @@
     <div id="main-view">
       <div class="hero">
         <div class="school-badge">
-          B2B AI Infrastructure for Schools & Academies
+          AI Infrastructure for Schools & Academies
         </div>
         <h1>The Institutional AI Platform for <span>High School College Admissions</span></h1>
         <p>
@@ -555,7 +570,7 @@
       <!-- Success Screen -->
       <div id="wiz-success" style="display: none; text-align: center; padding: 20px 0;">
         <div class="feature-icon-badge" style="width:64px;height:64px;margin:0 auto 16px;border-radius:50%;"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
-        <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: #0F172A;">School Workspace Created!</h2>
+        <h2 style="font-size: 1.8rem; margin-bottom: 12px; color: #ffffff;">School Workspace Created!</h2>
         <p style="color: var(--text-muted); margin-bottom: 28px; font-size: 1rem; line-height: 1.6;">
           Your school domain has been verified and registered. You can now access the counselor command center and batch ingest student records.
         </p>
