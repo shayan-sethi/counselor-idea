@@ -1931,8 +1931,8 @@ async function renderStudentScholarships() {
           <div style="font-size:0.75rem;">${dlHtml}</div>
           <div style="font-family:var(--mono); font-weight:700; color:${scoreColor}; font-size:0.85rem;">${m.match_score}% Match</div>
           <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">
-            <div style="margin-bottom:6px;"><strong style="color:var(--text-1);">Why:</strong> ${m.why}</div>
-            <div style="color:var(--amber);"><strong style="color:var(--amber);">Actions needed:</strong> ${m.actions_needed}</div>
+            <div style="margin-bottom:6px;"><strong style="color:var(--text-1);">Why:</strong><ul style="margin:4px 0 0 16px;">${m.why.split('\\n').map(line => `<li>${line}</li>`).join('')}</ul></div>
+            <div style="color:var(--amber);"><strong style="color:var(--amber);">Actions needed:</strong><ul style="margin:4px 0 0 16px;">${m.actions_needed.split('\\n').map(line => `<li>${line}</li>`).join('')}</ul></div>
             ${m.scholarship.url ? `<a href="${m.scholarship.url}" target="_blank" class="student-link" style="display:inline-block; margin-top:6px; font-size:0.68rem; font-family:var(--mono);">visit official link ↗</a>` : ''}
           </div>
         </div>

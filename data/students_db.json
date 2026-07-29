@@ -981,7 +981,13 @@
       "cuet_form_submitted": false,
       "tmua_registered": false,
       "sat_score": null
-    }
+    },
+    "shortlisted_colleges": [
+      "OXFORD",
+      "MIT",
+      "US_110404",
+      "US_166027"
+    ]
   },
   {
     "id": "STU_025",

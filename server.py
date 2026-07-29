@@ -840,21 +840,128 @@ def api_evaluate():
     result["traces"] = traces
     return jsonify(result)
 
-@app.route("/api/evaluate_cohort")
-def api_evaluate_cohort():
+
+
+def _build_cohort_context():
+    """Collect slim student summaries + unique target requirements for the batch prompt."""
+    # Slim student summaries (no huge nested objects)
+    student_summaries = []
+    all_target_ids = set()
+    for s in STUDENTS:
+        tids = s.get("targets", [])
+        all_target_ids.update(tids)
+        student_summaries.append({
+            "id": s["id"],
+            "name": s.get("name"),
+            "class_level": s.get("class_level"),
+            "board": s.get("board"),
+            "board_subjects": s.get("board_subjects", []),
+            "grades": s.get("grades", {}),
+            "standardized_tests": s.get("standardized_tests", {}),
+            "portfolio": [p.get("activity") if isinstance(p, dict) else str(p) for p in s.get("portfolio", [])],
+            "targets": tids,
+        })
+
+    # Pull only the targets that are actually used
+    target_reqs = {}
+    for tid in all_target_ids:
+        t = kg.get_course_or_exam(tid)
+        if t:
+            target_reqs[tid] = {
+                "name": t.get("name"),
+                "track": t.get("track"),
+                "subject_prerequisites": t.get("subject_prerequisites", []),
+                "grade_prerequisites": t.get("grade_prerequisites", []),
+                "admission_tests": t.get("admission_tests", []),
+            }
+    return student_summaries, target_reqs
+
+
+def _cohort_batch_groq(student_summaries, target_reqs, groq_key):
+    """
+    Single Groq API call: pass entire cohort + all targets, get back
+    a JSON object keyed by student_id, each containing a 'targets' dict.
+    """
+    import requests, json as _json
+
+    prompt = f"""You are unlockED PRISM — an AI admissions compliance engine.
+
+Evaluate EVERY student in the roster against EACH of their assigned target pathways.
+Use the target requirements to detect gaps, compute a match score (0-100), and suggest remediations.
+
+--- TARGET REQUIREMENTS ---
+{_json.dumps(target_reqs, indent=2)}
+
+--- STUDENT ROSTER ({len(student_summaries)} students) ---
+{_json.dumps(student_summaries, indent=2)}
+
+Return a single JSON object. Keys are student IDs. Each value has a "targets" dict keyed by target ID:
+{{
+  "STU_001": {{
+    "targets": {{
+      "CAMBRIDGE_CS": {{
+        "target_name": "Cambridge Computer Science",
+        "track": "UK",
+        "compliant": true,
+        "match_score": 87,
+        "risk_level": "Strong Match",
+        "urgency_score": 10,
+        "difficulty_label": "Target",
+        "gaps": [{{"field": "grades", "issue": "A-Level Maths grade below A*"}}],
+        "remediations": [{{"field": "grades", "action": "Achieve A* in Maths mock by Dec"}}]
+      }}
+    }}
+  }}
+}}
+
+Rules:
+- match_score 90-100 = Strong Match, 70-89 = Moderate Risk, 45-69 = High Risk, <45 = Critical
+- gaps: list only REAL gaps found; empty array if fully compliant
+- remediations: one actionable step per gap, max 12 words each
+- Return ONLY the JSON object, no markdown, no commentary
+"""
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {"role": "system", "content": "You are unlockED PRISM AI. Return ONLY a valid JSON object."},
+            {"role": "user",   "content": prompt},
+        ],
+        "response_format": {"type": "json_object"},
+        "temperature": 0.1,
+        "max_tokens": 8000,
+    }
+    try:
+        print(f"[PRISM Batch] Single Groq call for {len(student_summaries)} students …")
+        res = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+            json=payload,
+            timeout=60,
+        )
+        if res.status_code == 200:
+            raw = res.json()["choices"][0]["message"]["content"]
+            return _json.loads(raw)
+        else:
+            print(f"[PRISM Batch] Groq error {res.status_code}: {res.text[:300]}")
+    except Exception as e:
+        print(f"[PRISM Batch] Exception: {e}")
+    return None
+
+
+def _cohort_simulated_fallback(student_summaries):
+    """Local rule-based fallback — zero API calls."""
     results = {}
-    for student in STUDENTS:
-        result = {
-            "student_id": student["id"],
-            "student_name": student["name"],
-            "class_level": student["class_level"],
-            "targets": {}
-        }
+    for s_slim in student_summaries:
+        sid = s_slim["id"]
+        # Find full student record
+        student = next((s for s in STUDENTS if s["id"] == sid), None)
+        result = {"student_id": sid, "student_name": s_slim.get("name"), "class_level": s_slim.get("class_level"), "targets": {}}
+        if not student:
+            results[sid] = result
+            continue
         for tid in student.get("targets", []):
             try:
-                import time
-                time.sleep(0.15)  # Artificial delay to simulate agent reasoning
-                agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
+                agent_res = agent._solve_goal_simulated(sid, tid, STUDENTS, None, silent=True)
                 if agent_res:
                     result["targets"][tid] = {
                         "target_name": agent_res.get("target_name", "Target"),
@@ -865,24 +972,49 @@ def api_evaluate_cohort():
                         "urgency_score": agent_res.get("urgency_score", 0),
                         "gaps": agent_res.get("gaps", []),
                         "remediations": agent_res.get("remediations", []),
-                        "difficulty_label": agent_res.get("difficulty_label", "Target")
+                        "difficulty_label": agent_res.get("difficulty_label", "Target"),
                     }
             except Exception as e:
-                # If Gemini hits a rate limit or errors, provide a safe fallback so the dashboard doesn't crash
-                print(f"Error evaluating {student['id']} for {tid}: {e}")
-                result["targets"][tid] = {
-                    "target_name": "API Rate Limit / Engine Unavailable",
-                    "track": "Unknown",
-                    "compliant": False,
-                    "match_score": 0,
-                    "risk_level": "Engine Offline",
-                    "urgency_score": 0,
-                    "gaps": [{"field": "System", "issue": "Gemini API rate limit exceeded. Please wait a minute and refresh."}],
-                    "remediations": [],
-                    "difficulty_label": "Unknown"
-                }
-        results[student["id"]] = result
+                print(f"[Fallback] Error {sid}/{tid}: {e}")
+        results[sid] = result
+    return results
+
+
+@app.route("/api/evaluate_cohort")
+def api_evaluate_cohort():
+    groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+    student_summaries, target_reqs = _build_cohort_context()
+
+    results = None
+
+    if groq_key and student_summaries and target_reqs:
+        # ── ONE single Groq call for the entire cohort ──
+        raw = _cohort_batch_groq(student_summaries, target_reqs, groq_key)
+        if raw and isinstance(raw, dict):
+            # Merge Groq AI output with local structure; fill any missing students with simulated
+            results = {}
+            for s in STUDENTS:
+                sid = s["id"]
+                groq_entry = raw.get(sid)
+                if groq_entry and isinstance(groq_entry.get("targets"), dict):
+                    results[sid] = {
+                        "student_id": sid,
+                        "student_name": s.get("name"),
+                        "class_level": s.get("class_level"),
+                        "targets": groq_entry["targets"],
+                    }
+                else:
+                    # Student missing from Groq response — use local rule engine for just this student
+                    fallback = _cohort_simulated_fallback([next(ss for ss in student_summaries if ss["id"] == sid)])
+                    results[sid] = fallback.get(sid, {"student_id": sid, "targets": {}})
+            print(f"[PRISM Batch] Parsed AI results for {len(results)} students ✓")
+
+    if results is None:
+        print("[PRISM Batch] Groq unavailable — using local rule engine for entire cohort")
+        results = _cohort_simulated_fallback(student_summaries)
+
     return jsonify(results)
+
 
 # ── ML Predict ──
 
@@ -1542,6 +1674,7 @@ def api_calendar(student_id):
 
 SCHOLARSHIPS_PATH = os.path.join(BASE_DIR, "data", "scholarships.json")
 
+
 def load_scholarships():
     if os.path.exists(SCHOLARSHIPS_PATH):
         with open(SCHOLARSHIPS_PATH, "r", encoding="utf-8") as f:
@@ -1563,7 +1696,7 @@ def api_match_scholarships(student_id):
     student = next((s for s in STUDENTS if s["id"] == student_id), None)
     if not student:
         return jsonify({"error": "Student not found"}), 404
-        
+
     scholarships = load_scholarships()
     matches = ScholarshipAgent.match_scholarships(student, scholarships)
     return jsonify(matches)
@@ -1575,7 +1708,7 @@ def api_recommend_scholarship_students(scholarship_id):
     scholarship = next((s for s in scholarships if s["id"] == scholarship_id), None)
     if not scholarship:
         return jsonify({"error": "Scholarship not found"}), 404
-    
+
     recommended = ScholarshipAgent.recommend_students(scholarship, STUDENTS)
     return jsonify(recommended)
 
