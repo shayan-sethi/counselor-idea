@@ -1116,6 +1116,38 @@ def api_import_competition():
     save_competitions(comps)
     return jsonify(imported_comp), 201
 
+@app.route("/api/competitions")
+@login_required
+def api_competitions():
+    return jsonify(load_competitions())
+
+@app.route("/api/shortlist/<student_id>", methods=["POST"])
+@counselor_required
+def api_shortlist_toggle(student_id):
+    data = request.get_json()
+    college_id = data.get("college_id")
+    if not college_id:
+        return jsonify({"error": "college_id required"}), 400
+
+    idx = next((i for i, s in enumerate(STUDENTS) if s["id"] == student_id), None)
+    if idx is None:
+        return jsonify({"error": "Student not found"}), 404
+
+    student = STUDENTS[idx]
+    shortlisted = student.get("shortlisted_colleges", [])
+
+    if college_id in shortlisted:
+        shortlisted.remove(college_id)
+        added = False
+    else:
+        shortlisted.append(college_id)
+        added = True
+
+    student["shortlisted_colleges"] = shortlisted
+    STUDENTS[idx] = student
+    save_students(STUDENTS)
+    return jsonify({"added": added, "shortlisted_colleges": shortlisted})
+
 # ── College Shortlist & Deadline Calendar Endpoints ──
 
 COLLEGES_PATH = os.path.join(BASE_DIR, "data", "colleges_db.json")
@@ -1247,29 +1279,65 @@ def api_evaluate_shortlist():
         sat_val = 0
 
     name = college.get("name", "").lower()
-    
-    is_top_tier = any(x in name for x in ["harvard", "yale", "stanford", "mit", "princeton", "cambridge", "oxford", "caltech"])
-    is_mid_tier = any(x in name for x in ["ucla", "michigan", "nyu", "toronto", "imperial", "ucl", "cornell", "berkeley"])
 
-    if is_top_tier:
-        if grade_val >= 96 and sat_val >= 1530:
+    # Load Gemini university tiers cache
+    tiers_path = os.path.join(BASE_DIR, "data", "university_tiers.json")
+    tier_cache = {}
+    if os.path.exists(tiers_path):
+        try:
+            with open(tiers_path, "r", encoding="utf-8") as f:
+                tier_cache = json.load(f)
+        except Exception:
+            pass
+
+    # Determine tier (1=Elite, 2=Top, 3=Strong, 4=Standard)
+    # Default to hardcoded fallback lists if not yet in cache
+    tier = tier_cache.get(name)
+
+    if tier is None:
+        ELITE = ["harvard", "yale", "stanford", "mit", "princeton", "caltech", "cambridge", "oxford", "imperial", "eth zurich", "lse", "chicago", "columbia"]
+        TOP = ["cornell", "ucl", "ucla", "uc berkeley", "michigan", "nyu", "toronto", "melbourne", "edinburgh", "duke", "johns hopkins"]
+        STRONG = ["purdue", "umass", "ut austin", "ohio state", "penn state", "arizona state", "illinois", "wisconsin", "georgia tech"]
+        
+        if any(x in name for x in ELITE):
+            tier = 1
+        elif any(x in name for x in TOP):
+            tier = 2
+        elif any(x in name for x in STRONG):
+            tier = 3
+        else:
+            tier = 4
+
+    # Classify Reach / Target / Safety based on Tier
+    if tier == 1: # Elite
+        if grade_val >= 98 and sat_val >= 1560:
             category = "Target"
         else:
             category = "Reach"
-    elif is_mid_tier:
-        if grade_val >= 92 and (sat_val >= 1450 or sat_val == 0):
+    elif tier == 2: # Top
+        if grade_val >= 95 and (sat_val >= 1480 or sat_val == 0):
+            category = "Target"
+        elif grade_val >= 90:
+            category = "Reach"
+        else:
+            category = "Reach"
+    elif tier == 3: # Strong
+        if grade_val >= 90:
             category = "Safety"
-        elif grade_val >= 88:
+        elif grade_val >= 80:
             category = "Target"
         else:
             category = "Reach"
-    else:
+    else: # Standard / Tier 4
         if grade_val >= 85:
             category = "Safety"
-        else:
+        elif grade_val >= 70:
             category = "Target"
+        else:
+            category = "Reach"
 
-    return jsonify({"category": category})
+    return jsonify({"category": category, "tier": tier})
+
 
 @app.route("/api/exams")
 @login_required

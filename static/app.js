@@ -192,22 +192,23 @@ async function refreshData() {
 
 // ── View switching ──
 function switchView(v) {
-  ['dashboard', 'manage', 'predictor', 'reports', 'radar', 'shortlist', 'calendar', 'student-profile'].forEach(id => {
+  ['dashboard', 'manage', 'predictor', 'reports', 'extracurriculars', 'shortlist', 'calendar', 'student-profile'].forEach(id => {
     const el = document.getElementById(`view-${id}`);
     if (el) el.classList.toggle('hidden', id !== v);
     const tabMap = { 
-      'dashboard': 'dash', 'manage': 'manage', 'predictor': 'pred', 
-      'reports': 'reports', 'radar': 'radar', 'shortlist': 'shortlist', 'calendar': 'calendar',
-      'student-profile': 'student-profile'
+      'dashboard': 'dash', 'manage': 'manage', 'predictor': 'predictor', 
+      'reports': 'reports', 'shortlist': 'shortlist', 'calendar': 'calendar',
+      'student-profile': 'student-profile', 'extracurriculars': 'extracurriculars'
     };
     const tabEl = document.getElementById(`tab-${tabMap[id]}`);
     if (tabEl) tabEl.classList.toggle('active', id === v);
   });
-  if (v === 'manage') renderManageList();
-  if (v === 'reports') renderReportsView();
-  if (v === 'radar') renderRadarView();
-  if (v === 'shortlist') renderShortlistView();
-  if (v === 'calendar') renderCalendarView();
+  if (v === 'manage')          renderManageList();
+  if (v === 'reports')         renderReportsView();
+  if (v === 'shortlist')       renderRadarView();
+  if (v === 'predictor')       renderShortlistView();
+  if (v === 'calendar')        renderCalendarView();
+  if (v === 'extracurriculars') { /* CSV-driven, no render needed */ }
 }
 
 // ══════════════════════════════════════════════
@@ -590,53 +591,80 @@ function refreshStudentTargetCheckboxes() {
 }
 
 function renderManageList() {
-  // Students List
-  const el = document.getElementById('manage-student-list');
-  el.innerHTML = '';
-  if (students.length === 0) {
-    el.innerHTML = '<div class="loading-row">No students added yet.</div>';
-  } else {
-    students.forEach(s => {
-      const row = document.createElement('div');
-      row.className = 'manage-stu-row';
-      row.innerHTML = `
-        <div class="msr-info">
-          <span class="msr-name">${s.name}</span>
-          <span class="msr-meta">${s.id} · ${s.board} · Class ${s.class_level}</span>
-        </div>
-        <div class="msr-actions">
-          <button class="btn-edit" onclick="editStudent('${s.id}')">Edit</button>
-          <button class="btn-delete" onclick="deleteStudent('${s.id}', '${s.name}')">Delete</button>
-        </div>
-      `;
-      el.appendChild(row);
-    });
+  const masterBody = document.getElementById('student-excel-body');
+  if (masterBody) {
+    masterBody.innerHTML = '';
+    if (students.length === 0) {
+      masterBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No students found</td></tr>';
+    } else {
+      students.forEach(s => {
+        let minMatch = 100;
+        const a = cohortAudit[s.id];
+        if (a) {
+          for (const t in a.targets) {
+            const r = a.targets[t];
+            const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50);
+            minMatch = Math.min(minMatch, ms);
+          }
+        } else {
+          minMatch = 0;
+        }
+        
+        let matchStatusHtml = minMatch >= 90 ? '<span class="badge-risk" style="background:#D1FAE5;color:#047857;border:1px solid #6EE7B7;">Strong</span>' :
+                              minMatch >= 70 ? '<span class="badge-risk" style="background:var(--amber-light);color:#D97706;border:1px solid #FCD34D;">Med</span>' :
+                              '<span class="badge-risk high" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;">Risk</span>';
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${s.id}</strong></td>
+          <td style="font-weight:600; cursor:pointer; color:var(--accent);" onclick="openStudentProfile('${s.id}')">${s.name}</td>
+          <td>${s.board}</td>
+          <td>Class ${s.class_level}</td>
+          <td>${s.predicted_aggregate || 'N/A'}</td>
+          <td>${s.sat_score || 'N/A'}</td>
+          <td>${s.targets ? Object.keys(s.targets).length : 0}</td>
+          <td>${matchStatusHtml}</td>
+        `;
+        masterBody.appendChild(tr);
+      });
+    }
   }
 
-  // Targets List
-  const tel = document.getElementById('manage-target-list');
-  tel.innerHTML = '';
-  if (Object.keys(targets).length === 0) {
-    tel.innerHTML = '<div class="loading-row">No target pathways added yet.</div>';
-  } else {
-    for (const tid in targets) {
-      const t = targets[tid];
-      const row = document.createElement('div');
-      row.className = 'manage-stu-row';
-      row.innerHTML = `
-        <div class="msr-info">
-          <span class="msr-name">${t.name}</span>
-          <span class="msr-meta">${tid} · ${t.university || 'No university'} · Track: ${t.track} · Portfolio: Tier ${t.portfolio_tier}</span>
-        </div>
-        <div class="msr-actions">
-          <button class="btn-delete" onclick="deleteTarget('${tid}', '${t.name}')">Delete</button>
-        </div>
-      `;
-      tel.appendChild(row);
+  // Populate the new Statistics tab
+  const statsBody = document.getElementById('student-stats-body');
+  if (statsBody) {
+    statsBody.innerHTML = '';
+    if (students.length === 0) {
+      statsBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No students found</td></tr>';
+    } else {
+      students.forEach(s => {
+        let completion = 100;
+        let missing = [];
+        if (!s.grade_10_aggregate) missing.push("10th Grade");
+        if (!s.predicted_aggregate) missing.push("12th Pred");
+        if (!s.sat_score && !s.act_score) missing.push("Standardized Tests");
+        if (!s.targets || Object.keys(s.targets).length === 0) missing.push("Targets");
+        if (!s.extracurriculars || s.extracurriculars.length === 0) missing.push("Extracurriculars");
+        
+        completion = 100 - (missing.length * 20);
+        if (completion < 0) completion = 0;
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${s.name} <br> <span style="font-size:0.75rem;color:var(--text-3);">${s.id}</span></td>
+          <td>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div class="progress-bar" style="width:100px; height:8px;"><div class="progress-fill" style="width:${completion}%; background:${completion >= 80 ? 'var(--green)' : completion >= 50 ? 'var(--amber)' : 'var(--red)'};"></div></div>
+              <span style="font-size:0.8rem; font-weight:600;">${completion}%</span>
+            </div>
+          </td>
+          <td style="font-size:0.8rem; color:var(--text-2);">${missing.length > 0 ? missing.join(', ') : 'None'}</td>
+        `;
+        statsBody.appendChild(tr);
+      });
     }
   }
 }
-
 async function submitTargetForm(e) {
   e.preventDefault();
   const name = document.getElementById('mt-name').value.trim();
@@ -991,6 +1019,14 @@ function renderMatchesGrid(filterType) {
   
   let matchCount = 0;
 
+  // If the kanban board exists, clear it
+  const kReach = document.getElementById('kanban-reach');
+  const kTarget = document.getElementById('kanban-target');
+  const kLikely = document.getElementById('kanban-likely');
+  if (kReach) kReach.innerHTML = '';
+  if (kTarget) kTarget.innerHTML = '';
+  if (kLikely) kLikely.innerHTML = '';
+
   for (const tid in currentAuditData.targets) {
     const t = currentAuditData.targets[tid];
     const ms = t.match_score !== undefined ? t.match_score : (t.compliant ? 100 : 50);
@@ -1038,6 +1074,27 @@ function renderMatchesGrid(filterType) {
       </div>
     `;
     grid.appendChild(card);
+    
+    // Also append to kanban board if it exists
+    if (kReach && diffClass === 'reach') {
+      const kCard = document.createElement('div');
+      kCard.className = 'card';
+      kCard.style.cssText = 'margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;';
+      kCard.innerHTML = `<h4 style="font-size:1rem; margin-bottom:8px;">${t.target_name}</h4><div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: ${ms}%</div><div style="font-size:0.8rem; color:var(--text-2);">${reasonText.substring(0, 50)}...</div>`;
+      kReach.appendChild(kCard);
+    } else if (kTarget && diffClass === 'target') {
+      const kCard = document.createElement('div');
+      kCard.className = 'card';
+      kCard.style.cssText = 'margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;';
+      kCard.innerHTML = `<h4 style="font-size:1rem; margin-bottom:8px;">${t.target_name}</h4><div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: ${ms}%</div><div style="font-size:0.8rem; color:var(--text-2);">${reasonText.substring(0, 50)}...</div>`;
+      kTarget.appendChild(kCard);
+    } else if (kLikely && diffClass === 'safety') {
+      const kCard = document.createElement('div');
+      kCard.className = 'card';
+      kCard.style.cssText = 'margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;';
+      kCard.innerHTML = `<h4 style="font-size:1rem; margin-bottom:8px;">${t.target_name}</h4><div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: ${ms}%</div><div style="font-size:0.8rem; color:var(--text-2);">${reasonText.substring(0, 50)}...</div>`;
+      kLikely.appendChild(kCard);
+    }
   }
   
   if (matchCount === 0) {
@@ -1284,10 +1341,10 @@ async function searchCourses(val) {
 // Hide autocompletes on click outside
 document.addEventListener("click", (e) => {
   if (e.target.id !== "mt-uni") {
-    document.getElementById("mt-uni-results").classList.add("hidden");
+    const a = document.getElementById("mt-uni-results"); if(a) a.classList.add("hidden");
   }
   if (e.target.id !== "mt-name") {
-    document.getElementById("mt-course-results").classList.add("hidden");
+    const b = document.getElementById("mt-course-results"); if(b) b.classList.add("hidden");
   }
 });
 
@@ -1410,10 +1467,10 @@ let currentReportSubView = 'student';
 
 function switchReportSubView(type) {
   currentReportSubView = type;
-  document.getElementById('report-sec-student').classList.toggle('hidden', type !== 'student');
-  document.getElementById('report-sec-cohort').classList.toggle('hidden', type !== 'cohort');
+  const rs = document.getElementById('report-sec-student'); if(rs) rs.classList.toggle('hidden', type !== 'student');
+  const rc = document.getElementById('report-sec-cohort'); if(rc) rc.classList.toggle('hidden', type !== 'cohort');
   
-  const btnStud = document.getElementById('btn-report-sub-student');
+  const btnStud = document.getElementById('btn-report-sub-student'); if(!btnStud) return;
   const btnCoho = document.getElementById('btn-report-sub-cohort');
   
   if (type === 'student') {
@@ -1876,31 +1933,18 @@ window.printCohortReport = printCohortReport;
 // ══════════════════════════════════════════════
 
 function renderRadarView() {
-  const sel = document.getElementById('radar-student-select');
-  if (!sel) return;
-  const currentVal = sel.value;
-  sel.innerHTML = '';
-  students.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.id;
-    opt.textContent = `${s.name} (${s.id})`;
-    sel.appendChild(opt);
-  });
-  if (currentVal && students.some(s => s.id === currentVal)) {
-    sel.value = currentVal;
-  } else if (students.length > 0) {
-    sel.value = students[0].id;
-  }
-  if (sel.value) {
-    onRadarStudentChange(sel.value);
+  // We don't have a student select in the new UI for Opportunities yet, let's just use the first student
+  if (students.length > 0) {
+    onRadarStudentChange(students[0].id);
   }
 }
 window.renderRadarView = renderRadarView;
+window.renderRadarView = renderRadarView;
 
 async function onRadarStudentChange(studentId) {
-  const listCont = document.getElementById('radar-matches-list');
+  const listCont = document.getElementById('competitions-tbody');
   if (!listCont) return;
-  listCont.innerHTML = '<div class="loading-row"><span class="blink">▌</span> scanning opportunities…</div>';
+  listCont.innerHTML = '<tr><td colspan="4" style="text-align:center;">scanning opportunities…</td></tr>';
   
   try {
     const res = await fetch(`/api/opportunities/${studentId}`);
@@ -1914,8 +1958,8 @@ async function onRadarStudentChange(studentId) {
     
     matches.forEach(m => {
       const row = document.createElement('div');
-      row.className = 'stu-row';
-      row.style.gridTemplateColumns = '2fr 1fr 1fr 2fr';
+      
+      
       
       let dlHtml = '—';
       if (m.competition.deadline) {
@@ -1932,14 +1976,12 @@ async function onRadarStudentChange(studentId) {
       
       const scoreColor = m.match_score >= 90 ? 'var(--green)' : m.match_score >= 70 ? 'var(--amber)' : 'var(--red)';
       
+      row = document.createElement('tr');
       row.innerHTML = `
-        <div style="display:flex; flex-direction:column; gap:4px;">
-          <strong style="font-size:0.85rem; color:var(--text-1);">${m.competition.name}</strong>
-          <span style="font-size:0.68rem; color:var(--text-3); font-family:var(--mono);">${m.competition.type} · ${m.competition.fee}</span>
-        </div>
-        <div style="font-size:0.75rem;">${dlHtml}</div>
-        <div style="font-family:var(--mono); font-weight:700; color:${scoreColor}; font-size:0.85rem;">${m.match_score}% Match</div>
-        <div style="font-size:0.72rem; color:var(--text-2); line-height:1.4;">${m.why}<br/><small style="color:var(--text-3); display:block; margin-top:2px;">${m.competition.description}</small></div>
+        <td><strong>${m.competition.name}</strong><br><span style="font-size:0.75rem;color:var(--text-3);">${m.competition.type}</span></td>
+        <td>${dlHtml}</td>
+        <td><span class="badge-risk" style="color:${scoreColor}; border:1px solid ${scoreColor}; padding:2px 6px; border-radius:4px; font-size:0.75rem;">${m.match_score}% Match</span></td>
+        <td style="font-size:0.8rem;color:var(--text-2);">${m.why}</td>
       `;
       listCont.appendChild(row);
     });
@@ -2361,7 +2403,7 @@ function filterCalendarEvents() {
   
   filtered.forEach(e => {
     const row = document.createElement('div');
-    row.className = 'stu-row';
+    
     row.style.gridTemplateColumns = '100px 2fr 120px 2fr';
     row.style.cursor = 'default';
     
@@ -2410,3 +2452,965 @@ function filterCalendarEvents() {
 }
 window.filterCalendarEvents = filterCalendarEvents;
 
+
+function handleExtracurricularCsvUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const lines = text.split('\n');
+    const tbody = document.getElementById('ec-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    // Skip header row
+    for (let i = 1; i < lines.length; i++) {
+      if (!lines[i].trim()) continue;
+      // Simple CSV split (assuming no commas in quotes for now)
+      const cols = lines[i].split(',');
+      if (cols.length >= 4) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${cols[0]}</strong></td>
+          <td>${cols[1]}</td>
+          <td><span class="badge-risk" style="background:#E0E7FF;color:#4F46E5;border:1px solid #C7D2FE;">${cols[2]}</span></td>
+          <td style="font-size:0.8rem;color:var(--text-2);">${cols[3]}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+    
+    alert('Extracurriculars loaded from CSV!');
+  };
+  reader.readAsText(file);
+}
+window.handleExtracurricularCsvUpload = handleExtracurricularCsvUpload;
+
+// ══════════════════════════════════════════════
+//  NEW UI HELPERS — Fixed tabs
+// ══════════════════════════════════════════════
+
+// ── Student sub-tabs ──
+function showStudentSubTab(tab) {
+  const roster = document.getElementById('stu-roster-view');
+  const stats  = document.getElementById('stu-stats-view');
+  const tRoster = document.getElementById('stu-tab-roster');
+  const tStats  = document.getElementById('stu-tab-stats');
+  if (!roster || !stats) return;
+  if (tab === 'roster') {
+    roster.style.display = 'block'; stats.style.display = 'none';
+    if (tRoster) { tRoster.style.borderBottom = '2px solid var(--accent)'; tRoster.style.color = 'var(--text-1)'; }
+    if (tStats)  { tStats.style.borderBottom  = '2px solid transparent';   tStats.style.color  = 'var(--text-3)'; }
+  } else {
+    roster.style.display = 'none'; stats.style.display = 'block';
+    if (tStats)  { tStats.style.borderBottom  = '2px solid var(--accent)'; tStats.style.color  = 'var(--text-1)'; }
+    if (tRoster) { tRoster.style.borderBottom = '2px solid transparent';   tRoster.style.color = 'var(--text-3)'; }
+  }
+}
+window.showStudentSubTab = showStudentSubTab;
+
+// ── Opportunities sub-tabs ──
+function showOppSubTab(tab) {
+  const comp    = document.getElementById('opp-comp-view');
+  const colleges = document.getElementById('opp-colleges-view');
+  const tComp   = document.getElementById('opp-tab-comp');
+  const tColl   = document.getElementById('opp-tab-colleges');
+  if (!comp || !colleges) return;
+  if (tab === 'comp') {
+    comp.style.display = 'block'; colleges.style.display = 'none';
+    if (tComp) { tComp.style.borderBottom = '2px solid var(--accent)'; tComp.style.color = 'var(--text-1)'; }
+    if (tColl) { tColl.style.borderBottom = '2px solid transparent';   tColl.style.color = 'var(--text-3)'; }
+  } else {
+    comp.style.display = 'none'; colleges.style.display = 'block';
+    if (tColl) { tColl.style.borderBottom = '2px solid var(--accent)'; tColl.style.color = 'var(--text-1)'; }
+    if (tComp) { tComp.style.borderBottom = '2px solid transparent';   tComp.style.color = 'var(--text-3)'; }
+  }
+}
+window.showOppSubTab = showOppSubTab;
+
+// ── Roster filter/search ──
+function filterRoster() {
+  const q = (document.getElementById('roster-search') || {}).value || '';
+  const grade = (document.getElementById('roster-grade-filter') || {}).value || '';
+  const tbody = document.getElementById('student-excel-body');
+  if (!tbody) return;
+  const rows = tbody.querySelectorAll('tr');
+  rows.forEach(tr => {
+    const text = tr.innerText.toLowerCase();
+    const matchQ = q === '' || text.includes(q.toLowerCase());
+    const matchG = grade === '' || text.includes('class ' + grade);
+    tr.style.display = (matchQ && matchG) ? '' : 'none';
+  });
+}
+window.filterRoster = filterRoster;
+
+// ── Export roster CSV ──
+function exportRosterCsv() {
+  const rows = [['ID','Name','Board','Class','G10','G12 Pred','SAT','ACT','CUET','Portfolio Tier','Targets']];
+  students.forEach(s => {
+    rows.push([
+      s.id, s.name, s.board, s.class_level,
+      s.grade_10_aggregate || '', s.predicted_aggregate || '',
+      s.sat_score || '', s.act_score || '',
+      s.cuet_subjects ? s.cuet_subjects.join(';') : '',
+      s.portfolio && s.portfolio.length ? Math.min(...s.portfolio.map(p => p.tier || 3)) : '',
+      s.targets ? Object.keys(s.targets).length : 0
+    ]);
+  });
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'students_roster.csv';
+  a.click();
+}
+window.exportRosterCsv = exportRosterCsv;
+
+// ── Revised renderManageList with all new columns ──
+function renderManageListFull() {
+  const masterBody = document.getElementById('student-excel-body');
+  if (masterBody) {
+    masterBody.innerHTML = '';
+    if (students.length === 0) {
+      masterBody.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:20px;color:var(--text-3);">No students found</td></tr>';
+    } else {
+      students.forEach(s => {
+        let minMatch = null;
+        const a = cohortAudit[s.id];
+        if (a && Object.keys(a.targets || {}).length > 0) {
+          minMatch = 100;
+          for (const t in a.targets) {
+            const r = a.targets[t];
+            const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50);
+            minMatch = Math.min(minMatch, ms);
+          }
+        }
+        const matchBadge = minMatch === null
+          ? '<span style="color:var(--text-3);font-size:0.75rem;">No audit</span>'
+          : minMatch >= 90
+            ? '<span class="badge-risk" style="background:#D1FAE5;color:#047857;border:1px solid #6EE7B7;font-size:0.75rem;">Strong</span>'
+            : minMatch >= 70
+              ? '<span class="badge-risk" style="background:#FEF3C7;color:#D97706;border:1px solid #FCD34D;font-size:0.75rem;">Moderate</span>'
+              : '<span class="badge-risk" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;font-size:0.75rem;">At Risk</span>';
+
+        const portfolioTier = s.portfolio && s.portfolio.length
+          ? 'Tier ' + Math.min(...s.portfolio.map(p => p.tier || 3))
+          : '<span style="color:var(--text-3);">—</span>';
+
+        const cuetCount = s.cuet_subjects ? s.cuet_subjects.length : 0;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-size:0.78rem; color:var(--text-3);">${s.id}</td>
+          <td style="font-weight:600; cursor:pointer; color:var(--accent);" onclick="openStudentProfile('${s.id}')">${s.name}</td>
+          <td>${s.board}</td>
+          <td>Class ${s.class_level}</td>
+          <td>${s.grade_10_aggregate || '<span style="color:var(--text-3);">—</span>'}</td>
+          <td>${s.predicted_aggregate || '<span style="color:var(--text-3);">—</span>'}</td>
+          <td>${s.sat_score || '<span style="color:var(--text-3);">—</span>'}</td>
+          <td>${s.act_score || '<span style="color:var(--text-3);">—</span>'}</td>
+          <td>${cuetCount > 0 ? cuetCount + ' subj.' : '<span style="color:var(--text-3);">—</span>'}</td>
+          <td>${portfolioTier}</td>
+          <td>${s.targets ? Object.keys(s.targets).length : 0}</td>
+          <td>${matchBadge}</td>
+          <td><button class="btn-ghost-sm" onclick="openStudentProfile('${s.id}')" style="font-size:0.75rem;">View</button></td>
+        `;
+        masterBody.appendChild(tr);
+      });
+    }
+  }
+
+  // Stats tab
+  const statsBody = document.getElementById('student-stats-body');
+  if (statsBody) {
+    statsBody.innerHTML = '';
+    if (students.length === 0) {
+      statsBody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text-3);">No students found</td></tr>';
+    } else {
+      students.forEach(s => {
+        const hasG10   = !!s.grade_10_aggregate;
+        const hasG12   = !!s.predicted_aggregate;
+        const hasSAT   = !!s.sat_score;
+        const hasACT   = !!s.act_score;
+        const hasCUET  = !!(s.cuet_subjects && s.cuet_subjects.length > 0);
+        const hasPf    = !!(s.portfolio && s.portfolio.length > 0);
+        const hasEC    = !!(s.extracurriculars && s.extracurriculars.length > 0);
+        const hasTgt   = !!(s.targets && Object.keys(s.targets).length > 0);
+
+        const fields = [hasG10, hasG12, hasSAT || hasACT, hasCUET, hasPf, hasEC, hasTgt];
+        const filled  = fields.filter(Boolean).length;
+        const total   = fields.length;
+        const pct     = Math.round((filled / total) * 100);
+
+        const tick  = v => v ? '✅' : '❌';
+        const bar_c = pct >= 80 ? '#059669' : pct >= 50 ? '#D97706' : '#DC2626';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:600;">${s.name}<br><span style="font-size:0.72rem;color:var(--text-3);">${s.id}</span></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:80px;height:7px;background:var(--border);border-radius:4px;overflow:hidden;">
+                <div style="height:100%;width:${pct}%;background:${bar_c};border-radius:4px;"></div>
+              </div>
+              <span style="font-weight:700;font-size:0.85rem;">${pct}%</span>
+            </div>
+          </td>
+          <td style="text-align:center;">${tick(hasG10)}</td>
+          <td style="text-align:center;">${tick(hasG12)}</td>
+          <td style="text-align:center;">${tick(hasSAT || hasACT)}</td>
+          <td style="text-align:center;">${tick(hasCUET)}</td>
+          <td style="text-align:center;">${tick(hasPf)}</td>
+          <td style="text-align:center;">${tick(hasEC)}</td>
+          <td style="text-align:center;">${tick(hasTgt)}</td>
+          <td style="font-size:0.78rem;color:var(--red);">${[
+            !hasG10  ? 'G10' : '',
+            !hasG12  ? 'G12' : '',
+            !(hasSAT||hasACT) ? 'SAT/ACT' : '',
+            !hasCUET ? 'CUET' : '',
+            !hasPf   ? 'Portfolio' : '',
+            !hasEC   ? 'Extracurriculars' : '',
+            !hasTgt  ? 'Targets' : ''
+          ].filter(Boolean).join(', ') || '—'}</td>
+        `;
+        statsBody.appendChild(tr);
+      });
+    }
+  }
+}
+window.renderManageListFull = renderManageListFull;
+
+// Override switchView's manage call to use the full function
+const _origSwitchView = switchView;
+switchView = function(v) {
+  _origSwitchView(v);
+  if (v === 'manage') renderManageListFull();
+  if (v === 'predictor') renderPredictorView();
+};
+window.switchView = switchView;
+
+// Also override the init call
+const _origInit = init;
+init = async function() {
+  await _origInit();
+  renderManageListFull();
+};
+window.init = init;
+
+// ── Opportunities: fix the row variable bug ──
+async function onRadarStudentChangeFixed(studentId) {
+  const tbody = document.getElementById('competitions-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;">Scanning opportunities for student…</td></tr>';
+
+  try {
+    const res = await fetch(`/api/opportunities/${studentId}`);
+    const matches = await res.json();
+
+    tbody.innerHTML = '';
+    if (!matches.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-3);">No matching competitions found for this student.</td></tr>';
+      return;
+    }
+
+    matches.forEach(m => {
+      let dlHtml = '—';
+      if (m.competition.deadline) {
+        if (m.days_remaining !== null && m.days_remaining < 0) {
+          dlHtml = '<span style="color:var(--text-3);">Closed</span>';
+        } else if (m.days_remaining !== null) {
+          const color = m.is_urgent ? 'var(--red)' : 'var(--text-2)';
+          dlHtml = `<span style="color:${color};">${m.competition.deadline}<br><small style="font-size:0.7rem;">${m.days_remaining}d left</small></span>`;
+        } else {
+          dlHtml = m.competition.deadline;
+        }
+      }
+      const sc = m.match_score >= 90 ? '#059669' : m.match_score >= 70 ? '#D97706' : '#DC2626';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><strong>${m.competition.name}</strong><br><span style="font-size:0.72rem;color:var(--text-3);">${m.competition.type} · ${m.competition.fee}</span></td>
+        <td style="white-space:nowrap;">${dlHtml}</td>
+        <td><span style="font-size:0.8rem;font-weight:700;color:${sc};">${m.match_score}%</span></td>
+        <td style="font-size:0.8rem;color:var(--text-2);">${m.why}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--red);">Failed to load: ${err.message}</td></tr>`;
+  }
+}
+window.onRadarStudentChange = onRadarStudentChangeFixed;
+
+// Also override renderRadarView to populate the student select
+function renderRadarViewFixed() {
+  const sel = document.getElementById('shortlist-student-select');
+  if (!sel) return;
+  sel.innerHTML = '';
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${s.id})`;
+    sel.appendChild(opt);
+  });
+  if (students.length > 0) {
+    sel.value = students[0].id;
+    onRadarStudentChangeFixed(students[0].id);
+  }
+}
+window.renderRadarView = renderRadarViewFixed;
+
+// ── Universities (Predictor) view ──
+let allUniversities = [];
+
+async function renderPredictorView() {
+  const sel = document.getElementById('predictor-student-select');
+  if (sel) {
+    sel.innerHTML = '';
+    students.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id; opt.textContent = `${s.name} (${s.id})`;
+      sel.appendChild(opt);
+    });
+    if (students.length > 0) sel.value = students[0].id;
+  }
+
+  const tbody = document.getElementById('predictor-uni-body');
+  const countEl = document.getElementById('uni-result-count');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">Loading university database…</td></tr>';
+
+  try {
+    if (allUniversities.length === 0) {
+      const res = await fetch('/api/colleges');
+      allUniversities = await res.json();
+    }
+    renderPredictorTable(allUniversities);
+    if (countEl) countEl.textContent = `${allUniversities.length} universities loaded`;
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--red);">Failed to load universities: ${err.message}</td></tr>`;
+  }
+}
+window.renderPredictorView = renderPredictorView;
+
+function renderPredictorTable(list) {
+  const tbody = document.getElementById('predictor-uni-body');
+  const countEl = document.getElementById('uni-result-count');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  const visible = list.slice(0, 200); // cap at 200 for performance
+  if (countEl) countEl.textContent = `Showing ${visible.length} of ${list.length} universities`;
+
+  if (!visible.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);">No results found.</td></tr>';
+    return;
+  }
+
+  const studentId = (document.getElementById('predictor-student-select') || {}).value || '';
+  const student = students.find(s => s.id === studentId);
+  const shortlisted = student && student.shortlisted_colleges ? student.shortlisted_colleges : [];
+
+  visible.forEach(u => {
+    const deadline = u.deadlines && u.deadlines.length ? u.deadlines[0] : '—';
+    const isShortlisted = shortlisted.includes(u.id || u.name);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600;">${u.name}</td>
+      <td>${u.country || '—'}</td>
+      <td>${u.expected_sat || '—'}</td>
+      <td style="font-size:0.8rem;">${typeof deadline === 'string' ? deadline : (deadline.label || JSON.stringify(deadline))}</td>
+      <td>
+        <button class="btn-ghost-sm" style="font-size:0.75rem; ${isShortlisted ? 'color:var(--accent);font-weight:700;' : ''}"
+          onclick="toggleShortlist('${(u.id||u.name).replace(/'/g,"\\'")}', this)">
+          ${isShortlisted ? '★ Shortlisted' : '☆ Shortlist'}
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+window.renderPredictorTable = renderPredictorTable;
+
+function filterPredictorList() {
+  const q = (document.getElementById('predictor-uni-search') || {}).value || '';
+  if (!q.trim()) { renderPredictorTable(allUniversities); return; }
+  const filtered = allUniversities.filter(u => u.name.toLowerCase().includes(q.toLowerCase()));
+  renderPredictorTable(filtered);
+}
+window.filterPredictorList = filterPredictorList;
+
+function onPredictorStudentChange(studentId) {
+  renderPredictorTable(allUniversities);
+}
+window.onPredictorStudentChange = onPredictorStudentChange;
+
+async function toggleShortlist(collegeId, btn) {
+  const sel = document.getElementById('predictor-student-select');
+  if (!sel || !sel.value) return alert('Select a student first');
+  const studentId = sel.value;
+  try {
+    const res = await fetch(`/api/shortlist/${studentId}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ college_id: collegeId })
+    });
+    if (res.ok) {
+      const d = await res.json();
+      const added = d.added;
+      btn.textContent = added ? '★ Shortlisted' : '☆ Shortlist';
+      btn.style.color = added ? 'var(--accent)' : '';
+      btn.style.fontWeight = added ? '700' : '';
+      // Update local data
+      const s = students.find(x => x.id === studentId);
+      if (s) {
+        s.shortlisted_colleges = s.shortlisted_colleges || [];
+        if (added) { s.shortlisted_colleges.push(collegeId); }
+        else { s.shortlisted_colleges = s.shortlisted_colleges.filter(c => c !== collegeId); }
+      }
+    }
+  } catch(err) { console.error(err); }
+}
+window.toggleShortlist = toggleShortlist;
+
+// ── Reports view fixes ──
+function renderReportsViewFull() {
+  const sel = document.getElementById('report-student-select');
+  if (!sel) return;
+  const currentVal = sel.value;
+  sel.innerHTML = '';
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id; opt.textContent = `${s.name} (${s.id})`;
+    sel.appendChild(opt);
+  });
+  if (currentVal && students.some(s => s.id === currentVal)) sel.value = currentVal;
+  else if (students.length > 0) sel.value = students[0].id;
+  if (sel.value) onReportStudentChange(sel.value);
+  switchReportSubView('student');
+}
+window.renderReportsView = renderReportsViewFull;
+
+function switchReportSubView(type) {
+  const rs = document.getElementById('report-sec-student');
+  const rc = document.getElementById('report-sec-cohort');
+  const bs = document.getElementById('btn-report-sub-student');
+  const bc = document.getElementById('btn-report-sub-cohort');
+  if (rs) rs.classList.toggle('hidden', type !== 'student');
+  if (rc) rc.classList.toggle('hidden', type !== 'cohort');
+  if (bs) { bs.style.borderBottom = type === 'student' ? '2px solid var(--accent)' : '2px solid transparent'; bs.style.color = type === 'student' ? 'var(--text-1)' : 'var(--text-3)'; }
+  if (bc) { bc.style.borderBottom = type === 'cohort'  ? '2px solid var(--accent)' : '2px solid transparent'; bc.style.color = type === 'cohort'  ? 'var(--text-1)' : 'var(--text-3)'; }
+  if (type === 'cohort') renderCohortReport();
+}
+window.switchReportSubView = switchReportSubView;
+
+function renderCohortReport() {
+  let strong = 0, risk = 0;
+  const wrap = document.getElementById('cohort-report-table-wrap');
+  const total = students.length;
+  students.forEach(s => {
+    const a = cohortAudit[s.id]; if (!a) return;
+    let min = 100;
+    for (const t in a.targets) { const r = a.targets[t]; const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50); min = Math.min(min, ms); }
+    if (min >= 90) strong++; else if (min < 70) risk++;
+  });
+  const rtEl = document.getElementById('cohort-rep-total');
+  const rsEl = document.getElementById('cohort-rep-strong');
+  const rrEl = document.getElementById('cohort-rep-risk');
+  if (rtEl) rtEl.textContent = total;
+  if (rsEl) rsEl.textContent = strong;
+  if (rrEl) rrEl.textContent = risk;
+  if (wrap) {
+    let html = '<table class="excel-table" style="width:100%;"><thead><tr><th>Student</th><th>Min Match</th><th>Gaps</th><th>Status</th></tr></thead><tbody>';
+    students.forEach(s => {
+      const a = cohortAudit[s.id];
+      let min = null, gaps = 0;
+      if (a) { min = 100; for (const t in a.targets) { const r = a.targets[t]; const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50); min = Math.min(min, ms); if (!r.compliant) gaps += (r.gaps || []).length; } }
+      const statusHtml = min === null ? '<span style="color:var(--text-3);">—</span>' : min >= 90 ? '<span style="color:#059669;">Strong</span>' : min >= 70 ? '<span style="color:#D97706;">Moderate</span>' : '<span style="color:#DC2626;">At Risk</span>';
+      html += `<tr><td style="font-weight:600;">${s.name}</td><td>${min !== null ? min + '%' : '—'}</td><td>${gaps}</td><td>${statusHtml}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+}
+window.renderCohortReport = renderCohortReport;
+
+function generateStudentPdf() { alert('Generating student PDF report… (connect to a PDF library to implement)'); }
+function generateCohortPdf()  { alert('Generating cohort PDF report… (connect to a PDF library to implement)'); }
+function sendReportEmail()     { alert('Sending report to student email…'); }
+async function saveReportNotes() {
+  const sel = document.getElementById('report-student-select');
+  const notes = (document.getElementById('report-notes-input') || {}).value || '';
+  if (!sel || !sel.value) return;
+  try {
+    await fetch(`/api/students/${sel.value}`, {
+      method: 'PATCH', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ counselor_notes: notes })
+    });
+  } catch(e) { console.error(e); }
+}
+window.generateStudentPdf = generateStudentPdf;
+window.generateCohortPdf  = generateCohortPdf;
+window.sendReportEmail    = sendReportEmail;
+window.saveReportNotes    = saveReportNotes;
+
+// ── Extracurriculars CSV parser (improved) ──
+function handleExtracurricularCsvUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const statusEl = document.getElementById('ec-status');
+  if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Parsing CSV…'; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    const tbody = document.getElementById('ec-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    // detect delimiter
+    const delim = lines[0].includes('\t') ? '\t' : ',';
+    const headers = lines[0].split(delim).map(h => h.replace(/^"|"$/g,'').trim());
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(delim).map(c => c.replace(/^"|"$/g,'').trim());
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td style="color:var(--text-3);">${i}</td>` + cols.map(c => `<td>${c}</td>`).join('');
+      tbody.appendChild(tr);
+    }
+    if (statusEl) statusEl.textContent = `✅ Loaded ${lines.length - 1} activities from ${file.name}`;
+  };
+  reader.readAsText(file);
+}
+window.handleExtracurricularCsvUpload = handleExtracurricularCsvUpload;
+
+// ── Also update header counts live ──
+const _origRenderDashboard = renderDashboard;
+renderDashboard = function() {
+  _origRenderDashboard();
+  const hc = document.getElementById('m-cohort-header');
+  const hr = document.getElementById('m-risk-header');
+  let risk = 0;
+  students.forEach(s => { const a = cohortAudit[s.id]; if (!a) return; let min = 100; for (const t in a.targets) { const r = a.targets[t]; const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50); min = Math.min(min, ms); } if (min < 70) risk++; });
+  if (hc) hc.textContent = students.length;
+  if (hr) hr.textContent = risk + ' high-risk';
+};
+window.renderDashboard = renderDashboard;
+
+// ── Calendar view: populate student dropdown ──
+function renderCalendarViewFixed() {
+  const sel = document.getElementById('calendar-student-select');
+  if (!sel) return;
+  const currentVal = sel.value;
+  sel.innerHTML = '';
+  students.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = `${s.name} (${s.id})`;
+    sel.appendChild(opt);
+  });
+  if (currentVal && students.some(s => s.id === currentVal)) sel.value = currentVal;
+  else if (students.length > 0) sel.value = students[0].id;
+
+  // init to current month
+  const now = new Date();
+  currentCalYear  = now.getFullYear();
+  currentCalMonth = now.getMonth();
+  selectedCalDay  = null;
+
+  if (sel.value) onCalendarStudentChange(sel.value);
+}
+window.renderCalendarView = renderCalendarViewFixed;
+
+// Event items styled nicely
+const _origFilterCalendarEvents = filterCalendarEvents;
+filterCalendarEvents = function() {
+  const listCont = document.getElementById('calendar-events-list');
+  if (!listCont) return;
+  listCont.innerHTML = '';
+
+  const showCollege = (document.getElementById('cal-filter-college') || {checked:true}).checked;
+  const showExam    = (document.getElementById('cal-filter-exam')    || {checked:true}).checked;
+  const showComp    = (document.getElementById('cal-filter-competition') || {checked:true}).checked;
+
+  const today = new Date();
+
+  const filtered = calendarEvents.filter(e => {
+    if (e.type === 'college'     && !showCollege) return false;
+    if (e.type === 'exam'        && !showExam)    return false;
+    if (e.type === 'competition' && !showComp)    return false;
+    const eDate = new Date(e.date);
+    const matchMonth = eDate.getFullYear() === currentCalYear && eDate.getMonth() === currentCalMonth;
+    if (!matchMonth) return false;
+    if (selectedCalDay !== null && eDate.getDate() !== selectedCalDay) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    listCont.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-3);">No events for ${selectedCalDay ? 'day '+selectedCalDay : 'this month'} with current filters.</div>`;
+    return;
+  }
+
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  filtered.forEach(e => {
+    const eDate    = new Date(e.date);
+    const dateStr  = `${eDate.getDate()} ${months[eDate.getMonth()]} ${eDate.getFullYear()}`;
+    const diffDays = Math.ceil((eDate - today) / 86400000);
+    const countdown = diffDays < 0  ? `<span style="color:var(--text-3);font-size:0.72rem;">Passed</span>`
+                    : diffDays === 0 ? `<span style="color:var(--red);font-weight:700;font-size:0.72rem;">TODAY</span>`
+                    :                  `<span style="color:${diffDays<=14?'var(--red)':diffDays<=30?'var(--amber)':'var(--text-2)'};font-size:0.72rem;font-weight:600;">in ${diffDays}d</span>`;
+
+    const typeColor = e.type === 'exam' ? '#D97706' : e.type === 'competition' ? '#059669' : '#DC2626';
+    const typeName  = e.type === 'exam' ? 'Exam' : e.type === 'competition' ? 'Competition' : 'College';
+
+    const card = document.createElement('div');
+    card.style.cssText = 'display:flex; align-items:flex-start; gap:14px; padding:12px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px; border-left:3px solid ' + typeColor + ';';
+    card.innerHTML = `
+      <div style="min-width:52px; text-align:center;">
+        <div style="font-weight:700; font-size:1rem; color:var(--text-1);">${eDate.getDate()}</div>
+        <div style="font-size:0.68rem; color:var(--text-3); text-transform:uppercase;">${months[eDate.getMonth()]}</div>
+        <div style="margin-top:4px;">${countdown}</div>
+      </div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-weight:700; font-size:0.85rem; color:var(--text-1); margin-bottom:3px;">${e.title}</div>
+        <div style="font-size:0.75rem; color:var(--text-3); margin-bottom:6px;">${e.description || ''}</div>
+        <span style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 8px; border-radius:20px; border:1px solid ${typeColor}; color:${typeColor};">${typeName}</span>
+      </div>
+    `;
+    listCont.appendChild(card);
+  });
+};
+window.filterCalendarEvents = filterCalendarEvents;
+
+// ══════════════════════════════════════════════
+//  EXTRACURRICULARS — load from competitions_db
+// ══════════════════════════════════════════════
+
+let allCompetitionsDB = [];
+
+async function renderExtracurricularsView() {
+  const tbody = document.getElementById('ec-tbody');
+  const status = document.getElementById('ec-status');
+  if (!tbody) return;
+
+  if (allCompetitionsDB.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">Loading…</td></tr>';
+    try {
+      const res = await fetch('/api/competitions');
+      allCompetitionsDB = await res.json();
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--red);">Failed to load: ${e.message}</td></tr>`;
+      return;
+    }
+  }
+
+  renderExtracurricularsTable(allCompetitionsDB);
+  if (status) { status.style.display = 'block'; status.textContent = `✅ ${allCompetitionsDB.length} activities loaded from database`; }
+}
+window.renderExtracurricularsView = renderExtracurricularsView;
+
+function renderExtracurricularsTable(list) {
+  const tbody = document.getElementById('ec-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  list.forEach((c, i) => {
+    const impactColor = c.portfolio_tier === 1 ? '#059669' : c.portfolio_tier === 2 ? '#D97706' : '#6B7280';
+    const impactLabel = c.portfolio_tier === 1 ? 'High Impact' : c.portfolio_tier === 2 ? 'Medium Impact' : 'Good to Have';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--text-3);font-size:0.78rem;">${i+1}</td>
+      <td>
+        <div style="font-weight:600;font-size:0.85rem;">${c.name}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);margin-top:2px;">${c.description ? c.description.slice(0,80)+'…' : ''}</div>
+      </td>
+      <td><span style="font-size:0.75rem;color:var(--accent);">${c.type}</span></td>
+      <td>
+        <span style="font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid ${impactColor};color:${impactColor};">
+          ${impactLabel}
+        </span>
+      </td>
+      <td style="font-size:0.8rem;">
+        <div style="color:var(--text-2);">${c.deadline || '—'}</div>
+        <div style="font-size:0.72rem;color:var(--text-3);">Class ${c.min_class_level}–${c.max_class_level} · ${c.fee}</div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+window.renderExtracurricularsTable = renderExtracurricularsTable;
+
+// Update the EC table header in the HTML to match
+document.addEventListener('DOMContentLoaded', () => {
+  const ecHead = document.querySelector('#ec-tbody')?.closest('table')?.querySelector('thead tr');
+  if (ecHead) {
+    ecHead.innerHTML = '<th>#</th><th>Activity / Competition</th><th>Type</th><th>Impact</th><th>Deadline &amp; Eligibility</th>';
+  }
+});
+
+// Override switchView to call renderExtracurricularsView
+const _baseSwitch2 = window.switchView;
+window.switchView = function(v) {
+  _baseSwitch2(v);
+  if (v === 'extracurriculars') renderExtracurricularsView();
+};
+
+// Also handle CSV upload — merge with DB or replace
+function handleExtracurricularCsvUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('ec-status');
+  if (status) { status.style.display = 'block'; status.textContent = 'Parsing CSV…'; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
+    const delim = lines[0].includes('\t') ? '\t' : ',';
+    const headers = lines[0].split(delim).map(h => h.replace(/^"|"$/g,'').trim());
+    const tbody = document.getElementById('ec-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(delim).map(c => c.replace(/^"|"$/g,'').trim());
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td style="color:var(--text-3);">${i}</td>` + cols.map(c => `<td>${c}</td>`).join('');
+      tbody.appendChild(tr);
+    }
+    if (status) status.textContent = `✅ ${lines.length - 1} rows loaded from ${file.name}`;
+  };
+  reader.readAsText(file);
+}
+window.handleExtracurricularCsvUpload = handleExtracurricularCsvUpload;
+
+// ══════════════════════════════════════════════
+//  UNIVERSITIES — fixed shortlist + Reach/Target/Safety
+// ══════════════════════════════════════════════
+
+async function toggleShortlistFixed(collegeId, collegeName, btn) {
+  const sel = document.getElementById('predictor-student-select');
+  if (!sel || !sel.value) { alert('Select a student first'); return; }
+  const studentId = sel.value;
+
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    // 1. Toggle shortlist
+    const res = await fetch(`/api/shortlist/${studentId}`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ college_id: collegeId })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const d = await res.json();
+    const added = d.added;
+
+    // Update local student data
+    const s = students.find(x => x.id === studentId);
+    if (s) s.shortlisted_colleges = d.shortlisted_colleges;
+
+    if (added) {
+      // 2. Evaluate Reach/Target/Safety
+      const evalRes = await fetch('/api/evaluate_shortlist', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ student_id: studentId, college_id: collegeId })
+      });
+      const evalData = evalRes.ok ? await evalRes.json() : { category: 'Target' };
+      const category = evalData.category || 'Target';
+
+      btn.textContent = '★ Shortlisted';
+      btn.style.color = 'var(--accent)';
+      btn.style.fontWeight = '700';
+      btn.disabled = false;
+
+      // 3. Add to kanban
+      addToKanban(category, collegeId, collegeName, studentId);
+    } else {
+      btn.textContent = '☆ Shortlist';
+      btn.style.color = '';
+      btn.style.fontWeight = '';
+      btn.disabled = false;
+      // Remove from kanban
+      const existing = document.getElementById(`kanban-card-${collegeId}`);
+      if (existing) existing.remove();
+    }
+  } catch(err) {
+    btn.textContent = '☆ Shortlist';
+    btn.disabled = false;
+    console.error('Shortlist error:', err);
+    alert('Failed to update shortlist: ' + err.message);
+  }
+}
+window.toggleShortlistFixed = toggleShortlistFixed;
+
+function addToKanban(category, collegeId, collegeName, studentId) {
+  const colId = category === 'Reach' ? 'kanban-reach' : category === 'Safety' ? 'kanban-likely' : 'kanban-target';
+  const colEl = document.getElementById(colId);
+  if (!colEl) return;
+
+  // Remove "No data yet" placeholder
+  const placeholder = colEl.querySelector('[data-placeholder]');
+  if (placeholder) placeholder.remove();
+
+  const card = document.createElement('div');
+  card.id = `kanban-card-${collegeId}`;
+  card.style.cssText = 'padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px; font-size:0.82rem;';
+  const borderColor = category === 'Reach' ? '#EF4444' : category === 'Safety' ? '#10B981' : '#F59E0B';
+  card.style.borderLeft = `3px solid ${borderColor}`;
+  card.innerHTML = `
+    <div style="font-weight:600; color:var(--text-1); margin-bottom:4px;">${collegeName}</div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:0.7rem; color:var(--text-3);">${category}</span>
+      <button onclick="removeFromShortlistUI('${collegeId}', '${studentId}', this)" style="background:none;border:none;cursor:pointer;font-size:0.7rem;color:var(--red);">Remove</button>
+    </div>
+  `;
+  colEl.appendChild(card);
+}
+window.addToKanban = addToKanban;
+
+async function removeFromShortlistUI(collegeId, studentId, btn) {
+  const card = document.getElementById(`kanban-card-${collegeId}`);
+  try {
+    const res = await fetch(`/api/shortlist/${studentId}`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ college_id: collegeId })
+    });
+    if (res.ok) {
+      const d = await res.json();
+      const s = students.find(x => x.id === studentId);
+      if (s) s.shortlisted_colleges = d.shortlisted_colleges;
+      if (card) card.remove();
+      // Reset the table button
+      const tableBtn = document.querySelector(`[data-college-id="${collegeId}"]`);
+      if (tableBtn) { tableBtn.textContent = '☆ Shortlist'; tableBtn.style.color = ''; tableBtn.style.fontWeight = ''; }
+    }
+  } catch(e) { console.error(e); }
+}
+window.removeFromShortlistUI = removeFromShortlistUI;
+
+// Override renderPredictorTable to use the fixed toggle and pre-fill kanban
+async function renderPredictorViewFull() {
+  const sel = document.getElementById('predictor-student-select');
+  if (sel) {
+    const curVal = sel.value;
+    sel.innerHTML = '';
+    students.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id; opt.textContent = `${s.name} (${s.id})`;
+      sel.appendChild(opt);
+    });
+    if (curVal && students.some(s => s.id === curVal)) sel.value = curVal;
+    else if (students.length > 0) sel.value = students[0].id;
+  }
+
+  const tbody = document.getElementById('predictor-uni-body');
+  const countEl = document.getElementById('uni-result-count');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">Loading university database…</td></tr>';
+
+  try {
+    if (allUniversities.length === 0) {
+      const res = await fetch('/api/colleges');
+      allUniversities = await res.json();
+    }
+    renderPredictorTableFull(allUniversities);
+    if (countEl) countEl.textContent = `${allUniversities.length.toLocaleString()} universities loaded`;
+    // Populate kanban from existing shortlist
+    populateKanbanFromShortlist();
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--red);">Failed to load: ${err.message}</td></tr>`;
+  }
+}
+window.renderPredictorView = renderPredictorViewFull;
+
+function renderPredictorTableFull(list) {
+  const tbody = document.getElementById('predictor-uni-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  const studentId = (document.getElementById('predictor-student-select') || {}).value || '';
+  const student = students.find(s => s.id === studentId);
+  const shortlisted = student && student.shortlisted_colleges ? student.shortlisted_colleges : [];
+
+  const visible = list.slice(0, 300);
+  const countEl = document.getElementById('uni-result-count');
+  if (countEl) countEl.textContent = `Showing ${visible.length} of ${list.length}`;
+
+  if (!visible.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);">No results.</td></tr>';
+    return;
+  }
+
+  visible.forEach(u => {
+    const uid = u.id || u.name;
+    const isShortlisted = shortlisted.includes(uid);
+    const deadline = u.deadlines && u.deadlines.length
+      ? (typeof u.deadlines[0] === 'string' ? u.deadlines[0] : u.deadlines[0].label || u.deadlines[0].date || '—')
+      : '—';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600;">${u.name}</td>
+      <td>${u.country || '—'}</td>
+      <td>${u.expected_sat || '—'}</td>
+      <td style="font-size:0.8rem;color:var(--text-3);">${deadline}</td>
+      <td>
+        <button
+          data-college-id="${uid}"
+          onclick="toggleShortlistFixed('${uid.replace(/'/g,"\\'")}', '${u.name.replace(/'/g,"\\'")}', this)"
+          style="padding:4px 10px; font-size:0.75rem; border-radius:6px; border:1px solid var(--border); background:none; cursor:pointer; color:${isShortlisted ? 'var(--accent)' : 'var(--text-2)'}; font-weight:${isShortlisted ? '700' : '400'}; font-family:var(--sans);">
+          ${isShortlisted ? '★ Shortlisted' : '☆ Shortlist'}
+        </button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+window.renderPredictorTableFull = renderPredictorTableFull;
+
+function filterPredictorListFixed() {
+  const q = (document.getElementById('predictor-uni-search') || {}).value || '';
+  if (!q.trim()) { renderPredictorTableFull(allUniversities); return; }
+  const filtered = allUniversities.filter(u => u.name.toLowerCase().includes(q.toLowerCase()));
+  renderPredictorTableFull(filtered);
+}
+window.filterPredictorList = filterPredictorListFixed;
+
+function onPredictorStudentChangeFixed(studentId) {
+  // Reset kanban
+  ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '<div data-placeholder style="padding:12px;text-align:center;color:var(--text-3);font-size:0.8rem;">No data yet</div>';
+  });
+  renderPredictorTableFull(allUniversities);
+  populateKanbanFromShortlist();
+}
+window.onPredictorStudentChange = onPredictorStudentChangeFixed;
+
+async function populateKanbanFromShortlist() {
+  const sel = document.getElementById('predictor-student-select');
+  if (!sel || !sel.value) return;
+  const studentId = sel.value;
+  const student = students.find(s => s.id === studentId);
+  if (!student || !student.shortlisted_colleges || !student.shortlisted_colleges.length) return;
+
+  // Clear kanban
+  ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+
+  for (const cid of student.shortlisted_colleges) {
+    const uni = allUniversities.find(u => (u.id || u.name) === cid);
+    const name = uni ? uni.name : cid;
+    try {
+      const res = await fetch('/api/evaluate_shortlist', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ student_id: studentId, college_id: cid })
+      });
+      const d = res.ok ? await res.json() : { category: 'Target' };
+      addToKanban(d.category || 'Target', cid, name, studentId);
+    } catch(e) {
+      addToKanban('Target', cid, name, studentId);
+    }
+  }
+}
+window.populateKanbanFromShortlist = populateKanbanFromShortlist;
