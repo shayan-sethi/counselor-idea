@@ -1456,7 +1456,7 @@ async function ingestCounselorDocument() {
   if (statusEl) {
     statusEl.style.display = 'block';
     statusEl.style.color = 'var(--amber)';
-    statusEl.innerHTML = 'Parsing files... Auto-populating student form via PRISM AI.';
+    statusEl.innerHTML = 'Parsing files... Auto-populating student form via unlockED AI.';
   }
 
   const formData = new FormData();
@@ -1524,7 +1524,7 @@ async function ingestCounselorDocumentFromDash() {
   if (statusEl) {
     statusEl.style.display = 'block';
     statusEl.style.color = 'var(--amber)';
-    statusEl.innerHTML = '<span class="blink">▌</span> Extracting parameters via PRISM AI...';
+    statusEl.innerHTML = '<span class="blink">▌</span> Extracting parameters via unlockED AI...';
   }
 
   const formData = new FormData();
@@ -1805,7 +1805,7 @@ async function onReportStudentChange(studentId) {
       let remHtml = '';
       if (t.remediations && t.remediations.length > 0) {
         remHtml = `<div style="margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 8px;">
-          <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">PRISMA REMEDIATION ADVICE:</div>`;
+          <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">unlockED REMEDIATION ADVICE:</div>`;
         t.remediations.forEach(r => {
           const feasColor = r.feasibility === 'HIGH' ? 'var(--green)' : r.feasibility === 'MEDIUM' ? 'var(--amber)' : 'var(--red)';
           remHtml += `

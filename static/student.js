@@ -1169,7 +1169,7 @@ async function sendStudentAdvisorMessage() {
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br>');
 
-    agentMsg.innerHTML = `<strong style="color:var(--amber);">PRISM Copilot:</strong><br>${html}`;
+    agentMsg.innerHTML = `<strong style="color:var(--amber);">unlockED Copilot:</strong><br>${html}`;
     chatContainer.appendChild(agentMsg);
     chatContainer.scrollTop = chatContainer.scrollHeight;
   } catch (err) {
@@ -1213,7 +1213,7 @@ async function uploadAndIngestDocuments() {
   if (statusEl) {
     statusEl.style.display = 'block';
     statusEl.style.color = 'var(--amber)';
-    statusEl.innerHTML = 'Parsing documents... Extracting academic grades, board subjects, test scores, and extracurricular activities via PRISM AI.';
+    statusEl.innerHTML = 'Parsing documents... Extracting academic grades, board subjects, test scores, and extracurricular activities via unlockED AI.';
   }
 
   if (btnEl) btnEl.disabled = true;

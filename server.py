@@ -105,7 +105,7 @@ if os.path.exists(mp):
     with open(mp, "r") as f:
         MODEL_METRICS = json.load(f)
 
-print("[+] PRISM engine + ML models loaded.")
+print("[+] unlockED engine + ML models loaded.")
 
 # ──────────────────────────────────────────────
 #  Flask App
@@ -970,7 +970,7 @@ def api_student_advisor():
     else:
         gaps_summary = f"Currently, you have {len(student_gaps)} active gap(s) across your target pathways." if student_gaps else "Awesome! You are fully on track with no gaps."
         reply = (
-            f"Hello {student.get('name')}! I am your PRISM Pathway Copilot. {gaps_summary}\n\n"
+            f"Hello {student.get('name')}! I am your unlockED Pathway Copilot. {gaps_summary}\n\n"
             "Ask me anything about:\n"
             "- **'TMUA preparation'** or registration timelines\n"
             "- **'Math requirements'** or board subject mismatch remediations\n"
@@ -1042,13 +1042,14 @@ CRITICAL REASONING INSTRUCTIONS:
 4. Format your output in clean Markdown with appropriate headers, bold text, bullet points, and actionable details.
 5. If drafting an email, include Subject line, To address, Salutation, specific student gap evidence, and professional sign-off.
 """
-            for m_name in ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"]:
+            for m_name in ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]:
                 try:
                     model = genai.GenerativeModel(model_name=m_name)
                     response = model.generate_content([system_prompt, f"COUNSELOR PROMPT / COMMAND:\n{command}"])
-                    return jsonify({"response": response.text.strip()})
+                    if response and response.text:
+                        return jsonify({"response": response.text.strip()})
                 except Exception as m_err:
-                    print(f"[CounselorAgent Warning] Model {m_name} failed: {m_err}")
+                    print(f"[CounselorAgent Warning] Model {m_name} rate limited/failed: {m_err}. Trying next candidate...")
         except Exception as err:
             print(f"[CounselorAgent Error] Gemini reasoning model call failed: {err}")
 

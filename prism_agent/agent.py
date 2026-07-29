@@ -241,18 +241,26 @@ Write a sentence explaining your thought before calling each tool.
 
         trace = []
 
-        try:
-            model = genai.GenerativeModel(
-                model_name="gemini-3.6-flash",
-                tools=tools,
-                generation_config={"temperature": 0.0}
-            )
+        response = None
+        models_to_try = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]
+        for m_name in models_to_try:
+            try:
+                model = genai.GenerativeModel(
+                    model_name=m_name,
+                    tools=tools,
+                    generation_config={"temperature": 0.0}
+                )
+                chat = model.start_chat()
+                response = chat.send_message(prompt)
+                if response:
+                    break
+            except Exception as api_err:
+                if not silent:
+                    print(f"[Agent Warning] Gemini model {m_name} rate-limited or failed: {api_err}. Trying next model...")
 
-            chat = model.start_chat()
-            response = chat.send_message(prompt)
-        except Exception as api_err:
+        if not response:
             if not silent:
-                print(f"[Agent Warning] Gemini API call failed: {api_err}. Falling back to LOCAL Ollama reasoning engine.")
+                print(f"[Agent Warning] All Gemini models failed. Falling back to LOCAL Ollama reasoning engine.")
             return self._solve_goal_ollama_fallback(student_id, target_id, students_list, prompt, silent)
 
         for _ in range(15):

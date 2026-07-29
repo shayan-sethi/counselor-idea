@@ -121,16 +121,27 @@ CRITICAL INSTRUCTIONS:
    - Extract the subjects into "grades.g10_subjects".
    - CRITICAL: Keep the grades in their NATIVE format (e.g. "A*", "A", "7", "95"). DO NOT convert them to percentages.
 """
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=[system_prompt, text],
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=StudentProfile,
-            )
-        )
-        
-        data = json.loads(response.text.strip())
+        models_to_try = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]
+        last_err = None
+        data = None
+        for m_name in models_to_try:
+            try:
+                response = client.models.generate_content(
+                    model=m_name,
+                    contents=[system_prompt, text],
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=StudentProfile,
+                    )
+                )
+                data = json.loads(response.text.strip())
+                break
+            except Exception as err:
+                last_err = err
+                print(f"[IngestionAgent Warning] Model {m_name} rate limited/failed: {err}. Trying next model...")
+
+        if not data:
+            raise last_err
         
         # Convert lists back to dictionaries for subjects
         if "grades" in data:
