@@ -203,132 +203,14 @@ class PRISMAgent:
         return json.dumps(rems.get(target_id, []))
 
     def solve_goal(self, student_id, target_id, students_list, simulated_subjects=None, silent=False, use_real_engine=False):
-        import google.generativeai as genai
         import os
         import json
 
-        api_key = os.environ.get("GEMINI_API_KEY", "")
-        if not api_key:
-            if use_real_engine:
-                if not silent:
-                    print(f"[Agent Info] No Gemini API key found. Routing directly to LOCAL Ollama reasoning engine.")
-                return self._solve_goal_ollama_fallback(student_id, target_id, students_list, None, silent)
-            else:
-                return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
+        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+        if groq_key:
+            return self._solve_goal_groq_fallback(student_id, target_id, students_list, None, silent)
 
-        genai.configure(api_key=api_key)
-
-        prompt = f"""You are the PRISM Compliance Agent. Your goal is to evaluate compliance and design remediations for student {student_id} targeting course/exam {target_id}.
-Follow this sequence exactly to solve the goal:
-1. Retrieve the student profile using `fetch_student`.
-2. Retrieve target requirements using `fetch_requirements`.
-3. Check subjects prerequisite compliance using `check_subjects`. (Pass the simulated_subjects override string if one was provided in the context, otherwise empty).
-4. Check academic grade cutoffs using `check_grades`.
-5. Check timeline deadlines using `check_timeline`.
-6. Check extracurricular portfolio requirements using `check_portfolio`.
-7. Call `draft_remediations` with the list of ALL gaps found across all checks.
-8. Formulate a final response. Output a single JSON block at the very end of your response with the following format:
-{{
-  "compliant": true/false,
-  "urgency_score": <number>,
-  "gaps": <array of gap objects>,
-  "remediations": <array of remediation objects>
-}}
-
-Write a sentence explaining your thought before calling each tool.
-"""
-
-        tools = [
-            self.fetch_student,
-            self.fetch_requirements,
-            self.check_subjects,
-            self.check_grades,
-            self.check_timeline,
-            self.check_portfolio,
-            self.draft_remediations
-        ]
-
-        trace = []
-
-        response = None
-        models_to_try = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]
-        for m_name in models_to_try:
-            try:
-                model = genai.GenerativeModel(
-                    model_name=m_name,
-                    tools=tools,
-                    generation_config={"temperature": 0.0}
-                )
-                chat = model.start_chat()
-                response = chat.send_message(prompt)
-                if response:
-                    break
-            except Exception as api_err:
-                if not silent:
-                    print(f"[Agent Warning] Gemini model {m_name} rate-limited or failed: {api_err}. Trying next model...")
-
-            chat = model.start_chat()
-            response = chat.send_message(prompt)
-
-            for _ in range(15):
-                parts = response.candidates[0].content.parts
-                has_function_calls = False
-                function_responses = []
-
-                for part in parts:
-                    # Record thought if text is generated
-                    if part.text:
-                        trace.append({
-                            "type": "thought",
-                            "message": part.text.strip()
-                        })
-                        if not silent:
-                            self.console.print(f"\n[bold magenta]Thought:[/bold magenta] {part.text.strip()}")
-
-                    if part.function_call:
-                        has_function_calls = True
-                        fc = part.function_call
-                        args_dict = dict(fc.args)
-                        trace.append({
-                            "type": "action",
-                            "message": f"call_tool: {fc.name}",
-                            "detail": json.dumps(args_dict)
-                        })
-                        if not silent:
-                            self.console.print(f"[bold cyan]Action:[/bold cyan] call_tool [yellow]{fc.name}[/yellow] with ({json.dumps(args_dict)})")
-
-                        # Execute tool
-                        tool_func = getattr(self, fc.name, None)
-                        if tool_func:
-                            try:
-                                observation = tool_func(**args_dict)
-                            except Exception as e:
-                                observation = f"Error: {e}"
-                        else:
-                            observation = f"Error: Tool {fc.name} not found."
-
-                        trace.append({
-                            "type": "observation",
-                            "message": observation
-                        })
-                        if not silent:
-                            self.console.print(f"[dim green]Observation: {observation[:200]}...[/dim green]")
-
-                        function_responses.append({
-                            "functionResponse": {
-                                "name": fc.name,
-                                "response": {"result": str(observation)}
-                            }
-                        })
-
-                if has_function_calls:
-                    response = chat.send_message(function_responses)
-                else:
-                    break
-        except Exception as api_err:
-            if not silent:
-                print(f"[Agent Warning] All Gemini models failed. Falling back to LOCAL Ollama reasoning engine.")
-            return self._solve_goal_ollama_fallback(student_id, target_id, students_list, prompt, silent)
+        return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
 
         # Extract final answer
         final_text = response.text
@@ -359,6 +241,60 @@ Write a sentence explaining your thought before calling each tool.
             final_data["difficulty_label"] = self.reasoner._classify_difficulty(student, target, match_score, gaps)
 
         return final_data
+
+    def _solve_goal_groq_fallback(self, student_id, target_id, students_list, prompt, silent):
+        """Uses Groq API (llama-3.3-70b-versatile) to reason through student evaluation."""
+        import requests
+        import json
+        import re
+        
+        student = next((s for s in students_list if s["id"] == student_id), None)
+        target = self.kg.get_course_or_exam(target_id)
+        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+
+        fallback_prompt = f"""
+You are an expert AI admissions counselor. Evaluate student {student_id} for target {target_id}.
+Student Profile: {json.dumps(student)}
+Target Requirements: {json.dumps(target)}
+
+Output ONLY a valid JSON object matching this schema exactly:
+{{
+  "target_name": "{target['name'] if target else 'Target'}",
+  "track": "{target['track'] if target else 'Unknown'}",
+  "compliant": true,
+  "urgency_score": 15,
+  "match_score": 85,
+  "risk_level": "Strong Match",
+  "difficulty_label": "Target",
+  "gaps": [ {{"field": "grades", "issue": "describe gap"}} ],
+  "remediations": [ {{"field": "grades", "action": "describe action"}} ]
+}}
+"""
+        try:
+            res = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                json={
+                    "model": "llama-3.3-70b-versatile",
+                    "messages": [
+                        {"role": "system", "content": "You are unlockED AI Admissions Compliance Officer. Return ONLY valid JSON."},
+                        {"role": "user", "content": fallback_prompt}
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.1
+                },
+                timeout=20
+            )
+            if res.status_code == 200:
+                raw_text = res.json()["choices"][0]["message"]["content"]
+                final_data = json.loads(raw_text)
+                final_data["trace"] = [{"type": "thought", "message": "Groq Llama-3.3-70b evaluation completed."}]
+                return final_data
+        except Exception as err:
+            if not silent:
+                print(f"[Agent Warning] Groq goal evaluation failed: {err}. Falling back to simulated calculation.")
+
+        return self._solve_goal_simulated(student_id, target_id, students_list, "", silent)
 
     def _solve_goal_ollama_fallback(self, student_id, target_id, students_list, prompt, silent):
         """Uses the local Ollama LLM to reason through the problem when the Gemini API is rate-limited."""

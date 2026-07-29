@@ -117,47 +117,58 @@ CRITICAL INSTRUCTIONS:
    - Do not mix Grade 10 subjects into current board_subjects if the student is in Grade 11/12.
 3. CLASS LEVEL: If student is pursuing IB Diploma (IBDP), Grade 11, Grade 12, or A-Levels, set "class_level": 12 and "board": "IB" (or A-Levels/CBSE).
 4. IGCSE / GRADE 10 MARKS & BOARD: 
-   - Detect the Grade 10 board (e.g. IGCSE, CBSE, ICSE, IB MYP) and set it in "grades.g10_board".
-   - Extract the subjects into "grades.g10_subjects".
    - CRITICAL: Keep the grades in their NATIVE format (e.g. "A*", "A", "7", "95"). DO NOT convert them to percentages.
 """
-        models_to_try = ["gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.0-flash-lite"]
-        last_err = None
+        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
         data = None
-        for m_name in models_to_try:
-            try:
-                response = client.models.generate_content(
-                    model=m_name,
-                    contents=[system_prompt, text],
-                    config=types.GenerateContentConfig(
-                        response_mime_type="application/json",
-                        response_schema=StudentProfile,
-                    )
-                )
-                data = json.loads(response.text.strip())
-                break
-            except Exception as err:
-                last_err = err
-                print(f"[IngestionAgent Warning] Model {m_name} rate limited/failed: {err}. Trying next model...")
 
-        if not data:
-            print("[IngestionAgent] Gemini failed. Attempting Ollama fallback on localhost:11434...")
+        if groq_key:
             import requests
             try:
-                ollama_prompt = f"{system_prompt}\n\nPlease output ONLY valid JSON matching the schema.\n\nDOCUMENT TEXT:\n{text}"
-                res = requests.post("http://localhost:11434/api/generate", json={
-                    "model": "llama3.1",
-                    "prompt": ollama_prompt,
-                    "format": "json",
-                    "stream": False
-                }, timeout=120)
+                print("[IngestionAgent] Calling Groq API (llama-3.3-70b-versatile)...")
+                json_schema_desc = """
+Return ONLY a valid JSON object with the following schema:
+{
+  "name": "Full Name",
+  "class_level": 12,
+  "board": "CBSE / IB / IGCSE / A-Levels / ICSE",
+  "board_subjects": ["Subject1", "Subject2"],
+  "cuet_subjects": ["Subject1"],
+  "grades": {
+    "g10_board": "IGCSE / CBSE / etc",
+    "current_expected_board": "92.5%",
+    "g10_subjects": [{"subject_name": "Math", "grade": "A*"}]
+  },
+  "standardized_tests": {"SAT": 1500},
+  "portfolio": [
+    {"activity": "Title", "description": "Details", "tier": 1}
+  ],
+  "targets": ["STANFORD_CS", "MIT_STEM"]
+}
+"""
+                groq_payload = {
+                    "model": "llama-3.3-70b-versatile",
+                    "messages": [
+                        {"role": "system", "content": system_prompt + "\n\n" + json_schema_desc},
+                        {"role": "user", "content": f"Extract student profile from this document text:\n\n{text}"}
+                    ],
+                    "response_format": {"type": "json_object"},
+                    "temperature": 0.1
+                }
+                res = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                    json=groq_payload,
+                    timeout=30
+                )
                 if res.status_code == 200:
-                    data = json.loads(res.json().get("response", "{}"))
-                else:
-                    raise Exception(f"Ollama returned {res.status_code}")
-            except Exception as ollama_err:
-                print(f"[IngestionAgent] Ollama fallback failed: {ollama_err}")
-                raise last_err
+                    data = json.loads(res.json()["choices"][0]["message"]["content"])
+                    print("[IngestionAgent] Groq extraction successful!")
+            except Exception as g_err:
+                print(f"[IngestionAgent Warning] Groq extraction failed: {g_err}")
+
+        if not data:
+            print("[IngestionAgent Warning] Groq LLM failed or disabled. Using fallback rule engine.")
         
         # Convert lists back to dictionaries for subjects
         if "grades" in data:
