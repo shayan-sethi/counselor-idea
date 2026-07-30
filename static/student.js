@@ -978,7 +978,7 @@ async function submitProfile(e) {
         resBody.style.opacity = '1';
         resBody.style.pointerEvents = 'auto';
       }
-      renderAuditResults(data.student, data.audit);
+      renderAuditResults(studentData, data);
     });
 
   } catch (err) {
@@ -1024,6 +1024,14 @@ function renderAuditResults(student, audit) {
     <div class="metric"><span class="metric-num ${maxUrg >= 35 ? 'accent-r' : maxUrg > 0 ? 'accent-y' : 'accent-g'}">${maxUrg}%</span><span class="metric-lbl">risk score</span></div>
   `;
   body.appendChild(summaryEl);
+
+  if (targetCount === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'loading-row';
+    empty.style.marginTop = '16px';
+    empty.textContent = 'No target pathways assigned yet — add colleges to your shortlist and your counselor will set up a compliance audit against them.';
+    body.appendChild(empty);
+  }
 
   // Per-target results
   for (const tid in audit.targets) {
