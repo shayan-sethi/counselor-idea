@@ -64,7 +64,7 @@ unlockED is a premium SaaS, AI-powered College Counseling Platform driven by the
 
 ### 1. Prerequisites
 - Python 3.10 or higher.
-- A Gemini API Key from Google AI Studio.
+- A GROQ API Key
 
 ### 2. Installation
 Clone the repository and navigate to the project directory:
