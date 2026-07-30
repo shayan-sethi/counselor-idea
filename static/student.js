@@ -744,6 +744,8 @@ function showStep(step) {
   if (cEl) cEl.classList.toggle('hidden', step !== 'calendar');
   const schEl = document.getElementById('step-scholarships');
   if (schEl) schEl.classList.toggle('hidden', step !== 'scholarships');
+  const recEl = document.getElementById('step-recycling');
+  if (recEl) recEl.classList.toggle('hidden', step !== 'recycling');
 
   document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
@@ -755,6 +757,8 @@ function showStep(step) {
   if (cTab) cTab.classList.toggle('active', step === 'calendar');
   const schTab = document.getElementById('tab-scholarships');
   if (schTab) schTab.classList.toggle('active', step === 'scholarships');
+  const recTab = document.getElementById('tab-recycling');
+  if (recTab) recTab.classList.toggle('active', step === 'recycling');
 
   const advisorCard = document.getElementById('ai-advisor-card');
   if (advisorCard && step !== 'results') {
