@@ -698,7 +698,7 @@ def student_portal():
 
 # ── Read endpoints ──
 @app.route("/api/alumni")
-@counselor_required
+@login_required
 def api_alumni():
     return jsonify(load_alumni())
 

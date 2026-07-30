@@ -4339,14 +4339,14 @@ async function renderRecyclingView() {
   emptyState.classList.add('hidden');
 
   try {
-    const res = await fetch('/api/alumni', { headers: { 'Authorization': 'Bearer ' + getMockToken() } });
+    const res = await fetch('/api/alumni');
     const alumni = await res.json();
 
     const searchQ = (document.getElementById('alumni-search-input')?.value || '').toLowerCase();
     const filtered = alumni.filter(a => 
       a.name.toLowerCase().includes(searchQ) || 
-      a.admitted_universities.some(u => u.toLowerCase().includes(searchQ)) ||
-      a.board.toLowerCase().includes(searchQ)
+      (a.admitted_to || []).some(u => u.toLowerCase().includes(searchQ)) ||
+      (a.board || '').toLowerCase().includes(searchQ)
     );
 
     if (filtered.length === 0) {
@@ -4360,7 +4360,7 @@ async function renderRecyclingView() {
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div>
             <h4 style="margin:0; font-size:1.1rem; color:var(--text-1);">${a.name}</h4>
-            <div style="font-size:0.8rem; color:var(--text-3);">${a.board} • ${a.graduation_year}</div>
+            <div style="font-size:0.8rem; color:var(--text-3);">${a.board || 'N/A'} • ${a.graduating_class || 'N/A'}</div>
           </div>
           <div style="background:var(--success-bg); color:var(--success-text); padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:600;">
             Admitted
@@ -4370,25 +4370,25 @@ async function renderRecyclingView() {
         <div>
           <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:4px;">Admitted To:</div>
           <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            ${a.admitted_universities.map(u => `<span class="badge match">${u}</span>`).join('')}
+            ${(a.admitted_to || []).map(u => `<span class="badge match">${u}</span>`).join('')}
           </div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
           <div style="background:var(--bg); padding:10px; border-radius:8px;">
             <div style="font-size:0.75rem; color:var(--text-3);">Academics</div>
-            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${a.grades}</div>
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${a.grades?.final_score || a.grades?.expected_score || 'N/A'}</div>
           </div>
           <div style="background:var(--bg); padding:10px; border-radius:8px;">
             <div style="font-size:0.75rem; color:var(--text-3);">Testing</div>
-            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${a.test_scores || 'Test Optional'}</div>
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${Object.entries(a.standardized_tests || {}).map(([k,v])=>k+': '+v).join(', ') || 'Test Optional'}</div>
           </div>
         </div>
 
         <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:auto;">
           <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:8px;">🎓 Proven Pathway:</div>
           <div style="font-size:0.85rem; color:var(--text-1); line-height:1.4;">
-            ${a.remediation_taken || 'Standard application pathway.'}
+            ${a.key_remediation_taken || 'Standard application pathway.'}
           </div>
         </div>
       </div>
