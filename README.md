@@ -8,7 +8,7 @@ unlockED is a premium SaaS, AI-powered College Counseling Platform driven by the
 
 ### Backend & AI Engine
 - **Framework**: [Flask](https://flask.palletsprojects.com/) (Python)
-- **AI Core**: [Google Generative AI SDK](https://github.com/google/generative-ai-python) (Gemini API) for counselor co-pilot commands and text ingestion.
+- **AI Core**: [Groq Cloud API](https://console.groq.com/) for Agentic counselor co-pilot commands and text ingestion.
 - **Machine Learning & Data Processing**: 
   - [scikit-learn](https://scikit-learn.org/) & [joblib](https://joblib.readthedocs.io/) for pre-trained risk prediction models.
   - [pandas](https://pandas.pydata.org/) & [numpy](https://numpy.org/) for cohort analytics and data manipulation.
