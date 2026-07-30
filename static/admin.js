@@ -12,15 +12,6 @@ function switchView(viewId) {
   document.getElementById('view-ingestion').classList.toggle('hidden', viewId !== 'ingestion');
 }
 
-async function checkSession() {
-  const res = await fetch('/api/user_session');
-  if (!res.ok) { window.location.href = '/static/login.html'; return; }
-  const data = await res.json();
-  if (data.role !== 'admin') {
-    window.location.href = '/static/login.html';
-  }
-}
-
 async function loadUsers() {
   const tbody = document.getElementById('user-table-body');
   try {
@@ -137,11 +128,6 @@ async function deleteUser(username) {
   }
 }
 
-async function logout() {
-  await fetch('/api/logout');
-  window.location.href = '/static/login.html';
-}
-
 window.handleBulkIngestFile = async function(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -222,6 +208,11 @@ window.confirmBulkIngest = async function() {
 
 // Init
 window.onload = async () => {
-  await checkSession();
+  const authed = await checkUserSession();
+  if (!authed) return;
+  if (currentUserRole !== 'admin') {
+    window.location.href = '/static/login.html';
+    return;
+  }
   loadUsers();
 };

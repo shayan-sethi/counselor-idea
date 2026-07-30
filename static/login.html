@@ -307,7 +307,13 @@
     </div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="/static/firebase-config.js"></script>
   <script>
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const syntheticEmail = (username) => `${username}@unlocked.local`;
+
     let mode = 'login';
 
     function setMode(newMode) {
@@ -347,44 +353,56 @@
         }
       }
 
-      let wizardData = null;
-      if (mode === 'signup') {
-        const saved = localStorage.getItem('wizardData');
-        if (saved) {
-          try { wizardData = JSON.parse(saved); } catch(e) {}
-        }
-      }
-
-      const endpoint = mode === 'signup' ? '/api/signup' : '/api/login';
-
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password, wizardData })
-        });
-        const data = await res.json();
-        
-        if (!res.ok) {
-          errBox.textContent = data.error || 'Authentication failed';
-          errBox.style.display = 'block';
-          btn.disabled = false;
-          btn.textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
-        } else {
-          if (mode === 'signup') localStorage.removeItem('wizardData');
-          if (data.role === 'admin') {
-            window.location.href = '/static/admin.html';
-          } else if (data.role === 'counselor') {
-            window.location.href = '/static/intro.html?role=counselor';
-          } else {
-            window.location.href = '/static/intro.html?role=student';
-          }
-        }
-      } catch (err) {
-        errBox.textContent = err.message;
-        errBox.style.display = 'block';
+      const resetButton = () => {
         btn.disabled = false;
         btn.textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
+      };
+      const showError = (message) => {
+        errBox.textContent = message;
+        errBox.style.display = 'block';
+        resetButton();
+      };
+
+      try {
+        if (mode === 'signup') {
+          let wizardData = null;
+          const saved = localStorage.getItem('wizardData');
+          if (saved) {
+            try { wizardData = JSON.parse(saved); } catch (e) {}
+          }
+
+          const res = await fetch('/api/signup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password, wizardData })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            showError(data.error || 'Signup failed');
+            return;
+          }
+          localStorage.removeItem('wizardData');
+        }
+
+        // Sign-in establishes the actual Firebase session (for signup, the
+        // account was just created server-side with these same credentials).
+        await firebase.auth().signInWithEmailAndPassword(syntheticEmail(username), password);
+
+        const idToken = await firebase.auth().currentUser.getIdToken();
+        const sessionRes = await fetch('/api/user_session', {
+          headers: { Authorization: `Bearer ${idToken}` }
+        });
+        const sessionData = await sessionRes.json();
+
+        if (sessionData.role === 'admin') {
+          window.location.href = '/static/admin.html';
+        } else if (sessionData.role === 'counselor') {
+          window.location.href = '/static/intro.html?role=counselor';
+        } else {
+          window.location.href = '/static/intro.html?role=student';
+        }
+      } catch (err) {
+        showError(err.code === 'auth/invalid-credential' ? 'Invalid username or password' : err.message);
       }
     }
   </script>

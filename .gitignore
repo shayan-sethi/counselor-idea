@@ -28,3 +28,7 @@ Thumbs.db
 
 # User uploads
 uploads/
+
+# Firebase service account credentials
+secrets/
+firebase-service-account*.json

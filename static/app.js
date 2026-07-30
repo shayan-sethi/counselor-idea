@@ -3,15 +3,6 @@
    Dashboard + Manage (CRUD) + Predictor + Drawer
    ═══════════════════════════════════════════════════ */
 
-const originalFetch = window.fetch;
-window.fetch = async function(...args) {
-  const response = await originalFetch(...args);
-  if (response.status === 401) {
-    window.location.href = '/static/login.html';
-  }
-  return response;
-};
-
 let students = [];
 let cohortAudit = {};
 let targets = {};
@@ -98,40 +89,13 @@ const AP_SUBJECTS = {
 
 document.addEventListener('DOMContentLoaded', init);
 
-async function checkUserSession() {
-  try {
-    const res = await fetch('/api/user_session');
-    const data = await res.json();
-    if (!data.authenticated) {
-      window.location.href = '/static/login.html';
-      return false;
-    }
-    if (data.role !== 'counselor') {
-      window.location.href = '/student';
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error(err);
-    window.location.href = '/static/login.html';
-    return false;
-  }
-}
-
-async function logout() {
-  try {
-    await fetch('/api/logout', { method: 'POST' });
-    window.location.href = '/static/login.html';
-  } catch (err) {
-    window.location.href = '/static/login.html';
-  }
-}
-
-window.logout = logout;
-
 async function init() {
   const authed = await checkUserSession();
   if (!authed) return;
+  if (currentUserRole !== 'counselor') {
+    window.location.href = '/student';
+    return;
+  }
 
   try {
     // Fetch fast endpoints first to render dashboard instantly

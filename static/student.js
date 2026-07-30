@@ -2,15 +2,6 @@
    PRISM — Student Portal Controller
    ═══════════════════════════════════════════════════ */
 
-const originalFetch = window.fetch;
-window.fetch = async function(...args) {
-  const response = await originalFetch(...args);
-  if (response.status === 401) {
-    window.location.href = '/static/login.html';
-  }
-  return response;
-};
-
 let targets = {};
 let createdStudentId = null;
 let selectedTargetIds = [];
@@ -93,46 +84,6 @@ const AP_SUBJECTS = {
 };
 
 document.addEventListener('DOMContentLoaded', init);
-
-let currentUserRole = null;
-let currentUserStudentId = null;
-
-async function checkUserSession() {
-  try {
-    const res = await fetch('/api/user_session');
-    const data = await res.json();
-    if (!data.authenticated) {
-      alert('checkAuth: not authenticated');
-      // window.location.href = '/static/login.html';
-      return false;
-    }
-    currentUserRole = data.role;
-    currentUserStudentId = data.student_id;
-    
-    // Hide counselor link if not a counselor
-    const counselorLink = document.getElementById('counselor-view-link');
-    if (counselorLink && currentUserRole !== 'counselor') {
-      counselorLink.style.display = 'none';
-    }
-    
-    return true;
-  } catch (err) {
-    console.error(err);
-    window.location.href = '/static/login.html';
-    return false;
-  }
-}
-
-async function logout() {
-  try {
-    await fetch('/api/logout', { method: 'POST' });
-    window.location.href = '/static/login.html';
-  } catch (err) {
-    window.location.href = '/static/login.html';
-  }
-}
-
-window.logout = logout;
 
 async function init() {
   const authed = await checkUserSession();

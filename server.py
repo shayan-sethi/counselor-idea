@@ -35,7 +35,6 @@ if hasattr(sys.stderr, 'reconfigure'):
 # ──────────────────────────────────────────────
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STUDENTS_PATH = os.path.join(BASE_DIR, "data", "students_db.json")
 
 from prism_agent.knowledge_graph import KnowledgeGraph
 from prism_agent.reasoner import Reasoner
@@ -74,21 +73,91 @@ def auto_classify_portfolio(portfolio):
         classified.append({**item, "tier": tier})
     return classified
 
-# ── Load students ──
+# ── Firebase Admin SDK ──
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+_firebase_key_path = os.environ.get("FIREBASE_SERVICE_ACCOUNT_PATH", "secrets/firebase-service-account.json")
+if not os.path.isabs(_firebase_key_path):
+    _firebase_key_path = os.path.join(BASE_DIR, _firebase_key_path)
+
+if os.path.exists(_firebase_key_path):
+    firebase_admin.initialize_app(credentials.Certificate(_firebase_key_path))
+    db = firestore.client()
+else:
+    print(f"[!] Firebase key not found at {_firebase_key_path}. Falling back to local JSON for students.")
+    db = None
+
+STUDENTS_COLLECTION = "students"
+_FIRESTORE_BATCH_LIMIT = 500
+
+STUDENTS_PATH = os.path.join(BASE_DIR, "data", "students_db.json")
+
+# ── Students (Firestore/JSON Fallback) ──
 def load_students():
-    with open(STUDENTS_PATH, "r") as f:
-        return json.load(f)
+    if db:
+        return [doc.to_dict() for doc in db.collection(STUDENTS_COLLECTION).stream()]
+    if os.path.exists(STUDENTS_PATH):
+        with open(STUDENTS_PATH, "r") as f:
+            return json.load(f)
+    return []
+
+def get_student(student_id):
+    if db:
+        snap = db.collection(STUDENTS_COLLECTION).document(student_id).get()
+        return snap.to_dict() if snap.exists else None
+    students = load_students()
+    return next((s for s in students if s["id"] == student_id), None)
+
+def save_student(student):
+    if db:
+        db.collection(STUDENTS_COLLECTION).document(student["id"]).set(student)
+    else:
+        students = load_students()
+        for i, s in enumerate(students):
+            if s["id"] == student["id"]:
+                students[i] = student
+                break
+        else:
+            students.append(student)
+        with open(STUDENTS_PATH, "w") as f:
+            json.dump(students, f, indent=2)
 
 def save_students(students):
-    with open(STUDENTS_PATH, "w") as f:
-        json.dump(students, f, indent=2)
+    """Batch upsert — use only for genuinely bulk operations (e.g. CSV ingest)."""
+    if db:
+        for i in range(0, len(students), _FIRESTORE_BATCH_LIMIT):
+            chunk = students[i:i + _FIRESTORE_BATCH_LIMIT]
+            batch = db.batch()
+            for s in chunk:
+                batch.set(db.collection(STUDENTS_COLLECTION).document(s["id"]), s)
+            batch.commit()
+    else:
+        with open(STUDENTS_PATH, "w") as f:
+            json.dump(students, f, indent=2)
 
-STUDENTS = load_students()
+def delete_student(student_id):
+    """Delete a single student record. Returns False if it didn't exist."""
+    if db:
+        ref = db.collection(STUDENTS_COLLECTION).document(student_id)
+        if not ref.get().exists:
+            return False
+        ref.delete()
+        return True
+    else:
+        students = load_students()
+        initial_len = len(students)
+        students = [s for s in students if s["id"] != student_id]
+        if len(students) < initial_len:
+            with open(STUDENTS_PATH, "w") as f:
+                json.dump(students, f, indent=2)
+            return True
+        return False
 
-def next_student_id():
-    """Generate next STU_NNN id."""
+def next_student_id(students):
+    """Generate next STU_NNN id given the current student list."""
     nums = []
-    for s in STUDENTS:
+    for s in students:
         try:
             nums.append(int(s["id"].replace("STU_", "")))
         except ValueError:
@@ -115,19 +184,19 @@ print("[+] unlockED engine + ML models loaded.")
 #  Flask App
 # ──────────────────────────────────────────────
 
-from flask import session, redirect, url_for
-import hashlib
 from functools import wraps
 
 app = Flask(__name__, static_folder="static", static_url_path="/static")
-app.secret_key = "prism-secure-secret-key-12345"
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
+USERS_COLLECTION = "users"
 USERS_PATH = os.path.join(BASE_DIR, "data", "users_db.json")
 
 def load_users():
+    if db:
+        return [doc.to_dict() for doc in db.collection(USERS_COLLECTION).stream()]
     if os.path.exists(USERS_PATH):
-        with open(USERS_PATH, "r") as f:
+        with open(USERS_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
     return []
 
@@ -138,29 +207,73 @@ def load_alumni():
             return json.load(f)
     return []
 
-def save_users(users):
-    with open(USERS_PATH, "w") as f:
-        json.dump(users, f, indent=2)
+from firebase_admin import auth as firebase_auth
+from flask import g
 
-def hash_password(password):
-    return hashlib.sha256(password.encode('utf-8')).hexdigest()
+SYNTHETIC_EMAIL_DOMAIN = "unlocked.local"
+
+def synthetic_email(username):
+    """Firebase Auth requires an email; the app's UX only uses plain usernames."""
+    return f"{username}@{SYNTHETIC_EMAIL_DOMAIN}"
+
+def verify_token():
+    """Verify the Authorization: Bearer <idToken> header. Returns the decoded
+    token dict (with role/student_id custom claims) or None if missing/invalid."""
+    header = request.headers.get("Authorization", "")
+    if not header.startswith("Bearer "):
+        return None
+    token = header[len("Bearer "):].strip()
+    if not token:
+        return None
+    try:
+        return firebase_auth.verify_id_token(token)
+    except Exception:
+        return None
+
+def create_user_with_rollback(username, password, role, student_id):
+    """Creates a Firebase Auth user (uid=username, so uid uniqueness IS the
+    username uniqueness check) plus its Firestore users/{uid} doc and custom
+    claims. If anything after Auth-account creation fails, deletes the Auth
+    account rather than leaving an orphan that permanently blocks the
+    username. Raises ValueError("Username already exists") on conflict,
+    re-raises other errors after attempting rollback."""
+    try:
+        firebase_auth.create_user(uid=username, email=synthetic_email(username), password=password)
+    except firebase_admin.exceptions.AlreadyExistsError:
+        raise ValueError("Username already exists")
+
+    try:
+        firebase_auth.set_custom_user_claims(username, {"role": role, "student_id": student_id})
+        db.collection(USERS_COLLECTION).document(username).set({
+            "username": username, "role": role, "student_id": student_id
+        })
+    except Exception:
+        try:
+            firebase_auth.delete_user(username)
+        except Exception as rollback_err:
+            print(f"[CRITICAL] Orphaned Firebase Auth user '{username}' — rollback failed: {rollback_err}")
+        raise
 
 # ── Auth Decorators ──
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "username" not in session:
+        decoded = verify_token()
+        if not decoded:
             return jsonify({"error": "Unauthorized. Please log in."}), 401
+        g.user = decoded
         return f(*args, **kwargs)
     return decorated_function
 
 def counselor_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "username" not in session:
+        decoded = verify_token()
+        if not decoded:
             return jsonify({"error": "Unauthorized. Please log in."}), 401
-        if session.get("role") not in ["counselor", "admin"]:
+        g.user = decoded
+        if decoded.get("role") not in ["counselor", "admin"]:
             return jsonify({"error": "Forbidden. Counselor role required."}), 403
         return f(*args, **kwargs)
     return decorated_function
@@ -168,9 +281,11 @@ def counselor_required(f):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "username" not in session:
+        decoded = verify_token()
+        if not decoded:
             return jsonify({"error": "Unauthorized. Please log in."}), 401
-        if session.get("role") != "admin":
+        g.user = decoded
+        if decoded.get("role") != "admin":
             return jsonify({"error": "Forbidden. Admin role required."}), 403
         return f(*args, **kwargs)
     return decorated_function
@@ -180,20 +295,22 @@ def admin_required(f):
 def student_self_only(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "username" not in session:
+        decoded = verify_token()
+        if not decoded:
             return jsonify({"error": "Unauthorized. Please log in."}), 401
-        role = session.get("role")
-        if role == "counselor":
+        g.user = decoded
+        role = decoded.get("role")
+        if role in ("counselor", "admin"):
             return f(*args, **kwargs)
-        
+
         # Determine student_id from route kwargs or JSON body or query param
         student_id = kwargs.get("student_id")
         if not student_id and request.is_json:
             student_id = request.get_json().get("student_id")
         if not student_id:
             student_id = request.args.get("student_id")
-            
-        if role == "student" and session.get("student_id") != student_id:
+
+        if role == "student" and decoded.get("student_id") != student_id:
             return jsonify({"error": "Forbidden. You can only access your own profile."}), 403
         return f(*args, **kwargs)
     return decorated_function
@@ -205,7 +322,14 @@ def add_security_headers(response):
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'DENY'
     response.headers['X-XSS-Protection'] = '1; mode=block'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self';"
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self'; "
+        "script-src 'self' 'unsafe-inline' https://www.gstatic.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src 'self' https://fonts.gstatic.com; "
+        "connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; "
+        "frame-src https://unlock-ed.firebaseapp.com;"
+    )
     return response
 
 # ── Admin Endpoints ──
@@ -224,25 +348,15 @@ def api_admin_create_user():
     username = data.get("username", "").strip()
     password = data.get("password", "").strip()
     role = data.get("role", "student").strip()
-    student_id = data.get("student_id")
-    if not student_id:
-        student_id = None
+    student_id = data.get("student_id") or None
 
     if not username or not password:
         return jsonify({"error": "Username and password required"}), 400
 
-    users = load_users()
-    if any(u["username"].lower() == username.lower() for u in users):
-        return jsonify({"error": "Username already exists"}), 400
-
-    new_user = {
-        "username": username,
-        "password_hash": hash_password(password),
-        "role": role,
-        "student_id": student_id
-    }
-    users.append(new_user)
-    save_users(users)
+    try:
+        create_user_with_rollback(username, password, role, student_id)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
     return jsonify({"success": True, "message": "User created successfully"})
 
 @app.route("/api/admin/users/<username>", methods=["DELETE"])
@@ -251,10 +365,14 @@ def api_admin_delete_user(username):
     if username.lower() == "admin":
         return jsonify({"error": "Cannot delete the default admin account"}), 400
     users = load_users()
-    new_users = [u for u in users if u["username"].lower() != username.lower()]
-    if len(users) == len(new_users):
+    match = next((u for u in users if u["username"].lower() == username.lower()), None)
+    if not match:
         return jsonify({"error": "User not found"}), 404
-    save_users(new_users)
+    try:
+        firebase_auth.delete_user(match["username"])
+    except firebase_auth.UserNotFoundError:
+        pass
+    db.collection(USERS_COLLECTION).document(match["username"]).delete()
     return jsonify({"success": True})
 
 @app.route("/api/admin/users/<username>/password", methods=["PUT"])
@@ -270,35 +388,11 @@ def api_admin_reset_password(username):
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    user["password_hash"] = hash_password(new_password)
-    save_users(users)
+    firebase_auth.update_user(user["username"], password=new_password)
     return jsonify({"success": True, "message": "Password updated successfully"})
 
 # ── Auth Endpoints ──
 
-@app.route("/api/login", methods=["POST"])
-def api_login():
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "Missing login credentials"}), 400
-    username = data.get("username", "").strip()
-    password = data.get("password", "").strip()
-    
-    users = load_users()
-    user = next((u for u in users if u["username"].lower() == username.lower()), None)
-    if not user or user["password_hash"] != hash_password(password):
-        return jsonify({"error": "Invalid username or password"}), 401
-    
-    session["username"] = user["username"]
-    session["role"] = user["role"]
-    session["student_id"] = user["student_id"]
-    
-    return jsonify({
-        "message": "Login successful",
-        "role": user["role"],
-        "student_id": user["student_id"],
-        "username": user["username"]
-    })
 
 @app.route("/api/signup", methods=["POST"])
 def api_signup():
@@ -311,22 +405,14 @@ def api_signup():
     
     if not username or not password:
         return jsonify({"error": "Username and password required"}), 400
-        
-    users = load_users()
-    if any(u["username"].lower() == username.lower() for u in users):
-        return jsonify({"error": "Username already exists"}), 400
-        
-    new_student_id = next_student_id()
-    
-    new_user = {
-        "username": username,
-        "password_hash": hash_password(password),
-        "role": "student",
-        "student_id": new_student_id
-    }
-    users.append(new_user)
-    save_users(users)
-    
+
+    new_student_id = next_student_id(load_students())
+
+    try:
+        create_user_with_rollback(username, password, "student", new_student_id)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
     # Create student profile from wizardData
     student_name = username
     class_level = 12
@@ -428,34 +514,25 @@ def api_signup():
             "sat_score": None
         }
     }
-    STUDENTS.append(new_student)
-    save_students(STUDENTS)
-    
-    session["username"] = new_user["username"]
-    session["role"] = new_user["role"]
-    session["student_id"] = new_user["student_id"]
-    
+    save_student(new_student)
+
     return jsonify({
         "message": "Signup successful",
-        "role": new_user["role"],
-        "student_id": new_user["student_id"],
-        "username": new_user["username"]
+        "role": "student",
+        "student_id": new_student_id,
+        "username": username
     })
-
-@app.route("/api/logout", methods=["POST", "GET"])
-def api_logout():
-    session.clear()
-    return jsonify({"message": "Logged out successfully"})
 
 @app.route("/api/user_session")
 def api_user_session():
-    if "username" not in session:
+    decoded = verify_token()
+    if not decoded:
         return jsonify({"authenticated": False}), 200
     return jsonify({
         "authenticated": True,
-        "username": session["username"],
-        "role": session["role"],
-        "student_id": session["student_id"]
+        "username": decoded.get("uid"),
+        "role": decoded.get("role"),
+        "student_id": decoded.get("student_id")
     })
 
 # ── Page routes ──
@@ -466,16 +543,14 @@ def landing_page():
 
 @app.route("/dashboard")
 def counselor_dashboard():
-    if "username" not in session:
-        return redirect("/static/login.html")
-    if session.get("role") != "counselor":
-        return redirect("/student")
+    # No server-side gate: a bare navigation carries no bearer token to check.
+    # Enforcement is (a) client-side redirect-if-unauthenticated once Firebase
+    # Auth's onAuthStateChanged fires, and (b) the real boundary — every
+    # /api/* route below is still gated by verify_token()/the decorators.
     return send_from_directory("static", "index.html")
 
 @app.route("/student")
 def student_portal():
-    if "username" not in session:
-        return redirect("/static/login.html")
     return send_from_directory("static", "student.html")
 
 # ── Read endpoints ──
@@ -483,12 +558,12 @@ def student_portal():
 @app.route("/api/students")
 @counselor_required
 def api_students():
-    return jsonify(STUDENTS)
+    return jsonify(load_students())
 
 @app.route("/api/student/<student_id>")
 @student_self_only
 def api_student_single(student_id):
-    s = next((s for s in STUDENTS if s["id"] == student_id), None)
+    s = get_student(student_id)
     if not s:
         return jsonify({"error": "Not found"}), 404
     return jsonify(s)
@@ -695,8 +770,9 @@ def api_create_student():
     if not board_subjects:
         return jsonify({"error": "At least one board subject required"}), 400
 
+    students = load_students()
     student = {
-        "id": next_student_id(),
+        "id": next_student_id(students),
         "name": name,
         "class_level": int(class_level),
         "board": board,
@@ -717,8 +793,8 @@ def api_create_student():
     if int(class_level) == 10 and data.get("planned_class_11_subjects"):
         student["planned_class_11_subjects"] = data["planned_class_11_subjects"]
 
-    STUDENTS.append(student)
-    save_students(STUDENTS)
+    save_student(student)
+    students.append(student)
 
     # Run compliance check using agent
     result = {
@@ -729,7 +805,7 @@ def api_create_student():
     }
     traces = {}
     for tid in targets:
-        agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
+        agent_res = agent.solve_goal(student["id"], tid, students, silent=True)
         if agent_res:
             result["targets"][tid] = {
                 "target_name": agent_res.get("target_name", "Target"),
@@ -784,22 +860,19 @@ def api_ingest_documents():
 
     if auto_save:
         if not student_id or student_id == "STU_PREVIEW":
-            student_id = next_student_id()
+            student_id = next_student_id(load_students())
             extracted_profile["id"] = student_id
             if "status" not in extracted_profile:
                 extracted_profile["status"] = {"cuet_form_submitted": False, "tmua_registered": False, "sat_score": None}
-            STUDENTS.append(extracted_profile)
         else:
-            idx = next((i for i, s in enumerate(STUDENTS) if s["id"] == student_id), None)
-            if idx is not None:
-                existing = STUDENTS[idx]
+            existing = get_student(student_id)
+            if existing is not None:
                 existing.update(extracted_profile)
                 existing["id"] = student_id
                 extracted_profile = existing
             else:
                 extracted_profile["id"] = student_id
-                STUDENTS.append(extracted_profile)
-        save_students(STUDENTS)
+        save_student(extracted_profile)
 
     evaluation = {}
     try:
@@ -843,7 +916,7 @@ def api_convert_grade():
 @student_self_only
 def api_update_student(student_id):
     if request.method == "GET":
-        student = next((s for s in STUDENTS if s["id"] == student_id), None)
+        student = get_student(student_id)
         if not student:
             return jsonify({"error": "Student not found"}), 404
         return jsonify(student)
@@ -852,11 +925,9 @@ def api_update_student(student_id):
     if not data:
         return jsonify({"error": "No data"}), 400
 
-    idx = next((i for i, s in enumerate(STUDENTS) if s["id"] == student_id), None)
-    if idx is None:
+    student = get_student(student_id)
+    if student is None:
         return jsonify({"error": "Student not found"}), 404
-
-    student = STUDENTS[idx]
 
     # Update allowed fields
     for field in ["name", "board", "class_level", "board_subjects", "cuet_subjects",
@@ -868,8 +939,7 @@ def api_update_student(student_id):
     if "class_level" in data:
         student["class_level"] = int(data["class_level"])
 
-    STUDENTS[idx] = student
-    save_students(STUDENTS)
+    save_student(student)
     return jsonify({"student": student})
 
 # ── Delete student ──
@@ -877,12 +947,8 @@ def api_update_student(student_id):
 @app.route("/api/students/<student_id>", methods=["DELETE"])
 @counselor_required
 def api_delete_student(student_id):
-    global STUDENTS
-    before = len(STUDENTS)
-    STUDENTS = [s for s in STUDENTS if s["id"] != student_id]
-    if len(STUDENTS) == before:
+    if not delete_student(student_id):
         return jsonify({"error": "Not found"}), 404
-    save_students(STUDENTS)
     return jsonify({"ok": True})
 
 # ── Evaluate ──
@@ -893,7 +959,7 @@ def api_evaluate():
     data = request.get_json()
     student_id = data.get("student_id")
 
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
 
@@ -981,10 +1047,11 @@ Output ONLY a valid JSON object matching this schema exactly, where the keys are
 
     # For any targets missing or if Groq failed, fall back to simulated engine
     traces = {}
+    students = load_students()
     for tid in target_ids:
         tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
         if tid_str not in result["targets"]:
-            agent_res = agent._solve_goal_simulated(student["id"], tid_str, STUDENTS, None, silent=True)
+            agent_res = agent._solve_goal_simulated(student["id"], tid_str, students, None, silent=True)
             if agent_res:
                 result["targets"][tid_str] = {
                     "target_name": agent_res.get("target_name", "Target"),
@@ -1007,7 +1074,8 @@ Output ONLY a valid JSON object matching this schema exactly, where the keys are
 @app.route("/api/evaluate_cohort")
 def api_evaluate_cohort():
     results = {}
-    for student in STUDENTS:
+    students = load_students()
+    for student in students:
         result = {
             "student_id": student["id"],
             "student_name": student["name"],
@@ -1016,7 +1084,7 @@ def api_evaluate_cohort():
         }
         for tid in student.get("targets", []):
             try:
-                agent_res = agent._solve_goal_simulated(student["id"], tid, STUDENTS, None, silent=True)
+                agent_res = agent._solve_goal_simulated(student["id"], tid, students, None, silent=True)
                 if agent_res:
                     result["targets"][tid] = {
                         "target_name": agent_res.get("target_name", "Target"),
@@ -1074,15 +1142,16 @@ def api_student_advisor():
     student_id = data.get("student_id")
     message = data.get("message", "").lower()
     
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"reply": "I couldn't find your profile. Please complete Step 1 first."})
 
     # Evaluate current targets
     student_gaps = []
     has_math_gap = False
+    students = load_students()
     for tid in student.get("targets", []):
-        agent_res = agent.solve_goal(student["id"], tid, STUDENTS, silent=True)
+        agent_res = agent.solve_goal(student["id"], tid, students, silent=True)
         if agent_res and not agent_res.get("compliant", False):
             for gap in agent_res.get("gaps", []):
                 student_gaps.append(gap)
@@ -1149,12 +1218,13 @@ def api_counselor_agent():
     
     # Compile live cohort context for reasoning model
     cohort_summary_list = []
-    for s in STUDENTS:
+    students = load_students()
+    for s in students:
         student_audits = {}
         for tid in s.get("targets", []):
             try:
                 tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
-                audit_res = agent.solve_goal(s["id"], tid_str, STUDENTS, silent=True)
+                audit_res = agent.solve_goal(s["id"], tid_str, students, silent=True)
                 if audit_res:
                     student_audits[str(tid_str)] = {
                         "match_score": audit_res.get("match_score", 100),
@@ -1302,7 +1372,7 @@ def save_competitions(comps):
 @app.route("/api/opportunities/<student_id>")
 @student_self_only
 def api_opportunities(student_id):
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
         
@@ -1345,11 +1415,10 @@ def api_shortlist_toggle(student_id):
     if not college_id:
         return jsonify({"error": "college_id required"}), 400
 
-    idx = next((i for i, s in enumerate(STUDENTS) if s["id"] == student_id), None)
-    if idx is None:
+    student = get_student(student_id)
+    if student is None:
         return jsonify({"error": "Student not found"}), 404
 
-    student = STUDENTS[idx]
     shortlisted = student.get("shortlisted_colleges", [])
 
     if college_id in shortlisted:
@@ -1360,8 +1429,7 @@ def api_shortlist_toggle(student_id):
         added = True
 
     student["shortlisted_colleges"] = shortlisted
-    STUDENTS[idx] = student
-    save_students(STUDENTS)
+    save_student(student)
     return jsonify({"added": added, "shortlisted_colleges": shortlisted})
 
 # ── College Shortlist & Deadline Calendar Endpoints ──
@@ -1461,7 +1529,7 @@ def api_evaluate_shortlist():
     student_id = data.get("student_id")
     college_id = data.get("college_id")
 
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
         
@@ -1587,7 +1655,7 @@ def api_exams():
 @app.route("/api/calendar/<student_id>")
 @student_self_only
 def api_calendar(student_id):
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
 
@@ -1716,7 +1784,7 @@ def api_get_scholarships():
 @app.route("/api/match_scholarships/<student_id>")
 @student_self_only
 def api_match_scholarships(student_id):
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
 
@@ -1732,13 +1800,13 @@ def api_recommend_scholarship_students(scholarship_id):
     if not scholarship:
         return jsonify({"error": "Scholarship not found"}), 404
 
-    recommended = ScholarshipAgent.recommend_students(scholarship, STUDENTS)
+    recommended = ScholarshipAgent.recommend_students(scholarship, load_students())
     return jsonify(recommended)
 
 @app.route("/api/students/<student_id>/shortlist_scholarship", methods=["POST"])
 @counselor_required
 def api_shortlist_scholarship(student_id):
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
     
@@ -1756,8 +1824,8 @@ def api_shortlist_scholarship(student_id):
     else:
         student["shortlisted_scholarships"].append(scholarship_id)
         added = True
-        
-    save_students(STUDENTS)
+
+    save_student(student)
     return jsonify({"success": True, "added": added, "shortlisted": student["shortlisted_scholarships"]})
 
 @app.route("/api/import_scholarship", methods=["POST"])
@@ -1797,7 +1865,7 @@ def api_import_scholarship():
 def api_draft_recommendation():
     data = request.get_json()
     student_id = data.get("student_id")
-    student = next((s for s in STUDENTS if s["id"] == student_id), None)
+    student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
         
@@ -1956,13 +2024,14 @@ def api_bulk_ingest_save():
     
     if not students_to_add:
         return jsonify({"error": "No students provided"}), 400
-        
+
+    students = load_students()
     for st in students_to_add:
-        st["id"] = next_student_id()
+        st["id"] = next_student_id(students)
         st["status"] = {"cuet_form_submitted": False, "tmua_registered": False, "sat_score": None}
-        STUDENTS.append(st)
-        
-    save_students(STUDENTS)
+        students.append(st)
+
+    save_students(students_to_add)
     return jsonify({"success": True, "count": len(students_to_add)})
 
 if __name__ == "__main__":
