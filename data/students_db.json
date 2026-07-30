@@ -676,7 +676,8 @@
       "IMPERIAL",
       "BITS_PILANI",
       "VIT",
-      "MIT"
+      "MIT",
+      "DU"
     ]
   },
   {
@@ -989,6 +990,9 @@
       "MIT",
       "US_110404",
       "US_166027"
+    ],
+    "shortlisted_scholarships": [
+      "schol_tata_cornell"
     ]
   },
   {

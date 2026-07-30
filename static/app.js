@@ -174,7 +174,7 @@ async function refreshData() {
 // ── View switching ──
 function switchView(v) {
   window.currentActiveView = v;
-  ['dashboard', 'manage', 'predictor', 'university-dashboard', 'reports', 'extracurriculars', 'scholarships', 'shortlist', 'calendar', 'student-profile', 'recommendations'].forEach(id => {
+  ['dashboard', 'manage', 'predictor', 'university-dashboard', 'reports', 'extracurriculars', 'scholarships', 'shortlist', 'calendar', 'student-profile', 'recommendations', 'recycling'].forEach(id => {
     const el = document.getElementById(`view-${id}`);
     if (el) el.classList.toggle('hidden', id !== v);
     const tabMap = { 
@@ -182,7 +182,8 @@ function switchView(v) {
       'university-dashboard': 'university-dashboard',
       'reports': 'reports', 'shortlist': 'shortlist', 'calendar': 'calendar',
       'student-profile': 'student-profile', 'extracurriculars': 'extracurriculars',
-      'scholarships': 'scholarships', 'recommendations': 'recommendations'
+      'scholarships': 'scholarships', 'recommendations': 'recommendations',
+      'recycling': 'recycling'
     };
     const tabEl = document.getElementById(`tab-${tabMap[id]}`);
     if (tabEl) tabEl.classList.toggle('active', id === v);

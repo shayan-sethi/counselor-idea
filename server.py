@@ -73,20 +73,202 @@ def auto_classify_portfolio(portfolio):
         classified.append({**item, "tier": tier})
     return classified
 
-# ── Firebase Admin SDK ──
+# ── Firebase Admin SDK or local JSON DB fallback ──
 import firebase_admin
 from firebase_admin import credentials, firestore
+import jwt
 
 _firebase_key_path = os.environ.get("FIREBASE_SERVICE_ACCOUNT_PATH", "secrets/firebase-service-account.json")
 if not os.path.isabs(_firebase_key_path):
     _firebase_key_path = os.path.join(BASE_DIR, _firebase_key_path)
 
-if os.path.exists(_firebase_key_path):
-    firebase_admin.initialize_app(credentials.Certificate(_firebase_key_path))
-    db = firestore.client()
+USE_LOCAL_FALLBACK = False
+
+class MockDocumentReference:
+    def __init__(self, collection_name, doc_id, mock_db):
+        self.collection_name = collection_name
+        self.doc_id = doc_id
+        self.mock_db = mock_db
+
+    def get(self):
+        data = self.mock_db._get_doc(self.collection_name, self.doc_id)
+        class Snap:
+            def __init__(self, d):
+                self.exists = d is not None
+                self._d = d
+            def to_dict(self):
+                return self._d
+        return Snap(data)
+
+    def set(self, data):
+        self.mock_db._set_doc(self.collection_name, self.doc_id, data)
+
+    def delete(self):
+        self.mock_db._delete_doc(self.collection_name, self.doc_id)
+
+class MockCollectionReference:
+    def __init__(self, collection_name, mock_db):
+        self.collection_name = collection_name
+        self.mock_db = mock_db
+
+    def document(self, doc_id):
+        return MockDocumentReference(self.collection_name, doc_id, self.mock_db)
+
+    def stream(self):
+        docs = self.mock_db._get_collection(self.collection_name)
+        class Snap:
+            def __init__(self, d):
+                self._d = d
+            def to_dict(self):
+                return self._d
+        return [Snap(d) for d in docs]
+
+class MockBatch:
+    def __init__(self, mock_db):
+        self.mock_db = mock_db
+        self.ops = []
+
+    def set(self, doc_ref, data):
+        self.ops.append((doc_ref.collection_name, doc_ref.doc_id, data))
+
+    def commit(self):
+        for col, doc_id, data in self.ops:
+            self.mock_db._set_doc(col, doc_id, data)
+
+class MockFirestoreClient:
+    def __init__(self, students_path, users_path):
+        self.students_path = students_path
+        self.users_path = users_path
+        self._load_all()
+
+    def _load_all(self):
+        if os.path.exists(self.students_path):
+            with open(self.students_path, "r", encoding="utf-8") as f:
+                self.students = json.load(f)
+        else:
+            self.students = []
+        if os.path.exists(self.users_path):
+            with open(self.users_path, "r", encoding="utf-8") as f:
+                self.users = json.load(f)
+        else:
+            self.users = []
+
+    def _save_collection(self, collection_name):
+        if collection_name == "students":
+            with open(self.students_path, "w", encoding="utf-8") as f:
+                json.dump(self.students, f, indent=2)
+        elif collection_name == "users":
+            with open(self.users_path, "w", encoding="utf-8") as f:
+                json.dump(self.users, f, indent=2)
+
+    def _get_collection(self, collection_name):
+        if collection_name == "students":
+            return self.students
+        elif collection_name == "users":
+            return self.users
+        return []
+
+    def _get_doc(self, collection_name, doc_id):
+        col = self._get_collection(collection_name)
+        for doc in col:
+            key = "id" if collection_name == "students" else "username"
+            if doc.get(key) == doc_id:
+                return doc
+        return None
+
+    def _set_doc(self, collection_name, doc_id, data):
+        col = self._get_collection(collection_name)
+        found = False
+        key = "id" if collection_name == "students" else "username"
+        for i, doc in enumerate(col):
+            if doc.get(key) == doc_id:
+                col[i] = data
+                found = True
+                break
+        if not found:
+            col.append(data)
+        self._save_collection(collection_name)
+
+    def _delete_doc(self, collection_name, doc_id):
+        col = self._get_collection(collection_name)
+        key = "id" if collection_name == "students" else "username"
+        before = len(col)
+        col[:] = [doc for doc in col if doc.get(key) != doc_id]
+        if len(col) < before:
+            self._save_collection(collection_name)
+
+    def collection(self, collection_name):
+        return MockCollectionReference(collection_name, self)
+
+    def batch(self):
+        return MockBatch(self)
+
+class MockFirebaseAuth:
+    def __init__(self, mock_db):
+        self.mock_db = mock_db
+
+    def verify_id_token(self, token, **kwargs):
+        try:
+            decoded = jwt.decode(token, options={"verify_signature": False})
+            decoded["uid"] = decoded.get("sub")
+            return decoded
+        except Exception:
+            return None
+
+    def create_user(self, uid, email, password, **kwargs):
+        doc = self.mock_db._get_doc("users", uid)
+        if doc:
+            raise firebase_admin.exceptions.AlreadyExistsError("User already exists")
+        self.mock_db._set_doc("users", uid, {
+            "username": uid,
+            "email": email,
+            "role": "student",
+            "student_id": None
+        })
+
+    def set_custom_user_claims(self, uid, claims, **kwargs):
+        doc = self.mock_db._get_doc("users", uid)
+        if doc:
+            doc.update(claims)
+            self.mock_db._set_doc("users", uid, doc)
+
+    def delete_user(self, uid, **kwargs):
+        from firebase_admin import auth as original_auth
+        doc = self.mock_db._get_doc("users", uid)
+        if not doc:
+            raise original_auth.UserNotFoundError("User not found")
+        self.mock_db._delete_doc("users", uid)
+
+    def update_user(self, uid, password=None, **kwargs):
+        from firebase_admin import auth as original_auth
+        doc = self.mock_db._get_doc("users", uid)
+        if not doc:
+            raise original_auth.UserNotFoundError("User not found")
+
+if not os.path.exists(_firebase_key_path) and not (os.environ.get("FIRESTORE_EMULATOR_HOST") or os.environ.get("FIREBASE_AUTH_EMULATOR_HOST")):
+    print("[!] Warning: Firebase service account key not found at:", _firebase_key_path)
+    print("[!] Falling back to local JSON database storage and mock authentication.")
+    USE_LOCAL_FALLBACK = True
+    db = MockFirestoreClient(
+        students_path=os.path.join(BASE_DIR, "data", "students_db.json"),
+        users_path=os.path.join(BASE_DIR, "data", "users_db.json")
+    )
+    firebase_auth = MockFirebaseAuth(db)
 else:
-    print(f"[!] Firebase key not found at {_firebase_key_path}. Falling back to local JSON for students.")
-    db = None
+    if not os.path.exists(_firebase_key_path):
+        print("[+] Firebase emulator environment detected. Initializing with mock credentials.")
+        dummy_cert = {
+            "type": "service_account",
+            "project_id": os.environ.get("GCP_PROJECT", "unlock-ed"),
+            "private_key_id": "dummy_key_id",
+            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC3......\n-----END PRIVATE KEY-----\n",
+            "client_email": "firebase-adminsdk@unlock-ed.iam.gserviceaccount.com",
+            "client_id": "1234567890",
+        }
+        firebase_admin.initialize_app(credentials.Certificate(dummy_cert))
+    else:
+        firebase_admin.initialize_app(credentials.Certificate(_firebase_key_path))
+    db = firestore.client()
 
 STUDENTS_COLLECTION = "students"
 _FIRESTORE_BATCH_LIMIT = 500
@@ -95,64 +277,29 @@ STUDENTS_PATH = os.path.join(BASE_DIR, "data", "students_db.json")
 
 # ── Students (Firestore/JSON Fallback) ──
 def load_students():
-    if db:
-        return [doc.to_dict() for doc in db.collection(STUDENTS_COLLECTION).stream()]
-    if os.path.exists(STUDENTS_PATH):
-        with open(STUDENTS_PATH, "r") as f:
-            return json.load(f)
-    return []
+    return [doc.to_dict() for doc in db.collection(STUDENTS_COLLECTION).stream()]
 
 def get_student(student_id):
-    if db:
-        snap = db.collection(STUDENTS_COLLECTION).document(student_id).get()
-        return snap.to_dict() if snap.exists else None
-    students = load_students()
-    return next((s for s in students if s["id"] == student_id), None)
+    snap = db.collection(STUDENTS_COLLECTION).document(student_id).get()
+    return snap.to_dict() if snap.exists else None
 
 def save_student(student):
-    if db:
-        db.collection(STUDENTS_COLLECTION).document(student["id"]).set(student)
-    else:
-        students = load_students()
-        for i, s in enumerate(students):
-            if s["id"] == student["id"]:
-                students[i] = student
-                break
-        else:
-            students.append(student)
-        with open(STUDENTS_PATH, "w") as f:
-            json.dump(students, f, indent=2)
+    db.collection(STUDENTS_COLLECTION).document(student["id"]).set(student)
 
 def save_students(students):
-    """Batch upsert — use only for genuinely bulk operations (e.g. CSV ingest)."""
-    if db:
-        for i in range(0, len(students), _FIRESTORE_BATCH_LIMIT):
-            chunk = students[i:i + _FIRESTORE_BATCH_LIMIT]
-            batch = db.batch()
-            for s in chunk:
-                batch.set(db.collection(STUDENTS_COLLECTION).document(s["id"]), s)
-            batch.commit()
-    else:
-        with open(STUDENTS_PATH, "w") as f:
-            json.dump(students, f, indent=2)
+    for i in range(0, len(students), _FIRESTORE_BATCH_LIMIT):
+        chunk = students[i:i + _FIRESTORE_BATCH_LIMIT]
+        batch = db.batch()
+        for s in chunk:
+            batch.set(db.collection(STUDENTS_COLLECTION).document(s["id"]), s)
+        batch.commit()
 
 def delete_student(student_id):
-    """Delete a single student record. Returns False if it didn't exist."""
-    if db:
-        ref = db.collection(STUDENTS_COLLECTION).document(student_id)
-        if not ref.get().exists:
-            return False
-        ref.delete()
-        return True
-    else:
-        students = load_students()
-        initial_len = len(students)
-        students = [s for s in students if s["id"] != student_id]
-        if len(students) < initial_len:
-            with open(STUDENTS_PATH, "w") as f:
-                json.dump(students, f, indent=2)
-            return True
+    ref = db.collection(STUDENTS_COLLECTION).document(student_id)
+    if not ref.get().exists:
         return False
+    ref.delete()
+    return True
 
 def next_student_id(students):
     """Generate next STU_NNN id given the current student list."""
@@ -193,12 +340,7 @@ USERS_COLLECTION = "users"
 USERS_PATH = os.path.join(BASE_DIR, "data", "users_db.json")
 
 def load_users():
-    if db:
-        return [doc.to_dict() for doc in db.collection(USERS_COLLECTION).stream()]
-    if os.path.exists(USERS_PATH):
-        with open(USERS_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+    return [doc.to_dict() for doc in db.collection(USERS_COLLECTION).stream()]
 
 def load_alumni():
     path = os.path.join(BASE_DIR, "data", "alumni_db.json")
@@ -207,7 +349,8 @@ def load_alumni():
             return json.load(f)
     return []
 
-from firebase_admin import auth as firebase_auth
+if not USE_LOCAL_FALLBACK:
+    from firebase_admin import auth as firebase_auth
 from flask import g
 
 SYNTHETIC_EMAIL_DOMAIN = "unlocked.local"
