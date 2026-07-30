@@ -960,11 +960,12 @@
             <div class="greeting">Application Recycling</div>
             <div class="greeting-sub">Explore successful alumni pathways to strengthen current student applications</div>
           </div>
-          <div style="display:flex; gap:12px;">
-            <select id="recycling-student-select" style="padding:10px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text-1); min-width:280px;" onchange="handleRecyclingStudentSelect()">
-              <option value="">-- Match for Active Student --</option>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <select id="recycling-student-select" onchange="handleRecyclingStudentSelect()"
+              style="border-radius:8px; border:1px solid var(--border); padding:8px 12px; font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1);">
+              <option>Loading students…</option>
             </select>
-            <input type="text" id="alumni-search-input" placeholder="Search by name, board, or target..." style="padding:10px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text-1); min-width:280px;" oninput="renderRecyclingView()">
+            <input type="text" id="alumni-search-input" placeholder="Search by name, board, or target..." style="padding:8px 12px; border-radius:8px; border:1px solid var(--border); font-family:var(--sans); font-size:0.85rem; background:var(--surface); color:var(--text-1); min-width:240px;" oninput="renderRecyclingView()">
           </div>
         </div>
         

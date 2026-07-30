@@ -4336,13 +4336,23 @@ async function renderRecyclingView() {
   const selectEl = document.getElementById('recycling-student-select');
   if (!grid) return;
 
-  if (selectEl && selectEl.options.length <= 1 && window.students) {
-    window.students.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.id;
-      opt.textContent = s.name;
-      selectEl.appendChild(opt);
-    });
+  if (selectEl) {
+    const currentVal = selectEl.value;
+    // Only populate if we have students and the dropdown doesn't have them yet
+    if (selectEl.options.length <= 1 && typeof students !== 'undefined' && students) {
+      selectEl.innerHTML = '';
+      students.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `${s.name} (${s.id})`;
+        selectEl.appendChild(opt);
+      });
+      if (currentVal && students.some(s => s.id === currentVal)) {
+        selectEl.value = currentVal;
+      } else if (students.length > 0) {
+        selectEl.value = students[0].id;
+      }
+    }
   }
 
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-3);">Loading alumni pathways...</div>';
@@ -4356,8 +4366,8 @@ async function renderRecyclingView() {
     const selectedStudentId = selectEl ? selectEl.value : '';
 
     let selectedTargets = [];
-    if (selectedStudentId && window.cohortAudit && window.cohortAudit[selectedStudentId]) {
-       selectedTargets = Object.keys(window.cohortAudit[selectedStudentId].targets || {}).map(t => t.toLowerCase());
+    if (selectedStudentId && typeof cohortAudit !== 'undefined' && cohortAudit && cohortAudit[selectedStudentId]) {
+       selectedTargets = Object.keys(cohortAudit[selectedStudentId].targets || {}).map(t => t.toLowerCase());
     }
 
     const filtered = alumni.filter(a => {
