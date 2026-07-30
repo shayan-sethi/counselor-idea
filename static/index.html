@@ -83,6 +83,15 @@
         </svg>
         Application Recycling
       </button>
+      <button class="nav-item" id="tab-connections" onclick="switchView('connections')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        Alumni Connect
+      </button>
       <button class="nav-item" id="tab-university-dashboard" onclick="switchView('university-dashboard')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M4 6h16M4 12h16M4 18h7"></path>
@@ -169,6 +178,34 @@
     </header>
 
     <div class="content-wrapper">
+
+      <!-- ═══ CONNECTIONS INBOX ═══ -->
+      <main id="view-connections" class="hidden">
+        <div class="page-title-row">
+          <div>
+            <h1>Alumni Connect</h1>
+            <p class="subtitle">Review and forward student networking requests to alumni</p>
+          </div>
+        </div>
+
+        <div class="table-container" style="margin-top:24px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Alumni</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="connections-table-body">
+              <!-- Connections will be injected here -->
+            </tbody>
+          </table>
+        </div>
+      </main>
 
       <!-- ═══ DASHBOARD ═══ -->
       <main id="view-dashboard">
