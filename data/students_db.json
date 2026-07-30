@@ -47,7 +47,8 @@
       "KING'S_COLLEGE_LONDON",
       "IIT Bombay",
       "CAMBRIDGE",
-      "OXFORD"
+      "OXFORD",
+      "US_211440"
     ]
   },
   {
@@ -534,7 +535,8 @@
       }
     ],
     "shortlisted_colleges": [
-      "BITS_PILANI"
+      "BITS_PILANI",
+      "US_211440"
     ]
   },
   {
@@ -992,7 +994,8 @@
       "US_166027"
     ],
     "shortlisted_scholarships": [
-      "schol_tata_cornell"
+      "schol_tata_cornell",
+      "schol_karsh_duke"
     ]
   },
   {

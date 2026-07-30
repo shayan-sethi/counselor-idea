@@ -1246,7 +1246,7 @@ def api_evaluate_cohort():
                         "target_name": agent_res.get("target_name", "Target"),
                         "track": agent_res.get("track", "UK"),
                         "compliant": agent_res.get("compliant", False),
-                        "match_score": agent_res.get("match_score", generate_realistic_match_score(sid, exam_id, agent_res.get("compliant", True))),
+                        "match_score": agent_res.get("match_score", generate_realistic_match_score(student["id"], tid, agent_res.get("compliant", True))),
                         "risk_level": agent_res.get("risk_level", "Strong Match"),
                         "urgency_score": agent_res.get("urgency_score", 0),
                         "gaps": agent_res.get("gaps", []),

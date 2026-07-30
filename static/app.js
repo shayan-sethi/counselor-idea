@@ -4514,8 +4514,8 @@ async function renderRecyclingView() {
             ${a.key_remediation_taken || 'Standard application pathway.'}
           </div>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
 
   } catch (err) {
     console.error(err);
