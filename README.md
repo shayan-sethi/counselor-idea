@@ -1,6 +1,6 @@
 # unlockED
 
-unlockED is a premium SaaS, AI-powered College Counseling Platform driven by the **PRISM Agent Engine** under the hood. It is designed to assist counselors in managing portfolios, tracking student academic risks, identifying scholarship opportunities, and executing complex counseling commands.
+unlockED is a premium SaaS, AI-powered College Counseling Platform driven by the **unlockED Agent Engine** under the hood. It is designed to assist counsellors in managing portfolios, tracking student academic risks, identifying scholarship opportunities, and executing complex counseling commands.
 
 ---
 
@@ -64,7 +64,7 @@ unlockED is a premium SaaS, AI-powered College Counseling Platform driven by the
 
 ### 1. Prerequisites
 - Python 3.10 or higher.
-- A GROQ API Key
+- A Groq API Key
 
 ### 2. Installation
 Clone the repository and navigate to the project directory:
@@ -86,10 +86,7 @@ pip install -r requirements.txt
 ```
 
 ### 3. Configuration
-Create a `.env` file in the root directory and add your Google Gemini API key:
-```env
-GEMINI_API_KEY="your-gemini-api-key-here"
-```
+Create a `.env` file in the root directory and add your Groq API key:
 
 ### 4. Running the Application
 Start the Flask development server:
