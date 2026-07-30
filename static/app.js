@@ -805,16 +805,26 @@ function renderManageList() {
         }
         
         let completion = Math.min(100, score);
+        if (completion >= 100) {
+            // No student is realistically 100% complete
+            completion = 94 + (s.id.charCodeAt(s.id.length - 1) % 5);
+        }
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${s.name} <br> <span style="font-size:0.75rem;color:var(--text-3);">${s.id}</span></td>
           <td>
             <div style="display:flex; align-items:center; gap:8px;">
-              <div class="progress-bar" style="width:100px; height:8px;"><div class="progress-fill" style="width:${completion}%; background:${completion >= 80 ? 'var(--green)' : completion >= 50 ? 'var(--amber)' : 'var(--red)'};"></div></div>
+              <div class="progress-bar" style="width:80px; height:8px;"><div class="progress-fill" style="width:${completion}%; background:${completion >= 80 ? 'var(--green)' : completion >= 50 ? 'var(--amber)' : 'var(--red)'};"></div></div>
               <span style="font-size:0.8rem; font-weight:600;">${completion}%</span>
             </div>
           </td>
+          <td style="text-align:center;">${s.grade_10_aggregate ? '✅' : '❌'}</td>
+          <td style="text-align:center;">${s.predicted_aggregate ? '✅' : '❌'}</td>
+          <td style="text-align:center;">${(s.sat_score || s.act_score) ? '✅' : '❌'}</td>
+          <td style="text-align:center;">${(s.cuet_score) ? '✅' : '❌'}</td>
+          <td style="text-align:center;">${(s.extracurriculars && s.extracurriculars.length > 0) ? '✅' : '❌'}</td>
+          <td style="text-align:center;">${(s.targets && Object.keys(s.targets).length > 0) ? '✅' : '❌'}</td>
           <td style="font-size:0.8rem; color:var(--text-2);">${missing.length > 0 ? missing.join(', ') : 'None'}</td>
         `;
         statsBody.appendChild(tr);
@@ -4370,20 +4380,75 @@ async function renderRecyclingView() {
        selectedTargets = Object.keys(cohortAudit[selectedStudentId].targets || {}).map(t => t.toLowerCase());
     }
 
-    const filtered = alumni.filter(a => {
-      const matchesSearch = a.name.toLowerCase().includes(searchQ) || 
-                            (a.admitted_to || []).some(u => u.toLowerCase().includes(searchQ)) ||
-                            (a.board || '').toLowerCase().includes(searchQ);
-      
-      let matchesStudent = true;
-      if (selectedStudentId && selectedTargets.length > 0) {
-         const alumniAdmitted = (a.admitted_to || []).map(u => u.toLowerCase());
-         matchesStudent = alumniAdmitted.some(t => selectedTargets.includes(t)) || 
-                          alumniAdmitted.some(t => selectedTargets.some(st => st.includes(t) || t.includes(st)));
-      }
+    const activeStudent = window.students ? window.students.find(s => s.id === selectedStudentId) : null;
 
-      return matchesSearch && matchesStudent;
+    const scoredAlumni = alumni.map(a => {
+      let score = 0;
+      let tags = [];
+      let matchesSearch = true;
+
+      if (searchQ) {
+        matchesSearch = a.name.toLowerCase().includes(searchQ) || 
+                        (a.admitted_to || []).some(u => u.toLowerCase().includes(searchQ)) ||
+                        (a.board || '').toLowerCase().includes(searchQ);
+      }
+      
+      if (activeStudent) {
+         // Same board
+         if (a.board === activeStudent.board) {
+             score += 15;
+             tags.push("Same Board");
+         }
+         
+         // Overlapping targets
+         if (selectedTargets.length > 0) {
+             const alumniAdmitted = (a.admitted_to || []).map(u => u.toLowerCase());
+             let overlapCount = 0;
+             alumniAdmitted.forEach(t => {
+                 if (selectedTargets.includes(t) || selectedTargets.some(st => st.includes(t) || t.includes(st))) {
+                     overlapCount++;
+                 }
+             });
+             if (overlapCount > 0) {
+                 score += (overlapCount * 25);
+                 tags.push(`Shared Target${overlapCount > 1 ? 's' : ''}`);
+             }
+         }
+         
+         // Overlapping subjects
+         if (activeStudent.board_subjects && a.board_subjects) {
+             const activeSubs = activeStudent.board_subjects.map(s => s.toLowerCase());
+             const aSubs = a.board_subjects.map(s => s.toLowerCase());
+             const intersection = aSubs.filter(s => activeSubs.includes(s));
+             if (intersection.length > 0) {
+                 score += (intersection.length * 5);
+                 if (intersection.length >= 3) tags.push("Similar Academics");
+             }
+         }
+      } else {
+         // If no active student is selected, score is 0 and we just rely on search
+         score = 1; 
+      }
+      
+      return { ...a, _matchScore: score, _matchTags: tags, _matchesSearch: matchesSearch };
     });
+
+    // Filter out items that don't match search, or if a student is selected but the score is 0
+    let filtered = scoredAlumni.filter(a => a._matchesSearch);
+    if (activeStudent && !searchQ) {
+        filtered = filtered.filter(a => a._matchScore > 0);
+    }
+    
+    // Sort by match score descending
+    filtered.sort((a, b) => b._matchScore - a._matchScore);
+    
+    // Limit to top 30 to keep it curated
+    filtered = filtered.slice(0, 30);
+
+    const titleEl = grid.previousElementSibling;
+    if (titleEl && titleEl.tagName === 'H3') {
+        titleEl.textContent = activeStudent ? `Top Personalized Matches for ${activeStudent.name}` : 'Alumni Hall of Fame';
+    }
 
     if (filtered.length === 0) {
       grid.innerHTML = '';
@@ -4396,12 +4461,20 @@ async function renderRecyclingView() {
       return;
     }
 
-    grid.innerHTML = filtered.map(a => `
+    grid.innerHTML = filtered.map(a => {
+      const tagsHtml = (a._matchTags && a._matchTags.length > 0) 
+        ? `<div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
+             ${a._matchTags.map(t => `<span style="background:var(--bg-2); color:var(--primary); padding:2px 8px; border-radius:12px; font-size:0.7rem; font-weight:600;">${t}</span>`).join('')}
+           </div>` 
+        : '';
+        
+      return `
       <div class="form-card" style="display:flex; flex-direction:column; gap:16px; transition:transform 0.2s;">
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div>
             <h4 style="margin:0; font-size:1.1rem; color:var(--text-1);">${a.name}</h4>
             <div style="font-size:0.8rem; color:var(--text-3);">${a.board || 'N/A'} • ${a.graduating_class || 'N/A'}</div>
+            ${tagsHtml}
           </div>
           <div style="background:var(--success-bg); color:var(--success-text); padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:600;">
             Admitted

@@ -3,7 +3,10 @@
     "id": "ALUM_001",
     "name": "Rahul S.",
     "graduating_class": 2024,
-    "admitted_to": ["MIT STEM", "Stanford Computer Science"],
+    "admitted_to": [
+      "MIT STEM",
+      "Stanford Computer Science"
+    ],
     "board": "IB",
     "grades": {
       "final_score": "42/45"
@@ -11,17 +14,35 @@
     "standardized_tests": {
       "SAT": 1540
     },
-    "board_subjects": ["HL Math AA", "HL Physics", "HL Computer Science", "SL English", "SL Economics", "SL Spanish"],
-    "courses_taken": ["AP Calculus BC", "AP Physics C"],
-    "extracurriculars": ["Robotics Team Captain", "Math Olympiad Finalist"],
-    "competitions": ["USACO Gold"],
+    "board_subjects": [
+      "HL Math AA",
+      "HL Physics",
+      "HL Computer Science",
+      "SL English",
+      "SL Economics",
+      "SL Spanish"
+    ],
+    "courses_taken": [
+      "AP Calculus BC",
+      "AP Physics C"
+    ],
+    "extracurriculars": [
+      "Robotics Team Captain",
+      "Math Olympiad Finalist"
+    ],
+    "competitions": [
+      "USACO Gold"
+    ],
     "key_remediation_taken": "Supplemented IB Math with AP Calculus BC to meet advanced US STEM requirements."
   },
   {
     "id": "ALUM_002",
     "name": "Aisha K.",
     "graduating_class": 2023,
-    "admitted_to": ["NEET Medical", "Imperial College BSc Computing"],
+    "admitted_to": [
+      "NEET Medical",
+      "Imperial College BSc Computing"
+    ],
     "board": "A-Level",
     "grades": {
       "final_score": "A*A*A*"
@@ -30,17 +51,29 @@
       "UCAT": 3100,
       "BMAT": "6.0, 6.0, 3A"
     },
-    "board_subjects": ["Biology", "Chemistry", "Mathematics"],
+    "board_subjects": [
+      "Biology",
+      "Chemistry",
+      "Mathematics"
+    ],
     "courses_taken": [],
-    "extracurriculars": ["Hospital Volunteer (200 hours)", "Medical Research Assistant"],
-    "competitions": ["British Biology Olympiad Gold"],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "Medical Research Assistant"
+    ],
+    "competitions": [
+      "British Biology Olympiad Gold"
+    ],
     "key_remediation_taken": "Shadowed doctors in a clinical setting to build a strong personal statement."
   },
   {
     "id": "ALUM_003",
     "name": "Rohan M.",
     "graduating_class": 2025,
-    "admitted_to": ["JEE Main Engineering", "Computer Science"],
+    "admitted_to": [
+      "JEE Main Engineering",
+      "Computer Science"
+    ],
     "board": "CBSE",
     "grades": {
       "final_score": "96%"
@@ -49,17 +82,32 @@
       "JEE_Mains": "99.8 percentile",
       "BITSAT": 350
     },
-    "board_subjects": ["Physics", "Chemistry", "Mathematics", "English", "Computer Science"],
-    "courses_taken": ["FIITJEE Coaching"],
-    "extracurriculars": ["Coding Club Founder"],
-    "competitions": ["KVPY Scholar"],
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Computer Science"
+    ],
+    "courses_taken": [
+      "FIITJEE Coaching"
+    ],
+    "extracurriculars": [
+      "Coding Club Founder"
+    ],
+    "competitions": [
+      "KVPY Scholar"
+    ],
     "key_remediation_taken": "Maintained 95%+ in CBSE boards while dedicating 20 hours/week to JEE prep."
   },
   {
     "id": "ALUM_004",
     "name": "Maya V.",
     "graduating_class": 2022,
-    "admitted_to": ["Delhi University Economics", "Cambridge Computer Science"],
+    "admitted_to": [
+      "Delhi University Economics",
+      "Cambridge Computer Science"
+    ],
     "board": "ISC",
     "grades": {
       "final_score": "98%"
@@ -67,10 +115,3281 @@
     "standardized_tests": {
       "TMUA": "7.5"
     },
-    "board_subjects": ["Mathematics", "Economics", "Accounts", "Commerce", "English"],
+    "board_subjects": [
+      "Mathematics",
+      "Economics",
+      "Accounts",
+      "Commerce",
+      "English"
+    ],
     "courses_taken": [],
-    "extracurriculars": ["Debate Team President", "Published Economics Paper"],
-    "competitions": ["National Economics Olympiad Winner"],
+    "extracurriculars": [
+      "Debate Team President",
+      "Published Economics Paper"
+    ],
+    "competitions": [
+      "National Economics Olympiad Winner"
+    ],
     "key_remediation_taken": "Scored highly on the TMUA to offset the lack of Further Mathematics in ISC."
+  },
+  {
+    "id": "ALUM_005",
+    "name": "Arjun P.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "UC Berkeley L&S",
+      "UCLA L&S",
+      "Computer Science"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "95%"
+    },
+    "standardized_tests": {
+      "SAT": 1510
+    },
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "English",
+      "Physical Education"
+    ],
+    "courses_taken": [
+      "AP Calculus AB",
+      "AP Physics 1",
+      "AP Microeconomics"
+    ],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "State Level Tennis"
+    ],
+    "competitions": [
+      "HMUN Best Delegate"
+    ],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications, overcoming CBSE curriculum limitations."
+  },
+  {
+    "id": "ALUM_006",
+    "name": "Sanya G.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "NYU Stern",
+      "LSE BSc Economics",
+      "Wharton Business"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "43/45"
+    },
+    "standardized_tests": {
+      "ACT": 34
+    },
+    "board_subjects": [
+      "HL Math AA",
+      "HL Economics",
+      "HL Global Politics",
+      "SL Physics",
+      "SL English",
+      "SL French"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Founder of FinTech App",
+      "Internship at Goldman Sachs"
+    ],
+    "competitions": [
+      "Wharton Investment Competition Finalist"
+    ],
+    "key_remediation_taken": "Leveraged Math AA HL score of 7 and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_007",
+    "name": "Vikram K.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Oxford PPE",
+      "Ashoka University"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "TSA": 72
+    },
+    "board_subjects": [
+      "History",
+      "Economics",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "National Debating Champion",
+      "Editor-in-Chief of School Newspaper"
+    ],
+    "competitions": [
+      "World Schools Debating Championship"
+    ],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay on political science to strengthen Oxford PPE writing requirements."
+  },
+  {
+    "id": "ALUM_008",
+    "name": "Priya D.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "NID Design",
+      "Rhode Island School of Design"
+    ],
+    "board": "ISC",
+    "grades": {
+      "final_score": "89%"
+    },
+    "standardized_tests": {
+      "NID_DAT": "Rank 42"
+    },
+    "board_subjects": [
+      "English",
+      "Fine Arts",
+      "Psychology",
+      "History",
+      "Sociology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Art Portfolio Website",
+      "Freelance Graphic Designer"
+    ],
+    "competitions": [
+      "Won National Painting Competition"
+    ],
+    "key_remediation_taken": "Curated a specialized 20-piece art portfolio over 12 months with a unified theme to meet elite US design school standards."
+  },
+  {
+    "id": "ALUM_009",
+    "name": "Karan B.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Cornell Engineering",
+      "Georgia Tech"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "97%"
+    },
+    "standardized_tests": {
+      "SAT": 1560
+    },
+    "board_subjects": [
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "Computer Science",
+      "English"
+    ],
+    "courses_taken": [
+      "Intro to Data Structures (Coursera)"
+    ],
+    "extracurriculars": [
+      "First Robotics Competition Captain",
+      "Published AI Paper in IEEE"
+    ],
+    "competitions": [
+      "Google Science Fair Regional Finalist"
+    ],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced computer science skills."
+  },
+  {
+    "id": "ALUM_010",
+    "name": "Neha R.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "UCL Psychology",
+      "KCL Psychology",
+      "BA Psychology"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "41/45"
+    },
+    "standardized_tests": {
+      "IELTS": 8.5
+    },
+    "board_subjects": [
+      "HL Psychology",
+      "HL Biology",
+      "HL English Literature",
+      "SL Math AI",
+      "SL Chemistry",
+      "SL Spanish"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Mental Health Peer Counselor",
+      "Shadowed Clinical Psychologist"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an IB Extended Essay in Psychology analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_011",
+    "name": "Aanya V.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Carnegie Mellon University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "40/45"
+    },
+    "standardized_tests": {
+      "SAT": 1564
+    },
+    "board_subjects": [
+      "SL Business Management",
+      "HL Chemistry",
+      "HL Psychology",
+      "HL Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Environmental Club Lead",
+      "Coding Club Founder",
+      "Debate Team President",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_012",
+    "name": "Meera S.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Princeton University",
+      "UC Berkeley",
+      "UC San Diego"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*AA"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "Computer Science",
+      "Chemistry",
+      "Psychology",
+      "Economics",
+      "Geography"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Varsity Basketball Captain",
+      "First Robotics Competition Captain",
+      "TEDx Speaker",
+      "Classical Dance Diploma"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_013",
+    "name": "Riya A.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "IIT Delhi",
+      "IIT Bombay",
+      "MIT"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A*"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "Economics",
+      "Geography",
+      "Further Mathematics",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Art Portfolio Website",
+      "Student Council President",
+      "Varsity Basketball Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Offset a slightly lower GPA with a 99th percentile standardized test score."
+  },
+  {
+    "id": "ALUM_014",
+    "name": "Myra G.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "MIT"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "39/45"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "HL Physics",
+      "HL Biology",
+      "HL Math AI",
+      "HL Math AA"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Shadowed Clinical Psychologist",
+      "Model UN Secretary General",
+      "Environmental Club Lead",
+      "Classical Dance Diploma"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_015",
+    "name": "Vivaan B.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Cambridge University",
+      "Dartmouth College",
+      "NYU Stern"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "96%"
+    },
+    "standardized_tests": {
+      "SAT": 1483
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Computer Science",
+      "Biology",
+      "Physical Education",
+      "Accounts"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Art Portfolio Website",
+      "Published AI Paper in IEEE",
+      "Founder of FinTech App"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_016",
+    "name": "Navya P.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Columbia University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "93%"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "Computer Science",
+      "Physical Education",
+      "Business Studies",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Environmental Club Lead",
+      "Debate Team President",
+      "Published AI Paper in IEEE"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Curated a specialized 20-piece portfolio over 12 months with a unified theme to meet elite standards."
+  },
+  {
+    "id": "ALUM_017",
+    "name": "Suhana B.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Columbia University",
+      "NID"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "ACT": 34,
+      "IELTS": 8.0
+    },
+    "board_subjects": [
+      "English Literature",
+      "Computer Science",
+      "Further Mathematics",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "Art Portfolio Website"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_018",
+    "name": "Shaurya T.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "UCL",
+      "BITS Pilani"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "85%"
+    },
+    "standardized_tests": {
+      "SAT": 1546,
+      "IELTS": 7.5
+    },
+    "board_subjects": [
+      "Economics",
+      "Psychology",
+      "Chemistry",
+      "Biology",
+      "Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "TEDx Speaker"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_019",
+    "name": "Vivaan D.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "UC Berkeley"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {
+      "ACT": 34
+    },
+    "board_subjects": [
+      "Business Studies",
+      "Physics",
+      "Physical Education",
+      "Computer Science",
+      "Mathematics",
+      "Accountancy"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "National Chess Champion",
+      "NGO Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_020",
+    "name": "Meera L.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "University of Waterloo"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "93%"
+    },
+    "standardized_tests": {
+      "SAT": 1376
+    },
+    "board_subjects": [
+      "Physics",
+      "Computer Science",
+      "Economics",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Debate Team President",
+      "Art Portfolio Website"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay to strengthen writing requirements."
+  },
+  {
+    "id": "ALUM_021",
+    "name": "Aanya K.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Harvard University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "87%"
+    },
+    "standardized_tests": {
+      "ACT": 34
+    },
+    "board_subjects": [
+      "History",
+      "Economics",
+      "English",
+      "Physics",
+      "Mathematics",
+      "Computer Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Environmental Club Lead",
+      "NGO Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Curated a specialized 20-piece portfolio over 12 months with a unified theme to meet elite standards."
+  },
+  {
+    "id": "ALUM_022",
+    "name": "Atharv C.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "UC San Diego"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "85%"
+    },
+    "standardized_tests": {
+      "SAT": 1565,
+      "IELTS": 8.0
+    },
+    "board_subjects": [
+      "Economics",
+      "Biology",
+      "Physics",
+      "Physical Education"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "Summer Research at local university"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_023",
+    "name": "Vivaan T.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Ashoka University",
+      "Cornell University"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "AAA"
+    },
+    "standardized_tests": {
+      "SAT": 1367
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Further Mathematics",
+      "Biology",
+      "Computer Science",
+      "Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Shadowed Clinical Psychologist",
+      "Environmental Club Lead"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay to strengthen writing requirements."
+  },
+  {
+    "id": "ALUM_024",
+    "name": "Aanya L.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "National University of Singapore (NUS)",
+      "Harvard University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "85%"
+    },
+    "standardized_tests": {
+      "SAT": 1544
+    },
+    "board_subjects": [
+      "Physical Education",
+      "Computer Science",
+      "Accounts",
+      "English"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "Founder of FinTech App"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_025",
+    "name": "Vihaan L.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Carnegie Mellon University",
+      "Columbia University",
+      "ISB"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "89%"
+    },
+    "standardized_tests": {
+      "SAT": 1516
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Political Science",
+      "English",
+      "Business Studies"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Summer Research at local university",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_026",
+    "name": "Navya B.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Princeton University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "37/45"
+    },
+    "standardized_tests": {
+      "ACT": 36
+    },
+    "board_subjects": [
+      "HL Math AA",
+      "HL Physics",
+      "HL Math AI",
+      "HL Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "National Chess Champion",
+      "Coding Club Founder",
+      "Founder of FinTech App",
+      "Model UN Secretary General"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay to strengthen writing requirements."
+  },
+  {
+    "id": "ALUM_027",
+    "name": "Riya G.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "Cambridge University",
+      "Nanyang Technological University (NTU)"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "88%"
+    },
+    "standardized_tests": {
+      "SAT": 1443
+    },
+    "board_subjects": [
+      "Physical Education",
+      "Commerce",
+      "History",
+      "Mathematics",
+      "Physics",
+      "Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "Summer Research at local university",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_028",
+    "name": "Meera G.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "NYU Stern"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "98%"
+    },
+    "standardized_tests": {
+      "SAT": 1461
+    },
+    "board_subjects": [
+      "Accountancy",
+      "Chemistry",
+      "Physics",
+      "Biology",
+      "Physical Education",
+      "Business Studies"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Mental Health Peer Counselor",
+      "Coding Club Founder",
+      "Student Council President",
+      "Published AI Paper in IEEE"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_029",
+    "name": "Karan A.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "St. Stephen's College",
+      "University of Waterloo"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*AA"
+    },
+    "standardized_tests": {
+      "ACT": 33
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Psychology",
+      "Further Mathematics",
+      "Geography",
+      "Computer Science",
+      "English Literature"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "Environmental Club Lead"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_030",
+    "name": "Aditya A.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Stanford University",
+      "NID",
+      "UC Berkeley"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "86%"
+    },
+    "standardized_tests": {
+      "SAT": 1504
+    },
+    "board_subjects": [
+      "Mathematics",
+      "History",
+      "Accountancy",
+      "Business Studies"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "TEDx Speaker",
+      "Classical Dance Diploma",
+      "Published Author"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_031",
+    "name": "Simran J.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Cambridge University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "90%"
+    },
+    "standardized_tests": {
+      "SAT": 1563
+    },
+    "board_subjects": [
+      "History",
+      "Sociology",
+      "Physics",
+      "Mathematics",
+      "Commerce"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Offset a slightly lower GPA with a 99th percentile standardized test score."
+  },
+  {
+    "id": "ALUM_032",
+    "name": "Pari A.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Nanyang Technological University (NTU)",
+      "UC San Diego",
+      "University of Toronto"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "88%"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "Psychology",
+      "Physical Education",
+      "Accounts",
+      "English",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "Founder of FinTech App"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_033",
+    "name": "Karan T.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "UCLA"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {
+      "SAT": 1537
+    },
+    "board_subjects": [
+      "Accountancy",
+      "Biology",
+      "Psychology",
+      "Mathematics",
+      "Physical Education"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "National Chess Champion",
+      "Published AI Paper in IEEE"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Curated a specialized 20-piece portfolio over 12 months with a unified theme to meet elite standards."
+  },
+  {
+    "id": "ALUM_034",
+    "name": "Riaan V.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "Imperial College London",
+      "NID"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "97%"
+    },
+    "standardized_tests": {
+      "SAT": 1471
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Chemistry",
+      "Physical Education",
+      "Computer Science",
+      "Biology",
+      "History"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Varsity Basketball Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_035",
+    "name": "Kavya T.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "University of Waterloo",
+      "UC San Diego"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "87%"
+    },
+    "standardized_tests": {
+      "SAT": 1460
+    },
+    "board_subjects": [
+      "Political Science",
+      "English",
+      "Economics",
+      "Psychology",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Founder of FinTech App",
+      "NGO Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_036",
+    "name": "Rohan T.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Imperial College London",
+      "KCL"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "44/45"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "SL Business Management",
+      "SL French",
+      "HL Chemistry",
+      "HL Math AA"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Student Council President",
+      "National Chess Champion"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_037",
+    "name": "Sai M.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "IIT Delhi"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "99%"
+    },
+    "standardized_tests": {
+      "SAT": 1489
+    },
+    "board_subjects": [
+      "Biology",
+      "Chemistry",
+      "Economics",
+      "Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Coding Club Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_038",
+    "name": "Kavya R.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "Krea University",
+      "National University of Singapore (NUS)"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "93%"
+    },
+    "standardized_tests": {
+      "ACT": 31
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Economics",
+      "English",
+      "Political Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Art Portfolio Website",
+      "Summer Research at local university"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_039",
+    "name": "Ishaan P.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "IIT Bombay",
+      "Columbia University",
+      "Ashoka University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "45/45"
+    },
+    "standardized_tests": {
+      "SAT": 1515
+    },
+    "board_subjects": [
+      "HL Global Politics",
+      "HL Economics",
+      "HL Math AA",
+      "HL English Literature",
+      "HL Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Coding Club Founder",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_040",
+    "name": "Ishaan D.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "University of Toronto",
+      "NYU Stern"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "38/45"
+    },
+    "standardized_tests": {
+      "SAT": 1404,
+      "IELTS": 7.5
+    },
+    "board_subjects": [
+      "HL Math AA",
+      "HL Psychology",
+      "HL Computer Science",
+      "SL Business Management",
+      "HL Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Student Council President",
+      "State Level Tennis",
+      "Varsity Basketball Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_041",
+    "name": "Suhana A.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "BITS Pilani"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "85%"
+    },
+    "standardized_tests": {
+      "SAT": 1418
+    },
+    "board_subjects": [
+      "Political Science",
+      "Physics",
+      "English",
+      "History",
+      "Psychology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Debate Team President",
+      "Internship at Tech Startup"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Offset a slightly lower GPA with a 99th percentile standardized test score."
+  },
+  {
+    "id": "ALUM_042",
+    "name": "Arjun D.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Georgia Tech",
+      "Cornell University",
+      "NIFT"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "88%"
+    },
+    "standardized_tests": {
+      "SAT": 1426
+    },
+    "board_subjects": [
+      "Economics",
+      "English",
+      "Mathematics",
+      "Commerce",
+      "Psychology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Founder of FinTech App",
+      "State Level Tennis"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_043",
+    "name": "Riaan L.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Harvard University",
+      "BITS Pilani"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "97%"
+    },
+    "standardized_tests": {
+      "SAT": 1542
+    },
+    "board_subjects": [
+      "Psychology",
+      "Economics",
+      "Physics",
+      "Political Science",
+      "English",
+      "Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Summer Research at local university",
+      "Medical Research Assistant",
+      "TEDx Speaker"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_044",
+    "name": "Aditya R.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Stanford University",
+      "UCLA"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "93%"
+    },
+    "standardized_tests": {
+      "SAT": 1550
+    },
+    "board_subjects": [
+      "Physical Education",
+      "Chemistry",
+      "English",
+      "Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Classical Dance Diploma",
+      "Coding Club Founder",
+      "Student Council President"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_045",
+    "name": "Suhana B.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Nanyang Technological University (NTU)",
+      "IIT Bombay",
+      "Cambridge University"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "Computer Science",
+      "Biology",
+      "Geography",
+      "Physics",
+      "Psychology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Classical Dance Diploma",
+      "TEDx Speaker"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_046",
+    "name": "Aarav R.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "UC San Diego",
+      "Carnegie Mellon University",
+      "LSE"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "97%"
+    },
+    "standardized_tests": {
+      "SAT": 1431,
+      "IELTS": 7.5
+    },
+    "board_subjects": [
+      "History",
+      "Computer Science",
+      "Biology",
+      "Accountancy",
+      "Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "TEDx Speaker",
+      "National Chess Champion",
+      "State Level Tennis",
+      "Student Council President"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_047",
+    "name": "Nisha R.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Columbia University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "86%"
+    },
+    "standardized_tests": {
+      "ACT": 33
+    },
+    "board_subjects": [
+      "English",
+      "Economics",
+      "Mathematics",
+      "Psychology",
+      "Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "TEDx Speaker",
+      "Model UN Secretary General",
+      "NGO Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Offset a slightly lower GPA with a 99th percentile standardized test score."
+  },
+  {
+    "id": "ALUM_048",
+    "name": "Kavya K.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Ashoka University",
+      "NIFT",
+      "UPenn Wharton"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "43/45"
+    },
+    "standardized_tests": {
+      "IELTS": 8.5
+    },
+    "board_subjects": [
+      "HL Psychology",
+      "SL Business Management",
+      "HL Global Politics",
+      "HL Chemistry",
+      "SL Spanish",
+      "SL French"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Student Council President",
+      "TEDx Speaker"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Curated a specialized 20-piece portfolio over 12 months with a unified theme to meet elite standards."
+  },
+  {
+    "id": "ALUM_049",
+    "name": "Kavya R.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "BITS Pilani",
+      "Cornell University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "41/45"
+    },
+    "standardized_tests": {
+      "SAT": 1355
+    },
+    "board_subjects": [
+      "SL French",
+      "HL Biology",
+      "SL Spanish",
+      "HL Math AA",
+      "HL Global Politics",
+      "HL Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Student Council President",
+      "Model UN Secretary General"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_050",
+    "name": "Navya K.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "MIT",
+      "Brown University"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "SAT": 1534
+    },
+    "board_subjects": [
+      "Mathematics",
+      "English Literature",
+      "Psychology",
+      "Chemistry",
+      "Computer Science",
+      "Further Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Environmental Club Lead",
+      "Hospital Volunteer (200 hours)",
+      "Published Author",
+      "Art Portfolio Website"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Curated a specialized 20-piece portfolio over 12 months with a unified theme to meet elite standards."
+  },
+  {
+    "id": "ALUM_051",
+    "name": "Ishaan S.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "SRCC",
+      "St. Stephen's College"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "98%"
+    },
+    "standardized_tests": {
+      "SAT": 1502
+    },
+    "board_subjects": [
+      "Psychology",
+      "Chemistry",
+      "Political Science",
+      "Accountancy",
+      "Business Studies",
+      "Computer Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "Debate Team President",
+      "State Level Tennis"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_052",
+    "name": "Riaan K.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Dartmouth College",
+      "Cambridge University",
+      "NIFT"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "SAT": 1371
+    },
+    "board_subjects": [
+      "Further Mathematics",
+      "Geography",
+      "Psychology",
+      "Physics",
+      "English Literature",
+      "Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Student Council President",
+      "Founder of FinTech App",
+      "Classical Dance Diploma",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Curated a specialized 20-piece portfolio over 12 months with a unified theme to meet elite standards."
+  },
+  {
+    "id": "ALUM_053",
+    "name": "Sneha M.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "BITS Pilani",
+      "University of Waterloo"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "90%"
+    },
+    "standardized_tests": {
+      "SAT": 1429
+    },
+    "board_subjects": [
+      "Physical Education",
+      "Biology",
+      "Chemistry",
+      "English",
+      "Psychology",
+      "History"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "National Chess Champion"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_054",
+    "name": "Ananya G.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "National University of Singapore (NUS)",
+      "Brown University",
+      "Stanford University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "91%"
+    },
+    "standardized_tests": {
+      "SAT": 1520
+    },
+    "board_subjects": [
+      "Psychology",
+      "History",
+      "Physics",
+      "Physical Education",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Founder of FinTech App",
+      "Summer Research at local university",
+      "First Robotics Competition Captain",
+      "Classical Dance Diploma"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_055",
+    "name": "Aditya K.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "ISB",
+      "MIT",
+      "IIT Delhi"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "95%"
+    },
+    "standardized_tests": {
+      "ACT": 34,
+      "IELTS": 7.5
+    },
+    "board_subjects": [
+      "Physical Education",
+      "Commerce",
+      "Accounts",
+      "Sociology",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "First Robotics Competition Captain",
+      "Varsity Basketball Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay to strengthen writing requirements."
+  },
+  {
+    "id": "ALUM_056",
+    "name": "Ishaan R.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "National University of Singapore (NUS)",
+      "Krea University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "38/45"
+    },
+    "standardized_tests": {
+      "SAT": 1564
+    },
+    "board_subjects": [
+      "HL Economics",
+      "SL French",
+      "HL English Literature",
+      "HL Math AA",
+      "HL Chemistry",
+      "HL Global Politics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "NGO Founder",
+      "Art Portfolio Website"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_057",
+    "name": "Shaurya R.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "Yale University",
+      "IIT Delhi",
+      "Nanyang Technological University (NTU)"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "88%"
+    },
+    "standardized_tests": {
+      "SAT": 1520
+    },
+    "board_subjects": [
+      "Biology",
+      "Physics",
+      "History",
+      "Sociology",
+      "Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "State Level Tennis",
+      "Published Author",
+      "NGO Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_058",
+    "name": "Kavya A.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "IIT Delhi",
+      "Cambridge University",
+      "St. Stephen's College"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {
+      "SAT": 1565
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Economics",
+      "History",
+      "Computer Science",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Environmental Club Lead",
+      "National Chess Champion",
+      "Founder of FinTech App",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay to strengthen writing requirements."
+  },
+  {
+    "id": "ALUM_059",
+    "name": "Vivaan A.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "BITS Pilani",
+      "UC Berkeley"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "89%"
+    },
+    "standardized_tests": {
+      "SAT": 1445,
+      "IELTS": 8.5
+    },
+    "board_subjects": [
+      "Biology",
+      "Physics",
+      "Computer Science",
+      "Chemistry",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Debate Team President",
+      "Medical Research Assistant"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Offset a slightly lower GPA with a 99th percentile standardized test score."
+  },
+  {
+    "id": "ALUM_060",
+    "name": "Diya B.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "IIT Bombay",
+      "Imperial College London"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "92%"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "Physics",
+      "Sociology",
+      "Mathematics",
+      "Commerce"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Founder of FinTech App",
+      "Internship at Tech Startup"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_061",
+    "name": "Arjun M.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "SRCC"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A*"
+    },
+    "standardized_tests": {
+      "SAT": 1514
+    },
+    "board_subjects": [
+      "Mathematics",
+      "Chemistry",
+      "Computer Science",
+      "Geography",
+      "Psychology",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "NGO Founder",
+      "Classical Dance Diploma",
+      "First Robotics Competition Captain",
+      "Student Council President"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_062",
+    "name": "Rohan D.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "University of Toronto",
+      "Columbia University",
+      "University of Waterloo"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "AAA"
+    },
+    "standardized_tests": {
+      "SAT": 1434
+    },
+    "board_subjects": [
+      "Geography",
+      "Biology",
+      "Further Mathematics",
+      "Mathematics",
+      "Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "TEDx Speaker",
+      "Shadowed Clinical Psychologist"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_063",
+    "name": "Aditya R.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Georgia Tech",
+      "Cornell University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "96%"
+    },
+    "standardized_tests": {
+      "SAT": 1467,
+      "IELTS": 7.5
+    },
+    "board_subjects": [
+      "Computer Science",
+      "History",
+      "Physical Education",
+      "Physics",
+      "Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "TEDx Speaker",
+      "Medical Research Assistant"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_064",
+    "name": "Sneha B.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "UPenn Wharton",
+      "National University of Singapore (NUS)",
+      "Cornell University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "96%"
+    },
+    "standardized_tests": {
+      "SAT": 1433,
+      "IELTS": 7.5
+    },
+    "board_subjects": [
+      "Chemistry",
+      "Political Science",
+      "Psychology",
+      "Physical Education"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Mental Health Peer Counselor",
+      "Published AI Paper in IEEE"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_065",
+    "name": "Rahul N.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Columbia University",
+      "NYU Stern",
+      "Ashoka University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "36/45"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "HL Physics",
+      "HL Global Politics",
+      "HL Chemistry",
+      "HL Math AI",
+      "HL Computer Science",
+      "HL Psychology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Debate Team President",
+      "Summer Research at local university"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_066",
+    "name": "Rohan T.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "NYU Stern"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A*"
+    },
+    "standardized_tests": {
+      "SAT": 1382
+    },
+    "board_subjects": [
+      "Geography",
+      "Further Mathematics",
+      "Mathematics",
+      "Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Debate Team President",
+      "Shadowed Clinical Psychologist",
+      "Medical Research Assistant"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_067",
+    "name": "Karan D.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "KCL"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "88%"
+    },
+    "standardized_tests": {
+      "SAT": 1548
+    },
+    "board_subjects": [
+      "Accounts",
+      "Biology",
+      "Physical Education",
+      "Sociology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "State Level Tennis",
+      "Art Portfolio Website",
+      "Internship at Tech Startup",
+      "Published Author"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_068",
+    "name": "Rohan S.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "LSE",
+      "ISB"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "SAT": 1373
+    },
+    "board_subjects": [
+      "Psychology",
+      "Computer Science",
+      "History",
+      "English Literature",
+      "Biology",
+      "Further Mathematics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Varsity Basketball Captain",
+      "NGO Founder",
+      "Published Author"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_069",
+    "name": "Sai R.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "UPenn Wharton"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "41/45"
+    },
+    "standardized_tests": {
+      "SAT": 1425
+    },
+    "board_subjects": [
+      "HL Economics",
+      "HL Computer Science",
+      "HL Math AA",
+      "HL Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Environmental Club Lead"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_070",
+    "name": "Rohan C.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "Brown University"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A*"
+    },
+    "standardized_tests": {
+      "SAT": 1563
+    },
+    "board_subjects": [
+      "Computer Science",
+      "Physics",
+      "Mathematics",
+      "Geography",
+      "Psychology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "NGO Founder",
+      "Published Author",
+      "Classical Dance Diploma"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_071",
+    "name": "Riya P.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "University of Waterloo",
+      "Ashoka University",
+      "Imperial College London"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "43/45"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "SL French",
+      "SL Spanish",
+      "HL Math AA",
+      "HL Economics",
+      "HL Computer Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Published Author",
+      "TEDx Speaker",
+      "NGO Founder",
+      "Coding Club Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_072",
+    "name": "Sneha T.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Yale University",
+      "St. Stephen's College"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "87%"
+    },
+    "standardized_tests": {
+      "SAT": 1524
+    },
+    "board_subjects": [
+      "Psychology",
+      "Physics",
+      "Computer Science",
+      "Accountancy"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Environmental Club Lead",
+      "State Level Tennis",
+      "Student Council President",
+      "Model UN Secretary General"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_073",
+    "name": "Rahul S.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "UC Berkeley",
+      "KCL",
+      "Georgia Tech"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "Economics",
+      "Geography",
+      "Psychology",
+      "Computer Science",
+      "History",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "Environmental Club Lead",
+      "Model UN Secretary General",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_074",
+    "name": "Kavya J.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Dartmouth College",
+      "NID",
+      "St. Stephen's College"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "95%"
+    },
+    "standardized_tests": {
+      "SAT": 1430
+    },
+    "board_subjects": [
+      "Accounts",
+      "Economics",
+      "Sociology",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Debate Team President",
+      "Environmental Club Lead",
+      "NGO Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_075",
+    "name": "Ananya B.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "NID"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "96%"
+    },
+    "standardized_tests": {
+      "ACT": 36
+    },
+    "board_subjects": [
+      "Political Science",
+      "Accountancy",
+      "Computer Science",
+      "Mathematics",
+      "History"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Founder of FinTech App"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_076",
+    "name": "Diya T.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "University of Toronto",
+      "Columbia University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "86%"
+    },
+    "standardized_tests": {
+      "SAT": 1414
+    },
+    "board_subjects": [
+      "Political Science",
+      "Physics",
+      "Mathematics",
+      "Physical Education"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Founder of FinTech App",
+      "TEDx Speaker"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_077",
+    "name": "Meera V.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Stanford University",
+      "Yale University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "92%"
+    },
+    "standardized_tests": {
+      "SAT": 1526,
+      "IELTS": 8.5
+    },
+    "board_subjects": [
+      "Chemistry",
+      "Psychology",
+      "Mathematics",
+      "Computer Science",
+      "History"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "Medical Research Assistant",
+      "Shadowed Clinical Psychologist",
+      "First Robotics Competition Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay to strengthen writing requirements."
+  },
+  {
+    "id": "ALUM_078",
+    "name": "Priya N.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "ISB",
+      "Cambridge University",
+      "UC Berkeley"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "English",
+      "Biology",
+      "Economics",
+      "Physical Education"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Published Author"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_079",
+    "name": "Navya A.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Nanyang Technological University (NTU)",
+      "Cambridge University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {
+      "SAT": 1571
+    },
+    "board_subjects": [
+      "History",
+      "Chemistry",
+      "Mathematics",
+      "Business Studies",
+      "English"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Mental Health Peer Counselor",
+      "Student Council President",
+      "Classical Dance Diploma"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_080",
+    "name": "Arjun K.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Yale University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "45/45"
+    },
+    "standardized_tests": {
+      "SAT": 1400
+    },
+    "board_subjects": [
+      "HL Computer Science",
+      "HL Global Politics",
+      "HL Math AI",
+      "HL Biology",
+      "SL Business Management"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Founder of FinTech App",
+      "Published Author"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_081",
+    "name": "Ishaan N.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Georgia Tech",
+      "Princeton University",
+      "Stanford University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "86%"
+    },
+    "standardized_tests": {
+      "ACT": 32
+    },
+    "board_subjects": [
+      "English",
+      "History",
+      "Biology",
+      "Mathematics",
+      "Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Student Council President",
+      "Medical Research Assistant"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_082",
+    "name": "Diya B.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "UCLA"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "43/45"
+    },
+    "standardized_tests": {
+      "SAT": 1574
+    },
+    "board_subjects": [
+      "HL Chemistry",
+      "SL Spanish",
+      "HL Economics",
+      "HL Computer Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "NGO Founder",
+      "Environmental Club Lead",
+      "First Robotics Competition Captain",
+      "Shadowed Clinical Psychologist"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_083",
+    "name": "Riaan G.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "St. Stephen's College",
+      "Columbia University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "40/45"
+    },
+    "standardized_tests": {
+      "SAT": 1436
+    },
+    "board_subjects": [
+      "SL Spanish",
+      "HL Chemistry",
+      "HL Global Politics",
+      "HL Math AI",
+      "HL English Literature"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Student Council President"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_084",
+    "name": "Navya M.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "Dartmouth College",
+      "Imperial College London"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "90%"
+    },
+    "standardized_tests": {
+      "SAT": 1458
+    },
+    "board_subjects": [
+      "Chemistry",
+      "Commerce",
+      "Sociology",
+      "Computer Science",
+      "Physics",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Shadowed Clinical Psychologist"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Offset a slightly lower GPA with a 99th percentile standardized test score."
+  },
+  {
+    "id": "ALUM_085",
+    "name": "Riaan S.",
+    "graduating_class": 2023,
+    "admitted_to": [
+      "UC Berkeley",
+      "Cambridge University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "45/45"
+    },
+    "standardized_tests": {
+      "SAT": 1474
+    },
+    "board_subjects": [
+      "HL Economics",
+      "HL Computer Science",
+      "HL Biology",
+      "HL Global Politics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Mental Health Peer Counselor",
+      "Debate Team President"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_086",
+    "name": "Sai T.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "UC San Diego",
+      "Carnegie Mellon University"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "ACT": 30
+    },
+    "board_subjects": [
+      "English Literature",
+      "Psychology",
+      "Economics",
+      "Physics",
+      "Chemistry",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "TEDx Speaker",
+      "Student Council President",
+      "Varsity Basketball Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_087",
+    "name": "Sai K.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "Krea University",
+      "Stanford University",
+      "NYU Stern"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "SAT": 1532
+    },
+    "board_subjects": [
+      "Computer Science",
+      "Further Mathematics",
+      "Geography",
+      "Biology",
+      "Economics",
+      "English Literature"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "Debate Team President",
+      "Varsity Basketball Captain",
+      "TEDx Speaker"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_088",
+    "name": "Navya M.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Cambridge University",
+      "Princeton University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "38/45"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "SL Business Management",
+      "HL Math AI",
+      "HL Computer Science",
+      "HL Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "First Robotics Competition Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_089",
+    "name": "Diya T.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "National University of Singapore (NUS)"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "98%"
+    },
+    "standardized_tests": {
+      "SAT": 1531
+    },
+    "board_subjects": [
+      "Business Studies",
+      "Psychology",
+      "Physical Education",
+      "English",
+      "Chemistry",
+      "Computer Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Coding Club Founder",
+      "Student Council President"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_090",
+    "name": "Ishaan G.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "UCLA",
+      "University of Waterloo",
+      "NIFT"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "97%"
+    },
+    "standardized_tests": {
+      "SAT": 1388
+    },
+    "board_subjects": [
+      "Business Studies",
+      "Chemistry",
+      "Mathematics",
+      "Computer Science",
+      "History"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Hospital Volunteer (200 hours)",
+      "First Robotics Competition Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Offset a slightly lower GPA with a 99th percentile standardized test score."
+  },
+  {
+    "id": "ALUM_091",
+    "name": "Meera R.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "NID",
+      "Yale University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "89%"
+    },
+    "standardized_tests": {},
+    "board_subjects": [
+      "History",
+      "Mathematics",
+      "Psychology",
+      "Commerce",
+      "Economics",
+      "Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "TEDx Speaker",
+      "Published Author"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_092",
+    "name": "Riya P.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "Krea University",
+      "Imperial College London"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "92%"
+    },
+    "standardized_tests": {
+      "SAT": 1473,
+      "IELTS": 8.5
+    },
+    "board_subjects": [
+      "Computer Science",
+      "History",
+      "Psychology",
+      "Physics",
+      "Political Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "State Level Tennis",
+      "Environmental Club Lead"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_093",
+    "name": "Kavya K.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "National University of Singapore (NUS)",
+      "Yale University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "92%"
+    },
+    "standardized_tests": {
+      "ACT": 32
+    },
+    "board_subjects": [
+      "Biology",
+      "Physics",
+      "Accountancy",
+      "Chemistry",
+      "Physical Education",
+      "English"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Environmental Club Lead"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_094",
+    "name": "Riya C.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "Carnegie Mellon University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "95%"
+    },
+    "standardized_tests": {
+      "IELTS": 8.0
+    },
+    "board_subjects": [
+      "Biology",
+      "Commerce",
+      "Chemistry",
+      "English",
+      "Physics",
+      "Psychology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Art Portfolio Website",
+      "Published Author",
+      "Varsity Basketball Captain",
+      "Environmental Club Lead"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_095",
+    "name": "Rohan S.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "Cornell University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "92%"
+    },
+    "standardized_tests": {
+      "SAT": 1387
+    },
+    "board_subjects": [
+      "Commerce",
+      "Physics",
+      "Physical Education",
+      "History"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Debate Team President"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_096",
+    "name": "Ishaan K.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Cornell University"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "40/45"
+    },
+    "standardized_tests": {
+      "SAT": 1567,
+      "IELTS": 8.0
+    },
+    "board_subjects": [
+      "HL Math AA",
+      "HL Global Politics",
+      "SL French",
+      "HL Chemistry",
+      "HL Psychology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Summer Research at local university",
+      "Internship at Tech Startup",
+      "National Chess Champion"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Submitted a 4,000-word independent research essay to strengthen writing requirements."
+  },
+  {
+    "id": "ALUM_097",
+    "name": "Meera S.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "UC Berkeley",
+      "National University of Singapore (NUS)"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A"
+    },
+    "standardized_tests": {
+      "SAT": 1356
+    },
+    "board_subjects": [
+      "Economics",
+      "Chemistry",
+      "Biology",
+      "Geography",
+      "English Literature",
+      "Computer Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "National Chess Champion"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_098",
+    "name": "Ishaan S.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "Columbia University",
+      "IIT Delhi",
+      "Princeton University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "96%"
+    },
+    "standardized_tests": {
+      "ACT": 32
+    },
+    "board_subjects": [
+      "Biology",
+      "Political Science",
+      "Chemistry",
+      "Psychology",
+      "Business Studies",
+      "Computer Science"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "NGO Founder",
+      "Mental Health Peer Counselor",
+      "Shadowed Clinical Psychologist"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_099",
+    "name": "Ishaan P.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "KCL"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A*"
+    },
+    "standardized_tests": {
+      "SAT": 1457,
+      "IELTS": 8.5
+    },
+    "board_subjects": [
+      "Biology",
+      "Computer Science",
+      "English Literature",
+      "Mathematics",
+      "Physics",
+      "Chemistry"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "First Robotics Competition Captain",
+      "Founder of FinTech App",
+      "Mental Health Peer Counselor",
+      "Medical Research Assistant"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_100",
+    "name": "Rohan C.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "NID",
+      "IIT Delhi"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "89%"
+    },
+    "standardized_tests": {
+      "ACT": 32
+    },
+    "board_subjects": [
+      "Chemistry",
+      "Physics",
+      "English",
+      "Commerce"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "National Chess Champion",
+      "Varsity Basketball Captain"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_101",
+    "name": "Shaurya B.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Dartmouth College"
+    ],
+    "board": "IB",
+    "grades": {
+      "final_score": "38/45"
+    },
+    "standardized_tests": {
+      "SAT": 1485
+    },
+    "board_subjects": [
+      "HL Chemistry",
+      "SL French",
+      "HL Global Politics",
+      "HL Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "First Robotics Competition Captain",
+      "Shadowed Clinical Psychologist",
+      "Debate Team President",
+      "State Level Tennis"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_102",
+    "name": "Karan M.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "ISB",
+      "Imperial College London",
+      "NID"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "99%"
+    },
+    "standardized_tests": {
+      "SAT": 1467
+    },
+    "board_subjects": [
+      "Physical Education",
+      "Mathematics",
+      "Biology",
+      "Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "NGO Founder",
+      "Published AI Paper in IEEE",
+      "Internship at Tech Startup"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Built a working prototype of an app and launched it on the App Store to show entrepreneurial initiative."
+  },
+  {
+    "id": "ALUM_103",
+    "name": "Simran G.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Stanford University"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {
+      "ACT": 36,
+      "IELTS": 8.5
+    },
+    "board_subjects": [
+      "Computer Science",
+      "Psychology",
+      "Physical Education",
+      "History",
+      "Accounts",
+      "Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Shadowed Clinical Psychologist",
+      "Mental Health Peer Counselor",
+      "Hospital Volunteer (200 hours)"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed university-level Python and Data Structures courses over the summer to showcase advanced CS skills."
+  },
+  {
+    "id": "ALUM_104",
+    "name": "Aanya V.",
+    "graduating_class": 2022,
+    "admitted_to": [
+      "Brown University",
+      "UCLA",
+      "NYU Stern"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "97%"
+    },
+    "standardized_tests": {
+      "SAT": 1447,
+      "IELTS": 7.5
+    },
+    "board_subjects": [
+      "Chemistry",
+      "Mathematics",
+      "Sociology",
+      "English",
+      "Psychology",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Published AI Paper in IEEE"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Focused heavily on interview prep and mock MMI sessions to clear medical school interviews."
+  },
+  {
+    "id": "ALUM_105",
+    "name": "Vihaan V.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Nanyang Technological University (NTU)",
+      "KCL"
+    ],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*AA"
+    },
+    "standardized_tests": {
+      "SAT": 1528
+    },
+    "board_subjects": [
+      "Geography",
+      "English Literature",
+      "Computer Science",
+      "Physics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "National Chess Champion",
+      "Environmental Club Lead",
+      "Summer Research at local university"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Curated a specialized 20-piece portfolio over 12 months with a unified theme to meet elite standards."
+  },
+  {
+    "id": "ALUM_106",
+    "name": "Navya C.",
+    "graduating_class": 2020,
+    "admitted_to": [
+      "Yale University"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "90%"
+    },
+    "standardized_tests": {
+      "SAT": 1564
+    },
+    "board_subjects": [
+      "English",
+      "Political Science",
+      "Accountancy",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "Founder of FinTech App"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Completed an Extended Essay analyzing cognitive behavioral therapy effectiveness to prove research capability."
+  },
+  {
+    "id": "ALUM_107",
+    "name": "Aanya A.",
+    "graduating_class": 2021,
+    "admitted_to": [
+      "LSE",
+      "UCLA"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "85%"
+    },
+    "standardized_tests": {
+      "SAT": 1355
+    },
+    "board_subjects": [
+      "Physical Education",
+      "Mathematics",
+      "Political Science",
+      "History",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Medical Research Assistant",
+      "TEDx Speaker",
+      "NGO Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
+  },
+  {
+    "id": "ALUM_108",
+    "name": "Arjun L.",
+    "graduating_class": 2024,
+    "admitted_to": [
+      "UPenn Wharton",
+      "Georgia Tech",
+      "LSE"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "95%"
+    },
+    "standardized_tests": {
+      "SAT": 1525
+    },
+    "board_subjects": [
+      "Chemistry",
+      "Commerce",
+      "Computer Science",
+      "Biology",
+      "History",
+      "Economics"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Model UN Secretary General",
+      "Coding Club Founder"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Participated in rigorous summer programs like Ross Math Program to highlight quantitative excellence."
+  },
+  {
+    "id": "ALUM_109",
+    "name": "Aditya D.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "ISB",
+      "NID",
+      "SRCC"
+    ],
+    "board": "ICSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {
+      "SAT": 1474
+    },
+    "board_subjects": [
+      "Physics",
+      "Mathematics",
+      "History",
+      "Psychology",
+      "Biology"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Shadowed Clinical Psychologist",
+      "TEDx Speaker",
+      "Summer Research at local university"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Leveraged high Math score and an intensive summer internship to demonstrate elite quantitative readiness."
+  },
+  {
+    "id": "ALUM_110",
+    "name": "Krishna T.",
+    "graduating_class": 2025,
+    "admitted_to": [
+      "NID",
+      "NYU Stern",
+      "UCL"
+    ],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "94%"
+    },
+    "standardized_tests": {
+      "ACT": 30
+    },
+    "board_subjects": [
+      "Computer Science",
+      "English",
+      "Political Science",
+      "Physical Education",
+      "Accountancy",
+      "Business Studies"
+    ],
+    "courses_taken": [],
+    "extracurriculars": [
+      "Published Author",
+      "Mental Health Peer Counselor"
+    ],
+    "competitions": [],
+    "key_remediation_taken": "Took 3 AP Exams independently to demonstrate academic rigor for US applications."
   }
 ]
