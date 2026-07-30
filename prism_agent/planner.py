@@ -42,7 +42,21 @@ class Planner:
                 matching_alumni = [a for a in self.alumni_db if target_id in a.get("admitted_to", [])]
                 if matching_alumni and options:
                     best_alumnus = matching_alumni[0]
-                    alumni_note = f" 🎓 **Proven Pathway:** {best_alumnus['name']} ('{str(best_alumnus['graduating_class'])[-2:]}) was admitted to {target_id} by: {best_alumnus['key_remediation_taken']}"
+                    ecs = ", ".join(best_alumnus.get("extracurriculars", []))
+                    courses = ", ".join(best_alumnus.get("courses_taken", []))
+                    comps = ", ".join(best_alumnus.get("competitions", []))
+                    
+                    profile_strengths = []
+                    if ecs: profile_strengths.append(f"ECs: {ecs}")
+                    if courses: profile_strengths.append(f"Courses: {courses}")
+                    if comps: profile_strengths.append(f"Competitions: {comps}")
+                    
+                    strengths_str = " | ".join(profile_strengths)
+                    
+                    alumni_note = f" 🎓 **Proven Pathway ({best_alumnus['name']} '{str(best_alumnus['graduating_class'])[-2:]} -> {target_id}):**\n"
+                    alumni_note += f"• **Action Taken:** {best_alumnus.get('key_remediation_taken', 'Standard pathway')}\n"
+                    alumni_note += f"• **Profile Strengths:** {strengths_str}"
+                    
                     # Append to the first (primary) option
                     options[0]["remediation"] += f"\n\n{alumni_note}"
 
