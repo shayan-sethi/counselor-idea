@@ -772,6 +772,8 @@ function showStep(step) {
   }
   if (step === 'shortlist') {
     renderStudentShortlist();
+  } else if (step === 'recycling') {
+    renderStudentRecyclingView();
   }
   if (step === 'calendar') {
     renderStudentCalendar();
@@ -1913,3 +1915,78 @@ async function renderStudentScholarships() {
   }
 }
 window.renderStudentScholarships = renderStudentScholarships;
+
+// ══════════════════════════════════════════════
+//  STUDENT APPLICATION RECYCLING (ALUMNI PATHWAYS)
+// ══════════════════════════════════════════════
+
+async function renderStudentRecyclingView() {
+  const grid = document.getElementById('student-alumni-grid');
+  const emptyState = document.getElementById('student-alumni-empty');
+  if (!grid) return;
+
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-3);">Loading alumni pathways...</div>';
+  emptyState.classList.add('hidden');
+
+  try {
+    const res = await fetch('/api/alumni', { headers: { 'Authorization': 'Bearer ' + getMockToken() } });
+    const alumni = await res.json();
+
+    const searchQ = (document.getElementById('student-alumni-search')?.value || '').toLowerCase();
+    const filtered = alumni.filter(a => 
+      a.name.toLowerCase().includes(searchQ) || 
+      a.admitted_universities.some(u => u.toLowerCase().includes(searchQ)) ||
+      a.board.toLowerCase().includes(searchQ)
+    );
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '';
+      emptyState.classList.remove('hidden');
+      return;
+    }
+
+    grid.innerHTML = filtered.map(a => `
+      <div class="form-card" style="display:flex; flex-direction:column; gap:16px; transition:transform 0.2s;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <h4 style="margin:0; font-size:1.1rem; color:var(--text-1);">${a.name}</h4>
+            <div style="font-size:0.8rem; color:var(--text-3);">${a.board} • ${a.graduation_year}</div>
+          </div>
+          <div style="background:var(--success-bg); color:var(--success-text); padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:600;">
+            Admitted
+          </div>
+        </div>
+        
+        <div>
+          <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:4px;">Admitted To:</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            ${a.admitted_universities.map(u => `<span class="badge match">${u}</span>`).join('')}
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div style="background:var(--bg); padding:10px; border-radius:8px;">
+            <div style="font-size:0.75rem; color:var(--text-3);">Academics</div>
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${a.grades}</div>
+          </div>
+          <div style="background:var(--bg); padding:10px; border-radius:8px;">
+            <div style="font-size:0.75rem; color:var(--text-3);">Testing</div>
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${a.test_scores || 'Test Optional'}</div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:auto;">
+          <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:8px;">🎓 Proven Pathway:</div>
+          <div style="font-size:0.85rem; color:var(--text-1); line-height:1.4;">
+            ${a.remediation_taken || 'Standard application pathway.'}
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+  } catch (err) {
+    console.error(err);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:red;">Failed to load alumni data.</div>';
+  }
+}
+window.renderStudentRecyclingView = renderStudentRecyclingView;

@@ -697,6 +697,10 @@ def student_portal():
     return send_from_directory("static", "student.html")
 
 # ── Read endpoints ──
+@app.route("/api/alumni")
+@counselor_required
+def api_alumni():
+    return jsonify(load_alumni())
 
 @app.route("/api/students")
 @counselor_required

@@ -958,15 +958,23 @@
         <div class="dash-header">
           <div>
             <div class="greeting">Application Recycling</div>
-            <div class="greeting-sub">Reuse and manage essays, personal statements, and supplements for your students</div>
+            <div class="greeting-sub">Explore successful alumni pathways to strengthen current student applications</div>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <input type="text" id="alumni-search-input" placeholder="Search by name, board, or target..." style="padding:10px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text-1); min-width:280px;" oninput="renderRecyclingView()">
           </div>
         </div>
-        <div class="form-card" style="padding: 40px 24px; text-align: center; color: var(--text-3);">
-          <div style="font-size: 3rem; margin-bottom: 24px;">♻️</div>
-          <h2 style="color: var(--text-1); font-weight: 700; margin-bottom: 12px;">Coming Soon</h2>
-          <p style="max-width: 400px; margin: 0 auto; line-height: 1.6;">
-            This feature will allow you to organize and recycle application components, helping you save time while maximizing content quality across multiple college applications.
-          </p>
+        
+        <div class="dashboard-grid" style="grid-template-columns: 1fr; margin-top: 24px;">
+          <div class="dash-card">
+            <h3 class="card-title">Alumni Hall of Fame</h3>
+            <div id="alumni-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; margin-top: 16px;">
+              <!-- Alumni cards will be injected here -->
+            </div>
+            <div id="alumni-empty-state" class="hidden" style="text-align:center; padding:40px; color:var(--text-3);">
+              No alumni match your search.
+            </div>
+          </div>
         </div>
       </main>
     </div>

@@ -416,14 +416,23 @@
   <!-- ═══ APPLICATION RECYCLING ═══ -->
   <main id="step-recycling" class="hidden">
     <div class="page-title-row">
-      <h1>Application Recycling</h1>
-      <p class="subtitle">reuse and manage your application essays, statements, and supplements</p>
+      <div>
+        <h1>Application Pathways</h1>
+        <p class="subtitle">Explore successful alumni pathways to strengthen your own application</p>
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <input type="text" id="student-alumni-search" placeholder="Search by name, board, or target..." style="padding:10px 16px; border-radius:12px; border:1px solid var(--border); background:var(--surface); color:var(--text-1); min-width:280px;" oninput="renderStudentRecyclingView()">
+      </div>
     </div>
 
-    <div class="form-card" style="padding: 24px; text-align: center; color: var(--text-3);">
-      <div style="font-size: 2rem; margin-bottom: 16px;">♻️</div>
-      <h3>Coming Soon</h3>
-      <p>This space will allow you to organize and recycle your essays and application components to save time.</p>
+    <div class="form-card" style="padding:24px;">
+      <h3 style="margin-top:0; margin-bottom:16px; color:var(--text-1);">Alumni Hall of Fame</h3>
+      <div id="student-alumni-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        <!-- Alumni cards will be injected here -->
+      </div>
+      <div id="student-alumni-empty" class="hidden" style="text-align:center; padding:40px; color:var(--text-3);">
+        No alumni match your search.
+      </div>
     </div>
   </main>
 
