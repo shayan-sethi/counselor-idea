@@ -4333,7 +4333,17 @@ window.generateAICompliance = async function(studentId) {
 async function renderRecyclingView() {
   const grid = document.getElementById('alumni-grid');
   const emptyState = document.getElementById('alumni-empty-state');
+  const selectEl = document.getElementById('recycling-student-select');
   if (!grid) return;
+
+  if (selectEl && selectEl.options.length <= 1 && window.students) {
+    window.students.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.name;
+      selectEl.appendChild(opt);
+    });
+  }
 
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-3);">Loading alumni pathways...</div>';
   emptyState.classList.add('hidden');
@@ -4343,15 +4353,36 @@ async function renderRecyclingView() {
     const alumni = await res.json();
 
     const searchQ = (document.getElementById('alumni-search-input')?.value || '').toLowerCase();
-    const filtered = alumni.filter(a => 
-      a.name.toLowerCase().includes(searchQ) || 
-      (a.admitted_to || []).some(u => u.toLowerCase().includes(searchQ)) ||
-      (a.board || '').toLowerCase().includes(searchQ)
-    );
+    const selectedStudentId = selectEl ? selectEl.value : '';
+
+    let selectedTargets = [];
+    if (selectedStudentId && window.cohortAudit && window.cohortAudit[selectedStudentId]) {
+       selectedTargets = Object.keys(window.cohortAudit[selectedStudentId].targets || {}).map(t => t.toLowerCase());
+    }
+
+    const filtered = alumni.filter(a => {
+      const matchesSearch = a.name.toLowerCase().includes(searchQ) || 
+                            (a.admitted_to || []).some(u => u.toLowerCase().includes(searchQ)) ||
+                            (a.board || '').toLowerCase().includes(searchQ);
+      
+      let matchesStudent = true;
+      if (selectedStudentId && selectedTargets.length > 0) {
+         const alumniAdmitted = (a.admitted_to || []).map(u => u.toLowerCase());
+         matchesStudent = alumniAdmitted.some(t => selectedTargets.includes(t)) || 
+                          alumniAdmitted.some(t => selectedTargets.some(st => st.includes(t) || t.includes(st)));
+      }
+
+      return matchesSearch && matchesStudent;
+    });
 
     if (filtered.length === 0) {
       grid.innerHTML = '';
       emptyState.classList.remove('hidden');
+      if (selectedStudentId) {
+          emptyState.textContent = "No alumni match this student's shortlisted colleges. Try clearing the search or adding targets.";
+      } else {
+          emptyState.textContent = 'No alumni match your search.';
+      }
       return;
     }
 
@@ -4384,6 +4415,15 @@ async function renderRecyclingView() {
             <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${Object.entries(a.standardized_tests || {}).map(([k,v])=>k+': '+v).join(', ') || 'Test Optional'}</div>
           </div>
         </div>
+        
+        ${a.extracurriculars && a.extracurriculars.length > 0 ? `
+        <div>
+          <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:4px;">Extracurriculars:</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            ${a.extracurriculars.map(e => `<span class="badge" style="background:var(--border); color:var(--text-1); font-size: 0.75rem;">${e}</span>`).join('')}
+          </div>
+        </div>
+        ` : ''}
 
         <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:auto;">
           <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:8px;">🎓 Proven Pathway:</div>
@@ -4399,3 +4439,7 @@ async function renderRecyclingView() {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:red;">Failed to load alumni data.</div>';
   }
 }
+
+window.handleRecyclingStudentSelect = function() {
+  renderRecyclingView();
+};
