@@ -1,0 +1,76 @@
+[
+  {
+    "id": "ALUM_001",
+    "name": "Rahul S.",
+    "graduating_class": 2024,
+    "admitted_to": ["MIT STEM", "Stanford Computer Science"],
+    "board": "IB",
+    "grades": {
+      "final_score": "42/45"
+    },
+    "standardized_tests": {
+      "SAT": 1540
+    },
+    "board_subjects": ["HL Math AA", "HL Physics", "HL Computer Science", "SL English", "SL Economics", "SL Spanish"],
+    "courses_taken": ["AP Calculus BC", "AP Physics C"],
+    "extracurriculars": ["Robotics Team Captain", "Math Olympiad Finalist"],
+    "competitions": ["USACO Gold"],
+    "key_remediation_taken": "Supplemented IB Math with AP Calculus BC to meet advanced US STEM requirements."
+  },
+  {
+    "id": "ALUM_002",
+    "name": "Aisha K.",
+    "graduating_class": 2023,
+    "admitted_to": ["NEET Medical", "Imperial College BSc Computing"],
+    "board": "A-Level",
+    "grades": {
+      "final_score": "A*A*A*"
+    },
+    "standardized_tests": {
+      "UCAT": 3100,
+      "BMAT": "6.0, 6.0, 3A"
+    },
+    "board_subjects": ["Biology", "Chemistry", "Mathematics"],
+    "courses_taken": [],
+    "extracurriculars": ["Hospital Volunteer (200 hours)", "Medical Research Assistant"],
+    "competitions": ["British Biology Olympiad Gold"],
+    "key_remediation_taken": "Shadowed doctors in a clinical setting to build a strong personal statement."
+  },
+  {
+    "id": "ALUM_003",
+    "name": "Rohan M.",
+    "graduating_class": 2025,
+    "admitted_to": ["JEE Main Engineering", "Computer Science"],
+    "board": "CBSE",
+    "grades": {
+      "final_score": "96%"
+    },
+    "standardized_tests": {
+      "JEE_Mains": "99.8 percentile",
+      "BITSAT": 350
+    },
+    "board_subjects": ["Physics", "Chemistry", "Mathematics", "English", "Computer Science"],
+    "courses_taken": ["FIITJEE Coaching"],
+    "extracurriculars": ["Coding Club Founder"],
+    "competitions": ["KVPY Scholar"],
+    "key_remediation_taken": "Maintained 95%+ in CBSE boards while dedicating 20 hours/week to JEE prep."
+  },
+  {
+    "id": "ALUM_004",
+    "name": "Maya V.",
+    "graduating_class": 2022,
+    "admitted_to": ["Delhi University Economics", "Cambridge Computer Science"],
+    "board": "ISC",
+    "grades": {
+      "final_score": "98%"
+    },
+    "standardized_tests": {
+      "TMUA": "7.5"
+    },
+    "board_subjects": ["Mathematics", "Economics", "Accounts", "Commerce", "English"],
+    "courses_taken": [],
+    "extracurriculars": ["Debate Team President", "Published Economics Paper"],
+    "competitions": ["National Economics Olympiad Winner"],
+    "key_remediation_taken": "Scored highly on the TMUA to offset the lack of Further Mathematics in ISC."
+  }
+]

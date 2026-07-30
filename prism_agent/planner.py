@@ -1,6 +1,15 @@
 class Planner:
     def __init__(self, current_date_str="2026-07-22"):
         self.current_date_str = current_date_str
+        self.alumni_db = []
+        try:
+            import json, os
+            path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "alumni_db.json")
+            if os.path.exists(path):
+                with open(path, "r", encoding="utf-8") as f:
+                    self.alumni_db = json.load(f)
+        except Exception as e:
+            print(f"[Planner] Could not load alumni_db: {e}")
 
     def get_remediations(self, student_analysis):
         """
@@ -29,6 +38,14 @@ class Planner:
                 # Generate remediation options based on type and student context
                 options = self._generate_options_for_gap(gap_type, subject, class_level)
                 
+                # ALUMNI RECYCLING: Inject Proven Pathways
+                matching_alumni = [a for a in self.alumni_db if target_id in a.get("admitted_to", [])]
+                if matching_alumni and options:
+                    best_alumnus = matching_alumni[0]
+                    alumni_note = f" 🎓 **Proven Pathway:** {best_alumnus['name']} ('{str(best_alumnus['graduating_class'])[-2:]}) was admitted to {target_id} by: {best_alumnus['key_remediation_taken']}"
+                    # Append to the first (primary) option
+                    options[0]["remediation"] += f"\n\n{alumni_note}"
+
                 # Attach to ranked paths
                 for opt in options:
                     ranked_paths.append(opt)

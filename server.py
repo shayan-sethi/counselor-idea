@@ -131,6 +131,13 @@ def load_users():
             return json.load(f)
     return []
 
+def load_alumni():
+    path = os.path.join(BASE_DIR, "data", "alumni_db.json")
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
 def save_users(users):
     with open(USERS_PATH, "w") as f:
         json.dump(users, f, indent=2)
@@ -1171,12 +1178,16 @@ def api_counselor_agent():
         })
 
     groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+    alumni_db = load_alumni()
 
     system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
-You have access to the entire school's active student cohort database provided below.
+You have access to the entire school's active student cohort database and historical alumni success database.
 
 STUDENT COHORT DATA:
 {json.dumps(cohort_summary_list, indent=2)}
+
+HISTORICAL ALUMNI SUCCESS STORIES (PROVEN PATHWAYS):
+{json.dumps(alumni_db, indent=2)}
 
 CRITICAL REASONING INSTRUCTIONS:
 1. Act as a highly intelligent, expert high school counselor and admissions strategist.
