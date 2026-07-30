@@ -203,44 +203,7 @@ class PRISMAgent:
         return json.dumps(rems.get(target_id, []))
 
     def solve_goal(self, student_id, target_id, students_list, simulated_subjects=None, silent=False, use_real_engine=False):
-        import os
-        import json
-
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if groq_key:
-            return self._solve_goal_groq_fallback(student_id, target_id, students_list, None, silent)
-
         return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
-
-        # Extract final answer
-        final_text = response.text
-        try:
-            json_match = re.search(r"\{.*\}", final_text, re.DOTALL)
-            if json_match:
-                final_data = json.loads(json_match.group(0))
-            else:
-                final_data = json.loads(final_text)
-        except Exception:
-            final_data = self._solve_goal_fallback(student_id, target_id, students_list, simulated_subjects)
-
-        # Ensure keys are present
-        final_data["trace"] = trace
-        target = self.kg.get_course_or_exam(target_id)
-        if target:
-            final_data["target_name"] = target["name"]
-            final_data["track"] = target["track"]
-            
-        student = next((s for s in students_list if s["id"] == student_id), None)
-        if student and target:
-            gaps = final_data.get("gaps", [])
-            match_score = final_data.get("match_score")
-            if match_score is None:
-                match_score = self.reasoner._calculate_match_score(gaps, student, target)
-                final_data["match_score"] = match_score
-                final_data["risk_level"] = self.reasoner._risk_level_label(match_score)
-            final_data["difficulty_label"] = self.reasoner._classify_difficulty(student, target, match_score, gaps)
-
-        return final_data
 
     def _solve_goal_groq_fallback(self, student_id, target_id, students_list, prompt, silent):
         """Uses Groq API (llama-3.3-70b-versatile) to reason through student evaluation."""

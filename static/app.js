@@ -173,6 +173,7 @@ async function refreshData() {
 
 // ── View switching ──
 function switchView(v) {
+  window.currentActiveView = v;
   ['dashboard', 'manage', 'predictor', 'university-dashboard', 'reports', 'extracurriculars', 'scholarships', 'shortlist', 'calendar', 'student-profile', 'recommendations'].forEach(id => {
     const el = document.getElementById(`view-${id}`);
     if (el) el.classList.toggle('hidden', id !== v);
@@ -364,6 +365,41 @@ function filterDashboard() {
 
   renderStudentRows(filtered);
 }
+window.filterDashboard = filterDashboard;
+
+function filterUniversalSearch() {
+  const query = (document.getElementById('dash-search')?.value || '').trim();
+  const currentView = window.currentActiveView || 'dashboard';
+
+  if (currentView === 'dashboard') {
+    filterDashboard();
+  } else if (currentView === 'manage') {
+    const rosterSearch = document.getElementById('roster-search');
+    if (rosterSearch) {
+      rosterSearch.value = query;
+      if (typeof filterRoster === 'function') filterRoster();
+    }
+  } else if (currentView === 'predictor') {
+    const uniSearch = document.getElementById('predictor-uni-search');
+    if (uniSearch) {
+      uniSearch.value = query;
+      if (typeof filterPredictorListFixed === 'function') filterPredictorListFixed();
+    }
+  } else if (currentView === 'scholarships') {
+    const scholSearch = document.getElementById('search-scholarships');
+    if (scholSearch) {
+      scholSearch.value = query;
+      if (typeof filterScholarshipsTable === 'function') filterScholarshipsTable();
+    }
+  } else if (currentView === 'shortlist') {
+    const listSearch = document.getElementById('shortlist-search');
+    if (listSearch) {
+      listSearch.value = query;
+      if (typeof filterCollegesList === 'function') filterCollegesList();
+    }
+  }
+}
+window.filterUniversalSearch = filterUniversalSearch;
 
 function renderStudentRows(list) {
   const rows = document.getElementById('student-rows');
@@ -1796,6 +1832,28 @@ async function onReportStudentChange(studentId) {
   // Set inputs
   document.getElementById('report-notes-input').value = s.counselor_notes || '';
   document.getElementById('rep-counselor-notes-text').textContent = s.counselor_notes || 'No custom counselor remarks appended. Use the notes panel above to update.';
+
+  // Shortlisted Colleges
+  const collegesEl = document.getElementById('rep-shortlisted-colleges');
+  if (collegesEl) {
+    const list = s.shortlisted_colleges || [];
+    if (list.length > 0) {
+      collegesEl.innerHTML = `<ul style="margin:0; padding-left:16px;">${list.map(c => `<li style="margin-bottom:4px;">${c}</li>`).join('')}</ul>`;
+    } else {
+      collegesEl.textContent = 'None';
+    }
+  }
+
+  // Assigned Scholarships
+  const scholarshipsEl = document.getElementById('rep-assigned-scholarships');
+  if (scholarshipsEl) {
+    const list = s.shortlisted_scholarships || [];
+    if (list.length > 0) {
+      scholarshipsEl.innerHTML = `<ul style="margin:0; padding-left:16px;">${list.map(sch => `<li style="margin-bottom:4px;">${sch}</li>`).join('')}</ul>`;
+    } else {
+      scholarshipsEl.textContent = 'None';
+    }
+  }
   
   // Build subjects list
   document.getElementById('rep-subjects-list').textContent = s.board_subjects ? s.board_subjects.join(', ') : '—';
@@ -3013,15 +3071,12 @@ function renderPredictorTable(list) {
 window.renderPredictorTable = renderPredictorTable;
 
 function filterPredictorList() {
-  const q = (document.getElementById('predictor-uni-search') || {}).value || '';
-  if (!q.trim()) { renderPredictorTable(allUniversities); return; }
-  const filtered = allUniversities.filter(u => u.name.toLowerCase().includes(q.toLowerCase()));
-  renderPredictorTable(filtered);
+  filterPredictorListFixed();
 }
 window.filterPredictorList = filterPredictorList;
 
 function onPredictorStudentChange(studentId) {
-  renderPredictorTable(allUniversities);
+  filterPredictorListFixed();
 }
 window.onPredictorStudentChange = onPredictorStudentChange;
 
@@ -3721,11 +3776,18 @@ window.toggleShortlistCollegeFixed = toggleShortlistCollegeFixed;
 window.toggleShortlistCollege = toggleShortlistCollegeFixed;
 
 async function populateKanbanFromShortlist() {
-  const sel = document.getElementById('predictor-student-select');
+  const sel = document.getElementById('kanban-student-select');
   if (!sel || !sel.value) return;
   const studentId = sel.value;
   const student = students.find(s => s.id === studentId);
-  if (!student || !student.shortlisted_colleges || !student.shortlisted_colleges.length) return;
+  if (!student || !student.shortlisted_colleges || !student.shortlisted_colleges.length) {
+    // Clear kanban if no shortlisted colleges
+    ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '';
+    });
+    return;
+  }
 
   // Clear kanban
   ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
@@ -3967,6 +4029,7 @@ async function fetchAIRecommendations() {
         // Find student details
         const s = students.find(x => x.id === r.student_id);
         const sName = s ? s.name : r.student_id;
+        const isAlreadyShortlisted = s && s.shortlisted_scholarships && s.shortlisted_scholarships.includes(selectedScholarshipIdForAction);
         
         const card = document.createElement('div');
         card.style.background = 'var(--bg)';
@@ -3975,11 +4038,17 @@ async function fetchAIRecommendations() {
         card.style.padding = '12px';
         
         card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
             <div style="font-weight:700; color:var(--text-1);">${sName}</div>
             <div style="font-weight:700; color:var(--green);">${r.score}% Match</div>
           </div>
-          <div style="font-size:0.8rem; color:var(--text-2);">${r.reason}</div>
+          <div style="font-size:0.8rem; color:var(--text-2); margin-bottom:8px;">${r.reason}</div>
+          <div style="display:flex; justify-content:flex-end;">
+            <button class="btn-primary" style="font-size:0.72rem; padding:4px 10px; ${isAlreadyShortlisted ? 'background:var(--green); border-color:var(--green);' : ''}" 
+              onclick="toggleDirectScholarshipShortlist('${r.student_id}', '${selectedScholarshipIdForAction}', this)">
+              ${isAlreadyShortlisted ? '✓ Shortlisted' : 'Add to Shortlist'}
+            </button>
+          </div>
         `;
         listDiv.appendChild(card);
       });
@@ -3994,6 +4063,42 @@ async function fetchAIRecommendations() {
   }
 }
 window.fetchAIRecommendations = fetchAIRecommendations;
+
+async function toggleDirectScholarshipShortlist(studentId, scholarshipId, btn) {
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/api/students/${studentId}/shortlist_scholarship`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scholarship_id: scholarshipId })
+    });
+    const data = await res.json();
+    if (data.success) {
+      const added = data.added;
+      btn.textContent = added ? "✓ Shortlisted" : "Add to Shortlist";
+      btn.style.background = added ? "var(--green)" : "";
+      btn.style.borderColor = added ? "var(--green)" : "";
+      
+      const student = students.find(s => s.id === studentId);
+      if (student) {
+        student.shortlisted_scholarships = student.shortlisted_scholarships || [];
+        if (added) {
+          if (!student.shortlisted_scholarships.includes(scholarshipId)) {
+            student.shortlisted_scholarships.push(scholarshipId);
+          }
+        } else {
+          student.shortlisted_scholarships = student.shortlisted_scholarships.filter(id => id !== scholarshipId);
+        }
+      }
+      refreshData();
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+  }
+}
+window.toggleDirectScholarshipShortlist = toggleDirectScholarshipShortlist;
 
 // ── Recommendation Studio Logic ──
 
@@ -4075,6 +4180,24 @@ function renderRecBragSheet(sId) {
     s.targets.forEach(t => {
       const tName = targets[t] ? targets[t].name : t;
       html += `<li style="margin-bottom:4px;">${tName}</li>`;
+    });
+    html += `</ul></div>`;
+  }
+  
+  // Shortlisted Colleges
+  if (s.shortlisted_colleges && s.shortlisted_colleges.length > 0) {
+    html += `<div><strong style="color:var(--text-1);">Shortlisted Colleges</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
+    s.shortlisted_colleges.forEach(c => {
+      html += `<li style="margin-bottom:4px;">${c}</li>`;
+    });
+    html += `</ul></div>`;
+  }
+
+  // Assigned Scholarships
+  if (s.shortlisted_scholarships && s.shortlisted_scholarships.length > 0) {
+    html += `<div><strong style="color:var(--text-1);">Assigned Scholarships</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
+    s.shortlisted_scholarships.forEach(sch => {
+      html += `<li style="margin-bottom:4px;">${sch}</li>`;
     });
     html += `</ul></div>`;
   }

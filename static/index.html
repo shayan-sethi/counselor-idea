@@ -145,8 +145,8 @@
           <circle cx="11" cy="11" r="8"></circle>
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" class="search-bar" id="dash-search" oninput="filterDashboard()"
-          placeholder="Search students, opportunities.">
+        <input type="text" class="search-bar" id="dash-search" oninput="filterUniversalSearch()"
+          placeholder="Search students, colleges, scholarships...">
       </div>
       <div class="topbar-right">
         <div class="header-pill">
@@ -270,21 +270,6 @@
         <div class="dash-grid">
           <!-- AI Priority Queue -->
           <div>
-            <div class="section-header">
-              <div>
-                <h2 class="section-title">AI Priority Queue</h2>
-                <p class="section-subtitle">Students ranked by risk score — needs your attention today</p>
-              </div>
-              <a href="#" class="view-all" onclick="switchView('manage')">View All &rsaquo;</a>
-            </div>
-            <div class="priority-list" id="student-rows">
-              <div style="padding:40px 24px; text-align:center; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:16px;">
-                <div class="spinner" style="width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite;"></div>
-                <div>Unlocked Engine analyzing cohort data...</div>
-                <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
-              </div>
-            </div>
-
             <!-- AI Command Center -->
             <div class="ai-cmd-center">
               <h2 class="section-title" style="display:flex;align-items:center;gap:8px;">
@@ -301,6 +286,21 @@
                 <button type="button" class="btn-primary" onclick="runCounselorAgentCommand()">Run</button>
               </div>
               <div id="cc-agent-response"></div>
+            </div>
+
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">AI Priority Queue</h2>
+                <p class="section-subtitle">Students ranked by risk score — needs your attention today</p>
+              </div>
+              <a href="#" class="view-all" onclick="switchView('manage')">View All &rsaquo;</a>
+            </div>
+            <div class="priority-list" id="student-rows">
+              <div style="padding:40px 24px; text-align:center; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:16px;">
+                <div class="spinner" style="width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite;"></div>
+                <div>Unlocked Engine analyzing cohort data...</div>
+                <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+              </div>
             </div>
           </div>
 
@@ -728,6 +728,17 @@
                 style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">
                 COMPLIANCE STATUS</div>
               <div id="rep-compliance-body" style="font-size:0.85rem; color:var(--text-2);">Loading…</div>
+            </div>
+          </div>
+          
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-top:20px;">
+            <div class="card" style="padding:20px;">
+              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">SHORTLISTED COLLEGES</div>
+              <div id="rep-shortlisted-colleges" style="font-size:0.85rem; color:var(--text-2);">None</div>
+            </div>
+            <div class="card" style="padding:20px;">
+              <div style="font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.1em; margin-bottom:12px;">ASSIGNED SCHOLARSHIPS</div>
+              <div id="rep-assigned-scholarships" style="font-size:0.85rem; color:var(--text-2);">None</div>
             </div>
           </div>
           <div class="card" style="padding:20px; margin-top:20px;">

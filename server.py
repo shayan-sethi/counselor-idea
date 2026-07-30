@@ -1817,6 +1817,8 @@ def api_draft_recommendation():
     portfolio = student.get("portfolio", [])
     grades = student.get("grades", {})
     targets = student.get("targets", [])
+    shortlisted_colleges = student.get("shortlisted_colleges", [])
+    shortlisted_scholarships = student.get("shortlisted_scholarships", [])
     
     brag_sheet = f"Student Name: {student['name']}\n"
     brag_sheet += f"Board: {student.get('board')} Class {student.get('class_level')}\n"
@@ -1825,6 +1827,8 @@ def api_draft_recommendation():
     for item in portfolio:
         brag_sheet += f"- {item.get('title', '')} ({item.get('role', '')}): {item.get('description', '')}\n"
     brag_sheet += f"Target Universities: {', '.join(targets)}\n"
+    brag_sheet += f"Shortlisted Colleges: {', '.join(shortlisted_colleges)}\n"
+    brag_sheet += f"Shortlisted / Assigned Scholarships: {', '.join(shortlisted_scholarships)}\n"
 
     system_prompt = "You are an expert high school counselor writing a powerful, persuasive Letter of Recommendation (LOR) for a student's university application. Use the student's exact brag sheet and data to write a tailored draft. Do not use generic placeholders like [Name], use the real name. Keep it professional, highlighting their specific achievements. Output ONLY the letter itself."
     
