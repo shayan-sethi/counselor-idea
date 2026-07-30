@@ -270,21 +270,6 @@
         <div class="dash-grid">
           <!-- AI Priority Queue -->
           <div>
-            <div class="section-header">
-              <div>
-                <h2 class="section-title">AI Priority Queue</h2>
-                <p class="section-subtitle">Students ranked by risk score — needs your attention today</p>
-              </div>
-              <a href="#" class="view-all" onclick="switchView('manage')">View All &rsaquo;</a>
-            </div>
-            <div class="priority-list" id="student-rows">
-              <div style="padding:40px 24px; text-align:center; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:16px;">
-                <div class="spinner" style="width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite;"></div>
-                <div>Unlocked Engine analyzing cohort data...</div>
-                <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
-              </div>
-            </div>
-
             <!-- AI Command Center -->
             <div class="ai-cmd-center">
               <h2 class="section-title" style="display:flex;align-items:center;gap:8px;">
@@ -301,6 +286,21 @@
                 <button type="button" class="btn-primary" onclick="runCounselorAgentCommand()">Run</button>
               </div>
               <div id="cc-agent-response"></div>
+            </div>
+
+            <div class="section-header">
+              <div>
+                <h2 class="section-title">AI Priority Queue</h2>
+                <p class="section-subtitle">Students ranked by risk score — needs your attention today</p>
+              </div>
+              <a href="#" class="view-all" onclick="switchView('manage')">View All &rsaquo;</a>
+            </div>
+            <div class="priority-list" id="student-rows">
+              <div style="padding:40px 24px; text-align:center; color:var(--text-3); display:flex; flex-direction:column; align-items:center; gap:16px;">
+                <div class="spinner" style="width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 1s linear infinite;"></div>
+                <div>Unlocked Engine analyzing cohort data...</div>
+                <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+              </div>
             </div>
           </div>
 

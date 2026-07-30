@@ -8,7 +8,7 @@
 :root {
   /* Colors */
   --bg: #F4F7FE;
-  --surface: #FFFFFF;
+  --surface: #FAFAFA;
   --sidebar-bg: #1A1C23;
   --sidebar-text: #A0AEC0;
   --sidebar-active: #6366F1;
@@ -597,7 +597,7 @@ body {
 
 /* AI Command Center inside Dashboard */
 .ai-cmd-center {
-  margin-top: 32px;
+  margin-bottom: 32px;
   background: var(--surface);
   border-radius: 16px;
   padding: 24px;
