@@ -4559,67 +4559,45 @@ window.promptSetLogin = async function(studentId) {
 let connectionsData = [];
 
 window.renderConnectionsView = async function() {
-  try {
-    const res = await fetch('/api/connections');
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    connectionsData = data;
-    
-    // Sort by pending first, then by date descending
-    connectionsData.sort((a, b) => {
-      if (a.status === 'pending' && b.status !== 'pending') return -1;
-      if (a.status !== 'pending' && b.status === 'pending') return 1;
-      return new Date(b.created_at) - new Date(a.created_at);
-    });
-    
-    const tbody = document.getElementById('connections-table-body');
-    if (connectionsData.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-3);">No connection requests found.</td></tr>';
-      return;
-    }
-    
-    const getStudentName = id => {
-      const s = students.find(x => x.id === id);
-      return s ? s.name : id;
-    };
-    
-    tbody.innerHTML = connectionsData.map(c => {
-      const isPending = c.status === 'pending';
-      let statusBadge = '';
-      if (c.status === 'pending') statusBadge = '<span class="badge missing">Pending Review</span>';
-      else if (c.status === 'approved') statusBadge = '<span class="badge match">Approved</span>';
-      else if (c.status === 'rejected') statusBadge = '<span class="badge partial">Rejected</span>';
-      
-      const dateStr = new Date(c.created_at).toLocaleDateString();
-      
-      let actions = '';
-      if (isPending) {
-        actions = `
-          <button class="btn-primary" style="padding:4px 8px; font-size:0.75rem;" onclick="approveConnection('${c.id}')">Approve</button>
-          <button class="btn-outline" style="padding:4px 8px; font-size:0.75rem;" onclick="rejectConnection('${c.id}')">Reject</button>
-        `;
-      } else {
-        actions = `<span style="color:var(--text-3); font-size:0.85rem;">Reviewed</span>`;
-      }
-      
-      return `
-        <tr style="border-bottom:1px solid var(--border);">
-          <td style="padding:12px 8px; font-weight:500;">${getStudentName(c.student_id)}</td>
-          <td style="padding:12px 8px;">Alumni: ${c.alumni_id}</td>
-          <td style="padding:12px 8px; max-width:300px;">
-            <div style="background:var(--bg-card); padding:8px; border-radius:6px; font-size:0.85rem; color:var(--text-2); white-space:pre-wrap;">${c.message}</div>
-          </td>
-          <td style="padding:12px 8px;">${statusBadge}</td>
-          <td style="padding:12px 8px; color:var(--text-3); font-size:0.85rem;">${dateStr}</td>
-          <td style="padding:12px 8px; display:flex; gap:8px;">${actions}</td>
-        </tr>
-      `;
-    }).join('');
-    
-  } catch (err) {
-    console.error(err);
-    document.getElementById('connections-table-body').innerHTML = `<tr><td colspan="6" style="color:red; text-align:center;">Failed to load connections.</td></tr>`;
-  }
+  const dummyAlumni = [
+    { name: 'Sarah Chen', role: 'Software Engineer', company: 'Google', degree: 'BS Computer Science, MIT', linkedin: 'https://linkedin.com/in/dummy-sarah-chen' },
+    { name: 'Michael Rodriguez', role: 'Product Manager', company: 'Microsoft', degree: 'MBA, Stanford', linkedin: 'https://linkedin.com/in/dummy-michael-r' },
+    { name: 'Jessica Taylor', role: 'Data Scientist', company: 'Meta', degree: 'MS Data Science, UC Berkeley', linkedin: 'https://linkedin.com/in/dummy-jessica-t' },
+    { name: 'David Kim', role: 'Investment Banker', company: 'Goldman Sachs', degree: 'BS Finance, Wharton', linkedin: 'https://linkedin.com/in/dummy-david-kim' },
+    { name: 'Emily Patel', role: 'UX Designer', company: 'Apple', degree: 'BFA Design, RISD', linkedin: 'https://linkedin.com/in/dummy-emily-patel' },
+    { name: 'James Wilson', role: 'Management Consultant', company: 'McKinsey', degree: 'BA Economics, Harvard', linkedin: 'https://linkedin.com/in/dummy-james-wilson' },
+    { name: 'Amanda Lewis', role: 'Marketing Director', company: 'Nike', degree: 'BS Marketing, NYU', linkedin: 'https://linkedin.com/in/dummy-amanda-lewis' },
+    { name: 'Robert Chang', role: 'Machine Learning Engineer', company: 'OpenAI', degree: 'PhD Computer Science, CMU', linkedin: 'https://linkedin.com/in/dummy-robert-chang' },
+    { name: 'Olivia Martinez', role: 'Venture Capitalist', company: 'Sequoia', degree: 'MBA, Harvard Business School', linkedin: 'https://linkedin.com/in/dummy-olivia-m' },
+    { name: 'William Brown', role: 'Corporate Lawyer', company: 'Skadden', degree: 'JD, Yale Law School', linkedin: 'https://linkedin.com/in/dummy-william-b' },
+    { name: 'Sophia Davis', role: 'Strategy Operations', company: 'Stripe', degree: 'BA Public Policy, Princeton', linkedin: 'https://linkedin.com/in/dummy-sophia-davis' },
+    { name: 'Daniel White', role: 'Product Analyst', company: 'Spotify', degree: 'BS Statistics, UCLA', linkedin: 'https://linkedin.com/in/dummy-daniel-white' },
+    { name: 'Isabella Moore', role: 'Cloud Architect', company: 'AWS', degree: 'MS Computer Engineering, Georgia Tech', linkedin: 'https://linkedin.com/in/dummy-isabella-m' },
+    { name: 'Alexander Lee', role: 'Quantitative Analyst', company: 'Jane Street', degree: 'BS Mathematics, MIT', linkedin: 'https://linkedin.com/in/dummy-alexander-lee' },
+    { name: 'Mia Clark', role: 'Biomedical Researcher', company: 'Pfizer', degree: 'PhD Bioengineering, Johns Hopkins', linkedin: 'https://linkedin.com/in/dummy-mia-clark' }
+  ];
+
+  const grid = document.getElementById('alumni-directory-grid');
+  if (!grid) return;
+
+  grid.innerHTML = dummyAlumni.map(a => `
+    <div class="form-card" style="display:flex; flex-direction:column; gap:16px; padding:20px; transition:transform 0.2s;">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <h4 style="margin:0; font-size:1.15rem; color:var(--text-1); font-weight:600;">${a.name}</h4>
+        <div style="font-size:0.95rem; font-weight:500; color:var(--text-2);">${a.role} <span style="color:var(--text-3)">at</span> ${a.company}</div>
+        <div style="font-size:0.85rem; color:var(--text-3); display:flex; align-items:center; gap:6px; margin-top:4px;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          ${a.degree}
+        </div>
+      </div>
+      <div style="margin-top:auto; padding-top:16px; border-top:1px solid var(--border);">
+        <a href="${a.linkedin}" target="_blank" class="btn btn-secondary" style="width:100%; justify-content:center; text-decoration:none;">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="margin-right:6px;"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          View LinkedIn Profile
+        </a>
+      </div>
+    </div>
+  `).join('');
 };
 
 window.approveConnection = async function(id) {

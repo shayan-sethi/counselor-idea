@@ -2117,6 +2117,56 @@ async function renderStudentRecyclingView() {
     console.error(err);
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:red;">Failed to load alumni data.</div>';
   }
+  
+  await renderStudentConnections();
+}
+
+async function renderStudentConnections() {
+  const listCont = document.getElementById('student-connections-list');
+  const emptyState = document.getElementById('student-connections-empty');
+  if (!listCont) return;
+
+  try {
+    const res = await fetch('/api/connections/student');
+    if (!res.ok) throw new Error('Failed to fetch connections');
+    const connections = await res.json();
+    
+    if (connections.length === 0) {
+      listCont.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+    
+    emptyState.style.display = 'none';
+    
+    // Sort descending by date
+    connections.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+    listCont.innerHTML = connections.map(c => {
+      let statusBadge = '';
+      if (c.status === 'pending') statusBadge = '<span class="badge missing">Pending Review</span>';
+      else if (c.status === 'approved') statusBadge = '<span class="badge match">Approved & Forwarded</span>';
+      else if (c.status === 'rejected') statusBadge = '<span class="badge partial">Rejected</span>';
+      
+      const dateStr = new Date(c.created_at).toLocaleDateString();
+      
+      return `
+        <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+            <div>
+              <h4 style="margin:0; font-size:1.05rem; color:var(--text-1);">Request to Alumni: ${c.alumni_id}</h4>
+              <div style="font-size:0.8rem; color:var(--text-3); margin-top:4px;">Requested on ${dateStr}</div>
+            </div>
+            <div>${statusBadge}</div>
+          </div>
+          <div style="background:var(--surface); padding:12px; border-radius:8px; font-size:0.9rem; color:var(--text-2); white-space:pre-wrap;">${c.message}</div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error(err);
+    listCont.innerHTML = '<div style="color:red; text-align:center;">Failed to load your connections.</div>';
+  }
 }
 window.renderStudentRecyclingView = renderStudentRecyclingView;
 
@@ -2193,7 +2243,7 @@ window.submitConnectionRequest = async function() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         alumni_id: alumniId,
-        student_id: window.currentUserStudentId || 'student',
+        student_id: currentUserStudentId || 'student',
         message: message
       })
     });
@@ -2202,6 +2252,7 @@ window.submitConnectionRequest = async function() {
       alert('Your request has been submitted for counselor review.');
       document.getElementById('connection-modal').style.display = 'none';
       document.getElementById('connection-modal').classList.add('hidden');
+      await renderStudentConnections();
     } else {
       const err = await res.json();
       alert('Failed to send request: ' + (err.error || 'Unknown error'));

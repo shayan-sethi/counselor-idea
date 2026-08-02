@@ -802,6 +802,16 @@ def api_alumni():
 def api_get_connections():
     return jsonify(load_connections())
 
+@app.route("/api/connections/student", methods=["GET"])
+@login_required
+def api_get_student_connections():
+    student_id = g.user.get("student_id")
+    if not student_id:
+        return jsonify({"error": "No student ID associated with this user"}), 400
+    conns = load_connections()
+    student_conns = [c for c in conns if c.get("student_id") == student_id]
+    return jsonify(student_conns)
+
 @app.route("/api/connections", methods=["POST"])
 @login_required
 def api_create_connection():

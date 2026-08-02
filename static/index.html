@@ -183,27 +183,12 @@
       <main id="view-connections" class="hidden">
         <div class="page-title-row">
           <div>
-            <h1>Alumni Connect</h1>
-            <p class="subtitle">Review and forward student networking requests to alumni</p>
+            <h1>Alumni Directory</h1>
+            <p class="subtitle">Browse alumni profiles and their LinkedIn connections</p>
           </div>
         </div>
-
-        <div class="table-container" style="margin-top:24px;">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Student</th>
-                <th>Alumni</th>
-                <th>Message</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="connections-table-body">
-              <!-- Connections will be injected here -->
-            </tbody>
-          </table>
+        <div id="alumni-directory-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 24px;">
+          <!-- Dummy alumni will be injected here -->
         </div>
       </main>
 
