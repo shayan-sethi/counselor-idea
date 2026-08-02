@@ -19,6 +19,13 @@ const authReady = new Promise((resolve) => {
     resolve({ isMock: true });
     return;
   }
+  
+  if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+    // Force mock mode locally: if no token, resolve null immediately to trigger login redirect
+    resolve(null);
+    return;
+  }
+
   const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
     unsubscribe();
     resolve(user);
@@ -31,7 +38,7 @@ const authReady = new Promise((resolve) => {
 const originalFetch = window.fetch;
 window.fetch = async function (...args) {
   let token = localStorage.getItem('mockToken');
-  if (!token) {
+  if (!token && window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'localhost') {
     const user = firebase.auth().currentUser;
     if (user) {
       token = await user.getIdToken();

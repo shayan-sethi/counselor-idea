@@ -4551,6 +4551,8 @@ window.promptSetLogin = async function(studentId) {
     }
   } catch(e) {
     alert('Error setting login');
+  }
+}
 // ══════════════════════════════════════════════
 //  CONNECTIONS VIEW
 // ══════════════════════════════════════════════
