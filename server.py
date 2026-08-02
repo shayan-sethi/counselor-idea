@@ -145,9 +145,10 @@ class MockBatch:
             self.mock_db._set_doc(col, doc_id, data)
 
 class MockFirestoreClient:
-    def __init__(self, students_path, users_path):
+    def __init__(self, students_path, users_path, connections_path=None):
         self.students_path = students_path
         self.users_path = users_path
+        self.connections_path = connections_path or os.path.join(os.path.dirname(students_path), "connections_db.json")
         self._load_all()
 
     def _load_all(self):
@@ -161,6 +162,11 @@ class MockFirestoreClient:
                 self.users = json.load(f)
         else:
             self.users = []
+        if os.path.exists(self.connections_path):
+            with open(self.connections_path, "r", encoding="utf-8") as f:
+                self.connections = json.load(f)
+        else:
+            self.connections = []
 
     def _save_collection(self, collection_name):
         if collection_name == "students":
@@ -169,18 +175,23 @@ class MockFirestoreClient:
         elif collection_name == "users":
             with open(self.users_path, "w", encoding="utf-8") as f:
                 json.dump(self.users, f, indent=2)
+        elif collection_name == "connections":
+            with open(self.connections_path, "w", encoding="utf-8") as f:
+                json.dump(self.connections, f, indent=2)
 
     def _get_collection(self, collection_name):
         if collection_name == "students":
             return self.students
         elif collection_name == "users":
             return self.users
+        elif collection_name == "connections":
+            return self.connections
         return []
 
     def _get_doc(self, collection_name, doc_id):
         col = self._get_collection(collection_name)
         for doc in col:
-            key = "id" if collection_name == "students" else "username"
+            key = "username" if collection_name == "users" else "id"
             if doc.get(key) == doc_id:
                 return doc
         return None
@@ -188,7 +199,7 @@ class MockFirestoreClient:
     def _set_doc(self, collection_name, doc_id, data):
         col = self._get_collection(collection_name)
         found = False
-        key = "id" if collection_name == "students" else "username"
+        key = "username" if collection_name == "users" else "id"
         for i, doc in enumerate(col):
             if doc.get(key) == doc_id:
                 col[i] = data
@@ -200,7 +211,7 @@ class MockFirestoreClient:
 
     def _delete_doc(self, collection_name, doc_id):
         col = self._get_collection(collection_name)
-        key = "id" if collection_name == "students" else "username"
+        key = "username" if collection_name == "users" else "id"
         before = len(col)
         col[:] = [doc for doc in col if doc.get(key) != doc_id]
         if len(col) < before:
@@ -280,9 +291,30 @@ else:
     db = firestore.client()
 
 STUDENTS_COLLECTION = "students"
+CONNECTIONS_COLLECTION = "connections"
 _FIRESTORE_BATCH_LIMIT = 500
 
 STUDENTS_PATH = os.path.join(BASE_DIR, "data", "students_db.json")
+
+# ── Connections (Firestore/JSON Fallback) ──
+def load_connections():
+    return [doc.to_dict() for doc in db.collection(CONNECTIONS_COLLECTION).stream()]
+
+def get_connection(conn_id):
+    snap = db.collection(CONNECTIONS_COLLECTION).document(conn_id).get()
+    return snap.to_dict() if snap.exists else None
+
+def save_connection(conn):
+    db.collection(CONNECTIONS_COLLECTION).document(conn["id"]).set(conn)
+
+def next_connection_id(connections):
+    nums = []
+    for c in connections:
+        try:
+            nums.append(int(c["id"].replace("REQ_", "")))
+        except:
+            pass
+    return f"REQ_{(max(nums) + 1):03d}" if nums else "REQ_001"
 
 # ── Students (Firestore/JSON Fallback) ──
 def load_students():
@@ -710,6 +742,58 @@ def student_portal():
 @login_required
 def api_alumni():
     return jsonify(load_alumni())
+
+# ── Alumni Connections ──
+@app.route("/api/connections", methods=["GET"])
+@counselor_required
+def api_get_connections():
+    return jsonify(load_connections())
+
+@app.route("/api/connections", methods=["POST"])
+@login_required
+def api_create_connection():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    alumni_id = data.get("alumni_id")
+    message = data.get("message")
+    
+    if not student_id or not alumni_id or not message:
+        return jsonify({"error": "Missing fields"}), 400
+        
+    conns = load_connections()
+    new_id = next_connection_id(conns)
+    import datetime
+    
+    conn = {
+        "id": new_id,
+        "student_id": student_id,
+        "alumni_id": alumni_id,
+        "message": message,
+        "status": "pending",
+        "created_at": datetime.datetime.now().isoformat()
+    }
+    save_connection(conn)
+    return jsonify(conn)
+
+@app.route("/api/connections/<conn_id>/approve", methods=["POST"])
+@counselor_required
+def api_approve_connection(conn_id):
+    conn = get_connection(conn_id)
+    if not conn:
+        return jsonify({"error": "Not found"}), 404
+    conn["status"] = "approved"
+    save_connection(conn)
+    return jsonify(conn)
+
+@app.route("/api/connections/<conn_id>/reject", methods=["POST"])
+@counselor_required
+def api_reject_connection(conn_id):
+    conn = get_connection(conn_id)
+    if not conn:
+        return jsonify({"error": "Not found"}), 404
+    conn["status"] = "rejected"
+    save_connection(conn)
+    return jsonify(conn)
 
 @app.route("/api/students")
 @counselor_required
