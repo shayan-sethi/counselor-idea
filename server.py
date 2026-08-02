@@ -230,7 +230,22 @@ class MockFirebaseAuth:
     def verify_id_token(self, token, **kwargs):
         try:
             decoded = jwt.decode(token, options={"verify_signature": False})
-            decoded["uid"] = decoded.get("sub")
+            email = decoded.get("email", "")
+            username = email.split("@")[0] if "@" in email else decoded.get("sub")
+            
+            # case insensitive search for username
+            doc = None
+            for d in self.mock_db._get_collection("users"):
+                if d.get("username", "").lower() == username.lower():
+                    doc = d
+                    break
+            
+            decoded["uid"] = doc["username"] if doc else username
+            
+            if doc:
+                decoded["role"] = doc.get("role")
+                decoded["student_id"] = doc.get("student_id")
+                
             return decoded
         except Exception:
             return None
@@ -576,6 +591,44 @@ def api_admin_reset_password(username):
     return jsonify({"success": True, "message": "Password updated successfully"})
 
 # ── Auth Endpoints ──
+
+@app.route("/api/login", methods=["POST"])
+def api_login():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing data"}), 400
+    username = data.get("username", "").strip()
+    password = data.get("password", "")
+    
+    if USE_LOCAL_FALLBACK:
+        doc = None
+        for d in db._get_collection("users"):
+            if d.get("username", "").lower() == username.lower():
+                doc = d
+                break
+                
+        if not doc:
+            return jsonify({"error": "auth/user-not-found"}), 404
+            
+        import hashlib
+        if hashlib.sha256(password.encode()).hexdigest() != doc.get("password_hash", ""):
+            # We can allow empty passwords for convenience if not set, or reject.
+            # In users_db.json they are set.
+            # But wait, what if it's a new signup?
+            # We should probably still check.
+            if doc.get("password_hash") != hashlib.sha256(password.encode()).hexdigest() and doc.get("password_hash"):
+                 return jsonify({"error": "auth/invalid-credential"}), 401
+            
+        token = jwt.encode({
+            "sub": doc["username"],
+            "email": synthetic_email(doc["username"]),
+            "role": doc.get("role"),
+            "student_id": doc.get("student_id")
+        }, "mock_secret", algorithm="HS256")
+        
+        return jsonify({"token": token, "mock": True})
+    else:
+        return jsonify({"error": "Not implemented in production"}), 501
 
 
 @app.route("/api/signup", methods=["POST"])

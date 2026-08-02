@@ -15,6 +15,10 @@ function syntheticEmail(username) {
 // redirect-if-unauthenticated check must wait for it (avoids a flash-redirect
 // on a hard refresh of an already-authenticated page).
 const authReady = new Promise((resolve) => {
+  if (localStorage.getItem('mockToken')) {
+    resolve({ isMock: true });
+    return;
+  }
   const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
     unsubscribe();
     resolve(user);
@@ -26,9 +30,14 @@ const authReady = new Promise((resolve) => {
 // than caching one token for the page's lifetime) to same-origin API calls.
 const originalFetch = window.fetch;
 window.fetch = async function (...args) {
-  const user = firebase.auth().currentUser;
-  if (user) {
-    const token = await user.getIdToken();
+  let token = localStorage.getItem('mockToken');
+  if (!token) {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      token = await user.getIdToken();
+    }
+  }
+  if (token) {
     const [resource, config = {}] = args;
     config.headers = { ...(config.headers || {}), Authorization: `Bearer ${token}` };
     args = [resource, config];
@@ -74,6 +83,7 @@ async function checkUserSession() {
 
 async function logout() {
   try {
+    localStorage.removeItem('mockToken');
     await firebase.auth().signOut();
   } finally {
     window.location.href = '/static/login.html';

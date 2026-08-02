@@ -233,7 +233,7 @@
     firebase.initializeApp(FIREBASE_CONFIG);
     const syntheticEmail = (username) => `${username}@unlocked.local`;
 
-
+    let mode = 'login';
     function setMode(newMode) {
       mode = newMode;
       document.getElementById('tab-login').classList.toggle('active', mode === 'login');
@@ -303,11 +303,56 @@
           localStorage.removeItem('wizardData');
         }
 
-        // Sign-in establishes the actual Firebase session (for signup, the
-        // account was just created server-side with these same credentials).
-        await firebase.auth().signInWithEmailAndPassword(syntheticEmail(username), password);
+        // Attempt Mock Login first (will return 501 if in production mode)
+        let idToken = null;
+        try {
+          const loginRes = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+          const loginData = await loginRes.json();
+          if (loginRes.ok && loginData.mock) {
+            idToken = loginData.token;
+            localStorage.setItem('mockToken', idToken);
+          } else if (loginRes.status !== 501) {
+             throw new Error(loginData.error || 'Login failed');
+          }
+        } catch(e) {
+          if (e.message !== 'Not implemented in production') {
+            throw e;
+          }
+        }
 
-        const idToken = await firebase.auth().currentUser.getIdToken();
+        // Fallback to real Firebase Auth if mock login is not available
+        if (!idToken) {
+          if (mode === 'signup') {
+            try {
+              await firebase.auth().createUserWithEmailAndPassword(syntheticEmail(username), password);
+            } catch (err) {
+              if (err.code === 'auth/email-already-in-use') {
+                await firebase.auth().signInWithEmailAndPassword(syntheticEmail(username), password);
+              } else {
+                throw err;
+              }
+            }
+          } else {
+            try {
+              await firebase.auth().signInWithEmailAndPassword(syntheticEmail(username), password);
+            } catch (err) {
+              if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found') {
+                try {
+                  await firebase.auth().createUserWithEmailAndPassword(syntheticEmail(username), password);
+                } catch (createErr) {
+                  throw err;
+                }
+              } else {
+                throw err;
+              }
+            }
+          }
+          idToken = await firebase.auth().currentUser.getIdToken();
+        }
         const sessionRes = await fetch('/api/user_session', {
           headers: { Authorization: `Bearer ${idToken}` }
         });
