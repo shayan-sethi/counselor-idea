@@ -6,105 +6,47 @@
   <title>Login - unlockED Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-base: #050505;
-      --bg-gradient-1: #4F46E5;
-      --bg-gradient-2: #9333EA;
-      --surface: rgba(15, 18, 25, 0.65);
-      --border: rgba(255, 255, 255, 0.1);
-      --accent: #E1E1CD;
-      --accent-glow: rgba(225, 225, 205, 0.25);
-      --text: #ffffff;
-      --text-muted: rgba(255, 255, 255, 0.5);
-      --error: #ef4444;
-      --font-sans: 'Outfit', 'Inter', -apple-system, sans-serif;
-      --font-mono: 'Fira Code', monospace;
+      --bg: #F4F7FE;
+      --surface: #FFFFFF;
+      --surface-alt: #FAFAFA;
+      --border: #E2E8F0;
+      --accent: #6366F1;
+      --accent-hover: #4F46E5;
+      --text-1: #111827;
+      --text-2: #4B5563;
+      --text-3: #9CA3AF;
+      --error: #EF4444;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg-base);
-      color: var(--text);
+      background: linear-gradient(180deg, #E0E7FF 0%, #F4F7FE 400px, #F4F7FE 100%);
+      color: var(--text-2);
       font-family: var(--font-sans);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Dynamic Animated Background */
-    .bg-animation {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: -1;
-      background: radial-gradient(circle at 15% 50%, rgba(79, 70, 229, 0.12), transparent 40%),
-                  radial-gradient(circle at 85% 30%, rgba(147, 51, 234, 0.12), transparent 40%);
-    }
-
-    .bg-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      animation: float 20s infinite ease-in-out alternate;
-    }
-
-    .bg-orb-1 {
-      width: 400px;
-      height: 400px;
-      background: rgba(79, 70, 229, 0.15);
-      top: -100px;
-      left: -100px;
-    }
-
-    .bg-orb-2 {
-      width: 500px;
-      height: 500px;
-      background: rgba(147, 51, 234, 0.1);
-      bottom: -150px;
-      right: -100px;
-      animation-delay: -5s;
-    }
-
-    @keyframes float {
-      0% { transform: translate(0, 0) rotate(0deg) scale(1); }
-      100% { transform: translate(100px, 50px) rotate(45deg) scale(1.1); }
+      -webkit-font-smoothing: antialiased;
     }
 
     .login-container {
       width: 100%;
       max-width: 440px;
       background: var(--surface);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border);
-      border-radius: 24px;
+      border-radius: 16px;
       padding: 48px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
-      position: relative;
-      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      opacity: 0;
-      transform: translateY(20px);
-    }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      box-shadow: var(--shadow-lg);
     }
 
     .logo-area {
@@ -114,165 +56,146 @@
 
     .logo-prism {
       font-weight: 800;
-      font-size: 2.8rem;
-      letter-spacing: -0.04em;
-      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 2.2rem;
+      color: var(--text-1);
+      letter-spacing: -0.02em;
       margin-bottom: 8px;
-      filter: drop-shadow(0 4px 12px rgba(165, 180, 252, 0.2));
+    }
+    
+    .logo-prism span {
+      color: var(--accent);
     }
 
     .logo-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      font-size: 0.85rem;
+      color: var(--text-3);
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 0.05em;
       font-weight: 600;
     }
 
     .auth-tabs {
       display: flex;
       margin-bottom: 32px;
-      background: rgba(0,0,0,0.2);
-      border-radius: 12px;
+      background: var(--surface-alt);
+      border-radius: 8px;
       padding: 4px;
-      border: 1px solid rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
     }
     .auth-tab {
       flex: 1;
       text-align: center;
       padding: 10px;
-      color: var(--text-muted);
+      color: var(--text-2);
       cursor: pointer;
       font-weight: 600;
       font-size: 0.9rem;
-      border-radius: 8px;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 6px;
+      transition: all 0.2s ease;
     }
     .auth-tab.active {
-      color: var(--bg-base);
-      background: var(--text);
-      box-shadow: 0 4px 12px rgba(255,255,255,0.2);
+      color: var(--accent);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
     }
 
     .form-group {
       margin-bottom: 24px;
-      position: relative;
     }
 
     label {
       display: block;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--text-muted);
-      margin-bottom: 10px;
+      font-size: 0.8rem;
       font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 8px;
     }
 
     input {
       width: 100%;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      padding: 14px 18px;
-      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text-1);
       font-family: var(--font-sans);
       font-size: 1rem;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       outline: none;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
     }
     
     input::placeholder {
-      color: rgba(255,255,255,0.2);
+      color: var(--text-3);
     }
 
     input:focus {
-      background: rgba(0, 0, 0, 0.4);
-      border-color: #818cf8;
-      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15), inset 0 2px 4px rgba(0,0,0,0.1);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
     }
 
     .btn-login {
       width: 100%;
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      background: var(--accent);
       color: #ffffff;
       border: none;
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 8px;
+      padding: 14px;
       font-size: 1rem;
-      font-family: var(--font-sans);
       font-weight: 600;
-      letter-spacing: 0.5px;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 8px 16px -4px rgba(99, 102, 241, 0.5), inset 0 1px 1px rgba(255,255,255,0.2);
+      transition: background 0.2s ease;
       margin-top: 8px;
+      box-shadow: var(--shadow-sm);
     }
 
     .btn-login:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 20px -4px rgba(99, 102, 241, 0.6), inset 0 1px 1px rgba(255,255,255,0.3);
-      filter: brightness(1.1);
+      background: var(--accent-hover);
     }
-
-    .btn-login:active {
-      transform: translateY(0);
+    
+    .btn-login:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
     }
 
     .error-banner {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
+      background: #FEE2E2;
+      border: 1px solid #FCA5A5;
+      color: var(--error);
       padding: 12px 16px;
-      border-radius: 10px;
+      border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 500;
       margin-bottom: 24px;
       display: none;
-      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-    }
-
-    @keyframes shake {
-      10%, 90% { transform: translate3d(-2px, 0, 0); }
-      20%, 80% { transform: translate3d(4px, 0, 0); }
-      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
-      40%, 60% { transform: translate3d(6px, 0, 0); }
     }
 
     .hint-area {
       text-align: center;
       margin-top: 32px;
       padding-top: 24px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--text-2);
       line-height: 1.6;
     }
 
     .hint-area code {
-      font-family: var(--font-mono);
-      background: rgba(255, 255, 255, 0.08);
-      padding: 3px 6px;
-      border-radius: 6px;
-      color: #c7d2fe;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-1);
       font-size: 0.75rem;
     }
   </style>
 </head>
 <body>
   
-  <div class="bg-animation">
-    <div class="bg-orb bg-orb-1"></div>
-    <div class="bg-orb bg-orb-2"></div>
-  </div>
-
   <div class="login-container">
     <div class="logo-area">
-      <div class="logo-prism">unlockED</div>
-      <div class="logo-subtitle">Institutional School & Counselor Portal</div>
+      <div class="logo-prism">unlock<span>ED</span></div>
+      <div class="logo-subtitle">Institutional Portal</div>
     </div>
 
     <div class="error-banner" id="error-box">Invalid credentials</div>
@@ -296,7 +219,7 @@
         <input type="password" id="confirm-password" placeholder="••••••••" autocomplete="new-password">
       </div>
 
-      <button type="submit" class="btn-login" id="btn-submit">Sign In →</button>
+      <button type="submit" class="btn-login" id="btn-submit">Sign In</button>
     </form>
 
     <div class="hint-area">
@@ -321,7 +244,7 @@
       document.getElementById('tab-login').classList.toggle('active', mode === 'login');
       document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
       document.getElementById('confirm-group').style.display = mode === 'signup' ? 'block' : 'none';
-      document.getElementById('btn-submit').textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
+      document.getElementById('btn-submit').textContent = mode === 'signup' ? 'Create Account' : 'Sign In';
       document.getElementById('error-box').style.display = 'none';
       if (mode === 'signup') {
         document.getElementById('confirm-password').setAttribute('required', 'true');
@@ -348,14 +271,14 @@
           errBox.textContent = "Passwords do not match";
           errBox.style.display = 'block';
           btn.disabled = false;
-          btn.textContent = 'Create Account →';
+          btn.textContent = 'Create Account';
           return;
         }
       }
 
       const resetButton = () => {
         btn.disabled = false;
-        btn.textContent = mode === 'signup' ? 'Create Account →' : 'Sign In →';
+        btn.textContent = mode === 'signup' ? 'Create Account' : 'Sign In';
       };
       const showError = (message) => {
         errBox.textContent = message;
