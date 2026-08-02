@@ -24,8 +24,9 @@
       <div class="brand-name">unlockED</div>
     </div>
     <nav class="nav-links">
-      <button class="nav-item active" id="tab-profile" onclick="showStep('profile')">Your Profile</button>
+      <button class="nav-item active" id="tab-dash" onclick="showStep('dash')">Dashboard</button>
       <button class="nav-item" id="tab-results" onclick="showStep('results')">Audit Results</button>
+      <button class="nav-item" id="tab-onboarding" style="display:none;" onclick="showStep('onboarding')">Setup Profile</button>
       <button class="nav-item" id="tab-radar" onclick="showStep('radar')">Opportunity Radar</button>
       <button class="nav-item" id="tab-scholarships" onclick="showStep('scholarships')">Scholarships & Aid</button>
       <button class="nav-item" id="tab-shortlist" onclick="showStep('shortlist')">College Shortlisting</button>
@@ -48,52 +49,37 @@
     </header>
     <div class="content-wrapper">
 
-  <!-- ═══ PROFILE FORM ═══ -->
-  <main id="step-profile">
-    <div class="page-title-row">
-      <h1>Student Profile & Self-Submission</h1>
-      <p class="subtitle">counselor intake portal · enter your details or upload documents for counselor review</p>
-      <!-- Automated AI Document Ingestion -->
-      <div class="form-card" style="margin-bottom: 32px; padding: 40px; border: 2px dashed var(--accent); background: var(--accent-light); text-align: center; border-radius: 16px;">
-        <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 12px;">Automated Data Ingestion for Counselor Audit</div>
-        <p style="font-size: 1.05rem; color: var(--text-2); margin-bottom: 24px; max-width: 600px; margin-left: auto; margin-right: auto;">
-          Upload your academic transcript, Class 10 marks card, or resume. AI will parse and submit your complete profile for counselor audit.
-        </p>
-        
-        <div class="dropzone" id="ingest-dropzone"
-          style="padding: 40px; background: var(--surface); cursor: pointer; border-radius: 12px; box-shadow: var(--shadow-sm); display: inline-block; width: 100%; max-width: 500px;"
-          onclick="document.getElementById('ingest-file-input').click()">
-          <input type="file" id="ingest-file-input" multiple accept=".pdf,.txt,.docx,.png,.jpg,.jpeg"
-            style="display: none;" onchange="handleFileSelect(event)" />
-          <div style="font-size: 2.5rem; margin-bottom: 12px; display: flex; justify-content: center;"><svg width="40" height="40" fill="none" stroke="var(--accent)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
-          <div style="font-weight: 700; font-size: 1.2rem; color: var(--text-1);">Click to browse files</div>
-          <div style="font-size: 0.9rem; color: var(--text-3); margin-top: 8px;">Supports PDFs, Marksheets, Resumes</div>
-        </div>
-
-        <div id="file-list-preview" style="margin-top: 16px; font-size: 0.9rem; color: var(--text-1); font-weight: 500;"></div>
-        
-        <button type="button" id="btn-auto-ingest" class="btn-primary" onclick="uploadAndIngestDocuments()"
-          style="margin-top: 24px; font-size: 1.2rem; padding: 16px 32px; border-radius: 30px; box-shadow: var(--shadow-md);">
-          Extract & Populate Profile
-        </button>
-        <div id="ingest-status" style="margin-top: 16px; font-size: 0.9rem; color: var(--text-2); display: none;"></div>
+  <!-- ═══ ONBOARDING WIZARD ═══ -->
+  <main id="step-onboarding">
+    <div class="dash-header">
+      <div>
+        <div class="greeting">Welcome to unlockED</div>
+        <div class="greeting-sub">Let's set up your profile to unlock your personalized pathway.</div>
       </div>
-
+    </div>
+    <div class="wizard-container" style="max-width: 700px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      
+      <!-- Progress Bar -->
+      <div style="display:flex; justify-content: space-between; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+        <div class="wizard-step active" id="wstep-1" style="font-weight:bold; color:var(--accent);">1. Basics</div>
+        <div class="wizard-step" id="wstep-2" style="color:var(--text-3);">2. Grades</div>
+        <div class="wizard-step" id="wstep-3" style="color:var(--text-3);">3. Extracurriculars</div>
+      </div>
+      
       <form id="student-form" class="student-form" onsubmit="submitProfile(event)">
-
-        <!-- Step 1: Basics -->
-        <div class="form-card">
-          <div class="form-section-title">01 — Basics</div>
-          <div class="form-row">
+        <!-- Step 1 -->
+        <div id="wizard-sec-1" class="wizard-sec">
+          <h2 style="font-size: 1.2rem; color: var(--text-1); margin-bottom: 16px;">Basic Information</h2>
+          <div class="form-row" style="margin-bottom: 16px;">
             <div class="field field-wide">
               <label>Your Full Name *</label>
-              <input type="text" id="sf-name" required placeholder="e.g. Aarav Sharma" />
+              <input type="text" id="sf-name" required placeholder="e.g. Aarav Sharma" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;" />
             </div>
           </div>
-          <div class="form-row">
-            <div class="field">
+          <div class="form-row" style="margin-bottom: 16px; display:flex; gap:16px;">
+            <div class="field" style="flex:1;">
               <label>Board *</label>
-              <select id="sf-board">
+              <select id="sf-board" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;">
                 <option value="CBSE">CBSE</option>
                 <option value="ICSE">ICSE</option>
                 <option value="State Board">State Board</option>
@@ -101,45 +87,30 @@
                 <option value="A-Levels">A-Levels</option>
               </select>
             </div>
-            <div class="field">
+            <div class="field" style="flex:1;">
               <label>Class Level *</label>
-              <select id="sf-class">
+              <select id="sf-class" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;">
                 <option value="10">Class 10</option>
                 <option value="11">Class 11</option>
                 <option value="12" selected>Class 12</option>
               </select>
             </div>
           </div>
-        </div>
-
-        <!-- Step 2: Subjects -->
-        <div class="form-card">
-          <div class="form-section-title">02 — Your Subjects</div>
-          <p class="field-hint">Select all subjects you are currently studying (or plan to study in Class 11/12).</p>
-          <div class="check-grid" id="sf-subjects"></div>
-          <div style="display: flex; gap: 8px; margin-top: 12px;">
-            <input type="text" id="sf-custom-subject-input"
-              placeholder="Don't see your subject? Type custom subject name..."
-              style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-            <button type="button" class="btn-outline-sm" onclick="addCustomBoardSubject()">+ Add Subject</button>
+          <div class="field" style="margin-bottom: 16px;">
+            <label>Select Your Subjects</label>
+            <div class="check-grid" id="sf-subjects" style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;"></div>
           </div>
+          <button type="button" class="btn-primary" onclick="nextWizardStep(2)" style="width:100%; padding:12px; border-radius:8px;">Next Step →</button>
         </div>
 
-        <!-- Step 3: Targets Removed -->
-        <div style="margin-bottom: 32px; text-align: center;">
-          <h2 style="font-size: 1.4rem; color: var(--text-1); margin-bottom: 16px;">What college are you aiming for?</h2>
-          <button type="button" class="btn-primary" onclick="showStep('shortlist')" style="font-size: 1.1rem; padding: 14px 28px; border-radius: 20px;">
-            Search Colleges & Add to Shortlist →
-          </button>
-        </div>
-
-        <!-- Step 4: Grades -->
-        <div class="form-card">
-          <div class="form-section-title">04 — Grades & Test Scores</div>
-          <div class="form-row">
-            <div class="field">
+        <!-- Step 2 -->
+        <div id="wizard-sec-2" class="wizard-sec hidden" style="display:none;">
+          <h2 style="font-size: 1.2rem; color: var(--text-1); margin-bottom: 16px;">Grades & Test Scores</h2>
+          
+          <div class="form-row" style="display:flex; gap:16px; margin-bottom: 16px;">
+            <div class="field" style="flex:1;">
               <label>Grade 10 Board *</label>
-              <select id="sf-g10-board">
+              <select id="sf-g10-board" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;">
                 <option value="CBSE">CBSE</option>
                 <option value="ICSE">ICSE</option>
                 <option value="State Board">State Board</option>
@@ -147,90 +118,176 @@
                 <option value="IB MYP">IB MYP</option>
               </select>
             </div>
-            <div class="field">
+          </div>
+
+          <div class="form-row" style="display:flex; gap:16px; margin-bottom: 16px;">
+            <div class="field" style="flex:1;">
               <label>Grade 10 Aggregate</label>
-              <input type="text" id="sf-g10" placeholder="e.g. 88%" />
+              <input type="text" id="sf-g10" placeholder="e.g. 88%" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;" />
             </div>
-            <div class="field">
+            <div class="field" style="flex:1;">
               <label>Class 11 Aggregate</label>
-              <input type="text" id="sf-g11" placeholder="e.g. 85%" />
+              <input type="text" id="sf-g11" placeholder="e.g. 85%" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;" />
             </div>
           </div>
-          <div class="form-row">
-            <div class="field">
+          <div class="form-row" style="display:flex; gap:16px; margin-bottom: 16px;">
+            <div class="field" style="flex:1;">
               <label>Expected Board Aggregate</label>
-              <input type="text" id="sf-gexp" placeholder="e.g. 90%" />
+              <input type="text" id="sf-gexp" placeholder="e.g. 90%" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;" />
+            </div>
+            <div class="field" style="flex:1;">
+              <label>SAT Score (if any)</label>
+              <input type="number" id="sf-sat" placeholder="e.g. 1480" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;" />
             </div>
           </div>
-
-          <!-- Grade 10 Individual Subject Marks -->
-          <div class="field" style="margin-top: 16px; margin-bottom: 16px;">
-            <label>Grade 10 Subject Marks</label>
-            <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Enter your individual
-              Class 10 subject marks.</p>
-            <div id="sf-g10-subject-grades-container"
-              style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
-            </div>
-            <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <input type="text" id="sf-g10-custom-subj"
-                placeholder="Add Grade 10 subject (e.g. French, Social Science)..."
-                style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1); border-radius: 4px;" />
-              <button type="button" class="btn-outline-sm" onclick="addG10SubjectRow()">+ Add Grade 10 Subject</button>
-            </div>
-          </div>
-
-          <!-- Class 11/12 Individual Subject Marks -->
+          
           <div class="field" style="margin-bottom: 16px;" id="sf-subject-grades-section">
-            <label>Class 11/12 Expected Subject Marks</label>
-            <p class="field-hint" style="font-size:0.72rem; color:var(--text-3); margin-top: 2px;">Expected marks for
-              subjects selected in Step 02.</p>
-            <div id="sf-subject-grades-container"
-              style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px;">
-            </div>
+            <label>Expected Subject Marks</label>
+            <div id="sf-subject-grades-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;"></div>
           </div>
-          <div class="form-row">
-            <div class="field">
-              <label>SAT Score (if taken)</label>
-              <input type="number" id="sf-sat" placeholder="e.g. 1480" min="400" max="1600" />
-            </div>
-            <div class="field">
-              <label>AP Exams Taken</label>
-              <div id="sf-ap-list" style="margin-bottom: 8px;"></div>
-              <div class="ap-picker-row" style="display: flex; gap: 6px;">
-                <select id="sf-ap-subject"
-                  style="flex: 1; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
-                  <option value="" disabled selected>Select AP Subject...</option>
-                </select>
-                <select id="sf-ap-score"
-                  style="width: 70px; font-family: var(--mono); font-size: 0.75rem; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
-                  <option value="5">5</option>
-                  <option value="4">4</option>
-                  <option value="3">3</option>
-                  <option value="2">2</option>
-                  <option value="1">1</option>
-                </select>
-                <button type="button" class="btn-ghost-sm" onclick="addAPFromSelect()">+ add</button>
-              </div>
+          
+          <div class="field" style="margin-bottom: 16px;">
+            <label>AP Exams Taken</label>
+            <div id="sf-ap-list" style="margin-bottom: 8px;"></div>
+            <div class="ap-picker-row" style="display: flex; gap: 6px;">
+              <select id="sf-ap-subject" style="flex: 1; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
+                <option value="" disabled selected>Select AP Subject...</option>
+              </select>
+              <select id="sf-ap-score" style="width: 70px; padding: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--text-1);">
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+              </select>
+              <button type="button" class="btn-ghost-sm" onclick="addAPFromSelect()">+ add</button>
             </div>
           </div>
 
-          <div class="field" style="margin-top:14px">
+          <div style="display:flex; gap:12px;">
+            <button type="button" class="btn-outline" onclick="nextWizardStep(1)" style="flex:1; padding:12px; border-radius:8px;">← Back</button>
+            <button type="button" class="btn-primary" onclick="nextWizardStep(3)" style="flex:1; padding:12px; border-radius:8px;">Next Step →</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div id="wizard-sec-3" class="wizard-sec hidden" style="display:none;">
+          <h2 style="font-size: 1.2rem; color: var(--text-1); margin-bottom: 16px;">Extracurriculars</h2>
+          <p style="font-size: 0.85rem; color: var(--text-2); margin-bottom: 16px;">List your top activities. Our AI will assess the impact level automatically.</p>
+          <div id="sf-portfolio-list" style="margin-bottom: 16px;"></div>
+          <button type="button" class="btn-outline" onclick="addStudentPortfolioRow()" style="width:100%; padding:10px; border-radius:8px; margin-bottom:16px;">+ Add Activity</button>
+          
+          <div class="field" style="margin-top:14px; display:none;" id="sf-cuet-group">
             <label>CUET Domain Subjects (if applicable)</label>
-            <input type="text" id="sf-cuet" placeholder="comma-separated, e.g. Physics, Mathematics, English" />
+            <input type="text" id="sf-cuet" placeholder="comma-separated, e.g. Physics, Mathematics, English" style="width:100%; padding:10px; background:rgba(0,0,0,0.2); border:1px solid var(--border); color:var(--text-1); border-radius:8px;" />
+          </div>
+
+          <div style="display:flex; gap:12px;">
+            <button type="button" class="btn-outline" onclick="nextWizardStep(2)" style="flex:1; padding:12px; border-radius:8px;">← Back</button>
+            <button type="submit" class="btn-primary" id="sf-submit" style="flex:1; padding:12px; border-radius:8px; background:linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border:none; color:white;">Submit Profile →</button>
           </div>
         </div>
-
-        <!-- Step 5: Portfolio -->
-        <div class="form-card">
-          <div class="form-section-title">05 — extracurriculars & portfolio</div>
-          <p class="field-hint">Describe your activities and achievements. Our AI will automatically assess the impact
-            level — no need to classify them yourself.</p>
-          <div id="sf-portfolio-list"></div>
-          <button type="button" class="btn-ghost-sm" onclick="addStudentPortfolioRow()">+ add activity</button>
-        </div>
-
-        <button type="submit" class="btn-run btn-wide" id="sf-submit">submit & get audit results →</button>
       </form>
+    </div>
+  </main>
+  
+  <!-- ═══ DASHBOARD ═══ -->
+  <main id="step-dash" class="hidden" style="display:none;">
+    
+    <!-- Dynamic Welcome Banner -->
+    <div class="welcome-banner" style="background: linear-gradient(135deg, var(--accent), #818CF8); border-radius: 16px; padding: 32px; color: white; margin-bottom: 24px; box-shadow: var(--shadow-md); position: relative; overflow: hidden;">
+      <div style="position: relative; z-index: 2;">
+        <h1 id="dash-welcome-text" style="font-size: 2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em;">Welcome back!</h1>
+        <p style="font-size: 1.05rem; opacity: 0.9; max-width: 600px;">Your AI-powered admission overview. Keep your profile updated to get the best insights.</p>
+      </div>
+      <!-- Decorative background element -->
+      <div style="position: absolute; right: -50px; top: -50px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%); border-radius: 50%; z-index: 1;"></div>
+    </div>
+
+    <!-- Profile Readiness Indicator -->
+    <div class="card" style="margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2 style="font-size: 1.1rem; color: var(--text-1); font-weight: 600;">Profile Readiness</h2>
+        <span id="dash-readiness-text" style="font-weight: 700; color: var(--accent);">0%</span>
+      </div>
+      <div style="width: 100%; height: 10px; background: var(--border); border-radius: 5px; overflow: hidden;">
+        <div id="dash-readiness-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #10B981, #34D399); transition: width 0.5s ease-out; border-radius: 5px;"></div>
+      </div>
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="kpi-grid" style="margin-bottom: 24px;">
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#E0E7FF; color:#4F46E5;">
+             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+          </div>
+        </div>
+        <div class="kpi-value" id="dash-grade-value">—</div>
+        <div class="kpi-label">Expected Grades</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#D1FAE5; color:#059669;">
+             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+          </div>
+        </div>
+        <div class="kpi-value" id="dash-sat-value">—</div>
+        <div class="kpi-label">Test Scores</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon" style="background:#FEF3C7; color:#D97706;">
+             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+        </div>
+        <div class="kpi-value" id="dash-activities-value">—</div>
+        <div class="kpi-label">Activities Logged</div>
+      </div>
+    </div>
+    
+    <!-- Action Layout -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 24px;">
+      
+      <!-- Left Column: Recent Activities & Shortlisted Colleges -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="card">
+          <h2 style="font-size: 1.1rem; color: var(--text-1); font-weight: 600; margin-bottom: 16px;">Recent Extracurriculars</h2>
+          <div id="dash-recent-activities" style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="color: var(--text-3); font-size: 0.9rem;">No activities logged yet.</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h2 style="font-size: 1.1rem; color: var(--text-1); font-weight: 600; margin-bottom: 16px;">Shortlisted Colleges</h2>
+          <div id="dash-shortlisted-colleges" style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <div style="color: var(--text-3); font-size: 0.9rem;">No colleges shortlisted yet.</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column: Quick Actions & Next Steps -->
+      <div style="display: flex; flex-direction: column; gap: 24px;">
+        <div class="card" style="background: var(--surface);">
+          <h2 style="font-size: 1.1rem; color: var(--text-1); font-weight: 600; margin-bottom: 16px;">Quick Actions</h2>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn-outline" style="width: 100%; justify-content: center;" onclick="showStep('onboarding')">Edit Profile</button>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="showStep('results')">View Audit Results</button>
+          </div>
+        </div>
+        
+        <div class="card" style="background: var(--bg); border: none;">
+          <h2 style="font-size: 1.1rem; color: var(--text-1); font-weight: 600; margin-bottom: 16px;">Next Steps</h2>
+          <ul id="dash-next-steps" style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px;">
+            <li style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.9rem; color: var(--text-2);">
+              <svg width="16" height="16" style="margin-top: 2px; color: var(--accent); flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              Complete your profile to unlock more insights.
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+    </div>
   </main>
 
   <!-- ═══ RESULTS ═══ -->

@@ -775,6 +775,7 @@ function renderManageList() {
           </td>
           <td style="text-align:right;">
             <button onclick="openStudentProfile('${s.id}')" style="background:var(--surface); border:1px solid var(--border); padding:6px 12px; border-radius:6px; font-size:0.8rem; font-weight:500; cursor:pointer; color:var(--text-2);" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-2)'">View Profile</button>
+            <button onclick="promptSetLogin('${s.id}')" style="margin-left: 8px; background:var(--accent); border:none; padding:6px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer; color:var(--bg);">Set Login</button>
           </td>
         `;
         masterBody.appendChild(tr);
@@ -4525,4 +4526,24 @@ async function renderRecyclingView() {
 
 window.handleRecyclingStudentSelect = function() {
   renderRecyclingView();
+};
+
+window.promptSetLogin = async function(studentId) {
+  const password = prompt(`Enter a new password for student ${studentId}:`);
+  if (!password) return;
+  try {
+    const res = await fetch('/api/counselor/create_student_login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ student_id: studentId, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      alert('Login set successfully. Username is: ' + studentId);
+    } else {
+      alert('Failed: ' + data.error);
+    }
+  } catch(e) {
+    alert('Error setting login');
+  }
 };

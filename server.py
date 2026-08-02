@@ -909,6 +909,31 @@ def api_search_courses():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/counselor/create_student_login", methods=["POST"])
+@counselor_required
+def api_counselor_create_student_login():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data"}), 400
+    
+    student_id = data.get("student_id", "").strip()
+    password = data.get("password", "").strip()
+    
+    if not student_id or not password:
+        return jsonify({"error": "Student ID and password required"}), 400
+    
+    students = load_students()
+    s = next((st for st in students if st["id"] == student_id), None)
+    if not s:
+        return jsonify({"error": "Student not found"}), 404
+    
+    try:
+        # Username will be the student_id for simplicity (e.g. STU_001)
+        create_user_with_rollback(student_id, password, "student", student_id)
+        return jsonify({"success": True})
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
 @app.route("/api/students", methods=["POST"])
 def api_create_student():
     data = request.get_json()
@@ -1083,8 +1108,24 @@ def api_update_student(student_id):
 
     student = get_student(student_id)
     if student is None:
-        return jsonify({"error": "Student not found"}), 404
-
+        student = {
+            "id": student_id,
+            "name": "",
+            "class_level": 12,
+            "board": "",
+            "board_subjects": [],
+            "cuet_subjects": [],
+            "grades": {},
+            "standardized_tests": {},
+            "portfolio": [],
+            "targets": [],
+            "shortlisted_colleges": [],
+            "status": {
+                "cuet_form_submitted": False,
+                "tmua_registered": False,
+                "sat_score": None
+            }
+        }
     # Update allowed fields
     for field in ["name", "board", "class_level", "board_subjects", "cuet_subjects",
                   "grades", "standardized_tests", "portfolio", "targets", "status",
@@ -1572,7 +1613,9 @@ def api_shortlist_toggle(student_id):
         return jsonify({"error": "college_id required"}), 400
 
     student = get_student(student_id)
+    print("Looking for student:", student_id, "Found:", bool(student))
     if student is None:
+        print("Available students:", [doc.id for doc in db.collection(STUDENTS_COLLECTION).stream()])
         return jsonify({"error": "Student not found"}), 404
 
     shortlisted = student.get("shortlisted_colleges", [])

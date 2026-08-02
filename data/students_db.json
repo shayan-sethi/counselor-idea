@@ -1,47 +1,14 @@
 [
   {
     "id": "STU_101",
-    "name": "Kavya Patel",
-    "class_level": 10,
-    "board": "IGCSE",
-    "board_subjects": [
-      "Physics",
-      "Chemistry",
-      "Biology",
-      "English",
-      "Psychology"
-    ],
-    "targets": [
-      "Vellore Institute of Technology",
-      "Delhi University St. Stephens",
-      "IIT Bombay",
-      "Cambridge Medicine"
-    ],
-    "grades": {
-      "current_expected_board": "72.7%",
-      "subjects": {
-        "Physics": 75,
-        "Chemistry": 69,
-        "Biology": 74,
-        "English": 68,
-        "Psychology": 77
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1420
-    },
-    "portfolio": [
-      {
-        "activity": "MUN Best Delegate",
-        "description": "Won at Harvard MUN",
-        "tier": 1
-      },
-      {
-        "activity": "NGO Volunteer",
-        "description": "Taught English",
-        "tier": 3
-      }
-    ],
+    "name": "Test Name",
+    "class_level": 12,
+    "board": "CBSE",
+    "board_subjects": [],
+    "targets": [],
+    "grades": {},
+    "standardized_tests": {},
+    "portfolio": [],
     "shortlisted_colleges": [
       "NYU",
       "KING'S_COLLEGE_LONDON",
@@ -49,7 +16,8 @@
       "CAMBRIDGE",
       "OXFORD",
       "US_211440"
-    ]
+    ],
+    "cuet_subjects": []
   },
   {
     "id": "STU_102",
@@ -1077,5 +1045,49 @@
       }
     ],
     "targets": []
+  },
+  {
+    "id": "STU_001",
+    "name": "Saiansh Tapuriah",
+    "class_level": 12,
+    "board": "ICSE",
+    "board_subjects": [
+      "Mathematics",
+      "Chemistry",
+      "Computer Science",
+      "Accounts"
+    ],
+    "cuet_subjects": [],
+    "grades": {
+      "class_10_aggregate": "95",
+      "class_10_subjects": {},
+      "class_11_aggregate": "95",
+      "current_expected_board": "95",
+      "g10_board": "ICSE",
+      "subjects": {
+        "Accounts": "95",
+        "Chemistry": "95",
+        "Computer Science": "95",
+        "Mathematics": "95"
+      }
+    },
+    "standardized_tests": {
+      "SAT": 1500
+    },
+    "portfolio": [],
+    "targets": [],
+    "shortlisted_colleges": [
+      "CAMBRIDGE",
+      "OXFORD",
+      "IND_FLAME",
+      "IND_DU",
+      "IND_ASHOKA",
+      "US_100858"
+    ],
+    "status": {
+      "cuet_form_submitted": false,
+      "sat_score": null,
+      "tmua_registered": false
+    }
   }
 ]

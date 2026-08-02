@@ -110,7 +110,14 @@ async function init() {
     // Automatically load logged in student's profile
     if (currentUserRole === 'student' && currentUserStudentId) {
       createdStudentId = currentUserStudentId;
-      await loadExistingStudentProfile(currentUserStudentId);
+      const isComplete = await loadExistingStudentProfile(currentUserStudentId);
+      if(isComplete) {
+        showStep('dash');
+        unlockTabs();
+      } else {
+        showStep('onboarding');
+        lockTabs();
+      }
     }
   } catch (e) {
     console.error('Init error:', e);
@@ -118,15 +125,16 @@ async function init() {
 }
 
 async function loadExistingStudentProfile(studentId) {
+  let isComplete = false;
   try {
     const res = await fetch(`/api/student/${studentId}`);
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
         alert('loadProfile: 401/403');
         // window.location.href = '/static/login.html';
-        return;
+        return false;
       }
-      return;
+      return false;
     }
     const s = await res.json();
     
@@ -216,10 +224,119 @@ async function loadExistingStudentProfile(studentId) {
     // Shortlisted Exams
     shortlistedExams = s.shortlisted_exams || [];
     if (typeof renderExamsTab === 'function') renderExamsTab();
+
+    if (s.board_subjects && s.board_subjects.length > 0 && s.grades && Object.keys(s.grades).length > 0) isComplete = true;
+    if (isComplete) {
+      populateDashboard(s);
+    }
+    return isComplete;
   } catch (err) {
     console.error('Failed to load profile:', err);
   }
 }
+
+function populateDashboard(s) {
+  if (!s) return;
+  
+  // Welcome Text
+  const firstName = (s.name || 'Student').split(' ')[0];
+  const welcomeEl = document.getElementById('dash-welcome-text');
+  if (welcomeEl) welcomeEl.innerText = `Welcome back, ${firstName}!`;
+  
+  // Readiness Calculation
+  let readiness = 10; // Base
+  if (s.board) readiness += 10;
+  if (s.board_subjects && s.board_subjects.length > 0) readiness += 20;
+  if (s.grades && Object.keys(s.grades).length > 0) readiness += 20;
+  if (s.standardized_tests && Object.keys(s.standardized_tests).length > 0) readiness += 10;
+  if (s.targets && s.targets.length > 0) readiness += 10;
+  if (s.portfolio && s.portfolio.length > 0) readiness += 20;
+  
+  readiness = Math.min(readiness, 100);
+  
+  const readiText = document.getElementById('dash-readiness-text');
+  const readiBar = document.getElementById('dash-readiness-bar');
+  if (readiText) readiText.innerText = `${readiness}%`;
+  if (readiBar) readiBar.style.width = `${readiness}%`;
+  
+  // KPIs
+  if (document.getElementById('dash-grade-value')) document.getElementById('dash-grade-value').innerText = s.grades?.current_expected_board || '—';
+  if (document.getElementById('dash-sat-value')) document.getElementById('dash-sat-value').innerText = s.standardized_tests?.SAT || '—';
+  if (document.getElementById('dash-activities-value')) document.getElementById('dash-activities-value').innerText = s.portfolio ? s.portfolio.length : '0';
+  
+  // Recent Activities
+  const recentActContainer = document.getElementById('dash-recent-activities');
+  if (recentActContainer) {
+    recentActContainer.innerHTML = '';
+    if (s.portfolio && s.portfolio.length > 0) {
+      const recent = s.portfolio.slice(-3).reverse();
+      recent.forEach(act => {
+        const div = document.createElement('div');
+        div.style.padding = '12px';
+        div.style.background = 'var(--bg)';
+        div.style.borderRadius = '8px';
+        div.style.border = '1px solid var(--border)';
+        div.innerHTML = `
+          <div style="font-weight: 600; color: var(--text-1); font-size: 0.95rem;">${act.activity}</div>
+          <div style="font-size: 0.85rem; color: var(--text-2); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${act.description}</div>
+        `;
+        recentActContainer.appendChild(div);
+      });
+    } else {
+      recentActContainer.innerHTML = '<div style="color: var(--text-3); font-size: 0.9rem;">No activities logged yet.</div>';
+    }
+  }
+  
+  // Shortlisted Colleges
+  const shortColContainer = document.getElementById('dash-shortlisted-colleges');
+  if (shortColContainer) {
+    shortColContainer.innerHTML = '';
+    const sColleges = s.shortlisted_colleges || [];
+    const tColleges = (s.targets || []).map(tid => targets[tid] ? targets[tid].university : null).filter(Boolean);
+    const colleges = [...new Set([...sColleges, ...tColleges])];
+    
+    if (colleges.length > 0) {
+      colleges.forEach(c => {
+        const span = document.createElement('span');
+        span.style.padding = '4px 10px';
+        span.style.background = 'var(--accent-light)';
+        span.style.color = 'var(--accent)';
+        span.style.borderRadius = '12px';
+        span.style.fontSize = '0.8rem';
+        span.style.fontWeight = '600';
+        span.innerText = c.replace(/_/g, ' ');
+        shortColContainer.appendChild(span);
+      });
+    } else {
+      shortColContainer.innerHTML = '<div style="color: var(--text-3); font-size: 0.9rem;">No colleges shortlisted yet.</div>';
+    }
+  }
+  
+  // Next Steps
+  const nextStepsContainer = document.getElementById('dash-next-steps');
+  if (nextStepsContainer) {
+    nextStepsContainer.innerHTML = '';
+    const steps = [];
+    if (readiness < 100) steps.push("Complete your profile to unlock more insights.");
+    if (!s.portfolio || s.portfolio.length < 3) steps.push("Log more extracurricular activities to strengthen your profile.");
+    if (!s.shortlisted_colleges || s.shortlisted_colleges.length === 0) steps.push("Use the Opportunity Radar to shortlist colleges.");
+    if (!s.standardized_tests || (!s.standardized_tests.SAT && !s.standardized_tests.ACT)) steps.push("Consider adding a standardized test score.");
+    
+    if (steps.length === 0) steps.push("Your profile looks great! Keep up the good work.");
+    
+    steps.forEach(step => {
+      const li = document.createElement('li');
+      li.style.display = 'flex';
+      li.style.alignItems = 'flex-start';
+      li.style.gap = '10px';
+      li.style.fontSize = '0.9rem';
+      li.style.color = 'var(--text-2)';
+      li.innerHTML = `<svg width="16" height="16" style="margin-top: 2px; color: var(--accent); flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> ${step}`;
+      nextStepsContainer.appendChild(li);
+    });
+  }
+}
+
 
 function getPlaceholderForBoard(board) {
   if (board === 'IB' || board === 'IB MYP') return "e.g. 7";
@@ -734,7 +851,8 @@ function renderSelectedTargets() {
 }
 
 function showStep(step) {
-  document.getElementById('step-profile').classList.toggle('hidden', step !== 'profile');
+  const sp = document.getElementById('step-onboarding'); if (sp) { sp.classList.toggle('hidden', step !== 'onboarding'); sp.style.display = (step === 'onboarding') ? 'block' : 'none'; }
+  const sd = document.getElementById('step-dash'); if (sd) { sd.classList.toggle('hidden', step !== 'dash'); sd.style.display = (step === 'dash') ? 'block' : 'none'; }
   document.getElementById('step-results').classList.toggle('hidden', step !== 'results');
   const rEl = document.getElementById('step-radar');
   if (rEl) rEl.classList.toggle('hidden', step !== 'radar');
@@ -747,7 +865,8 @@ function showStep(step) {
   const recEl = document.getElementById('step-recycling');
   if (recEl) recEl.classList.toggle('hidden', step !== 'recycling');
 
-  document.getElementById('tab-profile').classList.toggle('active', step === 'profile');
+  const tp = document.getElementById('tab-dash'); if (tp) tp.classList.toggle('active', step === 'dash');
+  const tonb = document.getElementById('tab-onboarding'); if(tonb) tonb.classList.toggle('active', step === 'onboarding');
   document.getElementById('tab-results').classList.toggle('active', step === 'results');
   const rTab = document.getElementById('tab-radar');
   if (rTab) rTab.classList.toggle('active', step === 'radar');
@@ -868,7 +987,7 @@ async function submitProfile(e) {
       board_subjects: boardSubjects,
       cuet_subjects: cuetSubjects,
       grades, standardized_tests: tests,
-      portfolio, targets: []
+      portfolio, targets: selectedTargetIds
     };
 
     if (createdStudentId) {
@@ -920,8 +1039,15 @@ async function submitProfile(e) {
     }
     const data = await evalRes.json();
 
-    // Show step results immediately
-    showStep('results');
+    // Show step dash immediately
+    alert('Profile successfully submitted!');
+    unlockTabs();
+    showStep('dash');
+    const sRes = await fetch(`/api/student/${createdStudentId}`);
+    if (sRes.ok) {
+      const sData = await sRes.json();
+      populateDashboard(sData);
+    }
 
     // Fade the audit results body while terminal prints
     const resBody = document.getElementById('res-body');
@@ -935,15 +1061,15 @@ async function submitProfile(e) {
         resBody.style.opacity = '1';
         resBody.style.pointerEvents = 'auto';
       }
-      renderAuditResults(studentData, data);
+      fetchStudentAudit();
     });
 
   } catch (err) {
     console.error(err);
-    alert('Submission failed. Is the server running?');
+    alert('Error saving profile');
   } finally {
     btn.disabled = false;
-    btn.textContent = 'submit & get audit results →';
+    btn.textContent = 'Submit Profile →';
   }
 }
 
@@ -1990,3 +2116,49 @@ async function renderStudentRecyclingView() {
   }
 }
 window.renderStudentRecyclingView = renderStudentRecyclingView;
+
+
+window.nextWizardStep = function(stepNum) {
+  document.querySelectorAll('.wizard-sec').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.wizard-sec').forEach(el => el.style.display = 'none');
+  
+  const sec = document.getElementById('wizard-sec-' + stepNum);
+  if (sec) {
+    sec.classList.remove('hidden');
+    sec.style.display = 'block';
+  }
+  
+  document.querySelectorAll('.wizard-step').forEach(el => {
+    el.classList.remove('active');
+    el.style.fontWeight = 'normal';
+    el.style.color = 'var(--text-3)';
+  });
+  const stepLabel = document.getElementById('wstep-' + stepNum);
+  if (stepLabel) {
+    stepLabel.classList.add('active');
+    stepLabel.style.fontWeight = 'bold';
+    stepLabel.style.color = 'var(--accent)';
+  }
+};
+
+window.lockTabs = function() {
+  const tabs = ['results', 'radar', 'shortlist', 'calendar', 'scholarships', 'recycling'];
+  tabs.forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if(el) {
+      el.style.opacity = '0.5';
+      el.style.pointerEvents = 'none';
+    }
+  });
+};
+
+window.unlockTabs = function() {
+  const tabs = ['results', 'radar', 'shortlist', 'calendar', 'scholarships', 'recycling'];
+  tabs.forEach(t => {
+    const el = document.getElementById('tab-' + t);
+    if(el) {
+      el.style.opacity = '1';
+      el.style.pointerEvents = 'auto';
+    }
+  });
+};
