@@ -1977,9 +1977,12 @@ async function renderStudentRecyclingView() {
 
         <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:auto;">
           <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:8px;">🎓 Proven Pathway:</div>
-          <div style="font-size:0.85rem; color:var(--text-1); line-height:1.4;">
+          <div style="font-size:0.85rem; color:var(--text-1); line-height:1.4; margin-bottom:12px;">
             ${a.key_remediation_taken || 'Standard application pathway.'}
           </div>
+          <button class="btn btn-secondary" style="width:100%; justify-content:center;" onclick="openConnectionModal('${a.id}', '${a.name.replace(/'/g, "\\'")}')">
+            Connect for Advice
+          </button>
         </div>
       </div>
     `).join('');
@@ -1990,3 +1993,53 @@ async function renderStudentRecyclingView() {
   }
 }
 window.renderStudentRecyclingView = renderStudentRecyclingView;
+
+window.openConnectionModal = function(alumniId, alumniName) {
+  document.getElementById('conn-alumni-id').value = alumniId;
+  document.getElementById('conn-alumni-name').textContent = alumniName;
+  document.getElementById('conn-message').value = '';
+  document.getElementById('connection-modal').classList.remove('hidden');
+  document.getElementById('connection-modal').style.display = 'flex';
+};
+
+window.submitConnectionRequest = async function() {
+  const alumniId = document.getElementById('conn-alumni-id').value;
+  const message = document.getElementById('conn-message').value.trim();
+  
+  if (!message) {
+    alert('Please enter a message to the alumni.');
+    return;
+  }
+  
+  const btn = document.querySelector('#connection-modal .btn-primary');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  
+  try {
+    const res = await fetch('/api/connections', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        alumni_id: alumniId,
+        student_id: window.currentUserStudentId || 'student',
+        message: message
+      })
+    });
+    
+    if (res.ok) {
+      alert('Your request has been submitted for counselor review.');
+      document.getElementById('connection-modal').style.display = 'none';
+      document.getElementById('connection-modal').classList.add('hidden');
+    } else {
+      const err = await res.json();
+      alert('Failed to send request: ' + (err.error || 'Unknown error'));
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Network error when submitting request.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+};
