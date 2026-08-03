@@ -2463,16 +2463,41 @@ def api_draft_recommendation():
     brag_sheet += f"Shortlisted Colleges: {', '.join(clean_colleges)}\n"
     brag_sheet += f"Shortlisted / Assigned Scholarships: {', '.join(shortlisted_scholarships)}\n"
 
-    system_prompt = "You are a school counselor helping draft a Letter of Recommendation outline. Given a student's brag sheet, output a SHORT structured outline (not a full letter) with: 1) Opening hook idea (1 sentence), 2) 3 key strengths to highlight (bullet points), 3) Suggested anecdote/story angle, 4) Closing theme. Use proper human-readable university names, never raw code tags. Be concise - max 150 words total."
+    system_prompt = f"""You are an expert high school counselor drafting a structured Letter of Recommendation outline for {student['name']}.
+Strictly output ONLY the structured outline in Markdown format. Do NOT include any conversational preamble, intro, or greetings (NEVER start with "Here is", "Sure", "Certainly", etc.).
+
+Format your output EXACTLY as follows:
+
+**Brief LOR outline for {student['name']}**
+
+**Opening hook idea**
+[1-2 sentences introducing student]
+
+**Key strengths**
+* [Strength 1]
+* [Strength 2]
+* [Strength 3]
+
+**Suggested anecdote/story angle**
+[1-2 sentences on a specific story/project]
+
+**Closing theme**
+[1 sentence conclusion]
+
+Rules:
+- Start directly with "**Brief LOR outline for {student['name']}**"
+- Use clean university names (e.g. Oxford, LSE, Stanford, Harvard), NEVER code tags.
+- Max 150 words total."""
 
     from prism_agent.groq_utils import groq_post_with_retry, GROQ_MODEL
     
     payload = {
         "model": GROQ_MODEL,
         "messages": [
-            {"role": "user", "content": f"{system_prompt}\n\nSTUDENT DATA:\n{brag_sheet}\n\nLOR Outline:"}
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"STUDENT BRAG SHEET:\n{brag_sheet}\n\nOutline:"}
         ],
-        "temperature": 0.5,
+        "temperature": 0.3,
         "max_tokens": 300
     }
     
@@ -2480,7 +2505,19 @@ def api_draft_recommendation():
     
     if res and res.status_code == 200:
         try:
-            content = res.json()["choices"][0]["message"]["content"]
+            content = res.json()["choices"][0]["message"]["content"].strip()
+            
+            # Strip any conversational prefix if model accidentally includes one
+            start_marker = f"Brief LOR outline for {student['name']}"
+            if start_marker in content:
+                idx = content.find(start_marker)
+                # Backup to include any leading ** if present
+                if idx >= 2 and content[idx-2:idx] == "**":
+                    idx -= 2
+                elif idx >= 1 and content[idx-1:idx] == "*":
+                    idx -= 1
+                content = content[idx:]
+            
             # Post-process content to replace any lingering raw university tags
             for raw_tag, clean_name in COLLEGE_NAME_MAP.items():
                 content = content.replace(raw_tag, clean_name)

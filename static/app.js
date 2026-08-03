@@ -4499,13 +4499,19 @@ window.generateAIRecommendation = async function() {
     const data = await res.json();
     let rawText = data.response || "";
 
+    // Strip chatbot intro preambles if any present
+    const matchPos = rawText.search(/\*?(\*?Brief LOR outline|\*?Opening hook)/i);
+    if (matchPos > 0) {
+      rawText = rawText.substring(matchPos);
+    }
+
     // Replace any raw university code tags in raw text
     for (const [tag, clean] of Object.entries(COLLEGE_NAME_MAP)) {
       rawText = rawText.split(tag).join(clean);
     }
     rawText = rawText.replace(/\b(UK_|US_|IND_)[A-Z0-9_]+\b/g, m => cleanUniName(m));
 
-    // Helper to convert Markdown to clean HTML for Quill
+    // Helper to convert Markdown / asterisk formatting to clean Quill HTML
     const lines = rawText.split('\n');
     const htmlLines = [];
     let inList = false;
@@ -4514,10 +4520,20 @@ window.generateAIRecommendation = async function() {
       const trimmed = line.trim();
       if (!trimmed) {
         if (inList) { htmlLines.push('</ul>'); inList = false; }
+        htmlLines.push('<p><br></p>');
         continue;
       }
 
-      const formatted = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      // Convert **bold** or *bold* (handles *Title* or *Heading*)
+      let formatted = trimmed
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/(^|\s)\*([^\*\s][^\*]*[^\*\s]|[^\*\s])\*(?=\s|$|\.|:|,)/g, '$1<strong>$2</strong>');
+
+      // If the line itself is wrapped in single asterisks like *Brief LOR outline for...* or *Opening hook idea*
+      if (/^\*[^\*\s].*[^\*\s]\*$/.test(trimmed)) {
+        const inner = trimmed.slice(1, -1);
+        formatted = `<strong>${inner}</strong>`;
+      }
 
       if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
         if (!inList) { htmlLines.push('<ul style="margin-top:4px; margin-bottom:8px; padding-left:20px;">'); inList = true; }
@@ -4526,9 +4542,9 @@ window.generateAIRecommendation = async function() {
       } else {
         if (inList) { htmlLines.push('</ul>'); inList = false; }
         if (trimmed.startsWith('# ')) {
-          htmlLines.push(`<h2 style="font-size:1.2rem; font-weight:700; margin-top:12px; margin-bottom:6px;">${formatted.replace(/^# /, '')}</h2>`);
+          htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;"><strong>${formatted.replace(/^# /, '')}</strong></p>`);
         } else if (trimmed.startsWith('## ')) {
-          htmlLines.push(`<h3 style="font-size:1.05rem; font-weight:700; margin-top:10px; margin-bottom:4px;">${formatted.replace(/^## /, '')}</h3>`);
+          htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;"><strong>${formatted.replace(/^## /, '')}</strong></p>`);
         } else {
           htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;">${formatted}</p>`);
         }
