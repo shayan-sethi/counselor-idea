@@ -15,7 +15,8 @@
       "IIT Bombay",
       "CAMBRIDGE",
       "OXFORD",
-      "US_211440"
+      "US_211440",
+      "US_100663"
     ],
     "cuet_subjects": []
   },
@@ -55,7 +56,9 @@
         "tier": 3
       }
     ],
-    "shortlisted_colleges": []
+    "shortlisted_colleges": [
+      "IND_FLAME"
+    ]
   },
   {
     "id": "STU_103",
@@ -457,7 +460,10 @@
         "tier": 3
       }
     ],
-    "shortlisted_colleges": []
+    "shortlisted_colleges": [],
+    "shortlisted_scholarships": [
+      "schol_karsh_duke"
+    ]
   },
   {
     "id": "STU_112",

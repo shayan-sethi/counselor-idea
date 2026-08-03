@@ -7,7 +7,13 @@
     "eligibility_criteria": "Must be an Indian citizen, accepted for undergraduate admission to Cornell, and eligible for need-based financial aid.",
     "award_value": "Full tuition and living expenses for up to 8 semesters.",
     "deadline": "2026-11-01",
-    "tags": ["STEM", "Engineering", "Architecture", "Need-based", "India"],
+    "tags": [
+      "STEM",
+      "Engineering",
+      "Architecture",
+      "Need-based",
+      "India"
+    ],
     "min_class_level": 12,
     "max_class_level": 12,
     "url": "https://admissions.cornell.edu/apply/international-students/tata-scholarship"
@@ -20,7 +26,12 @@
     "eligibility_criteria": "International student, nominated by their school. Outstanding academic achievement and creativity. Recognized as leaders within their school.",
     "award_value": "Tuition, books, incidental fees, and full residence support for 4 years.",
     "deadline": "2026-10-11",
-    "tags": ["Merit-based", "All Subjects", "Canada", "Leadership"],
+    "tags": [
+      "Merit-based",
+      "All Subjects",
+      "Canada",
+      "Leadership"
+    ],
     "min_class_level": 12,
     "max_class_level": 12,
     "url": "https://future.utoronto.ca/pearson/about/"
@@ -33,7 +44,13 @@
     "eligibility_criteria": "Students from low-income countries who cannot study for a degree in their own countries for political or financial reasons. Must hold an offer from Oxford.",
     "award_value": "Course fees, a grant for living costs, and one return air fare per year.",
     "deadline": "2026-02-14",
-    "tags": ["Need-based", "All Subjects except Medicine", "UK", "Humanities", "Science"],
+    "tags": [
+      "Need-based",
+      "All Subjects except Medicine",
+      "UK",
+      "Humanities",
+      "Science"
+    ],
     "min_class_level": 12,
     "max_class_level": 12,
     "url": "https://www.ox.ac.uk/admissions/undergraduate/fees-and-funding/oxford-support/reach-oxford-scholarship"
@@ -46,7 +63,13 @@
     "eligibility_criteria": "International students demonstrating strong academic preparation and documented need for financial aid.",
     "award_value": "Full tuition, room and board, mandatory fees, demonstrated need, plus 3 summers of funding for research/internships.",
     "deadline": "2026-01-02",
-    "tags": ["Merit-based", "Need-based", "Research", "All Subjects", "US"],
+    "tags": [
+      "Merit-based",
+      "Need-based",
+      "Research",
+      "All Subjects",
+      "US"
+    ],
     "min_class_level": 12,
     "max_class_level": 12,
     "url": "https://ousf.duke.edu/karsh-international-scholarship/"
@@ -59,9 +82,1139 @@
     "eligibility_criteria": "Indian students enrolled in 1st year of UG courses. Must have passed Class 12 with minimum 60%. Household income < Rs. 15 Lakh.",
     "award_value": "Up to Rs. 2 Lakhs over the duration of the degree.",
     "deadline": "2026-10-15",
-    "tags": ["Merit-based", "India", "Undergraduate", "All Subjects"],
+    "tags": [
+      "Merit-based",
+      "India",
+      "Undergraduate",
+      "All Subjects"
+    ],
     "min_class_level": 12,
     "max_class_level": 12,
     "url": "https://www.scholarships.reliancefoundation.org/"
+  },
+  {
+    "id": "schol_csv_c2ce3812",
+    "name": "Holmes Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a transfer student with a minimum 3.5 GPA and a minimum of 12 semester hours prior to enrolling at Trevecca.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/holmes-scholarship"
+  },
+  {
+    "id": "schol_csv_e10fec62",
+    "name": "Army ROTC Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is competitive.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/army-rotc-scholarship-1"
+  },
+  {
+    "id": "schol_csv_e674084e",
+    "name": "Arnold Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon academic excellence, leadership, and community involvement.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/arnold-scholarship"
+  },
+  {
+    "id": "schol_csv_573acc94",
+    "name": "Pamplin Scholars Program",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Program consists of two awards: the Leadership Award and the Scholar Award. Leadership Award applicant must be a senior enrolled in a Virginia public high school and must have a minimum 3.75 GPA and rank in top 5% of class. One Leadership Award recipient will be selected to receive the Scholar Award.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/pamplin-scholars-program"
+  },
+  {
+    "id": "schol_csv_7d661399",
+    "name": "Aura E. Severinghaus Award",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be an underrepresented minority student who is in their senior year at the College of Physicians and Surgeons of Columbia University. Applicant must have demonstrated outstanding academic achievement, leadership, and community service.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/aura-e-severinghaus-award"
+  },
+  {
+    "id": "schol_csv_d6dd8f35",
+    "name": "Binkley-Stephenson Award",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Awarded for the best scholarly article published in the Journal of American History during the preceding calendar year (March, June, September, December issues).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/binkley-stephenson-award"
+  },
+  {
+    "id": "schol_csv_f8e63282",
+    "name": "Music Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon audition and interview. Band and choral scholarships are available to music and non-music majors.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/music-scholarship-8"
+  },
+  {
+    "id": "schol_csv_a99b1f09",
+    "name": "Chemistry and Biochemistry Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon academic performance, SAT or ACT scores, leadership, extracurricular involvement, and community service.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/chemistry-and-biochemistry-scholarship"
+  },
+  {
+    "id": "schol_csv_eabfdb0b",
+    "name": "Bonner Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must rank in top two-fifths of class, demonstrate commitment to community service, and meet specific academic and financial need criteria.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/bonner-scholarship"
+  },
+  {
+    "id": "schol_csv_ac53fca9",
+    "name": "Mary R. Hardwick Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon financial need, overall academic standing, and applicant&#039;s required essay.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/mary-r-hardwick-scholarship"
+  },
+  {
+    "id": "schol_csv_9007f3cc",
+    "name": "Cochran-McDonald Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be employed by a Cochran-family-operated McDonald&#039;s restaurant and have a good work record and a recommendation from the manager. Financial need may be considered. Preference is given to freshmen and applicants demonstrating academic excellence.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/cochran-mcdonald-scholarship"
+  },
+  {
+    "id": "schol_csv_889159d0",
+    "name": "Prestige Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a U.S. Citizen and must have admission to the Columbus campus for autumn quarter after high school graduation. Applicant must meet two out of three of the following requirements: top 20% class rank, 3.2 GPA on a 4.0 scale, 23 ACT/1070 SAT. Applicant must demonstrate leadership experience and a record of extracurricular activities and service. One or more of the following additional criteria will be considered: First-generation college attendance, race and ethnic background, socioeconomic factors, state and county of residence.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/prestige-scholarship"
+  },
+  {
+    "id": "schol_csv_7ae6f540",
+    "name": "Joel W. Collins Sr. Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum cumulative 2.5 GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/joel-w-collins-sr-scholarship"
+  },
+  {
+    "id": "schol_csv_e02955e1",
+    "name": "John A. Baker Memorial Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a 2.0 GPA and a strong desire to complete degree. Selection based on financial need.",
+    "award_value": "$250.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/john-a-baker-memorial-scholarship"
+  },
+  {
+    "id": "schol_csv_196676b4",
+    "name": "Honor Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is by invitation upon admission. Applicant must have a minimum 3.3 GPA and minimum composite ACT score of 26 (combined SAT Reasoning score of 1170).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/honor-scholarship-5"
+  },
+  {
+    "id": "schol_csv_16170350",
+    "name": "Past President Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum 3.2 GPA and demonstrate contributions to the college community. Selection is based upon financial need, leadership ability, and character.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/past-president-scholarship"
+  },
+  {
+    "id": "schol_csv_ad332dc0",
+    "name": "Theta Delta Chi Educational Foundation Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be an active member in good standing at any active charge or colony in the Fraternity who is a junior or senior in college. Minimum 3.0 GPA required.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/theta-delta-chi-educational-foundation-scholarship"
+  },
+  {
+    "id": "schol_csv_8aa90654",
+    "name": "William H. Dunlap Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have lost one or both parents, either by death, desertion, or other conditions, which prevent such students from having normal parental care.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/william-h-dunlap-scholarship"
+  },
+  {
+    "id": "schol_csv_537d14b2",
+    "name": "Tau Beta PI/SAE Engineering Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a 3.75 GPA and be accepted into an ABET accredited program. Applicant must submit essay and transcripts. Selection is based upon standardized test scores.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/tau-beta-pisae-engineering-scholarship"
+  },
+  {
+    "id": "schol_csv_a3ae25d5",
+    "name": "North Jersey Regional Development Council Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon financial need.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/north-jersey-regional-development-council-scholarship"
+  },
+  {
+    "id": "schol_csv_2619d964",
+    "name": "International Students Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a student whose parents are not employed by the Seventh-day Adventist church and who enroll under a student visa status matriculated in a degree program. Applicants must be accepted as degree candidates and enroll for a minimum of 12 credits each semester.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/international-students-scholarship"
+  },
+  {
+    "id": "schol_csv_6949d68c",
+    "name": "Charles W. and Alice P. Davies Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a full-time freshman or sophomore resident of Fremont or Mills counties in Iowa. Selection is based upon class rank, GPA, ACT score, and financial need.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/charles-w-and-alice-p-davies-scholarship"
+  },
+  {
+    "id": "schol_csv_bc4151c4",
+    "name": "Community College Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a transfer and a have a minimum 3.0 GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/community-college-scholarship-5"
+  },
+  {
+    "id": "schol_csv_97cd97ac",
+    "name": "Helen I. and Rodney E. Nern Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must demonstrate financial need and be enrolled at Purdue University Fort Wayne. Minimum 3.0 GPA required of continuing students. FAFSA required of all applicants.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/helen-i-and-rodney-e-nern-scholarship"
+  },
+  {
+    "id": "schol_csv_8b057725",
+    "name": "Scholarship Incentive",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum 2.5 GPA, demonstrate financial need, and be enrolled full-time in an institution in Delaware or Pennsylvania. Applicants from other states may be considered if pursuing a major that is not offered in Delaware.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/scholarship-incentive"
+  },
+  {
+    "id": "schol_csv_6687521d",
+    "name": "Summer Scholarship in Epidemiology",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Award is to increase skills in epidemiology for M.D.&#039;s currently working in cystic fibroses.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/summer-scholarship-in-epidemiology"
+  },
+  {
+    "id": "schol_csv_90a9c437",
+    "name": "Pay it Forward Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a graduate of Clarion-Limestone High School or Keystone Oaks High School who clearly understands and demonstrates the concept of Pay it Forward. Applicant must have a minimum 2.75 secondary school GPA and minimum combined SAT Reasoning score of 900 (composite ACT score of 19). Essay required.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/pay-it-forward-scholarship"
+  },
+  {
+    "id": "schol_csv_b47630fc",
+    "name": "Bernard Ramsey Honors Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must rank in the top 5% of high school class and have a minimum combined SAT score of 1400 (composite ACT score of 31). Award is granted to Foundation Fellowship finalists who do not receive the fellowship. Applicant must have 3.7 GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/bernard-ramsey-honors-scholarship"
+  },
+  {
+    "id": "schol_csv_60875171",
+    "name": "Friends of IPFW Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a high school graduate who ranks in top 30% of secondary school class, has a minimum combined SAT score of 1650 (composite ACT score of 24), and has been admitted to the university.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/friends-of-ipfw-scholarship"
+  },
+  {
+    "id": "schol_csv_b3882299",
+    "name": "Foundation Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a member of a state, county, provincial, municipal, community, industrial, or federal fire department, must be interested in furthering his or her education in the fire sciences, and must submit application and statement of need. Selection is based upon need, desire, and initiative. Must be a member for two years of an emergency service organization (fire or emergency medical service).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/foundation-scholarship-3"
+  },
+  {
+    "id": "schol_csv_5ff4bc33",
+    "name": "Piedmont Incentive Grant",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must demonstrate financial need.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/piedmont-incentive-grant"
+  },
+  {
+    "id": "schol_csv_13dc9f6a",
+    "name": "Athletic Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Description not available",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/athletic-scholarship-12"
+  },
+  {
+    "id": "schol_csv_d40fb9d1",
+    "name": "Elon College Fellows Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must complete essay and interview if selected. Selection is based upon SAT Reasoning or ACT scores, GPA, and high school curriculum.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/elon-college-fellows-scholarship"
+  },
+  {
+    "id": "schol_csv_240a776f",
+    "name": "Raymond L. Boozer Endowed Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a resident of Lexington County, S.C. and have a minimum cumulative 2.5 GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/raymond-l-boozer-endowed-scholarship"
+  },
+  {
+    "id": "schol_csv_a55955fb",
+    "name": "Eleanor Tillquist Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a Ventura County resident who is a female, a student at Ventura College, with a minimum 3.0 GPA. Applicant must be interested in a medical related degree and demonstrate financial need and community service.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/eleanor-tillquist-scholarship"
+  },
+  {
+    "id": "schol_csv_9b690790",
+    "name": "Polly H. and Walter L. Lowry Memorial Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum cumulative 2.5 GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/polly-h-and-walter-l-lowry-memorial-scholarship"
+  },
+  {
+    "id": "schol_csv_486e62cc",
+    "name": "Lincoln Food Service Grant",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a member of the American School Food Service Association (ASFSA).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/lincoln-food-service-grant"
+  },
+  {
+    "id": "schol_csv_6e19f813",
+    "name": "Alumni Association Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a Canadian citizen or landed immigrant with a minimum grade average of 88%. Selection is based upon academic merit, academic promise, and contribution to school or community life. Award is in Canadian dollars.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/alumni-association-scholarship-4"
+  },
+  {
+    "id": "schol_csv_4b604983",
+    "name": "Mary Feindt Forum for Women in Surveying Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must submit six copies of application, proof of membership in ACSM, a brief statement describing educational objectives, future plans of study or research, professional activities, and financial need, at least three letters of recommendation, and official transcript.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/mary-feindt-forum-for-women-in-surveying-scholarship"
+  },
+  {
+    "id": "schol_csv_9844bcd4",
+    "name": "IEHA Education Foundation Scholarship Award",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be an IEHA member.",
+    "award_value": "$800.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/ieha-education-foundation-scholarship-award"
+  },
+  {
+    "id": "schol_csv_738cfdd9",
+    "name": "Founders Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum cumulative high school GPA of 3.2 on a 4.0 scale and a SAT Reasoning composite score of 1700 (ACT equivalent score of 25).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/founders-scholarship-15"
+  },
+  {
+    "id": "schol_csv_8b5456ee",
+    "name": "Easterm States Exposition Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Preference is given to applicant who has participated in the Eastern States Exposition.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/easterm-states-exposition-scholarship"
+  },
+  {
+    "id": "schol_csv_e4a19fad",
+    "name": "Flight Safety International Instrument Refresher Course Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a Whirly-Girl in good standing and possess an Instrument Rating Helicopter to apply. Course consists of 12 hours of academic training, six hours of simulator instruction and will be conducted at the Flight Safety Learning Center in Hurst, Texas.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/flight-safety-international-instrument-refresher-course-scholarship"
+  },
+  {
+    "id": "schol_csv_390c56b7",
+    "name": "Canadian Tuition Grant",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a Canadian student who enrolls full-time.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/canadian-tuition-grant"
+  },
+  {
+    "id": "schol_csv_f35fd834",
+    "name": "Missionary Grant",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a dependent of a missionary.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/missionary-grant"
+  },
+  {
+    "id": "schol_csv_994ee269",
+    "name": "R. Paul Nelson Full Tuition Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon GPA and SAT or ACT scores.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/r-paul-nelson-full-tuition-scholarship"
+  },
+  {
+    "id": "schol_csv_1f35e325",
+    "name": "Provost&#039;s Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon academic qualifications, including ACT/SAT I scores, class rank, and recalculated GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/provosts-scholarship-1"
+  },
+  {
+    "id": "schol_csv_9bc7c2ee",
+    "name": "Economics Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be enrolled at the University of Missouri at Columbia.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/economics-scholarship"
+  },
+  {
+    "id": "schol_csv_fa8e6529",
+    "name": "Elizabeth and James McKenzie Andrews Bursary",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be an Alberta, Canada resident and have a minimum 2.6 GPA. Applicant must demonstrate academic merit and financial need. Award is in Canadian dollars.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/elizabeth-and-james-mckenzie-andrews-bursary"
+  },
+  {
+    "id": "schol_csv_d3723c3c",
+    "name": "Leaders Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum high school GPA of 2.8 and a minimum combined SAT Reasoning score of 920 (composite ACT score of 19).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/leaders-scholarship"
+  },
+  {
+    "id": "schol_csv_37ce8548",
+    "name": "Atlanta Press Club Journalism Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must demonstrate interest in journalism, be attending a school in Georgia, and demonstrate financial need. Selection is also based upon academic performance. Two awards available for both broadcast and print journalism applicants.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/atlanta-press-club-journalism-scholarship"
+  },
+  {
+    "id": "schol_csv_5f7290b1",
+    "name": "Lois Virginia Singletary Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum 3.0 GPA and show promise of academic success and leadership.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/lois-virginia-singletary-scholarship"
+  },
+  {
+    "id": "schol_csv_e8231fcf",
+    "name": "D.W. Colvard Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a North Carolina resident, have a minimum 3.85 GPA, and demonstrate leadership and community and school service. Interview required of finalists.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/dw-colvard-scholarship"
+  },
+  {
+    "id": "schol_csv_071e8f6c",
+    "name": "Provost Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a GPA between 3.25 and 3.65 and a SAT Reasoning score between 950 and 1100 (composite ACT score of 23).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/provost-scholarship-4"
+  },
+  {
+    "id": "schol_csv_0beda745",
+    "name": "Shawnee State University Alumni Association Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum 3.0 GPA, be the child of a Shawnee State University alumnus/a, and a recent high school graduate.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/shawnee-state-university-alumni-association-scholarship"
+  },
+  {
+    "id": "schol_csv_56ef0b0e",
+    "name": "Girl Scout Leadership Award",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a woman, be an active Girl Scout member, have a letter of recommendation from Girl Scout Leader, submit a copy of Girl Scout record, meet all admissions requirements, and demonstrate financial need. FAFSA is required.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/girl-scout-leadership-award"
+  },
+  {
+    "id": "schol_csv_19a951f9",
+    "name": "James C. Basile Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a Ventura County Resident, demonstrate financial need, have a 3.0 GPA and be enrolled in a public college or university in California. Preference for students from schools in Simi Valley or Moorpark; or for Ventura County students who are physically or visually impaired; or for Ventura County students who have had one or both parents killed or disabled while engaged in services as a fire fighter or law enforcement provider.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/james-c-basile-scholarship"
+  },
+  {
+    "id": "schol_csv_84f79aa3",
+    "name": "Indiana University at Fort Wayne 25th Anniversary Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a new high school graduate and demonstrate superior academic achievement, leadership, or service within his or her school or community.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/indiana-university-at-fort-wayne-25th-anniversary-scholarship"
+  },
+  {
+    "id": "schol_csv_6092eba2",
+    "name": "Arturo Schomburg Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must demonstrate promise in the areas of strong academic performance and leadership at Hampshire College and in the community.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/arturo-schomburg-scholarship"
+  },
+  {
+    "id": "schol_csv_79040323",
+    "name": "Nursing Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be enrolled at the University of Missouri at Columbia.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/nursing-scholarship-3"
+  },
+  {
+    "id": "schol_csv_e33daf49",
+    "name": "Howard E. and Wilma J. Adkins Memorial Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum 3.2 GPA in engineering (2.8 overall), be at least 18 years old, and be a U.S. citizen. Preference is given to applicants residing or attending school in Wisconsin or Kentucky.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/howard-e-and-wilma-j-adkins-memorial-scholarship"
+  },
+  {
+    "id": "schol_csv_037e3609",
+    "name": "Mary Ann Reinert Nursing Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon description of career goals, volunteer and work experience, awards/honors, letters of recommendation, transcript, class rank, GPA, and financial need. Applicant must be enrolled full-time in an approved nursing or other health-related program and must be a resident in the Heartland Foundation service region.",
+    "award_value": "$300.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/mary-ann-reinert-nursing-scholarship"
+  },
+  {
+    "id": "schol_csv_03cf84f9",
+    "name": "Kansas All-State Academic Team Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be recognized as a member of the state&#039;s All-State Academic Team. Minimum 3.75 GPA required.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/kansas-all-state-academic-team-scholarship"
+  },
+  {
+    "id": "schol_csv_ded8ae0c",
+    "name": "Academic Excellence Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a Wisconsin resident enrolled full-time at a U of Wisconsin campus, Wisconsin Tech Coll or independent Wisconsin institution. Applicant must have the highest GPA in his or her class.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/academic-excellence-scholarship-6"
+  },
+  {
+    "id": "schol_csv_2edd6c91",
+    "name": "Technical and Community College Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a student member of ASM International Foundation. Application information can be found through local ASM chapter.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/technical-and-community-college-scholarship"
+  },
+  {
+    "id": "schol_csv_c440895b",
+    "name": "Dean&#039;s Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum 3.3 GPA and a minimum composite ACT score of 25 (combined SAT Reasoning score of 1130).",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/deans-scholarship-14"
+  },
+  {
+    "id": "schol_csv_bc910539",
+    "name": "Hopi Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be an enrolled member of the Hopi Tribe. Applicant who is an entering freshman must rank in top tenth of class and have a minimum composite ACT score of 21 (combined SAT Reasoning score of 930). Undergraduate applicants must have a minimum 2.5 GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/hopi-scholarship"
+  },
+  {
+    "id": "schol_csv_75d04327",
+    "name": "Lou Henry Hoover Girl Scout Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must demonstrate involvement in the Girl Scout Movement. Selection is based upon financial need.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/lou-henry-hoover-girl-scout-scholarship"
+  },
+  {
+    "id": "schol_csv_7628bb78",
+    "name": "John Wallace Cathcart II Annual Memorial Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have a minimum cumulative 2.5 GPA.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/john-wallace-cathcart-ii-annual-memorial-scholarship"
+  },
+  {
+    "id": "schol_csv_f9966cbc",
+    "name": "Major Madison Bell Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must be a lineal descendant of worthy Confederates or collateral descendant who is a member of the Children of the Confederacy or the United Daughters of the Confederacy. Applicant must have at least a 3.0 GPA, be enrolled in an accredited college or university, and carry a minimum of 12 hours each semester. Applicant must be prepared to pass entrance examination of prospective college or university. Applicant must submit proof of Confederate Military Record, line of descent from Confederate ancestor, a letter of endorsement from sponsoring Chapter, a letter of recommendation, complete financial report, official transcripts, an essay on the significance of a southern heritage, and a wallet-size photo. Original and four copies of the application forms and five copies of all documents, certificates, and letters must be submitted to the Division Director of Education. All inquiries must include a self-addressed, stamped envelope.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/major-madison-bell-scholarship"
+  },
+  {
+    "id": "schol_csv_9be5acc7",
+    "name": "Stanley D. Conklin Scholarship for Nurses",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must rank in the top two-fifths of class and have a minimum combined SAT Reasoning score of 1000.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/stanley-d-conklin-scholarship-for-nurses"
+  },
+  {
+    "id": "schol_csv_576a1476",
+    "name": "Dana Christmas Scholarship for Heroism",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have been 21 or younger at the time of heroic act and be a NJ resident.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/dana-christmas-scholarship-for-heroism"
+  },
+  {
+    "id": "schol_csv_84bf3c63",
+    "name": "Senior Fellowship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Applicant must have held a doctoral degree for seven years or more. Detailed proposal including a justification for conducting research in residence at the Smithsonian Institution is required.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/senior-fellowship"
+  },
+  {
+    "id": "schol_csv_688251e5",
+    "name": "Dean&#039;s Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Selection is based upon class rank, GPA, SAT or ACT scores, and advanced classes.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/deans-scholarship-85"
+  },
+  {
+    "id": "schol_csv_f56daadc",
+    "name": "Bill and Lynn Stamm Kovach Scholarship",
+    "type": "General",
+    "provider": "External Provider",
+    "eligibility_criteria": "Entering freshman applicant must have a minimum 2.5 GPA and a minimum composite ACT score of 24. Undergraduate applicant must demonstrate potential for academic success and financial need.",
+    "award_value": "$500.0",
+    "deadline": "Unknown deadline",
+    "tags": [
+      "CSV_Import"
+    ],
+    "min_class_level": 9,
+    "max_class_level": 12,
+    "url": "https://www.collegescholarships.org/financial-aid/scholarship/bill-and-lynn-stamm-kovach-scholarship"
   }
 ]

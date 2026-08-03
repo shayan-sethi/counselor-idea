@@ -3990,6 +3990,9 @@ function openScholarshipActionModal(scholarshipId, scholarshipName) {
   document.getElementById('btn-sa-recommend').disabled = false;
   
   modal.style.display = 'flex';
+  
+  // Auto-trigger the AI recommendations when the modal opens
+  fetchAIRecommendations();
 }
 window.openScholarshipActionModal = openScholarshipActionModal;
 
