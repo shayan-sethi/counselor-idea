@@ -16,34 +16,11 @@ ELITE_KEYWORDS = [
 HARD_BLOCK_TYPES = {"subject_missing", "cuet_missing_subject", "cuet_unlawful_domain"}
 
 
+from .groq_utils import get_groq_api_keys, groq_post_with_retry
+
+
 def _groq_post_with_retry(groq_key, payload, label="Groq", max_wait=15):
-    delays = [3]
-    deadline = time.time() + max_wait
-    last_err = "unknown"
-
-    for attempt, delay in enumerate(delays + [0], start=1):
-        try:
-            res = requests.post(
-                GROQ_ENDPOINT,
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json=payload,
-                timeout=30,
-            )
-            if res.status_code == 200:
-                return res, None
-            elif res.status_code in (429, 503):
-                last_err = f"HTTP {res.status_code} (rate-limit / overload)"
-            else:
-                last_err = f"HTTP {res.status_code}: {res.text[:200]}"
-                return None, last_err
-        except Exception as exc:
-            last_err = str(exc)
-
-        if time.time() + delay > deadline or delay == 0:
-            break
-        time.sleep(delay)
-
-    return None, last_err
+    return groq_post_with_retry(payload, label=label, max_wait=max_wait, initial_key=groq_key)
 
 
 class LLMScorer:
@@ -107,8 +84,8 @@ class LLMScorer:
     # ── 1. Score + classify a student-target pair ────────────────────────
 
     def score_and_classify(self, student, target, gaps, remediations=None):
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if not groq_key or not student or not target:
+        keys = get_groq_api_keys()
+        if not keys or not student or not target:
             return None
 
         ck = self._cache_key("score", student.get("id"), target.get("id", target.get("name")))
@@ -177,8 +154,7 @@ Return ONLY valid JSON:
     # ── 2. Classify a shortlisted college ────────────────────────────────
 
     def classify_shortlist(self, student, college, requirements_info=None):
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if not groq_key:
+        if not get_groq_api_keys():
             return None
 
         college_name = college.get("name", "Unknown")
@@ -289,9 +265,8 @@ Return ONLY valid JSON:
 
     # ── 3. Score opportunities (batch) ───────────────────────────────────
 
-    def score_opportunities(self, student, competitions):
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if not groq_key or not competitions:
+    def rank_opportunities(self, student, competitions):
+        if not get_groq_api_keys() or not competitions:
             return None
 
         ck = self._cache_key("opps", student.get("id"), len(competitions))
@@ -370,8 +345,7 @@ Return ONLY a valid JSON array (one entry per competition):
     # ── 4. Priority queue ────────────────────────────────────────────────
 
     def rank_priority(self, student, evaluations):
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if not groq_key or not evaluations:
+        if not get_groq_api_keys() or not evaluations:
             return None
 
         eval_summaries = {}

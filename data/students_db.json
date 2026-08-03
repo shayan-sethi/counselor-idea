@@ -35,7 +35,9 @@
         "tier": 3
       }
     ],
-    "shortlisted_colleges": []
+    "shortlisted_colleges": [
+      "MIT"
+    ]
   },
   {
     "id": "STU_103",
@@ -527,7 +529,8 @@
       }
     ],
     "shortlisted_colleges": [
-      "IMPERIAL"
+      "IMPERIAL",
+      "OXFORD"
     ]
   },
   {

@@ -3,46 +3,11 @@ import json
 import time
 import datetime
 
-GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODEL    = "llama-3.3-70b-versatile"
+from .groq_utils import get_groq_api_keys, groq_post_with_retry
+
 
 def _groq_post_with_retry(groq_key, payload, label="Groq", max_wait=15):
-    """
-    POST to Groq with exponential-backoff retries for up to `max_wait` seconds.
-    Returns (response_object | None, error_string | None)
-    """
-    import requests
-    delays = [3]              # 1 retry after 3 s — cache handles repeated clicks
-    deadline = time.time() + max_wait
-    last_err = "unknown"
-
-    for attempt, delay in enumerate(delays + [0], start=1):
-        try:
-            print(f"[{label}] attempt {attempt} …")
-            res = requests.post(
-                GROQ_ENDPOINT,
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json=payload,
-                timeout=30,
-            )
-            if res.status_code == 200:
-                return res, None
-            elif res.status_code in (429, 503):
-                last_err = f"HTTP {res.status_code} (rate-limit / overload)"
-                print(f"[{label}] {last_err} — waiting {delay}s before retry …")
-            else:
-                last_err = f"HTTP {res.status_code}: {res.text[:200]}"
-                print(f"[{label}] non-retryable error: {last_err}")
-                return None, last_err
-        except Exception as exc:
-            last_err = str(exc)
-            print(f"[{label}] request exception: {last_err}")
-
-        if time.time() + delay > deadline or delay == 0:
-            break
-        time.sleep(delay)
-
-    return None, last_err
+    return groq_post_with_retry(payload, label=label, max_wait=max_wait, initial_key=groq_key)
 
 
 class ScholarshipAgent:
@@ -61,9 +26,8 @@ class ScholarshipAgent:
         if not candidate_scholarships:
             return []
 
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if groq_key:
-            result = ScholarshipAgent._match_with_groq(student, candidate_scholarships, groq_key, silent)
+        if get_groq_api_keys():
+            result = ScholarshipAgent._match_with_groq(student, candidate_scholarships, None, silent)
             if result is not None:
                 return result
 
@@ -217,8 +181,8 @@ Return a JSON object:
             "temperature": 0.15,
         }
 
-        if groq_key:
-            res, err = _groq_post_with_retry(groq_key, payload, label="ScholarshipAgent.recommend")
+        if get_groq_api_keys():
+            res, err = _groq_post_with_retry(None, payload, label="ScholarshipAgent.recommend")
             if res is not None:
                 try:
                     data = json.loads(res.json()["choices"][0]["message"]["content"])

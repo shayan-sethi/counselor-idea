@@ -1531,7 +1531,7 @@ def api_counselor_agent():
             "audits": student_audits
         })
 
-    groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+    from prism_agent.groq_utils import get_groq_api_keys, groq_post_with_retry
     alumni_db = load_alumni()
 
     system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
@@ -1554,28 +1554,23 @@ CRITICAL REASONING INSTRUCTIONS:
 4. Format your output in clean Markdown with appropriate headers, bold text, bullet points, and actionable details.
 5. If drafting an email, include Subject line, To address, Salutation, specific student gap evidence, and professional sign-off.
 """
-    if groq_key:
-        import requests
+    if get_groq_api_keys():
         try:
             print("[CounselorAgent] Calling Groq API (llama-3.3-70b-versatile)...")
-            res = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json={
-                    "model": "llama-3.3-70b-versatile",
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": f"COUNSELOR PROMPT / COMMAND:\n{command}"}
-                    ],
-                    "temperature": 0.2
-                },
-                timeout=30
-            )
-            if res.status_code == 200:
+            payload = {
+                "model": "llama-3.3-70b-versatile",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": f"COUNSELOR PROMPT / COMMAND:\n{command}"}
+                ],
+                "temperature": 0.2
+            }
+            res, err = groq_post_with_retry(payload, label="CounselorAgent")
+            if res and res.status_code == 200:
                 text_out = res.json()["choices"][0]["message"]["content"]
                 return jsonify({"response": text_out.strip()})
             else:
-                print(f"[CounselorAgent Warning] Groq returned HTTP {res.status_code}: {res.text}")
+                print(f"[CounselorAgent Warning] Groq failed: {err}")
         except Exception as g_err:
             print(f"[CounselorAgent Warning] Groq reasoning call failed: {g_err}")
 

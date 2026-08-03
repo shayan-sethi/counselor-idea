@@ -3194,46 +3194,83 @@ function renderCohortReport() {
 }
 window.renderCohortReport = renderCohortReport;
 
-function generateStudentPdf() {
+async function generateStudentPdf() {
   const element = document.getElementById('report-sec-student');
   if (!element) return;
+  
+  const nameEl = document.getElementById('rep-name');
+  const studentName = nameEl ? nameEl.innerText.trim() : 'Student';
+  const fileName = `${studentName.replace(/[^a-zA-Z0-9_-]/g, '_')}_Status_Report.pdf`;
+
+  const actionBtns = element.querySelector('.report-action-buttons');
+  if (actionBtns) actionBtns.style.display = 'none';
+
   const opt = {
     margin:       0.3,
-    filename:     'Student_Report.pdf',
+    filename:     fileName,
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2 },
+    html2canvas:  { scale: 2, useCORS: true, logging: false },
     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
   };
-  if (typeof html2pdf !== 'undefined') {
-    html2pdf().set(opt).from(element).save();
-  } else {
-    alert("PDF library is still loading. Please try again in a few seconds.");
+
+  try {
+    if (typeof html2pdf !== 'undefined') {
+      await html2pdf().set(opt).from(element).save();
+    } else {
+      window.print();
+    }
+  } catch (err) {
+    console.error("PDF Export error, triggering fallback print:", err);
+    window.print();
+  } finally {
+    if (actionBtns) actionBtns.style.display = 'flex';
   }
 }
 
-function generateCohortPdf() {
+async function generateCohortPdf() {
   const element = document.getElementById('report-sec-cohort');
   if (!element) return;
+
+  const actionBtns = element.querySelector('.report-action-buttons');
+  if (actionBtns) actionBtns.style.display = 'none';
+
   const opt = {
     margin:       0.3,
-    filename:     'Cohort_Report.pdf',
+    filename:     'Cohort_Summary_Report.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2 },
+    html2canvas:  { scale: 2, useCORS: true, logging: false },
     jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
   };
-  if (typeof html2pdf !== 'undefined') {
-    html2pdf().set(opt).from(element).save();
-  } else {
-    alert("PDF library is still loading. Please try again in a few seconds.");
+
+  try {
+    if (typeof html2pdf !== 'undefined') {
+      await html2pdf().set(opt).from(element).save();
+    } else {
+      window.print();
+    }
+  } catch (err) {
+    console.error("PDF Export error, triggering fallback print:", err);
+    window.print();
+  } finally {
+    if (actionBtns) actionBtns.style.display = 'block';
   }
 }
 
 function sendReportEmail() {
   const nameEl = document.getElementById('rep-name');
-  const name = nameEl ? nameEl.innerText : "Student";
+  const name = nameEl ? nameEl.innerText.trim() : "Student";
+  
+  const sel = document.getElementById('report-student-select');
+  const studentId = sel ? sel.value : '';
+  const s = (typeof students !== 'undefined' && Array.isArray(students)) ? students.find(x => x.id === studentId) : null;
+  const defaultEmail = s && s.email ? s.email : `${name.toLowerCase().replace(/[^a-z0-9]/g, '.')}@example.com`;
+
+  const email = prompt(`Enter recipient email address for ${name}:`, defaultEmail);
+  if (!email) return;
+
   const subject = encodeURIComponent(`Admissions Status Report: ${name}`);
-  const body = encodeURIComponent(`Hi ${name},\n\nPlease find your latest admissions status report and compliance checklist attached as a PDF.\n\nBest regards,\nYour Counselor`);
-  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  const body = encodeURIComponent(`Hi ${name},\n\nPlease find your latest admissions status report and compliance checklist attached.\n\nBest regards,\nYour Counselor`);
+  window.location.href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
 }
 async function saveReportNotes() {
   const sel = document.getElementById('report-student-select');

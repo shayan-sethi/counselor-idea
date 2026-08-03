@@ -3,6 +3,7 @@ import re
 import os
 import json
 import requests
+from .groq_utils import get_groq_api_keys, groq_post_with_retry
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -312,10 +313,9 @@ class PRISMAgent:
         return self._solve_goal_llm(student_id, target_id, students_list, simulated_subjects, silent)
 
     def _solve_goal_llm(self, student_id, target_id, students_list, simulated_subjects=None, silent=False):
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        if not groq_key:
+        if not get_groq_api_keys():
             if not silent:
-                print("[Agent] No GROQ_API_KEY set, falling back to simulated pipeline.")
+                print("[Agent] No Groq API keys set, falling back to simulated pipeline.")
             return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
 
         tool_dispatch = {
@@ -362,28 +362,18 @@ class PRISMAgent:
         max_iterations = 12
 
         for _ in range(max_iterations):
-            try:
-                res = requests.post(
-                    "https://api.groq.com/openai/v1/chat/completions",
-                    headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                    json={
-                        "model": "llama-3.3-70b-versatile",
-                        "messages": messages,
-                        "tools": TOOL_SCHEMAS,
-                        "tool_choice": "auto",
-                        "temperature": 0.1,
-                        "max_tokens": 4096,
-                    },
-                    timeout=30,
-                )
-            except Exception as e:
+            groq_payload = {
+                "model": "llama-3.3-70b-versatile",
+                "messages": messages,
+                "tools": TOOL_SCHEMAS,
+                "tool_choice": "auto",
+                "temperature": 0.1,
+                "max_tokens": 4096,
+            }
+            res, err = groq_post_with_retry(groq_payload, label="Agent")
+            if not res or res.status_code != 200:
                 if not silent:
-                    print(f"[Agent] Groq request failed: {e}")
-                break
-
-            if res.status_code != 200:
-                if not silent:
-                    print(f"[Agent] Groq API error {res.status_code}: {res.text[:200]}")
+                    print(f"[Agent] Groq API request failed: {err}")
                 break
 
             choice = res.json()["choices"][0]
