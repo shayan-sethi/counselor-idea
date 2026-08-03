@@ -4777,7 +4777,7 @@ async function renderRecyclingView() {
           </div>
           <div style="background:var(--bg); padding:10px; border-radius:8px;">
             <div style="font-size:0.75rem; color:var(--text-3);">Testing</div>
-            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${Object.entries(a.standardized_tests || {}).map(([k,v])=>k+': '+v).join(', ') || 'Test Optional'}</div>
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${Object.entries(a.standardized_tests || {}).map(([k,v])=> k.toUpperCase() === 'SAT' && typeof v === 'number' ? k+': '+(Math.round(v/10)*10) : k+': '+v).join(', ') || 'Test Optional'}</div>
           </div>
         </div>
         

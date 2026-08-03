@@ -964,7 +964,10 @@ def flatten_student(s):
     s.setdefault("predicted_aggregate", g12 or None)
 
     # SAT / ACT flat fields
-    s.setdefault("sat_score", tests.get("SAT") or tests.get("sat"))
+    raw_sat = tests.get("SAT") or tests.get("sat")
+    if isinstance(raw_sat, (int, float)):
+        raw_sat = int(round(raw_sat / 10.0) * 10)
+    s.setdefault("sat_score", raw_sat)
     s.setdefault("act_score", tests.get("ACT") or tests.get("act"))
 
     return s
