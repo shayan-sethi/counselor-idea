@@ -9,18 +9,16 @@ Usage:
 import os, json, time, re
 import pandas as pd
 
-# ─── Load Gemini ──────────────────────────────────────
-api_key = os.environ.get("GEMINI_API_KEY", "").strip().strip('"')
+# ─── Load Groq ────────────────────────────────────────
+api_key = os.environ.get("GROQ_API_KEY", "").strip().strip('"')
 if not api_key:
     # Try reading from .env
     if os.path.exists(".env"):
         for line in open(".env"):
-            if "GEMINI_API_KEY" in line:
+            if "GROQ_API_KEY" in line:
                 api_key = line.split("=", 1)[1].strip().strip('"').strip("'")
 
-import google.generativeai as genai
-genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-2.0-flash")
+import requests
 
 # ─── Load all university names ─────────────────────────
 names = set()
@@ -82,13 +80,30 @@ def classify_batch(batch):
     name_list = "\n".join(f"- {n}" for n in batch)
     prompt = PROMPT_TEMPLATE.format(names=name_list)
     try:
-        resp = model.generate_content(prompt)
-        text = resp.text.strip()
-        # Strip markdown code fences if any
-        text = re.sub(r'^```json\s*', '', text)
-        text = re.sub(r'\s*```$', '', text)
-        result = json.loads(text)
-        return {k.lower(): int(v) for k, v in result.items() if isinstance(v, (int, str))}
+        res = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={
+                "model": "llama-3.3-70b-versatile",
+                "messages": [
+                    {"role": "system", "content": "You are an expert on global university prestige. Return ONLY valid JSON."},
+                    {"role": "user", "content": prompt}
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.1
+            },
+            timeout=30
+        )
+        if res.status_code == 200:
+            text = res.json()["choices"][0]["message"]["content"].strip()
+            # Strip markdown code fences if any
+            text = re.sub(r'^```json\s*', '', text)
+            text = re.sub(r'\s*```$', '', text)
+            result = json.loads(text)
+            return {k.lower(): int(v) for k, v in result.items() if isinstance(v, (int, str))}
+        else:
+            print(f"  ⚠ Batch error: HTTP {res.status_code} - {res.text}")
+            return {}
     except Exception as e:
         print(f"  ⚠ Batch error: {e}")
         return {}

@@ -4,10 +4,6 @@ import json
 import datetime
 import joblib
 import pandas as pd
-try:
-    import google.generativeai as genai
-except ImportError:
-    genai = None
 from flask import Flask, jsonify, request, send_from_directory
 try:
     from dotenv import load_dotenv
@@ -1557,8 +1553,6 @@ def api_counselor_agent():
     command = data.get("command", "").strip()
     if not command:
         return jsonify({"response": "Please enter a counselor command or query."}), 400
-
-    api_key = os.environ.get("GEMINI_API_KEY", "")
     
     # Compile live cohort context for reasoning model
     cohort_summary_list = []
@@ -1639,7 +1633,7 @@ CRITICAL REASONING INSTRUCTIONS:
         except Exception as g_err:
             print(f"[CounselorAgent Warning] Groq reasoning call failed: {g_err}")
 
-    # Fallback to local Ollama engine if Gemini is not configured or fails
+    # Fallback to local Ollama engine if Groq is not configured or fails
     import requests
     try:
         ollama_res = requests.post("http://127.0.0.1:11434/api/generate", json={
@@ -1910,7 +1904,7 @@ def api_evaluate_shortlist():
 
     name = college.get("name", "").lower()
 
-    # Load Gemini university tiers cache
+    # Load university tiers cache
     tiers_path = os.path.join(BASE_DIR, "data", "university_tiers.json")
     tier_cache = {}
     if os.path.exists(tiers_path):

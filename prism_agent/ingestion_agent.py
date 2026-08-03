@@ -11,11 +11,11 @@ except ImportError:
 class DocumentIngestionAgent:
     """
     Agentic Data Extraction Engine.
-    Uses Gemini LLM (with fallback rules) to parse unstructured student documents
+    Uses Groq LLM (with fallback rules) to parse unstructured student documents
     (transcripts, marks cards, resumes) into normalized student profiles.
     """
     def __init__(self):
-        self.api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+        self.api_key = os.environ.get("GROQ_API_KEY", "").strip()
 
     def process_documents(self, file_contents_list, file_names_list=None):
         """
@@ -54,54 +54,18 @@ class DocumentIngestionAgent:
         extracted_profile = None
         if self.api_key:
             try:
-                extracted_profile = self._extract_with_gemini(combined_text)
+                extracted_profile = self._extract_with_groq(combined_text)
             except Exception as e:
-                print(f"[IngestionAgent Warning] Gemini extraction failed: {e}. Using fallback rule engine.")
+                print(f"[IngestionAgent Warning] Groq extraction failed: {e}. Using fallback rule engine.")
 
         if not extracted_profile:
             extracted_profile = self._extract_with_rules(combined_text)
 
         return extracted_profile
 
-    def _extract_with_gemini(self, text):
-        from google import genai
-        from google.genai import types
-        from pydantic import BaseModel, Field
-        from typing import List, Dict, Optional
-
-        class PortfolioItem(BaseModel):
-            activity: str = Field(description="Activity/Project/Interest Title")
-            description: str = Field(description="Full Description including awards/impact")
-            tier: int = Field(description="1 for International/National/Patent/Global, 2 for State/Regional/Winner, 3 for School/Local/Hobby")
-
-        class StandardizedTests(BaseModel):
-            SAT: Optional[int] = Field(default=None)
-            ACT: Optional[int] = Field(default=None)
-            AP_CALCULUS_BC: Optional[int] = Field(default=None)
-
-        class SubjectGrade(BaseModel):
-            subject_name: str
-            grade: str = Field(description="The native grade achieved, e.g. 'A*', '7', '95', or 'A'")
-
-        class Grades(BaseModel):
-            g10_board: Optional[str] = Field(description="The board for Grade 10, e.g. IGCSE, CBSE, ICSE, IB MYP, State Board")
-            current_expected_board: str = Field(description="e.g. 92.5%, 42/45")
-            subjects: List[SubjectGrade] = Field(description="Current subjects and their native grades")
-            g10_subjects: List[SubjectGrade] = Field(description="Grade 10 subjects and their native grades")
-
-        class StudentProfile(BaseModel):
-            name: str = Field(description="Student Full Name")
-            class_level: int = Field(description="10 or 11 or 12")
-            board: str = Field(description="CBSE / ICSE / IB / Cambridge / State Board / A-Levels")
-            board_subjects: List[str] = Field(description="Current subjects (e.g. HL/SL subjects for IB)")
-            planned_class_11_subjects: List[str] = Field(description="Planned subjects if class_level is 10")
-            cuet_subjects: List[str] = Field(description="CUET subjects if applicable")
-            grades: Grades
-            standardized_tests: StandardizedTests
-            portfolio: List[PortfolioItem] = Field(description="List of extracurricular activities, projects, initiatives, hobbies, and sports. DO NOT include academic subjects or grades here.")
-            targets: List[str] = Field(description="Target IDs if mentioned, e.g. STANFORD_CS, CUET_DU_CS, MIT_STEM, JEE_MAIN, CAMBRIDGE_CS")
-
-        client = genai.Client(api_key=self.api_key)
+    def _extract_with_groq(self, text):
+        import requests
+        data = None
 
         system_prompt = """You are an expert AI admissions officer and transcript parser.
 Extract student information from the provided document text and populate the structured schema.
@@ -119,11 +83,8 @@ CRITICAL INSTRUCTIONS:
 4. IGCSE / GRADE 10 MARKS & BOARD: 
    - CRITICAL: Keep the grades in their NATIVE format (e.g. "A*", "A", "7", "95"). DO NOT convert them to percentages.
 """
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-        data = None
-
+        groq_key = self.api_key
         if groq_key:
-            import requests
             try:
                 print("[IngestionAgent] Calling Groq API (llama-3.3-70b-versatile)...")
                 json_schema_desc = """
