@@ -2470,7 +2470,6 @@ Format your output EXACTLY as follows:
 
 **Brief LOR outline for {student['name']}**
 
-
 **Opening hook idea**
 [1-2 sentences introducing student]
 
@@ -2487,7 +2486,7 @@ Format your output EXACTLY as follows:
 
 Rules:
 - Start directly with "**Brief LOR outline for {student['name']}**"
-- Follow with an extra blank line after the title.
+- Use exactly 1 blank line between sections.
 - Use clean university names (e.g. Oxford, LSE, Stanford, Harvard), NEVER code tags.
 - Max 150 words total."""
 

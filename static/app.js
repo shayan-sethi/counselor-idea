@@ -4513,20 +4513,27 @@ window.generateAIRecommendation = async function() {
     }
     rawText = rawText.replace(/\b(UK_|US_|IND_)[A-Z0-9_]+\b/g, m => cleanUniName(m));
 
+    // Collapse 3+ consecutive newlines into 2 newlines (exactly 1 blank line)
+    rawText = rawText.replace(/\n{3,}/g, '\n\n');
+
     // Helper to convert Markdown / asterisk formatting to clean Quill HTML
     const lines = rawText.split('\n');
     const htmlLines = [];
     let inList = false;
+    let lastWasEmpty = false;
 
     for (let line of lines) {
       const trimmed = line.trim();
       if (!trimmed) {
         if (inList) { htmlLines.push('</ul>'); inList = false; }
-        htmlLines.push('<p><br></p>');
+        if (!lastWasEmpty) {
+          htmlLines.push('<p><br></p>');
+          lastWasEmpty = true;
+        }
         continue;
       }
 
-      const isTitleLine = /Brief LOR outline for/i.test(trimmed);
+      lastWasEmpty = false;
 
       // Convert **bold** or *bold* (handles *Title* or *Heading*)
       let formatted = trimmed
@@ -4545,15 +4552,10 @@ window.generateAIRecommendation = async function() {
         htmlLines.push(`<li>${itemContent}</li>`);
       } else {
         if (inList) { htmlLines.push('</ul>'); inList = false; }
-        if (trimmed.startsWith('# ')) {
-          htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;"><strong>${formatted.replace(/^# /, '')}</strong></p>`);
-        } else if (trimmed.startsWith('## ')) {
-          htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;"><strong>${formatted.replace(/^## /, '')}</strong></p>`);
+        if (trimmed.startsWith('# ') || trimmed.startsWith('## ')) {
+          htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;"><strong>${formatted.replace(/^#+\s*/, '')}</strong></p>`);
         } else {
           htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;">${formatted}</p>`);
-        }
-        if (isTitleLine) {
-          htmlLines.push('<p><br></p>');
         }
       }
     }
