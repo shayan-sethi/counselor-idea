@@ -736,5 +736,640 @@
     "grade_prerequisites": [],
     "portfolio_tier": 3,
     "citations": []
+  },
+  "AIIMS": {
+    "id": "AIIMS",
+    "name": "AIIMS - MBBS (All India Institute of Medical Sciences)",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "AIIMS New Delhi",
+    "deadlines": [
+      {
+        "label": "NEET UG Registration Close",
+        "date": "2027-03-15",
+        "is_correction_window": false,
+        "description": "Last date to register for NEET UG examination."
+      },
+      {
+        "label": "NEET UG Exam Date",
+        "date": "2027-05-04",
+        "is_correction_window": false,
+        "description": "NEET UG examination date."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must have studied Physics in Class 12."
+      },
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "Must have studied Chemistry in Class 12."
+      },
+      {
+        "subject": "Biology",
+        "level": "compulsory",
+        "notes": "Must have studied Biology in Class 12."
+      },
+      {
+        "subject": "English",
+        "level": "compulsory",
+        "notes": "Must have studied English in Class 12."
+      }
+    ],
+    "admission_tests": [
+      "NEET_UG"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "50.0%",
+        "notes": "Minimum 50% aggregate in PCB for General category."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "AIIMS Prospectus 2026-27",
+        "clause": "Eligibility Criteria",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "IIT Bombay": {
+    "id": "IIT Bombay",
+    "name": "IIT Bombay - B.Tech Computer Science & Engineering",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "IIT Bombay",
+    "deadlines": [
+      {
+        "label": "JEE Main Registration Close",
+        "date": "2026-11-22",
+        "is_correction_window": false,
+        "description": "Last date to register for JEE Main."
+      },
+      {
+        "label": "JEE Advanced Registration",
+        "date": "2027-05-10",
+        "is_correction_window": false,
+        "description": "JEE Advanced registration deadline."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must have studied Physics in Class 12."
+      },
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "Must have studied Chemistry in Class 12."
+      },
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must have studied Mathematics in Class 12."
+      }
+    ],
+    "admission_tests": [
+      "JEE_MAIN",
+      "JEE_ADVANCED"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "75.0%",
+        "notes": "Minimum 75% aggregate in Class 12 or top 20 percentile."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "JoSAA 2026 Information Bulletin",
+        "clause": "IIT Bombay Eligibility",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "BITS Pilani": {
+    "id": "BITS Pilani",
+    "name": "BITS Pilani - B.E. / M.Sc. (Hons)",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "BITS Pilani",
+    "deadlines": [
+      {
+        "label": "BITSAT Registration Close",
+        "date": "2027-04-15",
+        "is_correction_window": false,
+        "description": "Last date to register for BITSAT examination."
+      },
+      {
+        "label": "BITSAT Exam Window",
+        "date": "2027-05-20",
+        "is_correction_window": false,
+        "description": "BITSAT online exam window begins."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must have studied Physics in Class 12."
+      },
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "Must have studied Chemistry in Class 12."
+      },
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must have studied Mathematics in Class 12."
+      }
+    ],
+    "admission_tests": [
+      "BITSAT"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "75.0%",
+        "notes": "Minimum 75% aggregate in PCM and 60% in each subject."
+      }
+    ],
+    "portfolio_tier": 2,
+    "citations": [
+      {
+        "source": "BITS Admissions 2026",
+        "clause": "Eligibility Criteria",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "Delhi University SRCC": {
+    "id": "Delhi University SRCC",
+    "name": "SRCC, Delhi University - B.Com (Hons)",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "Delhi University",
+    "deadlines": [
+      {
+        "label": "CUET Registration Close",
+        "date": "2027-03-26",
+        "is_correction_window": false,
+        "description": "Last date to fill CUET UG application form."
+      },
+      {
+        "label": "CUET Correction Window Close",
+        "date": "2027-03-30",
+        "is_correction_window": true,
+        "description": "CUET correction window closes."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "recommended",
+        "notes": "Mathematics or Applied Mathematics recommended for B.Com (Hons)."
+      },
+      {
+        "subject": "CUET_Language",
+        "level": "compulsory",
+        "notes": "Must select at least one Language from Section IA of CUET."
+      },
+      {
+        "subject": "CUET_Domain_Subjects",
+        "level": "compulsory",
+        "notes": "Must select Accountancy/Business Studies/Economics + 2 domain subjects from List B1/B2 in CUET."
+      }
+    ],
+    "admission_tests": [
+      "CUET_UG"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "50.0%",
+        "notes": "Aggregate pass in CBSE Class 12."
+      }
+    ],
+    "portfolio_tier": 2,
+    "citations": [
+      {
+        "source": "Delhi University UG Admissions Bulletin 2026-27",
+        "clause": "SRCC B.Com (Hons) Eligibility",
+        "last_verified": "2026-06-15"
+      }
+    ]
+  },
+  "Delhi University St. Stephens": {
+    "id": "Delhi University St. Stephens",
+    "name": "St. Stephen's College, Delhi University - B.A (Hons)",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "Delhi University",
+    "deadlines": [
+      {
+        "label": "CUET Registration Close",
+        "date": "2027-03-26",
+        "is_correction_window": false,
+        "description": "Last date to fill CUET UG application form."
+      },
+      {
+        "label": "St. Stephen's Interview Window",
+        "date": "2027-06-20",
+        "is_correction_window": false,
+        "description": "College-specific interview round for shortlisted CUET candidates."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "English",
+        "level": "compulsory",
+        "notes": "English is mandatory for all BA programmes."
+      },
+      {
+        "subject": "CUET_Language",
+        "level": "compulsory",
+        "notes": "Must select English from Section IA of CUET."
+      },
+      {
+        "subject": "CUET_Domain_Subjects",
+        "level": "compulsory",
+        "notes": "Must select relevant domain subjects matching the chosen BA specialization."
+      }
+    ],
+    "admission_tests": [
+      "CUET_UG"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "50.0%",
+        "notes": "Aggregate pass in CBSE Class 12."
+      }
+    ],
+    "portfolio_tier": 2,
+    "citations": [
+      {
+        "source": "Delhi University UG Admissions Bulletin 2026-27",
+        "clause": "St. Stephen's Eligibility",
+        "last_verified": "2026-06-15"
+      }
+    ]
+  },
+  "Ashoka University": {
+    "id": "Ashoka University",
+    "name": "Ashoka University - Undergraduate Programme",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "Ashoka University",
+    "deadlines": [
+      {
+        "label": "Application Round 3 Deadline",
+        "date": "2027-03-15",
+        "is_correction_window": false,
+        "description": "Final application round deadline."
+      }
+    ],
+    "subject_prerequisites": [],
+    "admission_tests": [],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "80.0%",
+        "notes": "Strong academic performance expected across all subjects."
+      }
+    ],
+    "portfolio_tier": 2,
+    "citations": [
+      {
+        "source": "Ashoka University Admissions 2026-27",
+        "clause": "Eligibility",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "Vellore Institute of Technology": {
+    "id": "Vellore Institute of Technology",
+    "name": "VIT - B.Tech Engineering",
+    "track": "India",
+    "type": "UniversityCourse",
+    "university": "Vellore Institute of Technology",
+    "deadlines": [
+      {
+        "label": "VITEEE Registration Close",
+        "date": "2027-03-31",
+        "is_correction_window": false,
+        "description": "Last date to register for VITEEE."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Physics",
+        "level": "compulsory",
+        "notes": "Must have studied Physics in Class 12."
+      },
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "Must have studied Mathematics in Class 12."
+      }
+    ],
+    "admission_tests": [
+      "VITEEE"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "60.0%",
+        "notes": "Minimum 60% aggregate in PCM."
+      }
+    ],
+    "portfolio_tier": 3,
+    "citations": [
+      {
+        "source": "VIT Admissions 2026",
+        "clause": "Eligibility Criteria",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "Oxford / Cambridge": {
+    "id": "Oxford / Cambridge",
+    "name": "University of Oxford / Cambridge - Undergraduate",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Oxford",
+    "deadlines": [
+      {
+        "label": "UCAS Application Deadline",
+        "date": "2026-10-15",
+        "is_correction_window": false,
+        "description": "UCAS deadline for Oxford/Cambridge applications."
+      },
+      {
+        "label": "Admissions Test Window",
+        "date": "2026-10-22",
+        "is_correction_window": false,
+        "description": "Oxford/Cambridge admissions tests (subject-specific)."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "recommended",
+        "notes": "A-Level or equivalent Mathematics strongly recommended for most courses."
+      }
+    ],
+    "admission_tests": [
+      "UCAS",
+      "Subject_Specific_Test"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "95.0%",
+        "notes": "Predicted grades equivalent to A*A*A at A-Level typically required."
+      },
+      {
+        "system": "IB",
+        "min_grade": "40",
+        "notes": "IB score of 40+ with 7,7,6 at HL."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "Oxford/Cambridge Undergraduate Prospectus 2026",
+        "clause": "International Qualifications",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "LSE Economics": {
+    "id": "LSE Economics",
+    "name": "London School of Economics - B.Sc Economics",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "London School of Economics",
+    "deadlines": [
+      {
+        "label": "UCAS Application Deadline",
+        "date": "2027-01-29",
+        "is_correction_window": false,
+        "description": "UCAS deadline for LSE applications."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "compulsory",
+        "notes": "A-Level Mathematics (or equivalent) is required. Further Mathematics is preferred."
+      }
+    ],
+    "admission_tests": [
+      "UCAS"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "93.0%",
+        "notes": "Equivalent to A*AA at A-Level with A* in Mathematics."
+      },
+      {
+        "system": "IB",
+        "min_grade": "38",
+        "notes": "IB score of 38 with 7,6,6 at HL including Mathematics."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "LSE Undergraduate Prospectus 2026",
+        "clause": "BSc Economics Entry Requirements",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "Ivy League": {
+    "id": "Ivy League",
+    "name": "Ivy League - Undergraduate Admission (General)",
+    "track": "US",
+    "type": "UniversityCourse",
+    "university": "Ivy League",
+    "deadlines": [
+      {
+        "label": "Early Decision Deadline",
+        "date": "2026-11-01",
+        "is_correction_window": false,
+        "description": "Early Decision/Early Action deadline for most Ivy League schools."
+      },
+      {
+        "label": "Regular Decision Deadline",
+        "date": "2027-01-01",
+        "is_correction_window": false,
+        "description": "Regular decision application deadline."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Mathematics",
+        "level": "recommended",
+        "notes": "Strong performance in Mathematics expected. AP Calculus BC preferred."
+      },
+      {
+        "subject": "English",
+        "level": "compulsory",
+        "notes": "English proficiency required."
+      }
+    ],
+    "admission_tests": [
+      "SAT",
+      "TOEFL"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "95.0%",
+        "notes": "Equivalent to 4.0 unweighted GPA expected."
+      },
+      {
+        "system": "IB",
+        "min_grade": "42",
+        "notes": "IB score of 42+ typically competitive."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "Common Data Set 2025-26",
+        "clause": "Admissions Statistics",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "UCLA Pre-Med": {
+    "id": "UCLA Pre-Med",
+    "name": "UCLA - Pre-Medical Track (Biology / Biochemistry)",
+    "track": "US",
+    "type": "UniversityCourse",
+    "university": "UCLA",
+    "deadlines": [
+      {
+        "label": "UC Application Deadline",
+        "date": "2026-11-30",
+        "is_correction_window": false,
+        "description": "UC system application deadline."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Biology",
+        "level": "compulsory",
+        "notes": "Strong Biology background required for pre-med track."
+      },
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "Chemistry required."
+      },
+      {
+        "subject": "Mathematics",
+        "level": "recommended",
+        "notes": "Mathematics through Calculus recommended."
+      }
+    ],
+    "admission_tests": [
+      "SAT",
+      "TOEFL"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "90.0%",
+        "notes": "Competitive GPA equivalent expected."
+      },
+      {
+        "system": "IB",
+        "min_grade": "38",
+        "notes": "IB score of 38+ competitive."
+      }
+    ],
+    "portfolio_tier": 2,
+    "citations": [
+      {
+        "source": "UCLA Admissions 2026",
+        "clause": "International Freshman Requirements",
+        "last_verified": "2026-06-01"
+      }
+    ]
+  },
+  "Cambridge Medicine": {
+    "id": "Cambridge Medicine",
+    "name": "University of Cambridge - Medicine (MB BChir)",
+    "track": "UK",
+    "type": "UniversityCourse",
+    "university": "University of Cambridge",
+    "deadlines": [
+      {
+        "label": "UCAS Application Deadline",
+        "date": "2026-10-15",
+        "is_correction_window": false,
+        "description": "UCAS deadline for Cambridge Medicine."
+      },
+      {
+        "label": "BMAT/UCAT Registration",
+        "date": "2026-09-20",
+        "is_correction_window": false,
+        "description": "Registration deadline for BMAT or UCAT admissions test."
+      }
+    ],
+    "subject_prerequisites": [
+      {
+        "subject": "Chemistry",
+        "level": "compulsory",
+        "notes": "A-Level Chemistry (or equivalent) is essential."
+      },
+      {
+        "subject": "Biology",
+        "level": "compulsory",
+        "notes": "A-Level Biology strongly recommended."
+      },
+      {
+        "subject": "Mathematics",
+        "level": "recommended",
+        "notes": "Mathematics or Further Mathematics recommended."
+      }
+    ],
+    "admission_tests": [
+      "UCAS",
+      "BMAT"
+    ],
+    "grade_prerequisites": [
+      {
+        "system": "CBSE",
+        "min_grade": "96.0%",
+        "notes": "Equivalent to A*A*A at A-Level."
+      },
+      {
+        "system": "IB",
+        "min_grade": "42",
+        "notes": "IB 42+ with 7,7,6 at HL including Chemistry."
+      }
+    ],
+    "portfolio_tier": 1,
+    "citations": [
+      {
+        "source": "Cambridge School of Clinical Medicine Prospectus 2026",
+        "clause": "Entry Requirements",
+        "last_verified": "2026-06-01"
+      }
+    ]
   }
 }

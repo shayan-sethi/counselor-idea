@@ -83,8 +83,8 @@ CRITICAL INSTRUCTIONS:
 4. IGCSE / GRADE 10 MARKS & BOARD: 
    - CRITICAL: Keep the grades in their NATIVE format (e.g. "A*", "A", "7", "95"). DO NOT convert them to percentages.
 """
-        groq_key = self.api_key
-        if groq_key:
+        from .groq_utils import get_groq_api_keys, groq_post_with_retry
+        if get_groq_api_keys():
             try:
                 print("[IngestionAgent] Calling Groq API (llama-3.3-70b-versatile)...")
                 json_schema_desc = """
@@ -116,13 +116,8 @@ Return ONLY a valid JSON object with the following schema:
                     "response_format": {"type": "json_object"},
                     "temperature": 0.1
                 }
-                res = requests.post(
-                    "https://api.groq.com/openai/v1/chat/completions",
-                    headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                    json=groq_payload,
-                    timeout=30
-                )
-                if res.status_code == 200:
+                res, err = groq_post_with_retry(groq_payload, label="IngestionAgent")
+                if res and res.status_code == 200:
                     data = json.loads(res.json()["choices"][0]["message"]["content"])
                     print("[IngestionAgent] Groq extraction successful!")
             except Exception as g_err:

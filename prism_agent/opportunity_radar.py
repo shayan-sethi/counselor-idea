@@ -172,84 +172,110 @@ class OpportunityRadar:
     def match_student(student, competitions):
         """
         Evaluates a student against all competitions.
-        Returns a sorted list of matched opportunities with personalized match explanations.
+        Uses LLM scoring when available, falls back to deterministic formula.
         """
-        matched_list = []
-        student_id = student.get("id")
         class_level = int(student.get("class_level", 12))
-        
-        # Determine student subjects (handle Class 10 vs 11/12)
+        ist_offset = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+        current_date = datetime.datetime.now(ist_offset).date()
+
         if class_level == 10 and student.get("planned_class_11_subjects"):
             subjects = student.get("planned_class_11_subjects", [])
         else:
             subjects = student.get("board_subjects", [])
-        norm_subjects = [s.lower().strip() for s in subjects]
 
-        # Check target tracks (elite US/UK paths get bonus recommendations for portfolios)
+        eligible = [
+            c for c in competitions
+            if c.get("min_class_level", 9) <= class_level <= c.get("max_class_level", 12)
+        ]
+
+        if not eligible:
+            return []
+
+        # Try LLM batch scoring
+        from .llm_scorer import LLMScorer
+        scorer = LLMScorer()
+        llm_results = scorer.score_opportunities(student, eligible)
+
+        if llm_results:
+            comp_map = {c.get("id"): c for c in eligible}
+            matched_list = []
+            for lr in llm_results:
+                comp_id = lr.get("competition_id")
+                comp = comp_map.get(comp_id)
+                if not comp:
+                    continue
+                days_left = None
+                dl_str = comp.get("deadline", "")
+                if dl_str:
+                    try:
+                        dl_date = datetime.datetime.strptime(dl_str, "%Y-%m-%d").date()
+                        days_left = (dl_date - current_date).days
+                    except Exception:
+                        pass
+                comp_tags = [t.lower().strip() for t in comp.get("subject_tags", [])]
+                matching_subjs = [s for s in subjects if s.lower().strip() in comp_tags]
+                matched_list.append({
+                    "competition": comp,
+                    "match_score": int(lr.get("match_score", 50)),
+                    "matching_subjects": matching_subjs,
+                    "why": lr.get("why", "AI-matched opportunity."),
+                    "days_remaining": days_left,
+                    "is_urgent": lr.get("is_urgent", days_left is not None and 0 <= days_left <= 60),
+                })
+            matched_list.sort(key=lambda x: (x["match_score"], -(x["days_remaining"] if x["days_remaining"] is not None else 9999)), reverse=True)
+            return matched_list
+
+        # Deterministic fallback
+        return OpportunityRadar._match_deterministic(student, eligible, subjects, current_date)
+
+    @staticmethod
+    def _match_deterministic(student, eligible, subjects, current_date):
+        matched_list = []
         targets = student.get("targets", [])
         has_elite_target = any(
             any(kw in t.lower() for kw in ["cambridge", "oxford", "mit", "stanford", "harvard", "imperial", "ucl"])
             for t in targets
         )
 
-        # Use current date in IST (UTC+5:30)
-        ist_offset = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
-        current_date = datetime.datetime.now(ist_offset).date()
-
-        for comp in competitions:
-            min_c = comp.get("min_class_level", 9)
-            max_c = comp.get("max_class_level", 12)
-
-            # Class Level constraint check
-            if not (min_c <= class_level <= max_c):
-                continue
-
-            # Calculate match score
+        for comp in eligible:
             comp_tags = [t.lower().strip() for t in comp.get("subject_tags", [])]
             matching_subjs = [s for s in subjects if s.lower().strip() in comp_tags]
-            
-            # Base match score
-            if not matching_subjs:
-                base_score = 40  # Low match base
-            else:
-                base_score = 70 + min(20, len(matching_subjs) * 10)  # Multi-subject match bonus
 
-            # Elite target portfolio upgrade bonus
+            if not matching_subjs:
+                base_score = 40
+            else:
+                base_score = 70 + min(20, len(matching_subjs) * 10)
+
             if has_elite_target and comp.get("portfolio_tier", 3) <= 2:
                 base_score += 10
-            
-            # Grade expectations alignment
+
             exp_grade_str = student.get("grades", {}).get("current_expected_board", "85%")
             try:
                 exp_grade = float(exp_grade_str.replace("%", "").strip())
             except:
                 exp_grade = 85.0
-            
+
             if exp_grade >= 92.0 and comp.get("portfolio_tier", 3) == 1:
                 base_score += 5
 
             match_score = min(100, base_score)
 
-            # Generate narrative "Why" explanation
             why_reasons = []
             if matching_subjs:
                 why_reasons.append(f"it directly aligns with your board subjects ({', '.join(matching_subjs)})")
-            
             if has_elite_target and comp.get("portfolio_tier", 3) <= 2:
                 why_reasons.append(f"satisfies the elite extracurricular portfolio requirement (Tier {comp.get('portfolio_tier')}) for your target pathway")
             else:
                 why_reasons.append(f"offers a strong extracurricular profile boost (Tier {comp.get('portfolio_tier')})")
-
             why_expl = "Recommended because " + " and ".join(why_reasons) + "."
 
-            # Calculate days remaining to deadline
             days_left = None
             dl_str = comp.get("deadline", "")
             if dl_str:
                 try:
                     dl_date = datetime.datetime.strptime(dl_str, "%Y-%m-%d").date()
                     days_left = (dl_date - current_date).days
-                except Exception as e:
+                except Exception:
                     pass
 
             matched_list.append({
@@ -258,9 +284,8 @@ class OpportunityRadar:
                 "matching_subjects": matching_subjs,
                 "why": why_expl,
                 "days_remaining": days_left,
-                "is_urgent": days_left is not None and 0 <= days_left <= 60
+                "is_urgent": days_left is not None and 0 <= days_left <= 60,
             })
 
-        # Sort: match score descending, then deadline urgency
         matched_list.sort(key=lambda x: (x["match_score"], -(x["days_remaining"] if x["days_remaining"] is not None else 9999)), reverse=True)
         return matched_list
