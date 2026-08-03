@@ -2387,30 +2387,28 @@ def api_draft_recommendation():
 
     system_prompt = "You are an expert high school counselor writing a powerful, persuasive Letter of Recommendation (LOR) for a student's university application. Use the student's exact brag sheet and data to write a tailored draft. Do not use generic placeholders like [Name], use the real name. Keep it professional, highlighting their specific achievements. Output ONLY the letter itself."
     
-    import requests
-    from flask import Response
-    try:
-        ollama_res = requests.post("http://127.0.0.1:11434/api/generate", json={
-            "model": "llama3.2",
-            "prompt": f"{system_prompt}\n\nSTUDENT BRAG SHEET:\n{brag_sheet}\n\nDraft the complete Letter of Recommendation below:",
-            "stream": True,
-            "options": {"temperature": 0.6}
-        }, timeout=60, stream=True)
-        
-        def generate():
-            for line in ollama_res.iter_lines():
-                if line:
-                    try:
-                        import json
-                        chunk = json.loads(line.decode('utf-8'))
-                        if "response" in chunk:
-                            yield chunk["response"]
-                    except:
-                        pass
-        
-        return Response(generate(), mimetype='text/plain')
-    except Exception as e:
-        print(f"[Recommendation Error] Ollama failed: {e}")
+    from prism_agent.groq_utils import groq_post_with_retry, GROQ_MODEL
+    
+    payload = {
+        "model": GROQ_MODEL,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"STUDENT BRAG SHEET:\n{brag_sheet}\n\nDraft the complete Letter of Recommendation below:"}
+        ],
+        "temperature": 0.6
+    }
+    
+    res, err = groq_post_with_retry(payload, label="LOR_Agent")
+    
+    if res and res.status_code == 200:
+        try:
+            content = res.json()["choices"][0]["message"]["content"]
+            return jsonify({"response": content})
+        except Exception as e:
+            print(f"[Recommendation Error] Failed to parse Groq response: {e}")
+            return jsonify({"error": "Engine failed to parse generated draft."}), 500
+    else:
+        print(f"[Recommendation Error] Groq failed: {err}")
         return jsonify({"error": "Engine failed to generate draft."}), 500
 
 # ── Bulk Ingestion ──

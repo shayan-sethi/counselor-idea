@@ -225,6 +225,7 @@ function renderDashboard() {
   animateNum('m-pass', strongMatch);
   animateNum('m-risk', highRisk);
   animateNum('m-gaps', gaps);
+  animateNum('kpi-deadlines', students.length > 0 ? 3 : 0);
 
   document.getElementById('dash-subtitle').textContent =
     `${students.length} students · ${Object.keys(targets).length} target pathways · real-time audit`;
@@ -253,7 +254,7 @@ function renderSchedule() {
       <div class="sch-icon urgent"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
       <div class="sch-details">
         <div class="sch-title">Finalize UC Application — ${s1.name}</div>
-        <div class="sch-time">Today, 10:00 AM <span class="badge-urgent">Due Soon</span></div>
+        <div class="sch-time">Today, 1:00 PM <span class="badge-urgent">Due Soon</span></div>
       </div>
     </div>
     <div class="sch-item">

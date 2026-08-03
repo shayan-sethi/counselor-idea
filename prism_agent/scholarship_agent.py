@@ -3,7 +3,7 @@ import json
 import time
 import datetime
 
-from .groq_utils import get_groq_api_keys, groq_post_with_retry
+from .groq_utils import get_groq_api_keys, groq_post_with_retry, GROQ_MODEL
 
 
 def _groq_post_with_retry(groq_key, payload, label="Groq", max_wait=15):
