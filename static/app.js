@@ -4505,9 +4505,11 @@ window.generateAIRecommendation = async function() {
       rawText = rawText.substring(matchPos);
     }
 
-    // Replace any raw university code tags in raw text
+    // Replace any raw university code tags safely
     for (const [tag, clean] of Object.entries(COLLEGE_NAME_MAP)) {
-      rawText = rawText.split(tag).join(clean);
+      if (rawText.includes(tag) && !rawText.includes(clean)) {
+        rawText = rawText.split(tag).join(clean);
+      }
     }
     rawText = rawText.replace(/\b(UK_|US_|IND_)[A-Z0-9_]+\b/g, m => cleanUniName(m));
 
@@ -4523,6 +4525,8 @@ window.generateAIRecommendation = async function() {
         htmlLines.push('<p><br></p>');
         continue;
       }
+
+      const isTitleLine = /Brief LOR outline for/i.test(trimmed);
 
       // Convert **bold** or *bold* (handles *Title* or *Heading*)
       let formatted = trimmed
@@ -4547,6 +4551,9 @@ window.generateAIRecommendation = async function() {
           htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;"><strong>${formatted.replace(/^## /, '')}</strong></p>`);
         } else {
           htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;">${formatted}</p>`);
+        }
+        if (isTitleLine) {
+          htmlLines.push('<p><br></p>');
         }
       }
     }

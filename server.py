@@ -2470,6 +2470,7 @@ Format your output EXACTLY as follows:
 
 **Brief LOR outline for {student['name']}**
 
+
 **Opening hook idea**
 [1-2 sentences introducing student]
 
@@ -2486,6 +2487,7 @@ Format your output EXACTLY as follows:
 
 Rules:
 - Start directly with "**Brief LOR outline for {student['name']}**"
+- Follow with an extra blank line after the title.
 - Use clean university names (e.g. Oxford, LSE, Stanford, Harvard), NEVER code tags.
 - Max 150 words total."""
 
@@ -2511,16 +2513,16 @@ Rules:
             start_marker = f"Brief LOR outline for {student['name']}"
             if start_marker in content:
                 idx = content.find(start_marker)
-                # Backup to include any leading ** if present
                 if idx >= 2 and content[idx-2:idx] == "**":
                     idx -= 2
                 elif idx >= 1 and content[idx-1:idx] == "*":
                     idx -= 1
                 content = content[idx:]
             
-            # Post-process content to replace any lingering raw university tags
+            # Post-process content to replace any lingering raw university tags safely
             for raw_tag, clean_name in COLLEGE_NAME_MAP.items():
-                content = content.replace(raw_tag, clean_name)
+                if raw_tag in content and clean_name not in content:
+                    content = content.replace(raw_tag, clean_name)
             return jsonify({"response": content})
         except Exception as e:
             print(f"[Recommendation Error] Failed to parse Groq response: {e}")
