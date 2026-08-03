@@ -4,7 +4,7 @@ import json
 import datetime
 import joblib
 import pandas as pd
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, send_file
 try:
     from dotenv import load_dotenv
     load_dotenv(override=True)
@@ -1808,6 +1808,33 @@ def load_exams():
 def api_colleges():
     return jsonify(load_colleges())
 
+def _find_requirements_for_college(college):
+    """Find matching requirements_db entries for a college from colleges_db."""
+    college_name = (college.get("name") or "").lower()
+    college_id = (college.get("id") or "").lower()
+    best_match = None
+    best_score = 0
+
+    for _rid, req in kg.requirements.items():
+        uni_name = (req.get("university") or "").lower()
+        req_name = (req.get("name") or "").lower()
+        score = 0
+        if uni_name and uni_name in college_name:
+            score += 3
+        elif college_name and college_name in uni_name:
+            score += 3
+        name_words = college_id.lower().replace("_", " ").split()
+        for w in name_words:
+            if len(w) > 2 and w in uni_name:
+                score += 1
+            if len(w) > 2 and w in req_name:
+                score += 1
+        if score > best_score:
+            best_score = score
+            best_match = req
+    return best_match if best_score >= 2 else None
+
+
 @app.route("/api/evaluate_shortlist", methods=["POST"])
 @login_required
 def api_evaluate_shortlist():
@@ -1821,13 +1848,45 @@ def api_evaluate_shortlist():
 
     colleges = load_colleges()
     college = next((c for c in colleges if c["id"] == college_id), None)
+    
+    if not college:
+        import re
+        def normalize(s):
+            return re.sub(r'[^a-z0-9]', '', str(s).lower())
+        def get_initials(s):
+            words = re.findall(r'[a-zA-Z0-9]+', str(s))
+            return "".join(w[0].lower() for w in words if w.lower() not in ('of', 'the', 'at', 'and'))
+            
+        norm_id = normalize(college_id)
+        
+        # 1. Try exact normalized match
+        college = next((c for c in colleges if normalize(c["name"]) == norm_id), None)
+        
+        # 2. Try partial match - only when query has 4+ chars to avoid false positives
+        if not college and len(norm_id) >= 4:
+            college = next((c for c in colleges if norm_id in normalize(c["name"]) or normalize(c["name"]) in norm_id), None)
+            
+        # 3. Try acronym match (e.g. NYU -> New York University, LSE -> London School of Economics)
+        # Only if query looks like an acronym (all uppercase original, or <= 5 chars)
+        if not college and (college_id.upper() == college_id or len(college_id) <= 5):
+            college = next((c for c in colleges if get_initials(c["name"]) == norm_id), None)
 
     if not college:
-        return jsonify({"category": "Target"})
+        return jsonify({"category": "Target", "match_score": 50, "reasoning": "College not found in database.", "gaps": [], "strengths": []})
 
-    # Try LLM-driven classification first
-    llm_result = llm_scorer.classify_shortlist(student, college)
+    requirements_info = _find_requirements_for_college(college)
+    if requirements_info:
+        if not college.get("admission_tests") and not college.get("required_exams"):
+            college["admission_tests"] = requirements_info.get("admission_tests", [])
+        if not college.get("subject_requirements"):
+            college["subject_requirements"] = [p.get("subject", "") for p in requirements_info.get("subject_prerequisites", [])]
+
+    llm_result = llm_scorer.classify_shortlist(student, college, requirements_info=requirements_info)
     if llm_result:
+        llm_result["required_exams"] = college.get("admission_tests", college.get("required_exams", []))
+        if requirements_info:
+            llm_result["subject_prerequisites"] = requirements_info.get("subject_prerequisites", [])
+            llm_result["grade_prerequisites"] = requirements_info.get("grade_prerequisites", [])
         return jsonify(llm_result)
 
     # Deterministic fallback
@@ -1870,16 +1929,19 @@ def api_evaluate_shortlist():
         tier = 4
 
     if tier == 1:
+        match_score = max(25, min(55, int(grade_val * 0.5 + (sat_val / 40 if sat_val else 0))))
         if grade_val >= 98 and sat_val >= 1560:
             category = "Target"
         else:
             category = "Reach"
     elif tier == 2:
+        match_score = max(35, min(72, int(grade_val * 0.65 + (sat_val / 50 if sat_val else 0))))
         if grade_val >= 95 and (sat_val >= 1480 or sat_val == 0):
             category = "Target"
         else:
             category = "Reach"
     elif tier == 3:
+        match_score = max(45, min(85, int(grade_val * 0.8 + (sat_val / 60 if sat_val else 5))))
         if grade_val >= 90:
             category = "Safety"
         elif grade_val >= 80:
@@ -1887,6 +1949,7 @@ def api_evaluate_shortlist():
         else:
             category = "Reach"
     else:
+        match_score = max(50, min(90, int(grade_val * 0.9 + (sat_val / 80 if sat_val else 5))))
         if grade_val >= 85:
             category = "Safety"
         elif grade_val >= 70:
@@ -1894,13 +1957,137 @@ def api_evaluate_shortlist():
         else:
             category = "Reach"
 
-    # CUET/JEE safety gate in deterministic fallback too
     admission_tests = college.get("admission_tests", college.get("required_exams", []))
     if any(t in ("CUET_UG", "JEE_MAIN", "JEE_ADVANCED") for t in admission_tests):
         if category == "Safety":
             category = "Target"
 
-    return jsonify({"category": category, "tier": tier})
+    gaps = []
+    student_subjects = [s.lower() for s in student.get("board_subjects", [])]
+    if requirements_info:
+        for prereq in requirements_info.get("subject_prerequisites", []):
+            subj = prereq.get("subject", "")
+            if prereq.get("level") == "compulsory" and subj.lower() not in student_subjects:
+                gaps.append(f"Missing required subject: {subj}")
+    if sat_val == 0 and any(t in ("SAT", "ACT") for t in admission_tests):
+        gaps.append("No SAT/ACT score on file")
+
+    reasoning = f"{'Elite' if tier == 1 else 'Top' if tier == 2 else 'Strong' if tier == 3 else 'Standard'} institution. "
+    reasoning += f"Student grade: {grade}, SAT: {sat_val if sat_val else 'N/A'}. "
+    if gaps:
+        reasoning += f"{len(gaps)} gap(s) identified."
+    else:
+        reasoning += "No major gaps found."
+
+    return jsonify({
+        "category": category,
+        "tier": tier,
+        "match_score": match_score,
+        "reasoning": reasoning,
+        "gaps": gaps,
+        "strengths": [],
+        "required_exams": admission_tests,
+    })
+
+
+@app.route("/api/export_shortlist/<student_id>")
+@login_required
+def api_export_shortlist(student_id):
+    """Export a student's shortlisted colleges with evaluations as Excel."""
+    from io import BytesIO
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+
+    student = get_student(student_id)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    shortlisted_ids = student.get("shortlisted_colleges", [])
+    if not shortlisted_ids:
+        return jsonify({"error": "No shortlisted colleges"}), 400
+
+    colleges = load_colleges()
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "University Shortlist"
+
+    header_font = Font(bold=True, color="FFFFFF", size=11)
+    header_fill = PatternFill(start_color="4F46E5", end_color="4F46E5", fill_type="solid")
+    reach_fill = PatternFill(start_color="FEE2E2", end_color="FEE2E2", fill_type="solid")
+    target_fill = PatternFill(start_color="FEF3C7", end_color="FEF3C7", fill_type="solid")
+    safety_fill = PatternFill(start_color="D1FAE5", end_color="D1FAE5", fill_type="solid")
+    thin_border = Border(
+        left=Side(style='thin'), right=Side(style='thin'),
+        top=Side(style='thin'), bottom=Side(style='thin')
+    )
+
+    headers = ["University", "Country", "Category", "Match Score", "Required Exams", "Gaps", "Reasoning"]
+    for col_idx, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col_idx, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal='center')
+        cell.border = thin_border
+
+    row_idx = 2
+    for cid in shortlisted_ids:
+        college = next((c for c in colleges if c["id"] == cid), None)
+        college_name = college["name"] if college else cid
+
+        eval_data = {"category": "Target", "match_score": 50, "reasoning": "", "gaps": [], "required_exams": []}
+        if college:
+            req_info = _find_requirements_for_college(college)
+            llm_res = llm_scorer.classify_shortlist(student, college, requirements_info=req_info)
+            if llm_res:
+                eval_data = llm_res
+                eval_data["required_exams"] = college.get("admission_tests", college.get("required_exams", []))
+
+        category = eval_data.get("category", "Target")
+        row_fill = reach_fill if category == "Reach" else safety_fill if category == "Safety" else target_fill
+
+        values = [
+            college_name,
+            college.get("country", "N/A") if college else "N/A",
+            category,
+            eval_data.get("match_score", 50),
+            ", ".join(eval_data.get("required_exams", [])),
+            "; ".join(eval_data.get("gaps", [])) or "None",
+            eval_data.get("reasoning", ""),
+        ]
+        for col_idx, val in enumerate(values, 1):
+            cell = ws.cell(row=row_idx, column=col_idx, value=val)
+            cell.border = thin_border
+            if col_idx == 3:
+                cell.fill = row_fill
+                cell.font = Font(bold=True)
+            cell.alignment = Alignment(wrap_text=True, vertical='top')
+        row_idx += 1
+
+    ws.column_dimensions['A'].width = 35
+    ws.column_dimensions['B'].width = 12
+    ws.column_dimensions['C'].width = 12
+    ws.column_dimensions['D'].width = 12
+    ws.column_dimensions['E'].width = 25
+    ws.column_dimensions['F'].width = 40
+    ws.column_dimensions['G'].width = 50
+
+    info_row = row_idx + 1
+    ws.cell(row=info_row, column=1, value=f"Student: {student.get('name', student_id)}")
+    ws.cell(row=info_row, column=1).font = Font(bold=True, size=10)
+    ws.cell(row=info_row + 1, column=1, value=f"Generated: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M')}")
+    ws.cell(row=info_row + 1, column=1).font = Font(italic=True, size=9, color="666666")
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    safe_name = student.get("name", student_id).replace(" ", "_")
+    return send_file(
+        output,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        as_attachment=True,
+        download_name=f"{safe_name}_University_Shortlist.xlsx"
+    )
 
 
 @app.route("/api/priority_queue/<student_id>")

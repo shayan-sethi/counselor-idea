@@ -1,26 +1,5 @@
 [
   {
-    "id": "STU_101",
-    "name": "Test Name",
-    "class_level": 12,
-    "board": "CBSE",
-    "board_subjects": [],
-    "targets": [],
-    "grades": {},
-    "standardized_tests": {},
-    "portfolio": [],
-    "shortlisted_colleges": [
-      "NYU",
-      "KING'S_COLLEGE_LONDON",
-      "IIT Bombay",
-      "CAMBRIDGE",
-      "OXFORD",
-      "US_211440",
-      "US_100663"
-    ],
-    "cuet_subjects": []
-  },
-  {
     "id": "STU_102",
     "name": "Arjun Ahuja",
     "class_level": 11,
@@ -56,9 +35,7 @@
         "tier": 3
       }
     ],
-    "shortlisted_colleges": [
-      "IND_FLAME"
-    ]
+    "shortlisted_colleges": []
   },
   {
     "id": "STU_103",
@@ -91,8 +68,7 @@
     },
     "portfolio": [],
     "shortlisted_colleges": [
-      "NYU",
-      "BITS_PILANI"
+      "NYU"
     ]
   },
   {
@@ -136,10 +112,9 @@
       }
     ],
     "shortlisted_colleges": [
-      "ASHOKA_UNIV",
       "MIT",
       "OXFORD",
-      "LSE",
+      "UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE",
       "UCL"
     ]
   },
@@ -181,8 +156,7 @@
     "shortlisted_colleges": [
       "UCL",
       "KING'S_COLLEGE_LONDON",
-      "UC_BERKELEY",
-      "ASHOKA_UNIV",
+      "University of California-Berkeley",
       "OXFORD"
     ]
   },
@@ -226,7 +200,6 @@
       }
     ],
     "shortlisted_colleges": [
-      "BITS_PILANI",
       "US_211440"
     ]
   },
@@ -274,8 +247,7 @@
       }
     ],
     "shortlisted_colleges": [
-      "LSE",
-      "VIT",
+      "UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE",
       "KING'S_COLLEGE_LONDON"
     ]
   },
@@ -368,9 +340,7 @@
       }
     ],
     "shortlisted_colleges": [
-      "OXFORD",
-      "DU",
-      "BITS_PILANI"
+      "OXFORD"
     ]
   },
   {
@@ -510,7 +480,6 @@
       }
     ],
     "shortlisted_colleges": [
-      "BITS_PILANI",
       "US_211440"
     ]
   },
@@ -558,8 +527,6 @@
       }
     ],
     "shortlisted_colleges": [
-      "BITS_PILANI",
-      "VIT",
       "IMPERIAL"
     ]
   },
@@ -605,9 +572,7 @@
     ],
     "shortlisted_colleges": [
       "UCL",
-      "VIT",
-      "ASHOKA_UNIV",
-      "UC_BERKELEY"
+      "University of California-Berkeley"
     ]
   },
   {
@@ -651,10 +616,7 @@
     "shortlisted_colleges": [
       "STANFORD",
       "IMPERIAL",
-      "BITS_PILANI",
-      "VIT",
-      "MIT",
-      "DU"
+      "MIT"
     ]
   },
   {
@@ -692,10 +654,7 @@
         "tier": 3
       }
     ],
-    "shortlisted_colleges": [
-      "BITS_PILANI",
-      "DU"
-    ]
+    "shortlisted_colleges": []
   },
   {
     "id": "STU_117",
@@ -817,7 +776,6 @@
     "shortlisted_colleges": [
       "STANFORD",
       "CAMBRIDGE",
-      "VIT",
       "KING'S_COLLEGE_LONDON",
       "UCL"
     ]
@@ -867,229 +825,8 @@
     ],
     "shortlisted_colleges": [
       "KING'S_COLLEGE_LONDON",
-      "VIT",
       "US_166027",
       "UK_OXFORDBROOKESUNIVERSITY"
-    ],
-    "status": {
-      "cuet_form_submitted": false,
-      "sat_score": null,
-      "tmua_registered": false
-    }
-  },
-  {
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "planned_class_11_subjects": [],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": "90.0%",
-      "subjects": {},
-      "g10_subjects": {
-        "Mathematics": 95.0,
-        "Physics": 95.0,
-        "Chemistry": 95.0,
-        "Computer Science": 95.0,
-        "English": 95.0,
-        "Spanish": 95.0,
-        "Geography": 95.0,
-        "Environmental Management": 95.0,
-        "Literature": 95.0
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "EpiAlert EpiAlert is an innovative devic",
-        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)",
-        "tier": 1
-      },
-      {
-        "activity": "Device has been recognized nationally, with t",
-        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece",
-        "tier": 1
-      },
-      {
-        "activity": "Pollution Alert To reduce the widespread",
-        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India.",
-        "tier": 1
-      },
-      {
-        "activity": "Technology",
-        "description": "Technology: Python programming, ML development, avid tech quizzer",
-        "tier": 3
-      },
-      {
-        "activity": "Sports",
-        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games",
-        "tier": 1
-      },
-      {
-        "activity": "Science",
-        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)",
-        "tier": 1
-      },
-      {
-        "activity": "Maths",
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award",
-        "tier": 1
-      },
-      {
-        "activity": "Scuba Diving",
-        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography",
-        "tier": 3
-      }
-    ],
-    "targets": [],
-    "id": "STU_024",
-    "status": {
-      "cuet_form_submitted": false,
-      "tmua_registered": false,
-      "sat_score": null
-    },
-    "shortlisted_colleges": [
-      "OXFORD",
-      "MIT",
-      "US_110404",
-      "US_166027"
-    ],
-    "shortlisted_scholarships": [
-      "schol_tata_cornell",
-      "schol_karsh_duke"
-    ]
-  },
-  {
-    "id": "STU_025",
-    "name": "SAIANSH TAPURIAH",
-    "class_level": 12,
-    "board": "IB",
-    "board_subjects": [
-      "Mathematics",
-      "Physics",
-      "Chemistry",
-      "Computer Science",
-      "Economics",
-      "English",
-      "Spanish",
-      "Geography",
-      "Environmental Management",
-      "Literature"
-    ],
-    "cuet_subjects": [],
-    "grades": {
-      "current_expected_board": 90,
-      "g10_board": null,
-      "g10_subjects": {
-        "Chemistry": 95,
-        "Computer Science": 95,
-        "English": 95,
-        "Environmental Management": 95,
-        "Geography": 95,
-        "Literature": 95,
-        "Mathematics": 95,
-        "Physics": 95,
-        "Spanish": 95
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1570
-    },
-    "portfolio": [
-      {
-        "activity": "EpiAlert EpiAlert is an innovative devic",
-        "tier": 1,
-        "description": "EpiAlert EpiAlert is an innovative device developed by Saiansh, that can detect Epileptic seizures and raise alarms, enabling immediate care for the patient. No such device exists in India. (Patent applied for)"
-      },
-      {
-        "activity": "Device has been recognized nationally, with t",
-        "tier": 1,
-        "description": "Device has been recognized nationally, with the Dr. APJ Abdul Kalam Ignited Mind Award and the Best Prototype award at Plaksha University\u2019s Young Creator\u2019s League. Media coverage: https://www.thehindu.com/news/cities/Delhi/gurugram-student-wins- apj-abdul-kalam-ignited-minds-children-creativity-and-innovation-award-2023- 24/article68451463.ece"
-      },
-      {
-        "activity": "Pollution Alert To reduce the widespread",
-        "tier": 1,
-        "description": "Pollution Alert To reduce the widespread air pollution in the city, Saiansh developed a mobile application that can be used to report instances of air pollution along with their location to government authorities. The government has acted on various reports of pollution via the app. The app has been recognised by Google and Times of India."
-      },
-      {
-        "activity": "Technology",
-        "tier": 3,
-        "description": "Technology: Python programming, ML development, avid tech quizzer"
-      },
-      {
-        "activity": "Sports",
-        "tier": 1,
-        "description": "Sports: Swimmer with medals at the national level, represented the country at ISF World School Games"
-      },
-      {
-        "activity": "Science",
-        "tier": 2,
-        "description": "Science: Interested in Physics advancements and research, worked as part of winning team at the Asian Regional Space Settlement Design Competition (aerospace engineering simulation)"
-      },
-      {
-        "activity": "Maths",
-        "tier": 1,
-        "description": "Maths: UKMT Senior Mathematics Competition Gold Award, Cathedral Maths Competition Gold Award"
-      },
-      {
-        "activity": "Scuba Diving",
-        "tier": 3,
-        "description": "Scuba Diving: interested in aquatic exploration and wildlife photography"
-      }
-    ],
-    "targets": []
-  },
-  {
-    "id": "STU_001",
-    "name": "Saiansh Tapuriah",
-    "class_level": 12,
-    "board": "ICSE",
-    "board_subjects": [
-      "Mathematics",
-      "Chemistry",
-      "Computer Science",
-      "Accounts"
-    ],
-    "cuet_subjects": [],
-    "grades": {
-      "class_10_aggregate": "95",
-      "class_10_subjects": {},
-      "class_11_aggregate": "95",
-      "current_expected_board": "95",
-      "g10_board": "ICSE",
-      "subjects": {
-        "Accounts": "95",
-        "Chemistry": "95",
-        "Computer Science": "95",
-        "Mathematics": "95"
-      }
-    },
-    "standardized_tests": {
-      "SAT": 1500
-    },
-    "portfolio": [],
-    "targets": [],
-    "shortlisted_colleges": [
-      "CAMBRIDGE",
-      "OXFORD",
-      "IND_FLAME",
-      "IND_DU",
-      "IND_ASHOKA",
-      "US_100858"
     ],
     "status": {
       "cuet_form_submitted": false,

@@ -209,6 +209,7 @@ function renderDashboard() {
   let strongMatch = 0, highRisk = 0, gaps = 0;
   students.forEach(s => {
     const a = cohortAudit[s.id]; if (!a) return;
+    if (!a.targets || Object.keys(a.targets).length === 0) return;
     let minMatch = 100;
     for (const t in a.targets) {
       const r = a.targets[t];
@@ -321,7 +322,7 @@ function getStudentMatchInfo(sid) {
   }
 
   if (!a || !a.targets || Object.keys(a.targets).length === 0) {
-    return { minMatch: 100, maxUrg: 0, hasGap: false, names, riskLevel: 'Pending AI' };
+    return { minMatch: null, maxUrg: 0, hasGap: false, names, riskLevel: 'Pending AI' };
   }
 
   let minMatch = 100, maxUrg = 0, hasGap = false;
@@ -353,6 +354,7 @@ function filterDashboard() {
     if (searchVal && !s.name.toLowerCase().includes(searchVal)) return false;
     if (filterVal === 'all') return true;
     const info = getStudentMatchInfo(s.id);
+    if (info.minMatch === null) return filterVal === 'all';
     if (filterVal === 'strong') return info.minMatch >= 90;
     if (filterVal === 'moderate') return info.minMatch >= 70 && info.minMatch < 90;
     if (filterVal === 'high') return info.minMatch >= 45 && info.minMatch < 70;
@@ -365,8 +367,8 @@ function filterDashboard() {
     const infoB = getStudentMatchInfo(b.id);
     if (sortVal === 'name-asc') return a.name.localeCompare(b.name);
     if (sortVal === 'name-desc') return b.name.localeCompare(a.name);
-    if (sortVal === 'match-asc') return infoA.minMatch - infoB.minMatch;
-    if (sortVal === 'match-desc') return infoB.minMatch - infoA.minMatch;
+    if (sortVal === 'match-asc') return (infoA.minMatch ?? -1) - (infoB.minMatch ?? -1);
+    if (sortVal === 'match-desc') return (infoB.minMatch ?? -1) - (infoA.minMatch ?? -1);
     if (sortVal === 'risk-desc') return infoB.maxUrg - infoA.maxUrg;
     return 0;
   });
@@ -429,10 +431,11 @@ function renderStudentRows(list) {
     const { minMatch, names, riskLevel } = info;
 
     const initial = (s.name || 'S')[0].toUpperCase();
-    const avatarBg = riskLevel === 'Pending AI' ? '#6366F1' : (minMatch >= 90 ? '#059669' : minMatch >= 70 ? '#D97706' : '#DC2626');
+    const hasScore = minMatch !== null && minMatch !== undefined;
+    const avatarBg = !hasScore ? '#6366F1' : (minMatch >= 90 ? '#059669' : minMatch >= 70 ? '#D97706' : '#DC2626');
     let badgeHtml = '';
-    if (riskLevel === 'Pending AI') {
-      badgeHtml = '<span class="badge-risk" style="background:rgba(99,102,241,0.1); color:#6366F1; border-color:rgba(99,102,241,0.3);">Ready</span>';
+    if (!hasScore) {
+      badgeHtml = '<span class="badge-risk" style="background:rgba(99,102,241,0.1); color:#6366F1; border-color:rgba(99,102,241,0.3);">No Targets</span>';
     } else if (minMatch >= 90) {
       badgeHtml = '<span class="badge-risk" style="background:rgba(5,150,105,0.1); color:#059669; border-color:#A7F3D0;">' + riskLevel + '</span>';
     } else if (minMatch >= 70) {
@@ -458,9 +461,9 @@ function renderStudentRows(list) {
         <div class="pq-meta">${s.id} · ${s.board || 'CBSE'} Class ${s.class_level || 12} &nbsp;|&nbsp; <strong>Targets:</strong> ${targetStr}</div>
       </div>
       <div class="pq-progress">
-        <span class="progress-label">${minMatch}% Match</span>
+        <span class="progress-label">${hasScore ? minMatch + '% Match' : 'N/A'}</span>
         <div class="progress-bar">
-          <div class="progress-fill" style="width: ${minMatch}%; background: ${avatarBg};"></div>
+          <div class="progress-fill" style="width: ${hasScore ? minMatch : 0}%; background: ${avatarBg};"></div>
         </div>
       </div>
       <button class="btn-circle" title="View Profile" onclick="event.stopPropagation(); openStudentProfile('${s.id}')">
@@ -714,19 +717,19 @@ function renderManageList() {
       masterBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No students found</td></tr>';
     } else {
       students.forEach(s => {
-        let minMatch = 100;
+        let minMatch = null;
         const a = cohortAudit[s.id];
-        if (a) {
+        if (a && a.targets && Object.keys(a.targets).length > 0) {
+          minMatch = 100;
           for (const t in a.targets) {
             const r = a.targets[t];
             const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50);
             minMatch = Math.min(minMatch, ms);
           }
-        } else {
-          minMatch = 0;
         }
-        
-        let matchStatusHtml = minMatch >= 90 ? '<span class="badge-risk" style="background:#D1FAE5;color:#047857;border:1px solid #6EE7B7;">Strong Match</span>' :
+
+        let matchStatusHtml = minMatch === null ? '<span class="badge-risk" style="background:rgba(99,102,241,0.1);color:#6366F1;border:1px solid rgba(99,102,241,0.3);">No Targets</span>' :
+                              minMatch >= 90 ? '<span class="badge-risk" style="background:#D1FAE5;color:#047857;border:1px solid #6EE7B7;">Strong Match</span>' :
                               minMatch >= 70 ? '<span class="badge-risk" style="background:var(--amber-light);color:#D97706;border:1px solid #FCD34D;">Med Risk</span>' :
                               '<span class="badge-risk high" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;">High Risk</span>';
                               
@@ -2196,23 +2199,25 @@ function renderCohortReport() {
   
   students.forEach(s => {
     const audit = cohortAudit[s.id];
-    let minMatch = 100;
+    let minMatch = null;
     let targetNames = [];
-    
+
     if (audit && Object.keys(audit.targets).length > 0) {
+      minMatch = 100;
       for (const tid in audit.targets) {
         const t = audit.targets[tid];
         targetNames.push(t.target_name);
         const matchScore = t.match_score !== undefined ? t.match_score : (t.compliant ? 100 : 50);
         minMatch = Math.min(minMatch, matchScore);
-        
+
         t.gaps.forEach(g => {
           const sub = g.subject || 'General';
           commonGaps[sub] = (commonGaps[sub] || 0) + 1;
         });
       }
     }
-    
+
+    if (minMatch === null) return;
     if (minMatch >= 90) strongCount++;
     else if (minMatch >= 70) riskCount++;
     else criticalCount++;
@@ -3163,6 +3168,7 @@ function renderCohortReport() {
   const total = students.length;
   students.forEach(s => {
     const a = cohortAudit[s.id]; if (!a) return;
+    if (!a.targets || Object.keys(a.targets).length === 0) return;
     let min = 100;
     for (const t in a.targets) { const r = a.targets[t]; const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50); min = Math.min(min, ms); }
     if (min >= 90) strong++; else if (min < 70) risk++;
@@ -3188,9 +3194,47 @@ function renderCohortReport() {
 }
 window.renderCohortReport = renderCohortReport;
 
-function generateStudentPdf() { alert('Generating student PDF report… (connect to a PDF library to implement)'); }
-function generateCohortPdf()  { alert('Generating cohort PDF report… (connect to a PDF library to implement)'); }
-function sendReportEmail()     { alert('Sending report to student email…'); }
+function generateStudentPdf() {
+  const element = document.getElementById('report-sec-student');
+  if (!element) return;
+  const opt = {
+    margin:       0.3,
+    filename:     'Student_Report.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  if (typeof html2pdf !== 'undefined') {
+    html2pdf().set(opt).from(element).save();
+  } else {
+    alert("PDF library is still loading. Please try again in a few seconds.");
+  }
+}
+
+function generateCohortPdf() {
+  const element = document.getElementById('report-sec-cohort');
+  if (!element) return;
+  const opt = {
+    margin:       0.3,
+    filename:     'Cohort_Report.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+  };
+  if (typeof html2pdf !== 'undefined') {
+    html2pdf().set(opt).from(element).save();
+  } else {
+    alert("PDF library is still loading. Please try again in a few seconds.");
+  }
+}
+
+function sendReportEmail() {
+  const nameEl = document.getElementById('rep-name');
+  const name = nameEl ? nameEl.innerText : "Student";
+  const subject = encodeURIComponent(`Admissions Status Report: ${name}`);
+  const body = encodeURIComponent(`Hi ${name},\n\nPlease find your latest admissions status report and compliance checklist attached as a PDF.\n\nBest regards,\nYour Counselor`);
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
 async function saveReportNotes() {
   const sel = document.getElementById('report-student-select');
   const notes = (document.getElementById('report-notes-input') || {}).value || '';
@@ -3242,7 +3286,7 @@ renderDashboard = function() {
   const hc = document.getElementById('m-cohort-header');
   const hr = document.getElementById('m-risk-header');
   let risk = 0;
-  students.forEach(s => { const a = cohortAudit[s.id]; if (!a) return; let min = 100; for (const t in a.targets) { const r = a.targets[t]; const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50); min = Math.min(min, ms); } if (min < 70) risk++; });
+  students.forEach(s => { const a = cohortAudit[s.id]; if (!a) return; if (!a.targets || Object.keys(a.targets).length === 0) return; let min = 100; for (const t in a.targets) { const r = a.targets[t]; const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50); min = Math.min(min, ms); } if (min < 70) risk++; });
   if (hc) hc.textContent = students.length;
   if (hr) hr.textContent = risk + ' high-risk';
 };
@@ -3474,8 +3518,8 @@ async function toggleShortlistFixed(collegeId, collegeName, btn) {
       btn.style.fontWeight = '700';
       btn.disabled = false;
 
-      // 3. Add to kanban
-      addToKanban(category, collegeId, collegeName, studentId);
+      // 3. Add to kanban with real eval data
+      addToKanban(category, collegeId, collegeName, studentId, evalData);
     } else {
       btn.textContent = '☆ Shortlist';
       btn.style.color = '';
@@ -3494,101 +3538,89 @@ async function toggleShortlistFixed(collegeId, collegeName, btn) {
 }
 window.toggleShortlistFixed = toggleShortlistFixed;
 
-function addToKanban(category, collegeId, collegeName, studentId) {
+function addToKanban(category, collegeId, collegeName, studentId, evalData) {
   const colId = category === 'Reach' ? 'kanban-reach' : category === 'Safety' ? 'kanban-likely' : 'kanban-target';
   const colEl = document.getElementById(colId);
   if (!colEl) return;
 
-  // Remove "No data yet" placeholder
   const placeholder = colEl.querySelector('[data-placeholder]') || Array.from(colEl.children).find(c => c.textContent.includes('No data yet'));
   if (placeholder) placeholder.remove();
 
-  // Deterministic mock data generation based on string length to ensure it stays consistent per college
-  const hash = collegeName.length + (collegeName.charCodeAt(0) || 0);
-  const isReach = category === 'Reach';
-  const isTarget = category === 'Target';
-  const isLikely = category === 'Safety';
-  
-  const acceptRate = isReach ? (4 + (hash % 10)) : isTarget ? (15 + (hash % 20)) : (35 + (hash % 40));
-  const matchPct = isReach ? (55 + (hash % 15)) : isTarget ? (75 + (hash % 15)) : (90 + (hash % 9));
-  
-  const color = isReach ? '#EF4444' : isTarget ? '#F59E0B' : '#10B981';
-  
-  const avgGpa = isReach ? (3.9 + ((hash % 2)/10)).toFixed(1) : isTarget ? (3.7 + ((hash % 3)/10)).toFixed(1) : (3.4 + ((hash % 4)/10)).toFixed(1);
-  const avgSat = isReach ? (1520 + (hash % 8)*10) : isTarget ? (1450 + (hash % 8)*10) : (1350 + (hash % 10)*10);
-  
-  const finAidFit = 60 + (hash % 35);
-  
-  let requirementsHtml = '';
-  if (isLikely || (isTarget && hash % 2 === 0)) {
-    requirementsHtml = `<div style="color:#10B981; font-size:0.8rem; font-weight:500; display:flex; align-items:center; gap:6px;">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
-      All requirements met
-    </div>`;
-  } else {
-    requirementsHtml = `<div style="font-size:0.75rem; color:var(--text-2); font-weight:600; margin-bottom:4px;">Missing Requirements</div>
+  const matchPct = evalData && evalData.match_score != null ? evalData.match_score : 50;
+  const reasoning = evalData && evalData.reasoning ? evalData.reasoning : '';
+  const gaps = evalData && evalData.gaps ? evalData.gaps : [];
+  const requiredExams = evalData && evalData.required_exams ? evalData.required_exams : [];
+
+  const color = category === 'Reach' ? '#EF4444' : category === 'Target' ? '#F59E0B' : '#10B981';
+
+  let gapsHtml = '';
+  if (gaps.length > 0) {
+    const gapItems = gaps.slice(0, 3).map(g =>
+      `<li style="display:flex; align-items:flex-start; gap:6px;"><div style="width:6px; height:6px; border:1px solid #EF4444; border-radius:50%; margin-top:4px; flex-shrink:0;"></div> ${g}</li>`
+    ).join('');
+    gapsHtml = `<div style="font-size:0.75rem; color:var(--text-2); font-weight:600; margin-bottom:4px;">Gaps</div>
       <ul style="margin:0; padding:0; list-style:none; font-size:0.75rem; color:var(--text-3); display:flex; flex-direction:column; gap:4px;">
-        <li style="display:flex; align-items:center; gap:6px;"><div style="width:6px; height:6px; border:1px solid #EF4444; border-radius:50%;"></div> Research publication</li>
-        ${isReach ? `<li style="display:flex; align-items:center; gap:6px;"><div style="width:6px; height:6px; border:1px solid #EF4444; border-radius:50%;"></div> Leadership role (VP+)</li>` : ''}
+        ${gapItems}
+        ${gaps.length > 3 ? `<li style="color:var(--text-3); font-style:italic;">+${gaps.length - 3} more</li>` : ''}
       </ul>`;
+  } else {
+    gapsHtml = `<div style="color:#10B981; font-size:0.8rem; font-weight:500; display:flex; align-items:center; gap:6px;">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg>
+      No major gaps identified
+    </div>`;
   }
+
+  const uni = allUniversities.find(u => (u.id || u.name) === collegeId);
+  const country = uni ? (uni.country || '') : '';
+  const safeCollegeId = collegeId.replace(/'/g, "\\'");
 
   const card = document.createElement('div');
   card.id = `kanban-card-${collegeId}`;
-  card.style.cssText = 'background:#ffffff; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding:16px; border:1px solid #E5E7EB; position:relative;';
-  
+  card.style.cssText = 'background:var(--surface); border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding:16px; border:1px solid var(--border); position:relative;';
+
   card.innerHTML = `
     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
-      <div>
-        <div style="font-weight:700; font-size:1.05rem; color:#111827; margin-bottom:2px;">${collegeName}</div>
-        <div style="font-size:0.8rem; color:#6B7280;">Accept rate: ${acceptRate}%</div>
+      <div style="flex:1;">
+        <div style="font-weight:700; font-size:1.05rem; color:var(--text-1); margin-bottom:2px;">${collegeName}</div>
+        ${country ? `<div style="font-size:0.75rem; color:var(--text-3); font-family:var(--mono); text-transform:uppercase;">${country}</div>` : ''}
       </div>
       <div style="text-align:right;">
-        <div style="font-weight:700; font-size:1.2rem; color:${color};">${matchPct}%</div>
-        <div style="font-size:0.75rem; color:#6B7280;">match</div>
+        <div style="font-weight:700; font-size:1.3rem; color:${color};">${matchPct}%</div>
+        <div style="font-size:0.7rem; color:var(--text-3);">match</div>
       </div>
     </div>
-    
-    <div style="margin-bottom:16px;">
-      <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#4B5563; margin-bottom:4px;">
+
+    <div style="margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-2); margin-bottom:4px;">
         <span>Profile Match</span>
         <span style="font-weight:600;">${matchPct}%</span>
       </div>
-      <div style="height:6px; background:#F3F4F6; border-radius:4px; overflow:hidden;">
-        <div style="height:100%; background:${color}; width:${matchPct}%; border-radius:4px;"></div>
+      <div style="height:6px; background:var(--bg); border-radius:4px; overflow:hidden;">
+        <div style="height:100%; background:${color}; width:${matchPct}%; border-radius:4px; transition: width 0.5s ease;"></div>
       </div>
     </div>
-    
-    <div style="display:flex; gap:12px; margin-bottom:16px;">
-      <div style="flex:1; background:#F3F4F6; border-radius:8px; padding:8px; text-align:center;">
-        <div style="font-weight:700; color:#111827; font-size:0.95rem;">${avgGpa}</div>
-        <div style="font-size:0.7rem; color:#6B7280;">Avg GPA</div>
+
+    ${requiredExams.length ? `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:0.7rem; color:var(--text-3); font-family:var(--mono); text-transform:uppercase; margin-bottom:4px;">Required Exams</div>
+      <div style="display:flex; flex-wrap:wrap; gap:4px;">
+        ${requiredExams.map(e => `<span style="font-size:0.72rem; background:rgba(99,102,241,0.1); color:#6366F1; padding:2px 8px; border-radius:4px; font-weight:600;">${e}</span>`).join('')}
       </div>
-      <div style="flex:1; background:#F3F4F6; border-radius:8px; padding:8px; text-align:center;">
-        <div style="font-weight:700; color:#111827; font-size:0.95rem;">${avgSat}</div>
-        <div style="font-size:0.7rem; color:#6B7280;">Avg SAT</div>
-      </div>
+    </div>` : ''}
+
+    ${reasoning ? `
+    <div style="margin-bottom:14px; padding:10px; background:var(--bg); border-radius:8px; border-left:3px solid ${color};">
+      <div style="font-size:0.75rem; color:var(--text-2); line-height:1.4;">${reasoning}</div>
+    </div>` : ''}
+
+    <div style="padding-top:12px; border-top:1px solid var(--border);">
+      ${gapsHtml}
     </div>
-    
-    <div style="margin-bottom:16px;">
-      <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:#4B5563; margin-bottom:4px;">
-        <span>Financial Aid Fit</span>
-        <span style="font-weight:600;">${finAidFit}%</span>
-      </div>
-      <div style="height:6px; background:#F3F4F6; border-radius:4px; overflow:hidden;">
-        <div style="height:100%; background:#6366F1; width:${finAidFit}%; border-radius:4px;"></div>
-      </div>
-    </div>
-    
-    <div style="padding-top:12px; border-top:1px solid #F3F4F6;">
-      ${requirementsHtml}
-    </div>
-    
-    <button onclick="removeFromShortlistUI('${collegeId}', '${studentId}', this)" style="position:absolute; top:-8px; right:-8px; width:24px; height:24px; background:#fff; border:1px solid #E5E7EB; border-radius:50%; color:#EF4444; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.05);">&times;</button>
+
+    <button onclick="removeFromShortlistUI('${safeCollegeId}', '${studentId}', this)" style="position:absolute; top:-8px; right:-8px; width:24px; height:24px; background:var(--surface); border:1px solid var(--border); border-radius:50%; color:#EF4444; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.05);">&times;</button>
   `;
   colEl.appendChild(card);
-  
-  // Update counts
+
   const countEl = document.getElementById(`count-${category === 'Reach' ? 'reach' : category === 'Safety' ? 'likely' : 'target'}`);
   if (countEl) {
     countEl.textContent = parseInt(countEl.textContent || '0') + 1;
@@ -3607,8 +3639,25 @@ async function removeFromShortlistUI(collegeId, studentId, btn) {
       const d = await res.json();
       const s = students.find(x => x.id === studentId);
       if (s) s.shortlisted_colleges = d.shortlisted_colleges;
-      if (card) card.remove();
-      // Reset the table button
+      if (card) {
+        const parent = card.parentElement;
+        card.remove();
+        // Update column count
+        if (parent) {
+          const colMap = { 'kanban-reach': 'count-reach', 'kanban-target': 'count-target', 'kanban-likely': 'count-likely' };
+          const countId = colMap[parent.id];
+          if (countId) {
+            const countEl = document.getElementById(countId);
+            if (countEl) {
+              const newCount = Math.max(0, parseInt(countEl.textContent || '0') - 1);
+              countEl.textContent = newCount;
+              if (newCount === 0) {
+                parent.innerHTML = '<div data-placeholder="true" style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No data yet</div>';
+              }
+            }
+          }
+        }
+      }
       const tableBtn = document.querySelector(`[data-college-id="${collegeId}"]`);
       if (tableBtn) { tableBtn.textContent = '☆ Shortlist'; tableBtn.style.color = ''; tableBtn.style.fontWeight = ''; }
     }
@@ -3716,21 +3765,27 @@ function filterPredictorListFixed() {
         </div>
         
         ${c.courses && c.courses.length ? `
-        <div style="margin-bottom:10px; font-size:0.75rem;">
-          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Popular Courses:</strong>
-          <span style="color:var(--text-2);">${c.courses.join(', ')}</span>
+        <div style="margin-bottom:12px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:6px;">Popular Courses:</strong>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            ${c.courses.map(crs => `<span style="background:var(--bg-2); color:var(--text-1); padding:3px 8px; border-radius:12px; font-size:0.7rem; font-weight:500;">${crs}</span>`).join('')}
+          </div>
         </div>` : ''}
         
         ${c.subject_requirements && c.subject_requirements.length ? `
-        <div style="margin-bottom:10px; font-size:0.75rem;">
-          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Subject Requirements:</strong>
-          <span style="color:var(--text-2);">${c.subject_requirements.join(', ')}</span>
+        <div style="margin-bottom:12px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:6px;">Subject Requirements:</strong>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            ${c.subject_requirements.map(req => `<span style="background:#EEF2FF; color:#4338CA; padding:3px 8px; border-radius:12px; font-size:0.7rem; font-weight:600;">${req}</span>`).join('')}
+          </div>
         </div>` : ''}
         
         ${c.required_exams && c.required_exams.length ? `
-        <div style="margin-bottom:10px; font-size:0.75rem;">
-          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:2px;">Required Exams:</strong>
-          <span style="font-family:var(--mono); font-weight:700; color:var(--amber);">${c.required_exams.join(', ')}</span>
+        <div style="margin-bottom:12px; font-size:0.75rem;">
+          <strong style="color:var(--text-3); font-family:var(--mono); font-size:0.6rem; text-transform:uppercase; display:block; margin-bottom:6px;">Required Exams:</strong>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            ${c.required_exams.map(ex => `<span style="background:#FEF3C7; color:#B45309; padding:3px 8px; border-radius:12px; font-size:0.7rem; font-weight:700; border:1px solid #FDE68A;">${ex}</span>`).join('')}
+          </div>
         </div>` : ''}
 
         ${c.expected_sat && c.expected_sat !== "N/A" && c.expected_sat !== "nan" ? `
@@ -3814,27 +3869,29 @@ async function populateKanbanFromShortlist() {
     if (el) el.innerHTML = '';
   });
 
-  for (const cid of student.shortlisted_colleges) {
+  const evalPromises = student.shortlisted_colleges.map(cid => {
     const uni = allUniversities.find(u => (u.id || u.name) === cid);
     const name = uni ? uni.name : cid;
-    try {
-      const res = await fetch('/api/evaluate_shortlist', {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ student_id: studentId, college_id: cid })
-      });
-      const d = res.ok ? await res.json() : { category: 'Target' };
-      addToKanban(d.category || 'Target', cid, name, studentId);
-    } catch(e) {
-      addToKanban('Target', cid, name, studentId);
-    }
-  }
+    return fetch('/api/evaluate_shortlist', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ student_id: studentId, college_id: cid })
+    })
+    .then(res => res.ok ? res.json() : { category: 'Target', match_score: 50 })
+    .then(d => ({ cid, name, evalData: d }))
+    .catch(() => ({ cid, name, evalData: { category: 'Target', match_score: 50 } }));
+  });
+
+  const results = await Promise.all(evalPromises);
+  results.forEach(({ cid, name, evalData }) => {
+    addToKanban(evalData.category || 'Target', cid, name, studentId, evalData);
+  });
 }
 window.populateKanbanFromShortlist = populateKanbanFromShortlist;
 
 // ══════════════════════════════════════════════
 //  UNIVERSITY DASHBOARD (KANBAN)
 // ══════════════════════════════════════════════
-function renderUniversityDashboard() {
+async function renderUniversityDashboard() {
   const sel = document.getElementById('kanban-student-select');
   if (!sel) return;
   const currentVal = sel.value;
@@ -3850,43 +3907,125 @@ function renderUniversityDashboard() {
   } else if (students.length > 0) {
     sel.value = students[0].id;
   }
-  
+
+  if (allUniversities.length === 0) {
+    try {
+      const res = await fetch('/api/colleges');
+      allUniversities = await res.json();
+    } catch(e) { console.error('Failed to load colleges for kanban', e); }
+  }
+
   if (sel.value) {
     onKanbanStudentChange(sel.value);
   }
 }
 
-function onKanbanStudentChange(studentId) {
+async function onKanbanStudentChange(studentId) {
   const s = students.find(x => x.id === studentId);
   const subtitle = document.getElementById('kanban-subtitle');
   if (subtitle && s) {
-    subtitle.textContent = `Profile match analysis for ${s.name} · Sorted by fit score`;
+    subtitle.textContent = `Profile match analysis for ${s.name}`;
   }
-  
-  // Reset kanban counts and UI
+
+  // Reset kanban
   ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.innerHTML = '<div data-placeholder="true" style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No data yet</div>';
+    if (el) el.innerHTML = '';
   });
   ['count-reach','count-target','count-likely'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.textContent = '0';
   });
-  
-  // Populate from targets in student profile
-  if (s && s.targets) {
-    s.targets.forEach((tid, i) => {
-      let cat = 'Target';
-      if (i % 3 === 0) cat = 'Reach';
-      else if (i % 3 === 2) cat = 'Safety';
-      
-      const collegeName = targets[tid] ? targets[tid].name : tid;
-      addToKanban(cat, tid, collegeName, studentId);
+
+  if (!s || !s.shortlisted_colleges || s.shortlisted_colleges.length === 0) {
+    ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div data-placeholder="true" style="padding:16px; text-align:center; color:var(--text-3); font-size:0.85rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No colleges shortlisted yet.<br><span style="font-size:0.75rem;">Browse the College Database to add some.</span></div>';
     });
+    return;
   }
+
+  // Show loading state
+  ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-3); font-size:0.8rem;">Evaluating...</div>';
+  });
+
+  // Evaluate all shortlisted colleges in parallel
+  const evalPromises = s.shortlisted_colleges.map(cid => {
+    const uni = allUniversities.find(u => (u.id || u.name) === cid);
+    const name = uni ? uni.name : cid;
+    return fetch('/api/evaluate_shortlist', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ student_id: studentId, college_id: cid })
+    })
+    .then(res => res.ok ? res.json() : { category: 'Target', match_score: 50, reasoning: 'Evaluation unavailable.' })
+    .then(d => ({ cid, name, evalData: d }))
+    .catch(() => ({ cid, name, evalData: { category: 'Target', match_score: 50, reasoning: 'Evaluation failed.' } }));
+  });
+
+  const results = await Promise.all(evalPromises);
+
+  // Clear loading state
+  ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+
+  if (results.length === 0) {
+    ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = '<div data-placeholder="true" style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No data yet</div>';
+    });
+    return;
+  }
+
+  results.forEach(({ cid, name, evalData }) => {
+    const category = evalData.category || 'Target';
+    addToKanban(category, cid, name, studentId, evalData);
+  });
 }
 window.renderUniversityDashboard = renderUniversityDashboard;
 window.onKanbanStudentChange = onKanbanStudentChange;
+
+async function exportShortlistExcel() {
+  const sel = document.getElementById('kanban-student-select');
+  if (!sel || !sel.value) { alert('Select a student first.'); return; }
+  const studentId = sel.value;
+  const student = students.find(s => s.id === studentId);
+  if (!student || !student.shortlisted_colleges || !student.shortlisted_colleges.length) {
+    alert('This student has no shortlisted colleges to export.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-export-shortlist');
+  if (btn) { btn.disabled = true; btn.textContent = 'Exporting...'; }
+
+  try {
+    const res = await fetch(`/api/export_shortlist/${studentId}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || `HTTP ${res.status}`);
+    }
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${(student.name || studentId).replace(/ /g, '_')}_University_Shortlist.xlsx`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(err) {
+    alert('Export failed: ' + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> Export Excel';
+    }
+  }
+}
+window.exportShortlistExcel = exportShortlistExcel;
 
 // ══════════════════════════════════════════════
 //  SCHOLARSHIPS DATABASE

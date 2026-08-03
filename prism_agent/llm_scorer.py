@@ -176,7 +176,7 @@ Return ONLY valid JSON:
 
     # ── 2. Classify a shortlisted college ────────────────────────────────
 
-    def classify_shortlist(self, student, college):
+    def classify_shortlist(self, student, college, requirements_info=None):
         groq_key = os.environ.get("GROQ_API_KEY", "").strip()
         if not groq_key:
             return None
@@ -198,25 +198,49 @@ Return ONLY valid JSON:
         required_exams = college.get("admission_tests", college.get("required_exams", []))
         country = college.get("country", college.get("track", ""))
 
-        prompt = f"""Classify this student's realistic admission chances at this college as "Safety", "Target", or "Reach".
+        req_block = ""
+        if requirements_info:
+            req_block = f"""
+Detailed Requirements (from our database):
+- Subject Prerequisites: {json.dumps(requirements_info.get("subject_prerequisites", []))}
+- Grade Prerequisites: {json.dumps(requirements_info.get("grade_prerequisites", []))}
+- Admission Tests: {json.dumps(requirements_info.get("admission_tests", []))}
+- Portfolio Tier Expected: {requirements_info.get("portfolio_tier", "N/A")}
+"""
+
+        prompt = f"""You are an expert college admissions evaluator. Evaluate this student's realistic admission chances at this college.
 
 Student:
+- Name: {student.get("name", "Unknown")}
 - Expected Grade: {grade}
 - SAT Score: {sat}
 - Board: {student.get("board", "Unknown")}
+- Class Level: {student.get("class_level", "12")}
 - Best Portfolio Tier: {best_tier} (1=elite international, 2=regional/national, 3=school-level, 4=none)
 - Board Subjects: {student.get("board_subjects", [])}
+- Portfolio Activities: {json.dumps([a.get("activity", "") for a in portfolio[:5]])}
+- Standardized Tests: {json.dumps(tests_dict)}
 
 College: {college_name}
 Country/Track: {country}
 Required Exams: {json.dumps(required_exams)}
+{req_block}
 
-HARD RULES:
-1. If the college requires CUET_UG or JEE_MAIN or JEE_ADVANCED, it can NEVER be "Safety". These competitive exams make outcomes unpredictable regardless of student strength.
-2. Elite institutions (Harvard, MIT, Stanford, Oxford, Cambridge, IITs, AIIMS, Imperial, Caltech, Princeton, Yale, Columbia, Chicago) are NEVER "Safety".
-3. Consider both academic fit AND exam requirements when classifying.
+SCORING RULES:
+1. match_score is 0-100. Consider academic fit, exam readiness, portfolio strength, and subject alignment.
+2. Super-selective institutions (Oxford, Cambridge, MIT, Stanford, Harvard, IITs, AIIMS, Imperial, Caltech, Princeton, Yale, Columbia, Chicago, LSE) cap at 78 maximum.
+3. No score above 92 regardless of strength. Minimum 5.
+4. If student is missing required subjects or exams, score should reflect that gap significantly.
 
-Return ONLY valid JSON: {{"category": "<Safety|Target|Reach>", "tier": <1-4>, "reasoning": "<1 sentence>"}}"""
+CLASSIFICATION RULES:
+1. If the college requires CUET_UG or JEE_MAIN or JEE_ADVANCED, it can NEVER be "Safety".
+2. Elite institutions are NEVER "Safety", at most "Target".
+3. "Safety" = high confidence of admission. "Target" = competitive but realistic. "Reach" = significant uncertainty or gaps.
+
+GAPS: Identify specific gaps between student profile and college requirements (missing subjects, low scores, missing exams, weak portfolio).
+
+Return ONLY valid JSON:
+{{"category": "<Safety|Target|Reach>", "match_score": <int 5-92>, "tier": <1-4>, "reasoning": "<2-3 sentences explaining why this classification>", "gaps": ["<gap1>", "<gap2>", ...], "strengths": ["<strength1>", "<strength2>", ...]}}"""
 
         payload = {
             "model": GROQ_MODEL,
@@ -236,17 +260,28 @@ Return ONLY valid JSON: {{"category": "<Safety|Target|Reach>", "tier": <1-4>, "r
             data = json.loads(res.json()["choices"][0]["message"]["content"])
             category = data.get("category", "Target")
             tier = int(data.get("tier", 3))
+            match_score = int(data.get("match_score", 50))
 
-            # Post-LLM CUET/JEE gate
             if any(t in ("CUET_UG", "JEE_MAIN", "JEE_ADVANCED", "JEE Mains") for t in required_exams):
                 if category == "Safety":
                     category = "Target"
 
             name_lower = college_name.lower()
-            if any(kw in name_lower for kw in ELITE_KEYWORDS) and category == "Safety":
-                category = "Target"
+            if any(kw in name_lower for kw in ELITE_KEYWORDS):
+                match_score = min(match_score, 78)
+                if category == "Safety":
+                    category = "Target"
 
-            result = {"category": category, "tier": tier, "reasoning": data.get("reasoning", "")}
+            match_score = max(5, min(92, match_score))
+
+            result = {
+                "category": category,
+                "tier": tier,
+                "match_score": match_score,
+                "reasoning": data.get("reasoning", ""),
+                "gaps": data.get("gaps", []),
+                "strengths": data.get("strengths", []),
+            }
             self._set_cached(ck, result)
             return result
         except Exception:

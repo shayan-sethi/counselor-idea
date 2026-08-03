@@ -592,7 +592,8 @@ class Reasoner:
 
         ELITE_KEYWORDS = [
             "cambridge", "oxford", "mit", "stanford", "harvard",
-            "yale", "princeton", "caltech", "imperial", "iit", "aiims"
+            "yale", "princeton", "caltech", "imperial", "iit", "aiims",
+            "ivy league", "lse", "london school of economics",
         ]
         uni_name = (target.get("university", "") or target.get("name", "")).lower()
         portfolio_tier = int(target.get("portfolio_tier", 3))
@@ -666,7 +667,8 @@ class Reasoner:
             "cambridge", "oxford", "mit", "stanford", "harvard",
             "yale", "princeton", "caltech", "imperial", "iit bombay",
             "iit delhi", "iit madras", "aiims", "columbia", "chicago",
-            "berkeley", "cornell", "pennsylvania"
+            "berkeley", "cornell", "pennsylvania", "ivy league", "lse",
+            "london school of economics",
         ]
 
         uni_name = (target.get("university", "") or target.get("name", "")).lower()
@@ -681,6 +683,13 @@ class Reasoner:
         # Super-selective institutions are always at least a Target, never Safety
         if is_super_selective:
             if match_score >= 72:
+                return "Target"
+            return "Reach"
+
+        # CUET/JEE targets can never be Safety — competitive exams are unpredictable
+        admission_tests = target.get("admission_tests", []) if target else []
+        if any(t in ("CUET_UG", "JEE_MAIN", "JEE_ADVANCED") for t in admission_tests):
+            if match_score >= 65:
                 return "Target"
             return "Reach"
 
