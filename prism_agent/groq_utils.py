@@ -6,6 +6,28 @@ GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
 GROQ_MODEL = "llama-3.3-70b-versatile"
 
 
+def _load_env_if_needed():
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    env_paths = [
+        os.path.join(base_dir, ".env"),
+        os.path.join(os.getcwd(), ".env")
+    ]
+    for env_path in env_paths:
+        if os.path.exists(env_path):
+            try:
+                with open(env_path, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line and not line.startswith("#") and "=" in line:
+                            k, v = line.split("=", 1)
+                            k_clean = k.strip()
+                            v_clean = v.strip().strip('"').strip("'")
+                            if k_clean and v_clean:
+                                os.environ[k_clean] = v_clean
+            except Exception:
+                pass
+
+
 def get_groq_api_keys():
     """
     Retrieves configured Groq API keys in priority order:
@@ -16,6 +38,7 @@ def get_groq_api_keys():
     5. GROQ_API_KEY_SECONDARY, GROQ_API_KEY_TERTIARY, GROQ_API_KEY_BACKUP
     6. Comma-separated keys in GROQ_API_KEYS
     """
+    _load_env_if_needed()
     keys = []
     
     env_vars = [
@@ -33,6 +56,10 @@ def get_groq_api_keys():
         val = os.environ.get(var, "").strip().strip('"').strip("'")
         if val and val not in keys:
             keys.append(val)
+
+    # Sync primary key if GROQ_API_KEY wasn't explicitly set but GROQ_API_KEY_1 was
+    if keys and not os.environ.get("GROQ_API_KEY"):
+        os.environ["GROQ_API_KEY"] = keys[0]
 
     # Dynamic scan for any GROQ_API_KEY_<int>
     for var, val in sorted(os.environ.items()):

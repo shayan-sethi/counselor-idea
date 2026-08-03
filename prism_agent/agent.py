@@ -368,7 +368,7 @@ class PRISMAgent:
                 "tools": TOOL_SCHEMAS,
                 "tool_choice": "auto",
                 "temperature": 0.1,
-                "max_tokens": 4096,
+                "max_tokens": 1024,
             }
             res, err = groq_post_with_retry(groq_payload, label="Agent")
             if not res or res.status_code != 200:
@@ -498,42 +498,32 @@ class PRISMAgent:
         
         student = next((s for s in students_list if s["id"] == student_id), None)
         target = self.kg.get_course_or_exam(target_id)
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
 
-        fallback_prompt = f"""
-You are an expert AI admissions counselor. Evaluate student {student_id} for target {target_id}.
-Student Profile: {json.dumps(student)}
-Target Requirements: {json.dumps(target)}
+        grade = student.get("grades", {}).get("current_expected_board", "N/A") if student else "N/A"
+        subjects = student.get("board_subjects", []) if student else []
+        tests = student.get("standardized_tests", {}) if student else {}
+        t_name = target["name"] if target else "Target"
+        t_track = target["track"] if target else "Unknown"
 
-Output ONLY a valid JSON object matching this schema exactly:
-{{
-  "target_name": "{target['name'] if target else 'Target'}",
-  "track": "{target['track'] if target else 'Unknown'}",
-  "compliant": true,
-  "urgency_score": 15,
-  "match_score": 85,
-  "risk_level": "Strong Match",
-  "difficulty_label": "Target",
-  "gaps": [ {{"field": "grades", "issue": "describe gap"}} ],
-  "remediations": [ {{"field": "grades", "action": "describe action"}} ]
-}}
-"""
+        fallback_prompt = f"""Evaluate student for target. Return JSON only.
+
+Student: id={student_id}, grade={grade}, subjects={subjects}, SAT={tests.get("SAT","N/A")}
+Target: {t_name} ({t_track}), tests={target.get("admission_tests",[]) if target else []}
+
+{{"target_name":"{t_name}","track":"{t_track}","compliant":true,"urgency_score":15,"match_score":70,"risk_level":"Strong Match","difficulty_label":"Target","gaps":[{{"field":"grades","issue":"describe gap"}}],"remediations":[{{"field":"grades","action":"describe action"}}]}}"""
+
         try:
-            res = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json={
-                    "model": "llama-3.3-70b-versatile",
-                    "messages": [
-                        {"role": "system", "content": "You are unlockED AI Admissions Compliance Officer. Return ONLY valid JSON."},
-                        {"role": "user", "content": fallback_prompt}
-                    ],
-                    "response_format": {"type": "json_object"},
-                    "temperature": 0.1
-                },
-                timeout=20
-            )
-            if res.status_code == 200:
+            res, err = groq_post_with_retry({
+                "model": "llama-3.3-70b-versatile",
+                "messages": [
+                    {"role": "system", "content": "Return ONLY valid JSON."},
+                    {"role": "user", "content": fallback_prompt}
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.1,
+                "max_tokens": 300
+            }, label="AgentFallback", max_wait=15)
+            if res and res.status_code == 200:
                 raw_text = res.json()["choices"][0]["message"]["content"]
                 final_data = json.loads(raw_text)
                 final_data["trace"] = [{"type": "thought", "message": "Groq Llama-3.3-70b evaluation completed."}]

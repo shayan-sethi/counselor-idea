@@ -952,47 +952,47 @@
         </div>
       </main>
 
-      <!-- Hidden stub -->
+      <!-- Recommendation Studio -->
       <main id="view-recommendations" class="hidden">
-        <div class="section-header">
+        <div class="dash-header">
           <div>
-            <h1 class="section-title">Recommendation Studio</h1>
-            <p class="section-subtitle">Draft and manage Letters of Recommendation</p>
+            <div class="greeting">Recommendation Studio</div>
+            <div class="greeting-sub">Draft and manage Letters of Recommendation</div>
           </div>
           <div style="display:flex; gap:12px; align-items:center;">
-            <select id="rec-student-select" class="form-input" style="width: 250px;">
+            <select id="rec-student-select" class="form-input" style="width: 250px;" onchange="renderRecBragSheet(this.value)">
               <option value="">Select a student...</option>
             </select>
-            <button class="btn-primary" onclick="generateAIRecommendation()">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg> Generate LOR Outline
+            <button class="btn-primary" onclick="generateAIRecommendation()" style="display:flex; align-items:center; gap:8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"/>
+              </svg>
+              Generate LOR Outline
             </button>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 24px; height: calc(100vh - 180px);">
+        <div style="display: grid; grid-template-columns: 1fr 360px; gap: 24px; height: calc(100vh - 190px);">
 
           <!-- Left: Editor -->
-          <div class="card" style="display: flex; flex-direction: column; height: 100%;">
-            <div
-              style="padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--bg-1);">
-              <button class="btn-secondary" style="padding: 4px 12px; font-size: 12px;" onclick="copyRecText()">Copy to
-                Clipboard</button>
+          <div class="card" style="display: flex; flex-direction: column; height: 100%; padding:0; overflow:hidden;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: flex-end; background: var(--surface);">
+              <button class="btn-secondary" style="padding: 4px 12px; font-size: 12px; display:flex; align-items:center; gap:6px;" onclick="copyRecText()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy to Clipboard
+              </button>
             </div>
             <!-- Quill editor container -->
             <div id="rec-editor-container" style="flex:1; width: 100%; border: none;"></div>
           </div>
 
           <!-- Right: Brag Sheet Sidebar -->
-          <div class="card" style="overflow-y: auto; height: 100%; background: var(--bg-2);">
-            <div
-              style="padding: 16px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-2); z-index: 10;">
-              <h3 style="margin:0; font-size: 14px; color: var(--text-1); font-weight: 600;">Student Context (Brag
-                Sheet)</h3>
+          <div class="card" style="display: flex; flex-direction: column; height: 100%; padding:0; overflow:hidden; background: var(--surface);">
+            <div style="padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; display:flex; justify-content:space-between; align-items:center;">
+              <h3 style="margin:0; font-size: 0.72rem; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-family:var(--mono);">STUDENT CONTEXT</h3>
+              <span id="rec-student-id-badge" style="font-family:var(--mono); font-size:0.7rem; color:var(--accent); font-weight:600;"></span>
             </div>
-            <div id="rec-sidebar-content"
-              style="padding: 16px; display: flex; flex-direction: column; gap: 16px; font-size: 13px; color: var(--text-2);">
+            <div id="rec-sidebar-content" style="flex:1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 16px; font-size: 13px; color: var(--text-2);">
               <div style="text-align: center; color: var(--text-3); padding: 40px 20px;">
                 Select a student to load their profile context.
               </div>

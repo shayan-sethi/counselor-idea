@@ -103,7 +103,9 @@
         "Psychology": 93
       }
     },
-    "standardized_tests": { "SAT": 1480 },
+    "standardized_tests": {
+      "SAT": 1480
+    },
     "portfolio": [
       {
         "activity": "MUN Best Delegate",
@@ -193,7 +195,9 @@
         "English": 96
       }
     },
-    "standardized_tests": { "SAT": 1510 },
+    "standardized_tests": {
+      "SAT": 1510
+    },
     "portfolio": [
       {
         "activity": "Research Paper",
@@ -288,7 +292,9 @@
         "Computer Science": 69
       }
     },
-    "standardized_tests": { "SAT": 1390 },
+    "standardized_tests": {
+      "SAT": 1390
+    },
     "portfolio": [
       {
         "activity": "Debate Club",
@@ -542,7 +548,13 @@
     ],
     "shortlisted_colleges": [
       "IMPERIAL",
-      "OXFORD"
+      "OXFORD",
+      "US_100751",
+      "US_100706",
+      "US_211440"
+    ],
+    "shortlisted_scholarships": [
+      "schol_tata_cornell"
     ]
   },
   {

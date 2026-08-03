@@ -111,37 +111,28 @@ class ScholarshipAgent:
 
     @staticmethod
     def _match_with_groq(student, candidate_scholarships, groq_key, silent=False):
-        prompt = f"""You are an expert Scholarship and Financial Aid Agent for unlockED.
-Evaluate the eligibility and strategic fit of {len(candidate_scholarships)} scholarship(s) for the following student profile:
+        grade = student.get("grades", {}).get("current_expected_board", "N/A")
+        tests = student.get("standardized_tests", {})
+        subjects = student.get("board_subjects", [])
 
-Student Profile:
-{json.dumps(student, indent=2)}
+        schol_brief = [{"id": s["id"], "name": s.get("name",""), "criteria": s.get("eligibility_criteria",""), "amount": s.get("amount",""), "deadline": s.get("deadline","")} for s in candidate_scholarships]
 
-Available Scholarships:
-{json.dumps(candidate_scholarships, indent=2)}
+        prompt = f"""Score scholarship fit. Return JSON array.
 
-For EACH scholarship, assign a match score 0-100 and write EXACTLY 2 short bullet lines (max 15-20 words each) for "why" and "actions_needed". Separate the two bullets with a literal \\n.
+Student: grade={grade}, board={student.get("board")}, SAT={tests.get("SAT","N/A")}, subjects={subjects[:6]}
 
-Return a valid JSON array:
-[
-  {{
-    "scholarship_id": "schol_tata_cornell",
-    "match_score": 88,
-    "why": "• 1540 SAT & 42/45 IB score meets STEM threshold.\\n• Cornell target pathway aligns with scholarship focus.",
-    "actions_needed": "• Submit CSS Profile before Nov 1st deadline.\\n• Get financial counselor sign-off.",
-    "is_urgent": false,
-    "days_remaining": 45
-  }}
-]
-"""
+Scholarships: {json.dumps(schol_brief)}
+
+[{{"scholarship_id":"<id>","match_score":<0-100>,"why":"<1 line>","actions_needed":"<1 line>","is_urgent":false,"days_remaining":<int>}}]"""
         payload = {
             "model": GROQ_MODEL,
             "messages": [
-                {"role": "system", "content": "You are unlockED Scholarship AI. Return ONLY a valid JSON array of scholarship match objects."},
+                {"role": "system", "content": "Return ONLY valid JSON."},
                 {"role": "user",   "content": prompt},
             ],
             "response_format": {"type": "json_object"},
             "temperature": 0.1,
+            "max_tokens": 400,
         }
 
         res, err = _groq_post_with_retry(groq_key, payload, label="ScholarshipAgent.match")
@@ -204,55 +195,24 @@ Return a valid JSON array:
         Uses Groq API to recommend top 3 best-fit students for a scholarship.
         Retries for up to ~15 s on rate-limit before falling back.
         """
-        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+        brief_students = [{"id": s.get("id"), "name": s.get("name"), "board": s.get("board"), "grade": s.get("grades",{}).get("current_expected_board","N/A"), "SAT": s.get("standardized_tests",{}).get("SAT","N/A"), "subjects": s.get("board_subjects",[])[:5]} for s in all_students]
 
-        rich_students = []
-        for s in all_students:
-            rich_students.append({
-                "id":                s.get("id"),
-                "name":              s.get("name"),
-                "class_level":       s.get("class_level"),
-                "board":             s.get("board"),
-                "expected_grade":    s.get("grades", {}).get("current_expected_board", "N/A"),
-                "standardized_tests": s.get("standardized_tests", {}),
-                "board_subjects":    s.get("board_subjects", []),
-                "targets":           [t.get("name") if isinstance(t, dict) else str(t) for t in s.get("target_pathways", [])],
-                "portfolio_summary": [p.get("activity") if isinstance(p, dict) else str(p) for p in s.get("portfolio", [])],
-                "financial_need":    s.get("financial_need", "High"),
-            })
+        prompt = f"""Pick top 3 students for this scholarship. Return JSON.
 
-        prompt = f"""You are an expert Chief Admissions Officer & Financial Aid Counselor for unlockED.
-Analyze this scholarship and evaluate the student roster. Select the top 3 best-fit students.
+Scholarship: {scholarship.get("name","")}, criteria={scholarship.get("eligibility_criteria","")}, amount={scholarship.get("amount","")}
 
-Scholarship:
-{json.dumps(scholarship, indent=2)}
+Students: {json.dumps(brief_students)}
 
-Candidate Roster:
-{json.dumps(rich_students, indent=2)}
-
-For each of the top 3, write EXACTLY 2 short bullet lines (max 15-20 words each). No long paragraphs.
-Example:
-"• 96% IB score & 1540 SAT matches STEM criteria.\\n• Rural Book Service leadership shows community alignment."
-
-Return a JSON object:
-{{
-  "recommendations": [
-    {{
-      "student_id": "STU_001",
-      "score": 96,
-      "reason": "• 42/45 IB score & 1540 SAT matches STEM criteria.\\n• EpiAlert project aligns with Tata innovation focus."
-    }}
-  ]
-}}
-"""
+{{"recommendations":[{{"student_id":"<id>","score":<0-100>,"reason":"<1 sentence>"}}]}}"""
         payload = {
             "model": GROQ_MODEL,
             "messages": [
-                {"role": "system", "content": "You are unlockED Scholarship Matching Agent. Return ONLY a valid JSON object."},
+                {"role": "system", "content": "Return ONLY valid JSON."},
                 {"role": "user",   "content": prompt},
             ],
             "response_format": {"type": "json_object"},
             "temperature": 0.15,
+            "max_tokens": 300,
         }
 
         if get_groq_api_keys():

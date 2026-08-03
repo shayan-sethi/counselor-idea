@@ -262,7 +262,7 @@ function renderDashboard() {
       const r = a.targets[t];
       const ms = r.match_score !== undefined ? r.match_score : (r.compliant ? 100 : 50);
       minMatch = Math.min(minMatch, ms);
-      if (!r.compliant) gaps += r.gaps.length;
+      if (!r.compliant) gaps += (r.gaps || []).length;
     }
     if (minMatch >= 90) strongMatch++;
     else if (minMatch < 70) highRisk++;
@@ -382,14 +382,10 @@ function getStudentMatchInfo(sid) {
     if (!r.compliant) hasGap = true;
   }
   
-  // Make match score realistic
-  if (minMatch >= 98) minMatch = 92;
-  else if (minMatch >= 90) minMatch = 89;
-
   let riskLevel = 'Strong Match';
   if (minMatch < 45) riskLevel = 'Critical';
   else if (minMatch < 70) riskLevel = 'High Risk';
-  else if (minMatch < 90) riskLevel = 'Moderate Risk';
+  else if (minMatch < 90) riskLevel = 'Moderate';
   return { minMatch, maxUrg, hasGap, names, riskLevel };
 }
 
@@ -1237,58 +1233,56 @@ function renderMatchesGrid(filterType) {
     
     const diffClass = diffLabel.toLowerCase(); // 'reach', 'target', 'safety'
     
-    // Pick the first reasoning logic as "why recommended" or mock it
-    let reasonText = 'Strong alignment with her artificial intelligence research project and solid SAT math score.';
-    if (t.gaps && t.gaps.length > 0) {
-      reasonText = t.gaps[0].details || t.gaps[0].reason || 'Profile needs some improvement to meet all requirements.';
-    } else if (t.remediations && t.remediations.length > 0) {
-      reasonText = t.remediations[0].details || 'Excellent match with current academic trajectory.';
+    let reasonText = '';
+    const gapsList = t.gaps || [];
+    const remsList = t.remediations || [];
+    if (gapsList.length > 0) {
+      reasonText = gapsList.map(g => g.description || g.issue || g.subject || '').filter(Boolean).slice(0, 2).join('. ');
+    } else {
+      reasonText = 'No compliance gaps detected. Student meets all prerequisites.';
     }
-    
+
+    let checklistHtml = '';
+    if (gapsList.length > 0) {
+      checklistHtml = gapsList.slice(0, 3).map(g => {
+        const icon = g.severity === 'CRITICAL' ? '<span class="mcc-icon mcc-icon-warn" style="color:var(--red);">&#10007;</span>' : '<span class="mcc-icon mcc-icon-warn" style="color:var(--amber);">&#9888;</span>';
+        return `<div class="mcc-item">${icon} ${g.subject || g.type || 'Gap'}: ${(g.description || '').substring(0, 60)}</div>`;
+      }).join('');
+    } else {
+      checklistHtml = '<div class="mcc-item"><span class="mcc-icon">&#10003;</span> All prerequisites met</div>';
+    }
+    if (remsList.length > 0) {
+      checklistHtml += `<div class="mcc-item" style="color:var(--accent);"><span class="mcc-icon">&#8594;</span> ${remsList[0].remediation || remsList[0].action_item || 'See remediations'}</div>`;
+    }
+
     const card = document.createElement('div');
     card.className = 'match-card';
     card.innerHTML = `
       <div class="mc-header">
         <div>
           <div class="mc-title">${t.target_name}</div>
-          <div class="mc-subtitle">BS Computer Science (Simulated)</div>
+          <div class="mc-subtitle">${t.track || ''} · ${diffLabel}</div>
         </div>
         <div class="mc-score ${diffClass}">${ms}% Match</div>
       </div>
       <div class="mc-reason">
-        <div class="mc-reason-title">WHY RECOMMENDED</div>
+        <div class="mc-reason-title">${gapsList.length > 0 ? 'GAPS IDENTIFIED' : 'STATUS'}</div>
         <div class="mc-reason-text">${reasonText}</div>
       </div>
       <div class="mc-checklist">
-        <div class="mcc-item"><span class="mcc-icon">✓</span> Need-blind financial aid</div>
-        <div class="mcc-item"><span class="mcc-icon ${diffClass === 'reach' ? 'mcc-icon-warn' : ''}">${diffClass === 'reach' ? '⚠️' : '✓'}</span> Decision: Nov 1 (3 days left)</div>
-      </div>
-      <div class="mc-actions">
-        <button class="btn-primary">Add to Shortlist</button>
-        <button class="btn-outline">View Details</button>
+        ${checklistHtml}
       </div>
     `;
     grid.appendChild(card);
     
-    // Also append to kanban board if it exists
-    if (kReach && diffClass === 'reach') {
+    const kCardHtml = `<h4 style="font-size:0.9rem; margin-bottom:6px;">${t.target_name}</h4><div style="font-size:0.75rem; color:var(--text-3); margin-bottom:4px;">Match: ${ms}% · ${diffLabel}</div><div style="font-size:0.72rem; color:var(--text-2);">${gapsList.length > 0 ? gapsList.length + ' gap(s)' : 'On track'}</div>`;
+    const targetCol = diffClass === 'reach' ? kReach : diffClass === 'safety' ? kLikely : kTarget;
+    if (targetCol) {
       const kCard = document.createElement('div');
       kCard.className = 'card';
-      kCard.style.cssText = 'margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;';
-      kCard.innerHTML = `<h4 style="font-size:1rem; margin-bottom:8px;">${t.target_name}</h4><div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: ${ms}%</div><div style="font-size:0.8rem; color:var(--text-2);">${reasonText.substring(0, 50)}...</div>`;
-      kReach.appendChild(kCard);
-    } else if (kTarget && diffClass === 'target') {
-      const kCard = document.createElement('div');
-      kCard.className = 'card';
-      kCard.style.cssText = 'margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;';
-      kCard.innerHTML = `<h4 style="font-size:1rem; margin-bottom:8px;">${t.target_name}</h4><div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: ${ms}%</div><div style="font-size:0.8rem; color:var(--text-2);">${reasonText.substring(0, 50)}...</div>`;
-      kTarget.appendChild(kCard);
-    } else if (kLikely && diffClass === 'safety') {
-      const kCard = document.createElement('div');
-      kCard.className = 'card';
-      kCard.style.cssText = 'margin:12px; padding:16px; border:1px solid var(--border); box-shadow:none;';
-      kCard.innerHTML = `<h4 style="font-size:1rem; margin-bottom:8px;">${t.target_name}</h4><div style="font-size:0.8rem; color:var(--text-3); margin-bottom:8px;">Match: ${ms}%</div><div style="font-size:0.8rem; color:var(--text-2);">${reasonText.substring(0, 50)}...</div>`;
-      kLikely.appendChild(kCard);
+      kCard.style.cssText = 'margin:12px; padding:14px; border:1px solid var(--border); box-shadow:none;';
+      kCard.innerHTML = kCardHtml;
+      targetCol.appendChild(kCard);
     }
   }
   
@@ -1366,7 +1360,13 @@ async function renderCompliance(sid, subs = null) {
       t.remediations.forEach((r, i) => {
         const fc = r.feasibility === 'HIGH' ? 'rf-high' : r.feasibility === 'MEDIUM' ? 'rf-med' : 'rf-low';
         const re = document.createElement('div'); re.className = 'rem-entry';
-        re.innerHTML = `<div class="re-header"><span class="re-num">option ${i + 1}</span><span class="re-feas ${fc}">${r.feasibility}</span></div><div class="re-text">${r.remediation}</div><div class="re-detail"><strong>action:</strong> ${r.action_item}<br><strong>reasoning:</strong> ${r.reasoning}</div>`;
+        const remText = (r.remediation || '').split(/\n\n\s*🎓/)[0].trim();
+        let alumniNote = '';
+        if (r.alumni_pathway) {
+          const ap = r.alumni_pathway;
+          alumniNote = `<div style="margin-top:6px; padding:6px 8px; background:var(--bg-2); border-radius:4px; border-left:2px solid var(--primary); font-size:0.72rem;"><strong style="color:var(--primary);">Proven Pathway — ${ap.name} '${ap.year}</strong><br><span style="color:var(--text-2);">Action: ${ap.action_taken}</span>${ap.strengths && ap.strengths.length ? `<br><span style="color:var(--text-3);">Profile: ${ap.strengths.join(' · ')}</span>` : ''}</div>`;
+        }
+        re.innerHTML = `<div class="re-header"><span class="re-num">option ${i + 1}</span><span class="re-feas ${fc}">${r.feasibility}</span></div><div class="re-text">${remText}</div><div class="re-detail"><strong>action:</strong> ${r.action_item}<br><strong>reasoning:</strong> ${r.reasoning}</div>${alumniNote}`;
         rbody.appendChild(re);
       });
     }
@@ -1949,8 +1949,7 @@ async function onReportStudentChange(studentId) {
   const audit = cohortAudit[s.id];
   listCont.innerHTML = '';
   
-  if (!audit || !audit._ai_evaluated) {
-    // Show AI Generation Button
+  if (!audit || !audit.targets || Object.keys(audit.targets).length === 0) {
     const btnContainer = document.createElement('div');
     btnContainer.innerHTML = `<button onclick="generateAICompliance('${s.id}')" style="width:100%; margin-bottom:15px; background:var(--accent); color:#fff; border:none; padding:10px; border-radius:6px; cursor:pointer; font-family:var(--sans); font-weight:700; font-size:0.85rem; letter-spacing:0.05em; transition:0.2s opacity;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">Generate status using unlockED agent</button>`;
     listCont.appendChild(btnContainer);
@@ -2025,13 +2024,29 @@ async function onReportStudentChange(studentId) {
           <div style="font-family: var(--mono); font-size: 0.62rem; color: var(--accent); margin-bottom: 6px; font-weight: 700; letter-spacing: 0.04em;">unlockED REMEDIATION ADVICE:</div>`;
         t.remediations.forEach(r => {
           const feasColor = r.feasibility === 'HIGH' ? 'var(--green)' : r.feasibility === 'MEDIUM' ? 'var(--amber)' : 'var(--red)';
+          const remText = (r.remediation || '').split(/\n\n\s*🎓/)[0].trim();
+
+          let alumniHtml = '';
+          if (r.alumni_pathway) {
+            const ap = r.alumni_pathway;
+            alumniHtml = `
+              <div style="margin-top:6px; padding:6px 8px; background:var(--bg-2); border-radius:4px; border-left:2px solid var(--primary); font-size:0.65rem;">
+                <div style="font-weight:600; color:var(--primary); margin-bottom:3px;">Proven Pathway — ${ap.name} '${ap.year}</div>
+                <div style="color:var(--text-2);"><strong>Action:</strong> ${ap.action_taken}</div>
+                ${ap.strengths && ap.strengths.length ? `<div style="color:var(--text-3); margin-top:2px;"><strong>Profile:</strong> ${ap.strengths.join(' · ')}</div>` : ''}
+              </div>`;
+          }
+
           remHtml += `
-            <div style="font-size: 0.72rem; color: var(--text-2); margin-bottom: 8px; padding: 8px; border: 1px solid var(--border); background: rgba(255,255,255,0.01);">
-              <div style="font-weight: 600; color: var(--text-1); line-height: 1.4;">${r.remediation}</div>
-              <div style="margin-top: 4px; font-size: 0.68rem; color: var(--text-3); display: flex; justify-content: space-between;">
-                <span><strong>Task:</strong> ${r.action_item}</span>
-                <span style="font-family: var(--mono); color: ${feasColor}; font-weight: 700;">[FEASIBILITY: ${r.feasibility}]</span>
+            <div style="font-size: 0.72rem; color: var(--text-2); margin-bottom: 8px; padding: 8px; border: 1px solid var(--border); border-radius: 6px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                <div style="font-weight: 600; color: var(--text-1); line-height: 1.4; flex:1;">${remText}</div>
+                <span style="font-family: var(--mono); color: ${feasColor}; font-weight: 700; font-size:0.6rem; white-space:nowrap;">${r.feasibility}</span>
               </div>
+              <div style="margin-top: 4px; font-size: 0.68rem; color: var(--text-3);">
+                <strong>Task:</strong> ${r.action_item}
+              </div>
+              ${alumniHtml}
             </div>`;
         });
         remHtml += `</div>`;
@@ -3245,7 +3260,7 @@ window.renderCohortReport = renderCohortReport;
 async function generateStudentPdf() {
   const element = document.getElementById('report-sec-student');
   if (!element) return;
-  
+
   const nameEl = document.getElementById('rep-name');
   const studentName = nameEl ? nameEl.innerText.trim() : 'Student';
   const fileName = `${studentName.replace(/[^a-zA-Z0-9_-]/g, '_')}_Status_Report.pdf`;
@@ -3253,25 +3268,28 @@ async function generateStudentPdf() {
   const actionBtns = element.querySelector('.report-action-buttons');
   if (actionBtns) actionBtns.style.display = 'none';
 
-  const opt = {
-    margin:       0.3,
-    filename:     fileName,
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, logging: false },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-  };
+  const btn = element.querySelector('.btn-primary');
+  if (btn) { btn.textContent = 'Generating PDF...'; btn.disabled = true; }
 
   try {
     if (typeof html2pdf !== 'undefined') {
-      await html2pdf().set(opt).from(element).save();
+      await html2pdf().set({
+        margin: [0.4, 0.3, 0.4, 0.3],
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: element.scrollWidth },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      }).from(element).save();
     } else {
       window.print();
     }
   } catch (err) {
-    console.error("PDF Export error, triggering fallback print:", err);
+    console.error("PDF export failed:", err);
     window.print();
   } finally {
     if (actionBtns) actionBtns.style.display = 'flex';
+    if (btn) { btn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg> Generate PDF Report'; btn.disabled = false; }
   }
 }
 
@@ -3282,32 +3300,35 @@ async function generateCohortPdf() {
   const actionBtns = element.querySelector('.report-action-buttons');
   if (actionBtns) actionBtns.style.display = 'none';
 
-  const opt = {
-    margin:       0.3,
-    filename:     'Cohort_Summary_Report.pdf',
-    image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true, logging: false },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
-  };
+  const btn = element.querySelector('.btn-primary');
+  if (btn) { btn.textContent = 'Generating PDF...'; btn.disabled = true; }
 
   try {
     if (typeof html2pdf !== 'undefined') {
-      await html2pdf().set(opt).from(element).save();
+      await html2pdf().set({
+        margin: [0.4, 0.3, 0.4, 0.3],
+        filename: 'Cohort_Summary_Report.pdf',
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: element.scrollWidth },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      }).from(element).save();
     } else {
       window.print();
     }
   } catch (err) {
-    console.error("PDF Export error, triggering fallback print:", err);
+    console.error("PDF export failed:", err);
     window.print();
   } finally {
     if (actionBtns) actionBtns.style.display = 'block';
+    if (btn) { btn.textContent = 'Export Cohort Report PDF'; btn.disabled = false; }
   }
 }
 
 function sendReportEmail() {
   const nameEl = document.getElementById('rep-name');
   const name = nameEl ? nameEl.innerText.trim() : "Student";
-  
+
   const sel = document.getElementById('report-student-select');
   const studentId = sel ? sel.value : '';
   const s = (typeof students !== 'undefined' && Array.isArray(students)) ? students.find(x => x.id === studentId) : null;
@@ -3316,9 +3337,35 @@ function sendReportEmail() {
   const email = prompt(`Enter recipient email address for ${name}:`, defaultEmail);
   if (!email) return;
 
+  let bodyLines = [`Hi ${name},`, '', 'Here is your latest admissions status report:', ''];
+
+  const audit = cohortAudit[studentId];
+  if (audit && audit.targets) {
+    for (const tid in audit.targets) {
+      const t = audit.targets[tid];
+      const score = t.match_score !== undefined ? t.match_score : '—';
+      const status = t.compliant ? 'Eligible' : 'Gaps Found';
+      bodyLines.push(`${t.target_name || tid}: ${score}% match — ${status}`);
+      if (t.gaps && t.gaps.length > 0) {
+        t.gaps.forEach(g => {
+          bodyLines.push(`  - ${g.subject || 'Gap'}: ${g.description || g.issue || ''}`);
+        });
+      }
+    }
+  }
+
+  if (s) {
+    bodyLines.push('');
+    bodyLines.push(`Board: ${s.board || '—'} | Class: ${s.class_level || '—'}`);
+    bodyLines.push(`Grade: ${(s.grades && s.grades.current_expected_board) || '—'}`);
+    bodyLines.push(`Subjects: ${(s.board_subjects || []).join(', ') || '—'}`);
+  }
+
+  bodyLines.push('', 'Best regards,', 'Your Counselor');
+
   const subject = encodeURIComponent(`Admissions Status Report: ${name}`);
-  const body = encodeURIComponent(`Hi ${name},\n\nPlease find your latest admissions status report and compliance checklist attached.\n\nBest regards,\nYour Counselor`);
-  window.location.href = `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
+  const body = encodeURIComponent(bodyLines.join('\n'));
+  window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
 }
 async function saveReportNotes() {
   const sel = document.getElementById('report-student-select');
@@ -3954,22 +4001,20 @@ async function populateKanbanFromShortlist() {
     if (el) el.innerHTML = '';
   });
 
-  const evalPromises = student.shortlisted_colleges.map(cid => {
+  for (const cid of student.shortlisted_colleges) {
     const uni = allUniversities.find(u => (u.id || u.name) === cid);
     const name = uni ? uni.name : cid;
-    return fetch('/api/evaluate_shortlist', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ student_id: studentId, college_id: cid })
-    })
-    .then(res => res.ok ? res.json() : { category: 'Target', match_score: 50 })
-    .then(d => ({ cid, name, evalData: d }))
-    .catch(() => ({ cid, name, evalData: { category: 'Target', match_score: 50 } }));
-  });
-
-  const results = await Promise.all(evalPromises);
-  results.forEach(({ cid, name, evalData }) => {
-    addToKanban(evalData.category || 'Target', cid, name, studentId, evalData);
-  });
+    try {
+      const res = await fetch('/api/evaluate_shortlist', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ student_id: studentId, college_id: cid })
+      });
+      const evalData = res.ok ? await res.json() : { category: 'Target', match_score: 50 };
+      addToKanban(evalData.category || 'Target', cid, name, studentId, evalData);
+    } catch(e) {
+      addToKanban('Target', cid, name, studentId, { category: 'Target', match_score: 50 });
+    }
+  }
 }
 window.populateKanbanFromShortlist = populateKanbanFromShortlist;
 
@@ -4036,39 +4081,31 @@ async function onKanbanStudentChange(studentId) {
     if (el) el.innerHTML = '<div style="padding:16px; text-align:center; color:var(--text-3); font-size:0.8rem;">Evaluating...</div>';
   });
 
-  // Evaluate all shortlisted colleges in parallel
-  const evalPromises = s.shortlisted_colleges.map(cid => {
-    const uni = allUniversities.find(u => (u.id || u.name) === cid);
-    const name = uni ? uni.name : cid;
-    return fetch('/api/evaluate_shortlist', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ student_id: studentId, college_id: cid })
-    })
-    .then(res => res.ok ? res.json() : { category: 'Target', match_score: 50, reasoning: 'Evaluation unavailable.' })
-    .then(d => ({ cid, name, evalData: d }))
-    .catch(() => ({ cid, name, evalData: { category: 'Target', match_score: 50, reasoning: 'Evaluation failed.' } }));
-  });
-
-  const results = await Promise.all(evalPromises);
-
-  // Clear loading state
+  // Evaluate sequentially to avoid Groq rate limits
   ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.innerHTML = '';
   });
 
-  if (results.length === 0) {
-    ['kanban-reach','kanban-target','kanban-likely'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.innerHTML = '<div data-placeholder="true" style="padding:12px; text-align:center; color:var(--text-3); font-size:0.8rem; background:var(--surface); border-radius:12px; border:1px dashed var(--border);">No data yet</div>';
-    });
-    return;
+  const results = [];
+  for (const cid of s.shortlisted_colleges) {
+    const uni = allUniversities.find(u => (u.id || u.name) === cid);
+    const name = uni ? uni.name : cid;
+    try {
+      const res = await fetch('/api/evaluate_shortlist', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ student_id: studentId, college_id: cid })
+      });
+      const evalData = res.ok ? await res.json() : { category: 'Target', match_score: 50, reasoning: 'Evaluation unavailable.' };
+      results.push({ cid, name, evalData });
+      addToKanban(evalData.category || 'Target', cid, name, studentId, evalData);
+    } catch(e) {
+      const evalData = { category: 'Target', match_score: 50, reasoning: 'Evaluation failed.' };
+      results.push({ cid, name, evalData });
+      addToKanban('Target', cid, name, studentId, evalData);
+    }
   }
 
-  results.forEach(({ cid, name, evalData }) => {
-    const category = evalData.category || 'Target';
-    addToKanban(category, cid, name, studentId, evalData);
-  });
 }
 window.renderUniversityDashboard = renderUniversityDashboard;
 window.onKanbanStudentChange = onKanbanStudentChange;
@@ -4387,88 +4424,163 @@ function initRecommendationsView() {
   }
 }
 
+function _cleanCollegeName(raw) {
+  if (!raw || typeof raw !== 'string') return raw || '';
+  const map = {
+    'UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE': 'London School of Economics (LSE)',
+    'LSE': 'LSE', 'OXFORD': 'University of Oxford', 'CAMBRIDGE': 'University of Cambridge',
+    'STANFORD': 'Stanford University', 'MIT': 'MIT', 'HARVARD': 'Harvard University',
+    'PRINCETON': 'Princeton University', 'YALE': 'Yale University', 'COLUMBIA': 'Columbia University',
+    'CORNELL': 'Cornell University', 'UPENN': 'University of Pennsylvania', 'BROWN': 'Brown University',
+    'DARTMOUTH': 'Dartmouth College', 'IMPERIAL': 'Imperial College London', 'UCL': 'UCL',
+    'IIT_BOMBAY': 'IIT Bombay', 'BITS_PILANI': 'BITS Pilani', 'AIIMS': 'AIIMS',
+    'DU': 'Delhi University', 'ASHOKA': 'Ashoka University',
+  };
+  const s = raw.trim();
+  if (map[s]) return map[s];
+  if (s.startsWith('UK_') || s.startsWith('US_') || s.startsWith('IND_')) {
+    const body = s.split('_').slice(1).join('_');
+    if (/^\d+$/.test(body)) return '';
+    return body.replace(/([A-Z])([A-Z]+)/g, (_, f, r) => f + r.toLowerCase())
+               .replace(/([a-z])([A-Z])/g, '$1 $2')
+               .replace(/\bOf\b/g, 'of').replace(/\bAnd\b/g, 'and');
+  }
+  return s;
+}
+
+const IVY_LEAGUE_SCHOOLS = ['Harvard', 'Yale', 'Princeton', 'Columbia', 'UPenn', 'Brown', 'Dartmouth', 'Cornell'];
+
 function renderRecBragSheet(sId) {
   const content = document.getElementById('rec-sidebar-content');
+  const badgeEl = document.getElementById('rec-student-id-badge');
+  if (!content) return;
+
   if (!sId) {
+    if (badgeEl) badgeEl.textContent = '';
     content.innerHTML = '<div style="text-align: center; color: var(--text-3); padding: 40px 20px;">Select a student to load their profile context.</div>';
     return;
   }
-  
+
   const s = students.find(x => x.id === sId);
   if (!s) return;
-  
-  let html = `<div style="background: var(--bg-1); padding: 12px; border-radius: 6px; border: 1px solid var(--border);">
-    <strong style="color: var(--text-1); font-size: 14px;">${s.name}</strong><br>
-    Board: ${s.board || 'N/A'} (Class ${s.class_level || 'N/A'})
+  if (badgeEl) badgeEl.textContent = s.id;
+
+  const sectionLabel = (text) => `<div style="font-family:var(--mono); font-size:0.65rem; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px;">${text}</div>`;
+
+  let html = `
+  <div style="background: var(--bg-1); padding: 14px 16px; border-radius: 10px; border: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-weight:700; color: var(--text-1); font-size: 1rem;">${s.name}</div>
+      <div style="font-size:0.75rem; color:var(--text-3); margin-top:2px;">${s.board || 'N/A'} Board · Class ${s.class_level || '12'}</div>
+    </div>
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:4px 10px; text-align:right;">
+      <div style="font-size:0.65rem; color:var(--text-3); font-family:var(--mono); text-transform:uppercase;">Predicted</div>
+      <div style="font-size:0.85rem; font-weight:700; color:var(--accent);">${(s.grades && s.grades.current_expected_board) || 'N/A'}</div>
+    </div>
   </div>`;
-  
-  // Grades
+
+  // Academics — clean grid layout
   if (s.grades && Object.keys(s.grades).length > 0) {
-    html += `<div><strong style="color:var(--text-1);">Academics & Grades</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
+    html += `<div>${sectionLabel('Academics')}`;
+    html += `<div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:12px;">`;
     for (const [k, v] of Object.entries(s.grades)) {
       if (k === 'history') continue;
       if (typeof v === 'object' && v !== null) {
-        html += `<li style="margin-bottom:4px;">${k.replace(/_/g, ' ')}: <ul style="margin:4px 0 0 16px; padding:0;">`;
+        html += `<div style="font-size:0.7rem; font-family:var(--mono); color:var(--text-3); text-transform:uppercase; margin-bottom:6px; font-weight:600;">${k.replace(/_/g, ' ')}</div>`;
+        html += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px 16px; margin-bottom:6px;">`;
         for (const [sub, val] of Object.entries(v)) {
-          html += `<li>${sub}: <b>${val}</b></li>`;
+          html += `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:3px 0; border-bottom:1px dashed var(--border);">
+            <span style="color:var(--text-2);">${sub}</span>
+            <strong style="color:var(--text-1);">${val}</strong>
+          </div>`;
         }
-        html += `</ul></li>`;
+        html += `</div>`;
       } else {
-        html += `<li style="margin-bottom:4px;">${k.replace(/_/g, ' ')}: <b>${v}</b></li>`;
+        html += `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:4px 0;">
+          <span style="color:var(--text-2);">${k.replace(/_/g, ' ')}</span>
+          <strong style="color:var(--text-1);">${v}</strong>
+        </div>`;
       }
     }
-    html += `</ul></div>`;
+    html += `</div></div>`;
   }
-  
+
+  // Standardized Tests
+  if (s.standardized_tests && Object.keys(s.standardized_tests).length > 0) {
+    html += `<div>${sectionLabel('Standardized Tests')}`;
+    html += `<div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:10px 14px; display:flex; flex-wrap:wrap; gap:12px;">`;
+    for (const [k, v] of Object.entries(s.standardized_tests)) {
+      html += `<div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:0.75rem; color:var(--text-3); font-family:var(--mono); font-weight:600;">${k}:</span>
+        <span style="font-size:0.9rem; font-weight:700; color:var(--accent);">${v}</span>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
   // Targets
   if (s.targets && s.targets.length > 0) {
-    html += `<div><strong style="color:var(--text-1);">Target Universities</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
+    html += `<div>${sectionLabel('Target Universities')}<div style="display:flex; flex-direction:column; gap:6px;">`;
     s.targets.forEach(t => {
-      const tName = targets[t] ? targets[t].name : t;
-      html += `<li style="margin-bottom:4px;">${tName}</li>`;
+      const tId = typeof t === 'object' ? (t.id || t) : t;
+      const tIdStr = String(tId);
+      if (tIdStr === 'Ivy League') {
+        html += `<div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:10px 12px;">
+          <div style="font-size:0.75rem; font-weight:700; color:var(--text-1); margin-bottom:6px;">Ivy League Schools</div>
+          <div style="display:flex; flex-wrap:wrap; gap:4px;">${IVY_LEAGUE_SCHOOLS.map(n => `<span style="font-size:0.68rem; background:var(--surface); border:1px solid var(--border); padding:2px 6px; border-radius:4px; color:var(--text-2);">${n}</span>`).join('')}</div>
+        </div>`;
+      } else {
+        const tName = targets[tIdStr] ? targets[tIdStr].name : tIdStr;
+        html += `<div style="background:var(--bg-1); border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:0.8rem; font-weight:600; color:var(--text-1); display:flex; align-items:center; gap:6px;">
+          <span style="color:var(--accent);">•</span> ${tName}
+        </div>`;
+      }
     });
-    html += `</ul></div>`;
+    html += `</div></div>`;
   }
-  
+
   // Shortlisted Colleges
   if (s.shortlisted_colleges && s.shortlisted_colleges.length > 0) {
-    html += `<div><strong style="color:var(--text-1);">Shortlisted Colleges</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
-    s.shortlisted_colleges.forEach(c => {
-      html += `<li style="margin-bottom:4px;">${c}</li>`;
-    });
-    html += `</ul></div>`;
+    const cleaned = s.shortlisted_colleges.map(c => _cleanCollegeName(c)).filter(n => n);
+    if (cleaned.length > 0) {
+      html += `<div>${sectionLabel('Shortlisted Colleges')}<div style="display:flex; flex-direction:column; gap:4px;">`;
+      cleaned.forEach(name => {
+        html += `<div style="background:var(--bg-1); border:1px solid var(--border); border-radius:6px; padding:6px 12px; font-size:0.78rem; color:var(--text-1); font-weight:500;">• ${name}</div>`;
+      });
+      html += `</div></div>`;
+    }
   }
 
   // Assigned Scholarships
   if (s.shortlisted_scholarships && s.shortlisted_scholarships.length > 0) {
-    html += `<div><strong style="color:var(--text-1);">Assigned Scholarships</strong><ul style="margin:8px 0 0 16px; padding:0;">`;
+    html += `<div>${sectionLabel('Assigned Scholarships')}<div style="display:flex; flex-direction:column; gap:4px;">`;
     s.shortlisted_scholarships.forEach(sch => {
-      html += `<li style="margin-bottom:4px;">${sch}</li>`;
+      html += `<div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:6px; padding:6px 12px; font-size:0.78rem; color:#166534; font-weight:600;">★ ${sch.replace(/_/g, ' ')}</div>`;
     });
-    html += `</ul></div>`;
+    html += `</div></div>`;
   }
-  
+
   // Portfolio
   if (s.portfolio && s.portfolio.length > 0) {
-    html += `<div><strong style="color:var(--text-1);">Portfolio / Extracurriculars</strong><div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">`;
+    html += `<div>${sectionLabel('Portfolio / Extracurriculars')}<div style="display:flex; flex-direction:column; gap:8px;">`;
     s.portfolio.forEach(p => {
       const title = p.title || p.activity || 'Activity';
       const role = p.role || p.position || '';
       const desc = p.description || p.detail || '';
-      const tier = p.tier ? `<span style="background:var(--primary-light); color:var(--primary); padding:2px 6px; border-radius:4px; font-size:10px; margin-left:6px; font-weight:bold;">T${p.tier}</span>` : '';
-      
-      html += `<div style="background: var(--bg-1); padding: 8px 10px; border-radius: 4px; border: 1px solid var(--border);">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-          <strong style="color:var(--text-1); line-height:1.2;">${title}</strong>
+      const tier = p.tier ? `<span style="background:#EEF2FF; color:#4338CA; border:1px solid #C7D2FE; padding:2px 6px; border-radius:4px; font-size:0.65rem; font-weight:700; font-family:var(--mono);">T${p.tier}</span>` : '';
+
+      html += `<div style="background: var(--bg-1); padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <strong style="color:var(--text-1); font-size:0.8rem;">${title}</strong>
           ${tier}
         </div>
-        ${role ? `<span style="font-size:11px; color:var(--text-3); text-transform:uppercase;">${role}</span><br>` : ''}
-        ${desc ? `<div style="margin-top:4px; font-size:12px;">${desc}</div>` : ''}
+        ${role ? `<div style="font-size:0.72rem; color:var(--text-3); margin-top:2px;">${role}</div>` : ''}
+        ${desc ? `<div style="margin-top:4px; font-size:0.72rem; color:var(--text-2); line-height:1.3;">${desc}</div>` : ''}
       </div>`;
     });
     html += `</div></div>`;
   }
-  
+
   content.innerHTML = html;
 }
 

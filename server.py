@@ -1600,60 +1600,34 @@ def api_counselor_agent():
     if not command:
         return jsonify({"response": "Please enter a counselor command or query."}), 400
     
-    # Compile live cohort context for reasoning model
-    cohort_summary_list = []
+    from prism_agent.groq_utils import get_groq_api_keys, groq_post_with_retry
+
     students = load_students()
+    cohort_brief = []
     for s in students:
-        student_audits = {}
+        targets_brief = []
         for tid in s.get("targets", []):
+            tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
             try:
-                tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
                 audit_res = agent.solve_goal(s["id"], tid_str, students, silent=True)
                 if audit_res:
-                    student_audits[str(tid_str)] = {
-                        "match_score": audit_res.get("match_score", generate_realistic_match_score(s["id"], tid_str, audit_res.get("compliant", True))),
-                        "compliant": audit_res.get("compliant", True),
-                        "gaps": audit_res.get("gaps", []),
-                        "remediations": audit_res.get("remediations", [])
-                    }
+                    gap_labels = [g.get("issue", g.get("field","")) for g in audit_res.get("gaps",[])[:3]]
+                    targets_brief.append({"id": tid_str, "score": audit_res.get("match_score",50), "ok": audit_res.get("compliant",True), "gaps": gap_labels})
             except Exception:
                 pass
-        cohort_summary_list.append({
-            "id": s["id"],
-            "name": s["name"],
-            "board": s.get("board"),
-            "class_level": s.get("class_level"),
-            "board_subjects": s.get("board_subjects", []),
-            "grades": s.get("grades", {}),
-            "standardized_tests": s.get("standardized_tests", {}),
-            "portfolio": s.get("portfolio", []),
-            "targets": s.get("targets", []),
-            "audits": student_audits
+        cohort_brief.append({
+            "id": s["id"], "name": s["name"], "board": s.get("board"), "class": s.get("class_level"),
+            "grade": s.get("grades",{}).get("current_expected_board","N/A"),
+            "SAT": s.get("standardized_tests",{}).get("SAT","N/A"),
+            "subjects": s.get("board_subjects",[])[:6],
+            "targets": targets_brief
         })
 
-    from prism_agent.groq_utils import get_groq_api_keys, groq_post_with_retry
-    alumni_db = load_alumni()
+    system_prompt = f"""You are an expert school counselor. Analyze the student cohort and answer the counselor's query.
+Format output in Markdown. Be specific and actionable.
 
-    system_prompt = f"""You are the unlockED Counselor AI Agent & Chief Admissions Officer Co-Pilot.
-You have access to the entire school's active student cohort database and historical alumni success database.
-
-STUDENT COHORT DATA:
-{json.dumps(cohort_summary_list, indent=2)}
-
-HISTORICAL ALUMNI SUCCESS STORIES (PROVEN PATHWAYS):
-{json.dumps(alumni_db, indent=2)}
-
-CRITICAL REASONING INSTRUCTIONS:
-1. Act as a highly intelligent, expert high school counselor and admissions strategist.
-2. Analyze the counselor's prompt carefully. It may ask you to:
-   - Perform a risk audit or cohort gap analysis across all students.
-   - Draft personalized warning or guidance emails to specific students or parents.
-   - Recommend new target pathways, university choices, or portfolio improvements for a specific student (e.g. STU_001).
-   - Provide strategic interventions, deadline warnings, or custom counseling notes.
-3. NEVER return static hardcoded canned responses. Always analyze the actual live JSON student cohort data dynamically.
-4. Format your output in clean Markdown with appropriate headers, bold text, bullet points, and actionable details.
-5. If drafting an email, include Subject line, To address, Salutation, specific student gap evidence, and professional sign-off.
-"""
+Cohort ({len(cohort_brief)} students):
+{json.dumps(cohort_brief)}"""
     if get_groq_api_keys():
         try:
             print("[CounselorAgent] Calling Groq API (llama-3.3-70b-versatile)...")
@@ -1661,9 +1635,10 @@ CRITICAL REASONING INSTRUCTIONS:
                 "model": "llama-3.3-70b-versatile",
                 "messages": [
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"COUNSELOR PROMPT / COMMAND:\n{command}"}
+                    {"role": "user", "content": command}
                 ],
-                "temperature": 0.2
+                "temperature": 0.2,
+                "max_tokens": 800
             }
             res, err = groq_post_with_retry(payload, label="CounselorAgent")
             if res and res.status_code == 200:
@@ -1691,39 +1666,37 @@ CRITICAL REASONING INSTRUCTIONS:
     # Final hardcoded fallback if everything else fails
     command_lower = command.lower()
     if "email" in command_lower or "draft" in command_lower:
-        flagged = [s for s in cohort_summary_list if any(not a.get("compliant") for a in s["audits"].values())]
+        flagged = [s for s in cohort_brief if any(not t.get("ok") for t in s.get("targets",[]))]
         if not flagged:
-            return jsonify({"response": "### 📧 Email Assistant\n\nNo students currently require urgent warning emails."})
+            return jsonify({"response": "### Email Assistant\n\nNo students currently require urgent warning emails."})
         target_student = flagged[0]
-        first_gap = next((g for a in target_student["audits"].values() for g in a.get("gaps", [])), {})
+        first_gap = (target_student.get("targets",[{}])[0].get("gaps",["Academic gap"]) or ["Academic gap"])[0]
         draft = (
-            f"### 📧 Dynamically Generated Warning Draft for {target_student['name']} ({target_student['id']})\n\n"
+            f"### Warning Draft for {target_student['name']} ({target_student['id']})\n\n"
             f"**To:** {target_student['name'].lower().replace(' ', '.')}@school.edu\n"
-            f"**Subject:** Action Required: Urgent Pathway Prerequisite Gap ({first_gap.get('subject', 'Academic Mismatch')})\n\n"
+            f"**Subject:** Action Required: Pathway Gap ({first_gap})\n\n"
             f"Dear {target_student['name']},\n\n"
-            f"Our unlockED compliance audit detected an active prerequisite gap for your target university pathways:\n"
-            f"👉 *{first_gap.get('description', 'Prerequisite subject or grade cutoff missing.')}*\n\n"
-            f"Please schedule a consultation with your school counselor to adjust your subject selection or pathway targets.\n\n"
+            f"Our compliance audit detected an active prerequisite gap.\n"
+            f"Please schedule a consultation with your school counselor.\n\n"
             f"Best regards,\nSchool Counseling Office"
         )
         return jsonify({"response": draft})
-    
+
     elif "recommend" in command_lower or "suggest" in command_lower or "stu_" in command_lower:
         student_match = re.search(r'(stu_\d+)', command_lower)
         sid = student_match.group(1).upper() if student_match else "STU_001"
-        s = next((st for st in cohort_summary_list if st["id"] == sid), cohort_summary_list[0] if cohort_summary_list else None)
+        s = next((st for st in cohort_brief if st["id"] == sid), cohort_brief[0] if cohort_brief else None)
         if not s:
             return jsonify({"response": f"Student ID '{sid}' not found."})
-        
-        resp = f"### 🎯 Strategic University & Pathway Recommendations for {s['name']} ({s['id']})\n\n"
-        resp += f"**Academic Board:** {s['board']} (Class {s['class_level']}) | **Current Targets:** {', '.join(s['targets']) or 'None'}\n\n"
-        resp += f"1. **High-Fit Pathway Optimization:** Ensure studied subjects ({', '.join(s['board_subjects'])}) are mapped to domain prerequisites.\n"
-        resp += f"2. **Portfolio Scaling:** {len(s['portfolio'])} activities registered. Focus on achieving Tier 1 national/international recognition.\n"
+
+        resp = f"### Recommendations for {s['name']} ({s['id']})\n\n"
+        resp += f"**Board:** {s['board']} (Class {s['class']}) | **Grade:** {s['grade']}\n\n"
+        resp += f"**Subjects:** {', '.join(s['subjects'])}\n"
         return jsonify({"response": resp})
-        
+
     else:
-        total = len(cohort_summary_list)
-        high_risk = sum(1 for s in cohort_summary_list if any(a.get("match_score", 100) < 70 for a in s["audits"].values()))
+        total = len(cohort_brief)
+        high_risk = sum(1 for s in cohort_brief if any(t.get("score", 100) < 70 for t in s.get("targets",[])))
         resp = (
             f"### 📊 Live Cohort Risk & Compliance Analysis\n\n"
             f"- **Active Cohort Size:** {total} students evaluated\n"
