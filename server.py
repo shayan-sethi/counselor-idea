@@ -40,11 +40,13 @@ from prism_agent.ingestion_agent import DocumentIngestionAgent
 from prism_agent.board_converter import BoardGradeConverter
 from prism_agent.opportunity_radar import OpportunityRadar, CompeteMapScraper
 from prism_agent.scholarship_agent import ScholarshipAgent
+from prism_agent.llm_scorer import LLMScorer
 
 kg = KnowledgeGraph()
 reasoner = Reasoner(kg)
 planner = Planner()
 agent = PRISMAgent(kg, reasoner, planner)
+llm_scorer = LLMScorer()
 ingestion_agent = DocumentIngestionAgent()
 
 # ── Portfolio auto-classifier ──
@@ -1816,16 +1818,22 @@ def api_evaluate_shortlist():
     student = get_student(student_id)
     if not student:
         return jsonify({"error": "Student not found"}), 404
-        
+
     colleges = load_colleges()
     college = next((c for c in colleges if c["id"] == college_id), None)
-    
+
     if not college:
         return jsonify({"category": "Target"})
 
+    # Try LLM-driven classification first
+    llm_result = llm_scorer.classify_shortlist(student, college)
+    if llm_result:
+        return jsonify(llm_result)
+
+    # Deterministic fallback
     grades_dict = student.get("grades", {})
     grade = grades_dict.get("current_expected_board") or grades_dict.get("class_12_aggregate") or grades_dict.get("class_10_aggregate") or "80"
-    
+
     grade_str = str(grade).replace('%','').strip()
     if '-' in grade_str:
         parts = grade_str.split('-')
@@ -1838,7 +1846,7 @@ def api_evaluate_shortlist():
             grade_val = float(grade_str)
         except:
             grade_val = 80.0
-        
+
     tests_dict = student.get("standardized_tests", {})
     sat = tests_dict.get("SAT") or tests_dict.get("sat")
     try:
@@ -1848,79 +1856,37 @@ def api_evaluate_shortlist():
 
     name = college.get("name", "").lower()
 
-    # Load university tiers cache
-    tiers_path = os.path.join(BASE_DIR, "data", "university_tiers.json")
-    tier_cache = {}
-    if os.path.exists(tiers_path):
-        try:
-            with open(tiers_path, "r", encoding="utf-8") as f:
-                tier_cache = json.load(f)
-        except Exception:
-            pass
+    ELITE = ["harvard", "yale", "stanford", "mit", "princeton", "caltech", "cambridge", "oxford", "imperial", "eth zurich", "lse", "chicago", "columbia", "iit bombay", "iit delhi", "iit madras", "iisc", "aiims"]
+    TOP = ["cornell", "ucl", "ucla", "uc berkeley", "michigan", "nyu", "toronto", "melbourne", "edinburgh", "duke", "johns hopkins", "bits pilani", "iit kanpur", "iit kharagpur", "iit roorkee"]
+    STRONG = ["purdue", "umass", "ut austin", "ohio state", "penn state", "arizona state", "illinois", "wisconsin", "georgia tech", "ashoka", "du srcc", "st stephens"]
 
-    # Determine tier (1=Elite, 2=Top, 3=Strong, 4=Standard)
-    # Default to hardcoded fallback lists if not yet in cache
-    tier = tier_cache.get(name)
+    if any(x in name for x in ELITE):
+        tier = 1
+    elif any(x in name for x in TOP):
+        tier = 2
+    elif any(x in name for x in STRONG):
+        tier = 3
+    else:
+        tier = 4
 
-    if tier is None:
-        try:
-            import requests, re
-            ollama_prompt = f"""You are a university ranking expert. Classify "{name}" into exactly one tier number (1, 2, 3, or 4).
-1 = Elite (Oxford, Harvard, MIT, IIT Bombay, AIIMS, etc.)
-2 = Top (UCL, Cornell, UCLA, NYU, BITS Pilani, etc.)
-3 = Strong (Purdue, UT Austin, Delhi University, etc.)
-4 = Standard (Regional/others)
-Output ONLY a single integer (1, 2, 3, or 4)."""
-            res = requests.post("http://127.0.0.1:11434/api/generate", json={
-                "model": "llama3.2",
-                "prompt": ollama_prompt,
-                "stream": False,
-                "options": {"temperature": 0.0}
-            }, timeout=5)
-            text = res.json().get("response", "").strip()
-            # Extract the first digit found
-            match = re.search(r'\d', text)
-            if match:
-                tier = int(match.group(0))
-            else:
-                raise ValueError("No digit in Ollama response")
-        except Exception as e:
-            # Complete fallback to hardcoded list if Ollama fails
-            print(f"[Ollama Fallback Error] {e}")
-            ELITE = ["harvard", "yale", "stanford", "mit", "princeton", "caltech", "cambridge", "oxford", "imperial", "eth zurich", "lse", "chicago", "columbia", "iit bombay", "iit delhi", "iit madras", "iisc", "aiims"]
-            TOP = ["cornell", "ucl", "ucla", "uc berkeley", "michigan", "nyu", "toronto", "melbourne", "edinburgh", "duke", "johns hopkins", "bits pilani", "iit kanpur", "iit kharagpur", "iit roorkee"]
-            STRONG = ["purdue", "umass", "ut austin", "ohio state", "penn state", "arizona state", "illinois", "wisconsin", "georgia tech", "ashoka", "du srcc", "st stephens"]
-            
-            if any(x in name for x in ELITE):
-                tier = 1
-            elif any(x in name for x in TOP):
-                tier = 2
-            elif any(x in name for x in STRONG):
-                tier = 3
-            else:
-                tier = 4
-
-    # Classify Reach / Target / Safety based on Tier
-    if tier == 1: # Elite
+    if tier == 1:
         if grade_val >= 98 and sat_val >= 1560:
             category = "Target"
         else:
             category = "Reach"
-    elif tier == 2: # Top
+    elif tier == 2:
         if grade_val >= 95 and (sat_val >= 1480 or sat_val == 0):
             category = "Target"
-        elif grade_val >= 90:
-            category = "Reach"
         else:
             category = "Reach"
-    elif tier == 3: # Strong
+    elif tier == 3:
         if grade_val >= 90:
             category = "Safety"
         elif grade_val >= 80:
             category = "Target"
         else:
             category = "Reach"
-    else: # Standard / Tier 4
+    else:
         if grade_val >= 85:
             category = "Safety"
         elif grade_val >= 70:
@@ -1928,7 +1894,48 @@ Output ONLY a single integer (1, 2, 3, or 4)."""
         else:
             category = "Reach"
 
+    # CUET/JEE safety gate in deterministic fallback too
+    admission_tests = college.get("admission_tests", college.get("required_exams", []))
+    if any(t in ("CUET_UG", "JEE_MAIN", "JEE_ADVANCED") for t in admission_tests):
+        if category == "Safety":
+            category = "Target"
+
     return jsonify({"category": category, "tier": tier})
+
+
+@app.route("/api/priority_queue/<student_id>")
+@student_self_only
+def api_priority_queue(student_id):
+    student = get_student(student_id)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    students_list = load_students()
+    evaluations = {}
+    for tid in student.get("targets", []):
+        tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
+        try:
+            agent_res = agent._solve_goal_simulated(student["id"], tid_str, students_list, None, silent=True)
+            if agent_res:
+                evaluations[tid_str] = agent_res
+        except Exception:
+            pass
+
+    priority_list = llm_scorer.rank_priority(student, evaluations)
+    if priority_list is None:
+        items = []
+        for tid, ev in evaluations.items():
+            items.append({
+                "target_id": tid,
+                "priority_score": ev.get("urgency_score", 0),
+                "priority_reason": f"{ev.get('risk_level', 'Unknown')} — {len(ev.get('gaps', []))} gap(s)",
+                "recommended_action": ev["remediations"][0].get("action_item", ev["remediations"][0].get("remediation", "Review gaps")) if ev.get("remediations") else "No action needed",
+                "action_deadline": None,
+            })
+        items.sort(key=lambda x: x["priority_score"], reverse=True)
+        priority_list = items
+
+    return jsonify({"student_id": student_id, "priority_queue": priority_list})
 
 
 @app.route("/api/exams")

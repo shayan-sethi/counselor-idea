@@ -2,6 +2,7 @@ import time
 import re
 import os
 import json
+import requests
 try:
     from dotenv import load_dotenv
     load_dotenv()
@@ -12,6 +13,114 @@ from rich.panel import Panel
 from .knowledge_graph import KnowledgeGraph
 from .reasoner import Reasoner
 from .planner import Planner
+from .llm_scorer import LLMScorer
+
+TOOL_SCHEMAS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_student",
+            "description": "Fetches the student profile for the given student ID. Call this first to understand the student's board, class level, subjects, grades, and portfolio.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "student_id": {"type": "string", "description": "The student ID, e.g. 'STU_001'"}
+                },
+                "required": ["student_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_requirements",
+            "description": "Queries the knowledge graph for a target course or exam's prerequisites, deadlines, and grade cutoffs.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_id": {"type": "string", "description": "The target pathway ID, e.g. 'JEE_MAIN', 'CUET_DU_CS'"}
+                },
+                "required": ["target_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "check_subjects",
+            "description": "Verifies if the student's board and CUET subjects meet the target's prerequisites. Returns a JSON array of subject gaps (empty if compliant).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_id": {"type": "string"},
+                    "student_id": {"type": "string"},
+                    "simulated_subjects": {"type": "string", "description": "Optional comma-separated list of subjects to evaluate instead of the student's actual subjects."}
+                },
+                "required": ["target_id", "student_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "check_grades",
+            "description": "Verifies if the student's board grades and test scores meet target cutoffs. Returns a JSON array of grade gaps.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_id": {"type": "string"},
+                    "student_id": {"type": "string"}
+                },
+                "required": ["target_id", "student_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "check_timeline",
+            "description": "Checks registration deadlines and timelines for the target. Returns a JSON array of deadline gaps.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_id": {"type": "string"}
+                },
+                "required": ["target_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "check_portfolio",
+            "description": "Checks if the student's extracurricular portfolio tier is sufficient for the target. Returns a JSON array of portfolio gaps.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_id": {"type": "string"},
+                    "student_id": {"type": "string"}
+                },
+                "required": ["target_id", "student_id"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "draft_remediations",
+            "description": "Generates feasibility-ranked remediation options for the discovered gaps. Call this after running compliance checks if any gaps were found.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target_id": {"type": "string"},
+                    "student_id": {"type": "string"},
+                    "gaps_json": {"type": "string", "description": "JSON string of the accumulated gaps array from all check tools."}
+                },
+                "required": ["target_id", "student_id", "gaps_json"]
+            }
+        }
+    }
+]
 
 class PRISMAgent:
     def __init__(self, kg: KnowledgeGraph, reasoner: Reasoner, planner: Planner):
@@ -19,6 +128,7 @@ class PRISMAgent:
         self.reasoner = reasoner
         self.planner = planner
         self.console = Console()
+        self.llm_scorer = LLMScorer()
 
     # Define tools for LLM
     def fetch_student(self, student_id: str) -> str:
@@ -199,7 +309,196 @@ class PRISMAgent:
         return json.dumps(rems.get(target_id, []))
 
     def solve_goal(self, student_id, target_id, students_list, simulated_subjects=None, silent=False, use_real_engine=False):
-        return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
+        return self._solve_goal_llm(student_id, target_id, students_list, simulated_subjects, silent)
+
+    def _solve_goal_llm(self, student_id, target_id, students_list, simulated_subjects=None, silent=False):
+        groq_key = os.environ.get("GROQ_API_KEY", "").strip()
+        if not groq_key:
+            if not silent:
+                print("[Agent] No GROQ_API_KEY set, falling back to simulated pipeline.")
+            return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
+
+        tool_dispatch = {
+            "fetch_student": self.fetch_student,
+            "fetch_requirements": self.fetch_requirements,
+            "check_subjects": self.check_subjects,
+            "check_grades": self.check_grades,
+            "check_timeline": self.check_timeline,
+            "check_portfolio": self.check_portfolio,
+            "draft_remediations": self.draft_remediations,
+        }
+
+        system_prompt = (
+            "You are PRISM AI, an expert admissions compliance agent. "
+            "Evaluate whether a student meets the requirements for a target university course or exam pathway.\n\n"
+            "You have tools to fetch student data, fetch target requirements, and run compliance checks "
+            "(subjects, grades, timeline, portfolio). Use them to perform a thorough evaluation.\n\n"
+            "Guidelines:\n"
+            "1. Start by fetching the student profile and target requirements.\n"
+            "2. Run ALL four compliance checks: check_subjects, check_grades, check_timeline, check_portfolio.\n"
+            "3. If any gaps are found, call draft_remediations with the combined gaps.\n"
+            "4. After all checks are done, respond with a brief natural-language summary of your findings.\n\n"
+            "Be thorough — do not skip any compliance checks."
+        )
+
+        user_msg = (
+            f"Evaluate student '{student_id}' for target pathway '{target_id}'.\n"
+            f"IMPORTANT: Use exactly these IDs when calling tools — "
+            f"student_id='{student_id}', target_id='{target_id}'. Do not abbreviate or modify them."
+        )
+        if simulated_subjects:
+            subs = simulated_subjects if isinstance(simulated_subjects, str) else ", ".join(simulated_subjects)
+            user_msg += f"\nUse these simulated subjects instead of the student's actual subjects: {subs}"
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_msg},
+        ]
+
+        trace = []
+        all_gaps = []
+        remediations = []
+        checks_called = set()
+        max_iterations = 12
+
+        for _ in range(max_iterations):
+            try:
+                res = requests.post(
+                    "https://api.groq.com/openai/v1/chat/completions",
+                    headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
+                    json={
+                        "model": "llama-3.3-70b-versatile",
+                        "messages": messages,
+                        "tools": TOOL_SCHEMAS,
+                        "tool_choice": "auto",
+                        "temperature": 0.1,
+                        "max_tokens": 4096,
+                    },
+                    timeout=30,
+                )
+            except Exception as e:
+                if not silent:
+                    print(f"[Agent] Groq request failed: {e}")
+                break
+
+            if res.status_code != 200:
+                if not silent:
+                    print(f"[Agent] Groq API error {res.status_code}: {res.text[:200]}")
+                break
+
+            choice = res.json()["choices"][0]
+            message = choice["message"]
+            messages.append(message)
+
+            if message.get("content"):
+                trace.append({"type": "thought", "message": message["content"]})
+
+            if not message.get("tool_calls"):
+                break
+
+            for tool_call in message["tool_calls"]:
+                fn_name = tool_call["function"]["name"]
+                try:
+                    fn_args = json.loads(tool_call["function"]["arguments"])
+                except json.JSONDecodeError:
+                    fn_args = {}
+
+                trace.append({
+                    "type": "action",
+                    "message": f"call_tool: {fn_name}",
+                    "detail": json.dumps(fn_args),
+                })
+
+                fn = tool_dispatch.get(fn_name)
+                if fn:
+                    result = fn(**fn_args)
+                else:
+                    result = json.dumps({"error": f"Unknown tool '{fn_name}'"})
+
+                trace.append({"type": "observation", "message": result})
+
+                if fn_name in ("check_subjects", "check_grades", "check_timeline", "check_portfolio"):
+                    checks_called.add(fn_name)
+                    try:
+                        parsed = json.loads(result)
+                        if isinstance(parsed, list):
+                            all_gaps.extend(parsed)
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+
+                if fn_name == "draft_remediations":
+                    try:
+                        parsed = json.loads(result)
+                        if isinstance(parsed, list):
+                            remediations = parsed
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+
+                messages.append({
+                    "role": "tool",
+                    "tool_call_id": tool_call["id"],
+                    "content": result,
+                })
+
+            if choice.get("finish_reason") == "stop":
+                break
+
+        if not checks_called:
+            if not silent:
+                print("[Agent] LLM loop produced no tool calls, falling back to simulated pipeline.")
+            return self._solve_goal_simulated(student_id, target_id, students_list, simulated_subjects, silent)
+
+        student = next((s for s in students_list if s["id"] == student_id), None)
+        target = self.kg.get_course_or_exam(target_id)
+
+        if not student or not target:
+            import hashlib
+            seed_str = f"{student_id}_{target_id}"
+            hash_val = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
+            ms = 55 + (hash_val % 18)
+            return {"compliant": True, "match_score": ms, "risk_level": "Moderate Risk",
+                    "urgency_score": 0, "gaps": [], "remediations": [], "trace": trace}
+
+        if all_gaps and not remediations:
+            temp_analysis = {
+                "student_id": student_id,
+                "class_level": student["class_level"],
+                "targets": {
+                    target_id: {
+                        "target_name": target["name"],
+                        "track": target["track"],
+                        "compliant": False,
+                        "urgency_score": self.reasoner._calculate_urgency(all_gaps),
+                        "gaps": all_gaps,
+                    }
+                },
+            }
+            remediations = self.planner.get_remediations(temp_analysis).get(target_id, [])
+
+        llm_result = self.llm_scorer.score_and_classify(student, target, all_gaps, remediations)
+
+        if llm_result:
+            match_score = llm_result["match_score"]
+            risk_level = llm_result.get("risk_level", self.reasoner._risk_level_label(match_score))
+            difficulty_label = llm_result.get("difficulty_label", "Target")
+            trace.append({"type": "thought", "message": llm_result.get("scoring_rationale", "LLM scoring complete.")})
+        else:
+            match_score = self.reasoner._calculate_match_score(all_gaps, student, target)
+            risk_level = self.reasoner._risk_level_label(match_score)
+            difficulty_label = self.reasoner._classify_difficulty(student, target, match_score, all_gaps)
+
+        return {
+            "compliant": len(all_gaps) == 0,
+            "match_score": match_score,
+            "risk_level": risk_level,
+            "urgency_score": self.reasoner._calculate_urgency(all_gaps),
+            "gaps": all_gaps,
+            "remediations": remediations,
+            "target_name": target["name"],
+            "track": target["track"],
+            "trace": trace,
+            "difficulty_label": difficulty_label,
+        }
 
     def _solve_goal_groq_fallback(self, student_id, target_id, students_list, prompt, silent):
         """Uses Groq API (llama-3.3-70b-versatile) to reason through student evaluation."""
