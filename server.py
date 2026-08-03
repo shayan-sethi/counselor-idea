@@ -1327,97 +1327,28 @@ def api_evaluate():
     if not target_ids:
         return jsonify(result)
 
-    # Build batch context
-    target_reqs = {}
-    for tid in target_ids:
-        tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
-        target = agent.kg.get_course_or_exam(tid_str)
-        target_reqs[tid_str] = target if target else {"name": tid_str, "track": "Unknown"}
-
-    import os, json, requests
-    groq_key = os.environ.get("GROQ_API_KEY", "").strip()
-
-    if groq_key and target_ids:
-        print(f"[api_evaluate] Calling Groq API (batch) for student {student_id} with {len(target_ids)} targets...")
-        prompt = f"""You are the unlockED AI Admissions Compliance Officer.
-Evaluate student {student_id} for their multiple targets in a single batch.
-Student Profile: {json.dumps(student, default=str)}
-Targets Requirements: {json.dumps(target_reqs, default=str)}
-
-IMPORTANT RULE: If the Target Requirements are missing, unknown, or provide insufficient information (e.g. no specific grade cutoffs or missing rules), DO NOT mark this as a gap. You MUST assume the student is fully eligible and compliant for that target. Only mark as INELIGIBLE (compliant: false) if there is a clear, explicit violation of a known requirement based on the provided student profile.
-
-Output ONLY a valid JSON object matching this schema exactly, where the keys are the target IDs:
-{{
-  "TARGET_ID_1": {{
-    "target_name": "Target Name",
-    "track": "UK/US/India etc",
-    "compliant": true,
-    "urgency_score": 10,
-    "match_score": 62,
-    "risk_level": "Moderate Risk",
-    "difficulty_label": "Target",
-    "gaps": [ {{"field": "grades", "description": "...", "severity": "HIGH", "type": "grade_cutoff_violation"}} ],
-    "remediations": [ {{"action_item": "...", "remediation": "...", "feasibility": "HIGH"}} ]
-  }}
-}}
-"""
-        try:
-            res = requests.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={"Authorization": f"Bearer {groq_key}", "Content-Type": "application/json"},
-                json={
-                    "model": "llama-3.3-70b-versatile",
-                    "messages": [
-                        {"role": "system", "content": "You are an expert AI admissions counselor. Return ONLY valid JSON."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "response_format": {"type": "json_object"},
-                    "temperature": 0.1
-                },
-                timeout=30
-            )
-            if res.status_code == 200:
-                raw_text = res.json()["choices"][0]["message"]["content"]
-                parsed = json.loads(raw_text)
-                for tid_str in target_reqs.keys():
-                    if tid_str in parsed:
-                        t = parsed[tid_str]
-                        result["targets"][tid_str] = {
-                            "target_name": t.get("target_name", "Target"),
-                            "track": t.get("track", "UK"),
-                            "compliant": t.get("compliant", False),
-                            "match_score": t.get("match_score", generate_realistic_match_score(sid, tid_str, t.get("compliant", True))),
-                            "risk_level": t.get("risk_level", "Strong Match"),
-                            "urgency_score": t.get("urgency_score", 0),
-                            "gaps": t.get("gaps", []),
-                            "remediations": t.get("remediations", []),
-                            "difficulty_label": t.get("difficulty_label", "Target")
-                        }
-            else:
-                print(f"[api_evaluate] Groq API returned {res.status_code}: {res.text}")
-        except Exception as e:
-            print(f"[api_evaluate] Batch Groq call failed: {e}")
-
-    # For any targets missing or if Groq failed, fall back to simulated engine
     traces = {}
     students = load_students()
+    
     for tid in target_ids:
         tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
-        if tid_str not in result["targets"]:
+        try:
             agent_res = agent._solve_goal_simulated(student["id"], tid_str, students, None, silent=True)
             if agent_res:
                 result["targets"][tid_str] = {
                     "target_name": agent_res.get("target_name", "Target"),
                     "track": agent_res.get("track", "UK"),
                     "compliant": agent_res.get("compliant", False),
-                    "match_score": agent_res.get("match_score", generate_realistic_match_score(sid, target_id, agent_res.get("compliant", True))),
+                    "match_score": agent_res.get("match_score", generate_realistic_match_score(student["id"], tid_str, agent_res.get("compliant", True))),
                     "risk_level": agent_res.get("risk_level", "Strong Match"),
                     "urgency_score": agent_res.get("urgency_score", 0),
                     "gaps": agent_res.get("gaps", []),
                     "remediations": agent_res.get("remediations", []),
                     "difficulty_label": agent_res.get("difficulty_label", "Target")
                 }
-        traces[tid_str] = [{"type": "thought", "message": "Evaluated in batch"}]
+            traces[tid_str] = [{"type": "thought", "message": "Evaluated using local simulated engine to avoid Groq rate limits."}]
+        except Exception as e:
+            print(f"[api_evaluate] Local reasoning engine failed for target {tid_str}: {e}")
 
     result["traces"] = traces
     return jsonify(result)
