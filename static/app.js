@@ -4492,10 +4492,27 @@ async function renderRecyclingView() {
         </div>
         
         <div>
-          <div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:4px;">Admitted To:</div>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            ${(a.admitted_to || []).map(u => `<span class="badge match">${u}</span>`).join('')}
-          </div>
+          ${(() => {
+            const ENTRANCE_KEYWORDS = ['jee', 'neet', 'bitsat', 'cuet', 'kvpy', 'olympiad', 'ucat', 'bmat', 'entrance', 'engineering', 'medical', 'aiims'];
+            const admitted = a.admitted_to || [];
+            const exams = admitted.filter(u => ENTRANCE_KEYWORDS.some(kw => u.toLowerCase().includes(kw)));
+            const unis  = admitted.filter(u => !ENTRANCE_KEYWORDS.some(kw => u.toLowerCase().includes(kw)));
+            let html = '';
+            if (unis.length > 0) {
+              html += `<div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:4px;">Universities:</div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:${exams.length > 0 ? '10px' : '0'};">
+                ${unis.map(u => `<span class="badge match">${u}</span>`).join('')}
+              </div>`;
+            }
+            if (exams.length > 0) {
+              html += `<div style="font-size:0.85rem; font-weight:600; color:var(--text-2); margin-bottom:4px;">Entrance Exams:</div>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                ${exams.map(e => `<span class="badge" style="background:#FEF3C7; color:#92400E; border:1px solid #FCD34D; font-size:0.75rem; font-weight:600; padding:2px 8px; border-radius:12px;">${e}</span>`).join('')}
+              </div>`;
+            }
+            if (!html) html = '<span style="color:var(--text-3); font-size:0.8rem;">—</span>';
+            return html;
+          })()}
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">

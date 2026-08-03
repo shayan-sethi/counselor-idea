@@ -37,6 +37,7 @@
       "IIT Bombay"
     ],
     "grades": {
+      "class_10_aggregate": "88%",
       "current_expected_board": "90.7%",
       "subjects": {
         "History": 94,
@@ -77,6 +78,7 @@
       "Oxford / Cambridge"
     ],
     "grades": {
+      "class_10_aggregate": "76%",
       "current_expected_board": "79.9%",
       "subjects": {
         "Physics": 84,
@@ -113,6 +115,7 @@
       "AIIMS"
     ],
     "grades": {
+      "class_10_aggregate": "93%",
       "current_expected_board": "94.1%",
       "subjects": {
         "Physics": 95,
@@ -122,7 +125,7 @@
         "Psychology": 93
       }
     },
-    "standardized_tests": {},
+    "standardized_tests": { "SAT": 1480 },
     "portfolio": [
       {
         "activity": "MUN Best Delegate",
@@ -159,6 +162,7 @@
       "UCLA Pre-Med"
     ],
     "grades": {
+      "class_10_aggregate": "83%",
       "current_expected_board": "85.1%",
       "subjects": {
         "Physics": 81,
@@ -203,6 +207,7 @@
       "Ivy League"
     ],
     "grades": {
+      "class_10_aggregate": "91%",
       "current_expected_board": "92.6%",
       "subjects": {
         "Economics": 88,
@@ -212,7 +217,7 @@
         "English": 96
       }
     },
-    "standardized_tests": {},
+    "standardized_tests": { "SAT": 1510 },
     "portfolio": [
       {
         "activity": "Research Paper",
@@ -249,6 +254,7 @@
       "Ashoka University"
     ],
     "grades": {
+      "class_10_aggregate": "89%",
       "current_expected_board": "90.4%",
       "subjects": {
         "Physics": 91,
@@ -298,6 +304,7 @@
       "BITS Pilani"
     ],
     "grades": {
+      "class_10_aggregate": "31/45",
       "current_expected_board": "33/45",
       "subjects": {
         "Physics": 71,
@@ -307,7 +314,7 @@
         "Computer Science": 69
       }
     },
-    "standardized_tests": {},
+    "standardized_tests": { "SAT": 1390 },
     "portfolio": [
       {
         "activity": "Debate Club",
@@ -343,6 +350,7 @@
       "UCLA Pre-Med"
     ],
     "grades": {
+      "class_10_aggregate": "82%",
       "current_expected_board": "83.4%",
       "subjects": {
         "Physics": 81,
@@ -390,6 +398,7 @@
       "IIT Bombay"
     ],
     "grades": {
+      "class_10_aggregate": "77%",
       "current_expected_board": "78.9%",
       "subjects": {
         "Physics": 77,
@@ -437,6 +446,7 @@
       "Stanford Computer Science"
     ],
     "grades": {
+      "class_10_aggregate": "42/45",
       "current_expected_board": "44/45",
       "subjects": {
         "Physics": 95,
@@ -485,6 +495,7 @@
       "Cambridge Medicine"
     ],
     "grades": {
+      "class_10_aggregate": "88%",
       "current_expected_board": "90.6%",
       "subjects": {
         "Economics": 95,
@@ -533,6 +544,7 @@
       "Oxford / Cambridge"
     ],
     "grades": {
+      "class_10_aggregate": "98%",
       "current_expected_board": "99.3%",
       "subjects": {
         "Physics": 102,
@@ -581,6 +593,7 @@
       "Delhi University SRCC"
     ],
     "grades": {
+      "class_10_aggregate": "74%",
       "current_expected_board": "75.6%",
       "subjects": {
         "History": 73,
@@ -629,6 +642,7 @@
       "Ashoka University"
     ],
     "grades": {
+      "class_10_aggregate": "92%",
       "current_expected_board": "93.9%",
       "subjects": {
         "Physics": 96,
@@ -675,6 +689,7 @@
       "LSE Economics"
     ],
     "grades": {
+      "class_10_aggregate": "36/45",
       "current_expected_board": "38/45",
       "subjects": {
         "Physics": 86,
@@ -715,6 +730,7 @@
       "BITS Pilani"
     ],
     "grades": {
+      "class_10_aggregate": "90%",
       "current_expected_board": "91.3%",
       "subjects": {
         "History": 88,
@@ -757,6 +773,7 @@
       "Stanford Computer Science"
     ],
     "grades": {
+      "class_10_aggregate": "73%",
       "current_expected_board": "74.3%",
       "subjects": {
         "History": 71,
@@ -803,6 +820,7 @@
       "Ashoka University"
     ],
     "grades": {
+      "class_10_aggregate": "79%",
       "current_expected_board": "80.6%",
       "subjects": {
         "Physics": 81,
@@ -841,6 +859,7 @@
       "Delhi University SRCC"
     ],
     "grades": {
+      "class_10_aggregate": "74%",
       "current_expected_board": "75.8%",
       "subjects": {
         "Physics": 79,

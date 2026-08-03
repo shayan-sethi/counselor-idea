@@ -192,7 +192,9 @@ class OpportunityRadar:
             for t in targets
         )
 
-        current_date = datetime.date(2026, 7, 25) # Current project date context
+        # Use current date in IST (UTC+5:30)
+        ist_offset = datetime.timezone(datetime.timedelta(hours=5, minutes=30))
+        current_date = datetime.datetime.now(ist_offset).date()
 
         for comp in competitions:
             min_c = comp.get("min_class_level", 9)

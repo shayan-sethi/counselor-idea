@@ -867,10 +867,37 @@ def api_reject_connection(conn_id):
     save_connection(conn)
     return jsonify(conn)
 
+def flatten_student(s):
+    """Add flat convenience fields the frontend uses, derived from nested objects."""
+    s = dict(s)  # shallow copy so we don't mutate Firestore data
+    grades = s.get("grades") or {}
+    tests  = s.get("standardized_tests") or {}
+
+    # G10 aggregate — pick from known field names or compute from per-subject scores
+    g10 = grades.get("class_10_aggregate") or grades.get("grade_10_aggregate")
+    if not g10:
+        g10_subs = grades.get("g10_subjects") or {}
+        if g10_subs:
+            vals = [v for v in g10_subs.values() if isinstance(v, (int, float))]
+            if vals:
+                avg = round(sum(vals) / len(vals), 1)
+                g10 = f"{avg}%"
+    s.setdefault("grade_10_aggregate", g10 or None)
+
+    # G12 predicted aggregate
+    g12 = grades.get("current_expected_board") or grades.get("predicted_aggregate")
+    s.setdefault("predicted_aggregate", g12 or None)
+
+    # SAT / ACT flat fields
+    s.setdefault("sat_score", tests.get("SAT") or tests.get("sat"))
+    s.setdefault("act_score", tests.get("ACT") or tests.get("act"))
+
+    return s
+
 @app.route("/api/students")
 @counselor_required
 def api_students():
-    return jsonify(load_students())
+    return jsonify([flatten_student(s) for s in load_students()])
 
 @app.route("/api/student/<student_id>")
 @student_self_only
