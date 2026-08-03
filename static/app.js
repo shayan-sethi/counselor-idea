@@ -10,6 +10,53 @@ let currentStudent = null;
 let simSubjects = [];
 let editingId = null;
 
+const COLLEGE_NAME_MAP = {
+  "UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE": "London School of Economics (LSE)",
+  "LSE": "London School of Economics (LSE)",
+  "LSE Economics": "London School of Economics (LSE)",
+  "UK_OXFORDBROOKESUNIVERSITY": "Oxford Brookes University",
+  "UK_UNIVERSITYOFOXFORD": "University of Oxford",
+  "OXFORD": "University of Oxford",
+  "UK_UNIVERSITYOFCAMBRIDGE": "University of Cambridge",
+  "CAMBRIDGE": "University of Cambridge",
+  "US_STANFORDUNIVERSITY": "Stanford University",
+  "STANFORD": "Stanford University",
+  "US_MASSACHUSETTSINSTITUTEOFTECHNOLOGY": "Massachusetts Institute of Technology (MIT)",
+  "MIT": "MIT",
+  "ASHOKA_UNIV": "Ashoka University",
+  "ASHOKA": "Ashoka University",
+  "AIIMS": "AIIMS",
+  "DU": "Delhi University",
+  "DELHI_UNIV": "Delhi University",
+  "UCL": "University College London (UCL)",
+  "UK_UNIVERSITYCOLLEGELONDON": "University College London (UCL)",
+  "HARVARD": "Harvard University",
+  "US_HARVARDUNIVERSITY": "Harvard University",
+  "KING'S_COLLEGE_LONDON": "King's College London",
+  "US_166027": "Harvard University",
+};
+
+function cleanUniName(s) {
+  if (!s || typeof s !== 'string') return s || '';
+  const trimmed = s.trim();
+  if (COLLEGE_NAME_MAP[trimmed]) return COLLEGE_NAME_MAP[trimmed];
+  if (trimmed.startsWith('UK_') || trimmed.startsWith('US_') || trimmed.startsWith('IND_')) {
+    const raw = trimmed.split('_').slice(1).join('_');
+    if (raw.includes('LONDONSCHOOLOFECONOMICS')) return 'London School of Economics (LSE)';
+    if (raw.includes('OXFORDBROOKES')) return 'Oxford Brookes University';
+    if (raw.includes('OXFORD')) return 'University of Oxford';
+    if (raw.includes('CAMBRIDGE')) return 'University of Cambridge';
+    if (raw.includes('STANFORD')) return 'Stanford University';
+    if (raw.includes('MASSACHUSETTS') || raw.includes('MIT')) return 'MIT';
+    if (raw.includes('HARVARD')) return 'Harvard University';
+    if (raw.includes('IMPERIAL')) return 'Imperial College London';
+    if (raw.includes('UNIVERSITYCOLLEGELONDON') || raw.includes('UCL')) return 'University College London (UCL)';
+    return raw.toLowerCase().replace(/(?:^|\s|-|_)\S/g, x => x.toUpperCase()).replace(/_/g, ' ');
+  }
+  return trimmed;
+}
+window.cleanUniName = cleanUniName;
+
 const BOARD_SUBJECTS = {
   "CBSE": [
     "Mathematics", "Physics", "Chemistry", "Biology", "Computer Science",
@@ -4450,7 +4497,13 @@ window.generateAIRecommendation = async function() {
     }
     
     const data = await res.json();
-    const rawText = data.response || "";
+    let rawText = data.response || "";
+
+    // Replace any raw university code tags in raw text
+    for (const [tag, clean] of Object.entries(COLLEGE_NAME_MAP)) {
+      rawText = rawText.split(tag).join(clean);
+    }
+    rawText = rawText.replace(/\b(UK_|US_|IND_)[A-Z0-9_]+\b/g, m => cleanUniName(m));
 
     // Helper to convert Markdown to clean HTML for Quill
     const lines = rawText.split('\n');

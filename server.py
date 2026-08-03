@@ -93,6 +93,79 @@ def auto_classify_portfolio(portfolio):
         classified.append({**item, "tier": tier})
     return classified
 
+COLLEGE_NAME_MAP = {
+    "UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE": "London School of Economics (LSE)",
+    "LSE": "London School of Economics (LSE)",
+    "LSE Economics": "London School of Economics (LSE)",
+    "UK_OXFORDBROOKESUNIVERSITY": "Oxford Brookes University",
+    "UK_UNIVERSITYOFOXFORD": "University of Oxford",
+    "OXFORD": "University of Oxford",
+    "UK_UNIVERSITYOFCAMBRIDGE": "University of Cambridge",
+    "CAMBRIDGE": "University of Cambridge",
+    "US_STANFORDUNIVERSITY": "Stanford University",
+    "STANFORD": "Stanford University",
+    "US_MASSACHUSETTSINSTITUTEOFTECHNOLOGY": "Massachusetts Institute of Technology (MIT)",
+    "MIT": "MIT",
+    "ASHOKA_UNIV": "Ashoka University",
+    "ASHOKA": "Ashoka University",
+    "DU": "Delhi University",
+    "DELHI_UNIV": "Delhi University",
+    "UCL": "University College London (UCL)",
+    "UK_UNIVERSITYCOLLEGELONDON": "University College London (UCL)",
+    "HARVARD": "Harvard University",
+    "US_HARVARDUNIVERSITY": "Harvard University",
+    "PRINCETON": "Princeton University",
+    "YALE": "Yale University",
+    "COLUMBIA": "Columbia University",
+    "CORNELL": "Cornell University",
+    "UPENN": "University of Pennsylvania",
+    "BROWN": "Brown University",
+    "DARTMOUTH": "Dartmouth College",
+    "AIIMS": "AIIMS",
+    "IIT_BOMBAY": "IIT Bombay",
+    "BITS_PILANI": "BITS Pilani",
+    "VIT": "VIT Vellore",
+    "KING'S_COLLEGE_LONDON": "King's College London",
+    "US_166027": "Harvard University",
+}
+
+def clean_university_name(s):
+    if not s or not isinstance(s, str):
+        return str(s) if s else ""
+    s_trim = s.strip()
+    if s_trim in COLLEGE_NAME_MAP:
+        return COLLEGE_NAME_MAP[s_trim]
+    if s_trim.startswith("UK_") or s_trim.startswith("US_") or s_trim.startswith("IND_"):
+        raw = s_trim.split("_", 1)[1]
+        if "LONDONSCHOOLOFECONOMICS" in raw:
+            return "London School of Economics (LSE)"
+        if "OXFORDBROOKES" in raw:
+            return "Oxford Brookes University"
+        if "OXFORD" in raw:
+            return "University of Oxford"
+        if "CAMBRIDGE" in raw:
+            return "University of Cambridge"
+        if "STANFORD" in raw:
+            return "Stanford University"
+        if "MASSACHUSETTS" in raw or "MIT" in raw:
+            return "MIT"
+        if "HARVARD" in raw:
+            return "Harvard University"
+        if "PRINCETON" in raw:
+            return "Princeton University"
+        if "YALE" in raw:
+            return "Yale University"
+        if "COLUMBIA" in raw:
+            return "Columbia University"
+        if "CORNELL" in raw:
+            return "Cornell University"
+        if "IMPERIAL" in raw:
+            return "Imperial College London"
+        if "UNIVERSITYCOLLEGELONDON" in raw or "UCL" in raw:
+            return "University College London (UCL)"
+        return raw.title().replace("Of", "of").replace("And", "and")
+    return s_trim
+
 # ── Firebase Admin SDK or local JSON DB fallback ──
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -2374,20 +2447,22 @@ def api_draft_recommendation():
     targets = student.get("targets", [])
     shortlisted_colleges = student.get("shortlisted_colleges", [])
     shortlisted_scholarships = student.get("shortlisted_scholarships", [])
-    
+    clean_targets = [clean_university_name(t) for t in targets]
+    clean_colleges = [clean_university_name(c) for c in shortlisted_colleges]
+
     brag_sheet = f"Student Name: {student['name']}\n"
     brag_sheet += f"Board: {student.get('board')} Class {student.get('class_level')}\n"
     brag_sheet += f"Grades: {json.dumps(grades)}\n"
     brag_sheet += "Extracurriculars & Portfolio:\n"
     for item in portfolio:
         brag_sheet += f"- {item.get('title', '')} ({item.get('role', '')}): {item.get('description', '')}\n"
-    brag_sheet += f"Target Universities: {', '.join(targets)}\n"
-    brag_sheet += f"Shortlisted Colleges: {', '.join(shortlisted_colleges)}\n"
+    brag_sheet += f"Target Universities: {', '.join(clean_targets)}\n"
+    brag_sheet += f"Shortlisted Colleges: {', '.join(clean_colleges)}\n"
     brag_sheet += f"Shortlisted / Assigned Scholarships: {', '.join(shortlisted_scholarships)}\n"
 
-    system_prompt = "You are a school counselor helping draft a Letter of Recommendation outline. Given a student's brag sheet, output a SHORT structured outline (not a full letter) with: 1) Opening hook idea (1 sentence), 2) 3 key strengths to highlight (bullet points), 3) Suggested anecdote/story angle, 4) Closing theme. Be concise - max 150 words total."
+    system_prompt = "You are a school counselor helping draft a Letter of Recommendation outline. Given a student's brag sheet, output a SHORT structured outline (not a full letter) with: 1) Opening hook idea (1 sentence), 2) 3 key strengths to highlight (bullet points), 3) Suggested anecdote/story angle, 4) Closing theme. Use proper human-readable university names, never raw code tags. Be concise - max 150 words total."
 
-    from prism_agent.groq_utils import groq_post_with_retry
+    from prism_agent.groq_utils import groq_post_with_retry, GROQ_MODEL
     
     payload = {
         "model": GROQ_MODEL,
@@ -2403,6 +2478,9 @@ def api_draft_recommendation():
     if res and res.status_code == 200:
         try:
             content = res.json()["choices"][0]["message"]["content"]
+            # Post-process content to replace any lingering raw university tags
+            for raw_tag, clean_name in COLLEGE_NAME_MAP.items():
+                content = content.replace(raw_tag, clean_name)
             return jsonify({"response": content})
         except Exception as e:
             print(f"[Recommendation Error] Failed to parse Groq response: {e}")

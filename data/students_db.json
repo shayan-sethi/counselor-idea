@@ -118,8 +118,8 @@
     ],
     "shortlisted_colleges": [
       "MIT",
-      "OXFORD",
-      "UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE",
+      "Oxford",
+      "London School of Economics",
       "UCL"
     ]
   },
@@ -255,8 +255,8 @@
       }
     ],
     "shortlisted_colleges": [
-      "UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE",
-      "KING'S_COLLEGE_LONDON"
+      "London School of Economics",
+      "King's College London"
     ]
   },
   {
@@ -846,9 +846,9 @@
       }
     ],
     "shortlisted_colleges": [
-      "KING'S_COLLEGE_LONDON",
-      "US_166027",
-      "UK_OXFORDBROOKESUNIVERSITY"
+      "King's College London",
+      "Harvard University",
+      "Oxford Brookes University"
     ],
     "status": {
       "cuet_form_submitted": false,

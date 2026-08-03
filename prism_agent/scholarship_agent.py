@@ -10,6 +10,80 @@ def _groq_post_with_retry(groq_key, payload, label="Groq", max_wait=15):
     return groq_post_with_retry(payload, label=label, max_wait=max_wait, initial_key=groq_key)
 
 
+COLLEGE_NAME_MAP = {
+    "UK_THELONDONSCHOOLOFECONOMICSANDPOLITICALSCIENCE": "London School of Economics (LSE)",
+    "LSE": "London School of Economics (LSE)",
+    "LSE Economics": "London School of Economics (LSE)",
+    "UK_OXFORDBROOKESUNIVERSITY": "Oxford Brookes University",
+    "UK_UNIVERSITYOFOXFORD": "University of Oxford",
+    "OXFORD": "University of Oxford",
+    "UK_UNIVERSITYOFCAMBRIDGE": "University of Cambridge",
+    "CAMBRIDGE": "University of Cambridge",
+    "US_STANFORDUNIVERSITY": "Stanford University",
+    "STANFORD": "Stanford University",
+    "US_MASSACHUSETTSINSTITUTEOFTECHNOLOGY": "Massachusetts Institute of Technology (MIT)",
+    "MIT": "MIT",
+    "ASHOKA_UNIV": "Ashoka University",
+    "ASHOKA": "Ashoka University",
+    "DU": "Delhi University",
+    "DELHI_UNIV": "Delhi University",
+    "UCL": "University College London (UCL)",
+    "UK_UNIVERSITYCOLLEGELONDON": "University College London (UCL)",
+    "HARVARD": "Harvard University",
+    "US_HARVARDUNIVERSITY": "Harvard University",
+    "PRINCETON": "Princeton University",
+    "YALE": "Yale University",
+    "COLUMBIA": "Columbia University",
+    "CORNELL": "Cornell University",
+    "UPENN": "University of Pennsylvania",
+    "BROWN": "Brown University",
+    "DARTMOUTH": "Dartmouth College",
+    "AIIMS": "AIIMS",
+    "IIT_BOMBAY": "IIT Bombay",
+    "BITS_PILANI": "BITS Pilani",
+    "VIT": "VIT Vellore",
+    "KING'S_COLLEGE_LONDON": "King's College London",
+    "US_166027": "Harvard University",
+}
+
+def clean_university_name(s):
+    if not s or not isinstance(s, str):
+        return str(s) if s else ""
+    s_trim = s.strip()
+    if s_trim in COLLEGE_NAME_MAP:
+        return COLLEGE_NAME_MAP[s_trim]
+    if s_trim.startswith("UK_") or s_trim.startswith("US_") or s_trim.startswith("IND_"):
+        raw = s_trim.split("_", 1)[1]
+        if "LONDONSCHOOLOFECONOMICS" in raw:
+            return "London School of Economics (LSE)"
+        if "OXFORDBROOKES" in raw:
+            return "Oxford Brookes University"
+        if "OXFORD" in raw:
+            return "University of Oxford"
+        if "CAMBRIDGE" in raw:
+            return "University of Cambridge"
+        if "STANFORD" in raw:
+            return "Stanford University"
+        if "MASSACHUSETTS" in raw or "MIT" in raw:
+            return "MIT"
+        if "HARVARD" in raw:
+            return "Harvard University"
+        if "PRINCETON" in raw:
+            return "Princeton University"
+        if "YALE" in raw:
+            return "Yale University"
+        if "COLUMBIA" in raw:
+            return "Columbia University"
+        if "CORNELL" in raw:
+            return "Cornell University"
+        if "IMPERIAL" in raw:
+            return "Imperial College London"
+        if "UNIVERSITYCOLLEGELONDON" in raw or "UCL" in raw:
+            return "University College London (UCL)"
+        return raw.title().replace("Of", "of").replace("And", "and")
+    return s_trim
+
+
 class ScholarshipAgent:
 
     @staticmethod
