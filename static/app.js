@@ -4479,30 +4479,50 @@ function renderRecBragSheet(sId) {
     </div>
   </div>`;
 
-  // Academics — clean grid layout
+  // Academics — split aggregates from subject-wise scores
   if (s.grades && Object.keys(s.grades).length > 0) {
-    html += `<div>${sectionLabel('Academics')}`;
-    html += `<div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:12px;">`;
+    const gradeLabels = {
+      'class_10_aggregate': 'Class 10 Aggregate',
+      'current_expected_board': 'Expected Board Score',
+      'class_12_aggregate': 'Class 12 Aggregate',
+      'predicted_score': 'Predicted Score',
+    };
+    const aggregates = [];
+    const subjectBlocks = [];
     for (const [k, v] of Object.entries(s.grades)) {
       if (k === 'history') continue;
       if (typeof v === 'object' && v !== null) {
-        html += `<div style="font-size:0.7rem; font-family:var(--mono); color:var(--text-3); text-transform:uppercase; margin-bottom:6px; font-weight:600;">${k.replace(/_/g, ' ')}</div>`;
-        html += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:4px 16px; margin-bottom:6px;">`;
-        for (const [sub, val] of Object.entries(v)) {
-          html += `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:3px 0; border-bottom:1px dashed var(--border);">
-            <span style="color:var(--text-2);">${sub}</span>
-            <strong style="color:var(--text-1);">${val}</strong>
-          </div>`;
-        }
-        html += `</div>`;
+        subjectBlocks.push({label: k, subjects: v});
       } else {
-        html += `<div style="display:flex; justify-content:space-between; font-size:0.8rem; padding:4px 0;">
-          <span style="color:var(--text-2);">${k.replace(/_/g, ' ')}</span>
-          <strong style="color:var(--text-1);">${v}</strong>
-        </div>`;
+        aggregates.push({key: k, label: gradeLabels[k] || k.replace(/_/g, ' '), value: v});
       }
     }
-    html += `</div></div>`;
+
+    html += `<div>${sectionLabel('Academics')}`;
+    if (aggregates.length > 0) {
+      html += `<div style="display:flex; gap:8px; margin-bottom:8px;">`;
+      aggregates.forEach(a => {
+        html += `<div style="flex:1; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:8px 10px; text-align:center;">
+          <div style="font-size:0.65rem; color:var(--text-3); text-transform:uppercase; font-weight:600; margin-bottom:2px;">${a.label}</div>
+          <div style="font-size:1rem; font-weight:700; color:var(--text-1);">${a.value}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    if (subjectBlocks.length > 0) {
+      subjectBlocks.forEach(block => {
+        html += `<div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:10px 12px;">`;
+        html += `<div style="display:grid; grid-template-columns: 1fr 1fr; gap:2px 16px;">`;
+        for (const [sub, val] of Object.entries(block.subjects)) {
+          html += `<div style="display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; padding:4px 0;">
+            <span style="color:var(--text-2);">${sub}</span>
+            <strong style="font-size:0.85rem; color:var(--text-1); font-variant-numeric:tabular-nums;">${val}</strong>
+          </div>`;
+        }
+        html += `</div></div>`;
+      });
+    }
+    html += `</div>`;
   }
 
   // Standardized Tests
