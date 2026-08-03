@@ -4449,17 +4449,42 @@ window.generateAIRecommendation = async function() {
       return;
     }
     
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    quillEditor.setText("");
-    
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      const length = quillEditor.getLength();
-      quillEditor.insertText(length - 1, chunk);
+    const data = await res.json();
+    const rawText = data.response || "";
+
+    // Helper to convert Markdown to clean HTML for Quill
+    const lines = rawText.split('\n');
+    const htmlLines = [];
+    let inList = false;
+
+    for (let line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        if (inList) { htmlLines.push('</ul>'); inList = false; }
+        continue;
+      }
+
+      const formatted = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+      if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+        if (!inList) { htmlLines.push('<ul style="margin-top:4px; margin-bottom:8px; padding-left:20px;">'); inList = true; }
+        const itemContent = formatted.replace(/^[\*\-] /, '');
+        htmlLines.push(`<li>${itemContent}</li>`);
+      } else {
+        if (inList) { htmlLines.push('</ul>'); inList = false; }
+        if (trimmed.startsWith('# ')) {
+          htmlLines.push(`<h2 style="font-size:1.2rem; font-weight:700; margin-top:12px; margin-bottom:6px;">${formatted.replace(/^# /, '')}</h2>`);
+        } else if (trimmed.startsWith('## ')) {
+          htmlLines.push(`<h3 style="font-size:1.05rem; font-weight:700; margin-top:10px; margin-bottom:4px;">${formatted.replace(/^## /, '')}</h3>`);
+        } else {
+          htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;">${formatted}</p>`);
+        }
+      }
     }
+    if (inList) htmlLines.push('</ul>');
+
+    const cleanHtml = htmlLines.join('');
+    quillEditor.clipboard.dangerouslyPasteHTML(cleanHtml);
   } catch (err) {
     console.error("Draft generation error:", err);
     quillEditor.setText("Error connecting to Unlocked Engine.");

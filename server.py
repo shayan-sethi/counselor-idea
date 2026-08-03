@@ -2385,20 +2385,20 @@ def api_draft_recommendation():
     brag_sheet += f"Shortlisted Colleges: {', '.join(shortlisted_colleges)}\n"
     brag_sheet += f"Shortlisted / Assigned Scholarships: {', '.join(shortlisted_scholarships)}\n"
 
-    system_prompt = "You are an expert high school counselor writing a powerful, persuasive Letter of Recommendation (LOR) for a student's university application. Use the student's exact brag sheet and data to write a tailored draft. Do not use generic placeholders like [Name], use the real name. Keep it professional, highlighting their specific achievements. Output ONLY the letter itself."
-    
-    from prism_agent.groq_utils import groq_post_with_retry, GROQ_MODEL
+    system_prompt = "You are a school counselor helping draft a Letter of Recommendation outline. Given a student's brag sheet, output a SHORT structured outline (not a full letter) with: 1) Opening hook idea (1 sentence), 2) 3 key strengths to highlight (bullet points), 3) Suggested anecdote/story angle, 4) Closing theme. Be concise - max 150 words total."
+
+    from prism_agent.groq_utils import groq_post_with_retry
     
     payload = {
         "model": GROQ_MODEL,
         "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"STUDENT BRAG SHEET:\n{brag_sheet}\n\nDraft the complete Letter of Recommendation below:"}
+            {"role": "user", "content": f"{system_prompt}\n\nSTUDENT DATA:\n{brag_sheet}\n\nLOR Outline:"}
         ],
-        "temperature": 0.6
+        "temperature": 0.5,
+        "max_tokens": 300
     }
     
-    res, err = groq_post_with_retry(payload, label="LOR_Agent")
+    res, err = groq_post_with_retry(payload, label="LOR_Outline")
     
     if res and res.status_code == 200:
         try:
