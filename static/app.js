@@ -4611,25 +4611,52 @@ window.generateAIRecommendation = async function() {
     const data = await res.json();
     let rawText = data.response || "";
 
-    // Replace any raw university code tags in raw text
+    // Strip chatbot intro preambles if any present
+    const matchPos = rawText.search(/\*?(\*?Brief LOR outline|\*?Opening hook)/i);
+    if (matchPos > 0) {
+      rawText = rawText.substring(matchPos);
+    }
+
+    // Replace any raw university code tags safely
     for (const [tag, clean] of Object.entries(COLLEGE_NAME_MAP)) {
-      rawText = rawText.split(tag).join(clean);
+      if (rawText.includes(tag) && !rawText.includes(clean)) {
+        rawText = rawText.split(tag).join(clean);
+      }
     }
     rawText = rawText.replace(/\b(UK_|US_|IND_)[A-Z0-9_]+\b/g, m => cleanUniName(m));
 
-    // Helper to convert Markdown to clean HTML for Quill
+    // Collapse 3+ consecutive newlines into 2 newlines (exactly 1 blank line)
+    rawText = rawText.replace(/\n{3,}/g, '\n\n');
+
+    // Helper to convert Markdown / asterisk formatting to clean Quill HTML
     const lines = rawText.split('\n');
     const htmlLines = [];
     let inList = false;
+    let lastWasEmpty = false;
 
     for (let line of lines) {
       const trimmed = line.trim();
       if (!trimmed) {
         if (inList) { htmlLines.push('</ul>'); inList = false; }
+        if (!lastWasEmpty) {
+          htmlLines.push('<p><br></p>');
+          lastWasEmpty = true;
+        }
         continue;
       }
 
-      const formatted = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      lastWasEmpty = false;
+
+      // Convert **bold** or *bold* (handles *Title* or *Heading*)
+      let formatted = trimmed
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/(^|\s)\*([^\*\s][^\*]*[^\*\s]|[^\*\s])\*(?=\s|$|\.|:|,)/g, '$1<strong>$2</strong>');
+
+      // If the line itself is wrapped in single asterisks like *Brief LOR outline for...* or *Opening hook idea*
+      if (/^\*[^\*\s].*[^\*\s]\*$/.test(trimmed)) {
+        const inner = trimmed.slice(1, -1);
+        formatted = `<strong>${inner}</strong>`;
+      }
 
       if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
         if (!inList) { htmlLines.push('<ul style="margin-top:4px; margin-bottom:8px; padding-left:20px;">'); inList = true; }
@@ -4637,10 +4664,8 @@ window.generateAIRecommendation = async function() {
         htmlLines.push(`<li>${itemContent}</li>`);
       } else {
         if (inList) { htmlLines.push('</ul>'); inList = false; }
-        if (trimmed.startsWith('# ')) {
-          htmlLines.push(`<h2 style="font-size:1.2rem; font-weight:700; margin-top:12px; margin-bottom:6px;">${formatted.replace(/^# /, '')}</h2>`);
-        } else if (trimmed.startsWith('## ')) {
-          htmlLines.push(`<h3 style="font-size:1.05rem; font-weight:700; margin-top:10px; margin-bottom:4px;">${formatted.replace(/^## /, '')}</h3>`);
+        if (trimmed.startsWith('# ') || trimmed.startsWith('## ')) {
+          htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;"><strong>${formatted.replace(/^#+\s*/, '')}</strong></p>`);
         } else {
           htmlLines.push(`<p style="margin-bottom:8px; line-height:1.5;">${formatted}</p>`);
         }
@@ -4889,7 +4914,7 @@ async function renderRecyclingView() {
           </div>
           <div style="background:var(--bg); padding:10px; border-radius:8px;">
             <div style="font-size:0.75rem; color:var(--text-3);">Testing</div>
-            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${Object.entries(a.standardized_tests || {}).map(([k,v])=>k+': '+v).join(', ') || 'Test Optional'}</div>
+            <div style="font-size:0.9rem; font-weight:600; color:var(--text-1);">${Object.entries(a.standardized_tests || {}).map(([k,v])=> k.toUpperCase() === 'SAT' && typeof v === 'number' ? k+': '+(Math.round(v/10)*10) : k+': '+v).join(', ') || 'Test Optional'}</div>
           </div>
         </div>
         
