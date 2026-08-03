@@ -76,7 +76,7 @@ class Reasoner:
 
             # Calculate overall target urgency score (risk priority)
             urgency_score = self._calculate_urgency(gaps)
-            match_score = self._calculate_match_score(gaps)
+            match_score = self._calculate_match_score(gaps, student, target)
             risk_level = self._risk_level_label(match_score)
 
             student_results["targets"][target_id] = {
@@ -398,83 +398,298 @@ class Reasoner:
         return min(score, 100)
 
     def _calculate_match_score(self, gaps, student=None, target=None):
-        """Calculates a 0-100 match/confidence percentage."""
-        import hashlib
-        
-        # Calculate a realistic base score between 92 and 98
-        if student and target:
-            seed_str = f"{student.get('id', '')}_{target.get('id', '')}"
-            hash_val = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
-            base_score = 92 + (hash_val % 7)
-        else:
-            base_score = 94
+        """
+        Calculates a realistic 0-100 match score using a weighted composite model:
 
-        if not gaps:
-            return base_score
+          Score = (0.40 × S_prereq) + (0.35 × S_academic) + (0.25 × S_profile) − P_penalties
 
-        deduction = 0
+        Hard gate: if any mandatory prerequisite is missing, S_prereq = 0 and the
+        total score is capped at 35 regardless of academic or profile strength.
+
+        An institutional selectivity ceiling is applied after composition:
+          - Super-selective (Tier-1 portfolio target / elite US/UK): max 78
+          - Highly competitive (Tier-2 portfolio target):            max 85
+          - Moderate (Tier-3 portfolio target):                      max 92
+
+        A deadline proximity penalty of up to 15 points is subtracted before
+        the ceiling is applied when critical deadlines are missed or expiring.
+        """
+        # ── Component 1: Prerequisite gate (40% weight) ───────────────────────
+        s_prereq, hard_cap = self._score_prereq_component(gaps)
+
+        # ── Component 2: Academic / exam fit (35% weight) ────────────────────
+        s_academic = self._score_academic_component(student, target, gaps)
+
+        # ── Component 3: Portfolio / profile depth (25% weight) ──────────────
+        s_profile = self._score_profile_component(student)
+
+        # ── Weighted composite ───────────────────────────────────────────────
+        raw_score = (0.40 * s_prereq) + (0.35 * s_academic) + (0.25 * s_profile)
+
+        # ── Hard gate cap: missing mandatory prereq → max 35 ─────────────────
+        if hard_cap:
+            score = min(raw_score, 35.0)
+            return int(round(score))
+
+        # ── Deadline proximity penalty ────────────────────────────────────────
+        score = self._apply_deadline_penalty(raw_score, gaps)
+
+        # ── Institutional selectivity ceiling ─────────────────────────────────
+        score = self._apply_institutional_ceiling(score, target)
+
+        return int(round(max(5, score)))
+
+    # ── Scoring sub-component helpers ─────────────────────────────────────────
+
+    @staticmethod
+    def _score_prereq_component(gaps):
+        """
+        Returns (S_prereq, hard_cap_triggered).
+
+        S_prereq is 100 if ALL mandatory prerequisites are satisfied.
+        S_prereq is 0 and hard_cap_triggered is True if ANY gap of type
+        'subject_missing', 'cuet_missing_subject', or 'cuet_unlawful_domain'
+        with severity CRITICAL exists — these represent structural eligibility
+        blockers that no amount of grades or extracurriculars can overcome.
+        """
+        HARD_BLOCK_TYPES = {"subject_missing", "cuet_missing_subject", "cuet_unlawful_domain"}
         for gap in gaps:
-            gtype = gap.get("type", "")
-            gsev = gap.get("severity", "WARNING")
+            if gap.get("type") in HARD_BLOCK_TYPES and gap.get("severity") == "CRITICAL":
+                return 0.0, True   # Hard gate triggered — cap total at 35
+        return 100.0, False
 
-            if gtype == "portfolio_gap":
-                deduction += 6
-            elif gsev == "CRITICAL":
-                if "deadline" in gtype or "expired" in gtype:
-                    deduction += 30  # Missed deadlines are very serious
+    @staticmethod
+    def _score_academic_component(student, target, gaps):
+        """
+        Returns S_academic in [20, 92] based on how the student's expected
+        grade compares to the target's stated minimum cutoff.
+
+        Scoring bands (mimicking a realistic percentile distribution):
+          - Expected grade >= min_grade (at or above cutoff):        80 – 92
+          - Within 10 percentage points below cutoff (25th–75th):   50 – 79
+          - More than 10 percentage points below cutoff (< 25th):   20 – 49
+
+        If a test_score_low or grade_cutoff_violation gap is present,
+        the score is additionally penalised by 8–15 points within its band.
+        Capped at 92 to account for exam-day variance and measurement error.
+        """
+        base = 65.0  # Default mid-range when no data is available
+
+        if student and target:
+            grades_data = student.get("grades", {})
+            exp_str = grades_data.get("current_expected_board", "")
+            student_board = student.get("board", "CBSE")
+
+            # Find the numeric minimum grade for the student's board system
+            min_grade_val = None
+            for req in target.get("grade_prerequisites", []):
+                if req.get("system") == student_board:
+                    try:
+                        min_grade_val = float(
+                            str(req["min_grade"]).replace("%", "").strip()
+                        )
+                    except (ValueError, KeyError):
+                        pass
+                    break
+
+            # Parse expected grade to a float percentage
+            exp_val = None
+            if exp_str:
+                try:
+                    exp_val = float(str(exp_str).replace("%", "").strip())
+                    # Sanity-clamp IB total-points style values (e.g. "33/45" already
+                    # converted to % by BoardGradeConverter before this call)
+                    if exp_val > 100:
+                        exp_val = min(exp_val, 100.0)
+                except ValueError:
+                    pass
+
+            if exp_val is not None and min_grade_val is not None:
+                gap_from_cutoff = exp_val - min_grade_val  # positive = above cutoff
+
+                if gap_from_cutoff >= 0:
+                    # At or above cutoff: 80–92 scaled by how far above
+                    # Every 1% above cutoff adds ~0.4 pts, hard-capped at 92
+                    base = min(92.0, 80.0 + gap_from_cutoff * 0.4)
+                elif gap_from_cutoff >= -10:
+                    # Within 10 pts below cutoff: 50–79
+                    # -10 → 50, 0 → 79
+                    base = 50.0 + (gap_from_cutoff + 10) * 2.9
                 else:
-                    deduction += 22  # Missing hard prerequisites
-            elif gsev == "WARNING":
-                deduction += 10
+                    # More than 10 pts below cutoff: 20–49
+                    # -10 → 49, -40 (extreme) → 20
+                    below = abs(gap_from_cutoff) - 10  # extra deficit beyond -10
+                    base = max(20.0, 49.0 - below * 0.97)
+            elif exp_val is not None:
+                # No specific min grade found — use absolute performance bands
+                if exp_val >= 92:
+                    base = 82.0
+                elif exp_val >= 80:
+                    base = 67.0
+                elif exp_val >= 65:
+                    base = 52.0
+                else:
+                    base = 35.0
 
-        return max(5, base_score - deduction)
+        # Apply penalty for grade/test-score violations already flagged as gaps
+        ACADEMIC_PENALTY_TYPES = {"grade_cutoff_violation", "test_score_low", "test_missing"}
+        for gap in gaps:
+            if gap.get("type") in ACADEMIC_PENALTY_TYPES:
+                sev = gap.get("severity", "WARNING")
+                base -= 15 if sev == "CRITICAL" else 8
+
+        return max(20.0, min(92.0, base))
+
+    @staticmethod
+    def _score_profile_component(student):
+        """
+        Returns S_profile in [30, 88] based on the student's extracurricular
+        portfolio tier.
+
+        Scoring:
+          - Tier 1 (international / national Olympiad / published research): 78–88
+          - Tier 2 (state / regional / major club president / hackathon):    55–70
+          - Tier 3 (basic school activities):                                 38–52
+          - No portfolio at all:                                               30
+
+        Multiple Tier-1 or Tier-2 activities add a small bonus (capped).
+        """
+        portfolio = student.get("portfolio", []) if student else []
+        if not portfolio:
+            return 30.0
+
+        tiers = [act.get("tier", 3) for act in portfolio]
+        best_tier = min(tiers)  # lower tier number = better
+        count_t1 = tiers.count(1)
+        count_t2 = tiers.count(2)
+
+        if best_tier == 1:
+            # Base 78; +2 per additional Tier-1 activity, capped at 88
+            return min(88.0, 78.0 + max(0, count_t1 - 1) * 2.0)
+        elif best_tier == 2:
+            # Base 55; +5 for each Tier-2 beyond the first, capped at 70
+            return min(70.0, 55.0 + max(0, count_t2 - 1) * 5.0)
+        else:
+            # Tier 3 only
+            return 38.0 + min(14.0, len(portfolio) * 2.0)  # small depth bonus
+
+    @staticmethod
+    def _apply_institutional_ceiling(score, target):
+        """
+        Applies an acceptance-rate-based ceiling to the composite score.
+
+        Super-selective targets (portfolio_tier == 1 or named elite institutions)
+        represent <10% acceptance rate environments; no matter how strong a profile
+        looks on paper, the competition means a realistic maximum is ~78%.
+
+        Tiers:
+          - Super-selective (portfolio_tier 1 / elite name):  max 78
+          - Highly competitive (portfolio_tier 2):             max 85
+          - Moderate (portfolio_tier 3):                       max 92
+        """
+        if not target:
+            return score
+
+        ELITE_KEYWORDS = [
+            "cambridge", "oxford", "mit", "stanford", "harvard",
+            "yale", "princeton", "caltech", "imperial", "iit", "aiims"
+        ]
+        uni_name = (target.get("university", "") or target.get("name", "")).lower()
+        portfolio_tier = int(target.get("portfolio_tier", 3))
+
+        is_super_selective = portfolio_tier == 1 or any(
+            kw in uni_name for kw in ELITE_KEYWORDS
+        )
+
+        if is_super_selective:
+            return min(score, 78.0)
+        elif portfolio_tier == 2:
+            return min(score, 85.0)
+        else:
+            return min(score, 92.0)
+
+    @staticmethod
+    def _apply_deadline_penalty(score, gaps):
+        """
+        Subtracts up to 15 points when critical deadlines have expired or are
+        closing within 48 hours without prerequisite actions completed.
+
+          - deadline_expired:  −15 pts (irreversible — door is closed)
+          - deadline_critical: −8 pts  (closing imminently)
+          - deadline_warning:  −3 pts  (approaching)
+        """
+        PENALTY_MAP = {
+            "deadline_expired": 15,
+            "deadline_critical": 8,
+            "deadline_warning": 3,
+        }
+        total_penalty = 0
+        for gap in gaps:
+            total_penalty += PENALTY_MAP.get(gap.get("type", ""), 0)
+        # Cap total deadline penalty at 15 to avoid double-counting multiple deadlines
+        return score - min(total_penalty, 15)
 
     @staticmethod
     def _risk_level_label(match_score):
-        """Maps a match score to a human-readable risk label."""
-        if match_score >= 90:
-            return "Strong Match"
+        """
+        Maps a realistic match score to a human-readable risk label.
+
+        With the new composite model, scores are distributed across a realistic
+        bell curve (mean ~55-68%). Labels are calibrated accordingly:
+          > 85  — Exceptional Match (rare; top-decile academics + Tier-1 portfolio)
+          70–85 — Strong Match
+          40–69 — Moderate / Work Needed
+          < 40  — Critical / High Risk
+        """
+        if match_score >= 85:
+            return "Exceptional Match"
         elif match_score >= 70:
+            return "Strong Match"
+        elif match_score >= 40:
             return "Moderate Risk"
-        elif match_score >= 45:
-            return "High Risk"
         else:
             return "Critical"
 
     def _classify_difficulty(self, student, target, match_score, gaps):
-        """Classifies target difficulty into Reach, Target, or Safety for the student."""
-        ELITE_UNIVERSITIES = [
-            "cambridge", "oxford", "mit", "stanford", "harvard", 
-            "yale", "princeton", "caltech", "imperial", "ucl", "columbia",
-            "chicago", "berkeley", "cornell", "pennsylvania"
+        """
+        Classifies the target difficulty into Reach, Target, or Safety.
+
+        Thresholds are calibrated for the new realistic scoring distribution
+        (mean ≈ 55–68%; ceiling ≤ 92%):
+
+          Reach:  Any critical gap OR match_score < 55
+          Safety: match_score >= 75 AND no critical gaps AND student meets
+                  portfolio tier AND target is not elite/super-selective
+          Target: everything in between
+        """
+        SUPER_SELECTIVE = [
+            "cambridge", "oxford", "mit", "stanford", "harvard",
+            "yale", "princeton", "caltech", "imperial", "iit bombay",
+            "iit delhi", "iit madras", "aiims", "columbia", "chicago",
+            "berkeley", "cornell", "pennsylvania"
         ]
-        
+
         uni_name = (target.get("university", "") or target.get("name", "")).lower()
-        is_elite = any(elite in uni_name for elite in ELITE_UNIVERSITIES)
-        
+        is_super_selective = any(kw in uni_name for kw in SUPER_SELECTIVE)
+
         has_critical_gaps = any(gap.get("severity") == "CRITICAL" for gap in gaps)
-        
-        if has_critical_gaps or match_score < 75:
+
+        # Any hard blocker or weak match → Reach
+        if has_critical_gaps or match_score < 55:
             return "Reach"
-            
-        if is_elite:
-            if match_score >= 95:
+
+        # Super-selective institutions are always at least a Target, never Safety
+        if is_super_selective:
+            if match_score >= 72:
                 return "Target"
-            else:
-                return "Reach"
-                
-        if match_score >= 93:
-            portfolio = student.get("portfolio", [])
-            student_best_tier = 3
-            if portfolio:
-                student_best_tier = min([act.get("tier", 3) for act in portfolio])
-            else:
-                student_best_tier = 4
-            
-            req_portfolio_tier = int(target.get("portfolio_tier", 3))
-            
-            if student_best_tier <= req_portfolio_tier:
-                return "Safety"
-            return "Target"
-            
+            return "Reach"
+
+        # Check if student's portfolio matches the required tier for Safety classification
+        portfolio = student.get("portfolio", []) if student else []
+        student_best_tier = min([act.get("tier", 3) for act in portfolio]) if portfolio else 4
+        req_portfolio_tier = int(target.get("portfolio_tier", 3))
+
+        if match_score >= 75 and student_best_tier <= req_portfolio_tier:
+            return "Safety"
+
         return "Target"

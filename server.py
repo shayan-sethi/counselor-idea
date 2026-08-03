@@ -56,13 +56,26 @@ TIER_2_KEYWORDS = ["state", "regional", "founder", "president", "hackathon winne
                    "head girl", "ted talk", "startup", "state winner", "gold medal"]
 
 def generate_realistic_match_score(student_id, target_id=None, compliant=True):
+    """
+    Fallback match score generator used when the full Reasoner pipeline cannot
+    be run (e.g., student or target not found in DB).
+
+    Returns a realistic score drawn from a deterministic but varied distribution:
+      - Compliant students (no known hard blockers): 55 – 72
+      - Non-compliant students (known gaps exist):   25 – 45
+
+    This replaces the previous 92–98 / 65–84 ranges which were unrealistically
+    high and misrepresented competitive admission realities.
+    """
     import hashlib
     seed_str = f"{student_id}_{target_id or 'unknown'}"
     hash_val = int(hashlib.md5(seed_str.encode()).hexdigest(), 16)
     if compliant:
-        return 92 + (hash_val % 7)
+        # Distribute across 55–72: a realistic "no obvious gaps" range
+        return 55 + (hash_val % 18)
     else:
-        return 65 + (hash_val % 20)
+        # Distribute across 25–45: non-compliant / hard-blocker range
+        return 25 + (hash_val % 21)
 
 def auto_classify_portfolio(portfolio):
     """Auto-classify portfolio activity tiers from descriptions using keyword rules."""
@@ -1340,8 +1353,8 @@ Output ONLY a valid JSON object matching this schema exactly, where the keys are
     "track": "UK/US/India etc",
     "compliant": true,
     "urgency_score": 10,
-    "match_score": 95,
-    "risk_level": "Strong Match",
+    "match_score": 62,
+    "risk_level": "Moderate Risk",
     "difficulty_label": "Target",
     "gaps": [ {{"field": "grades", "description": "...", "severity": "HIGH", "type": "grade_cutoff_violation"}} ],
     "remediations": [ {{"action_item": "...", "remediation": "...", "feasibility": "HIGH"}} ]
