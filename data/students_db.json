@@ -42,7 +42,10 @@
       "STANFORD",
       "IND_PLAKSHA",
       "IND_JINDAL",
-      "IND_KREA"
+      "IND_KREA",
+      "US_100830",
+      "US_100858",
+      "IMPERIAL"
     ]
   },
   {
@@ -560,6 +563,7 @@
       "US_211440"
     ],
     "shortlisted_scholarships": [
+      "schol_pearson_uoft",
       "schol_tata_cornell"
     ]
   },
