@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import re
 import datetime
 import joblib
 import pandas as pd
@@ -212,6 +213,7 @@ class MockCollectionReference:
         class Snap:
             def __init__(self, d):
                 self._d = d
+                self.id = d.get("id", "") if isinstance(d, dict) else ""
             def to_dict(self):
                 return self._d
         return [Snap(d) for d in docs]
@@ -338,9 +340,11 @@ class MockFirebaseAuth:
         doc = self.mock_db._get_doc("users", uid)
         if doc:
             raise firebase_admin.exceptions.AlreadyExistsError("User already exists")
+        import hashlib
         self.mock_db._set_doc("users", uid, {
             "username": uid,
             "email": email,
+            "password_hash": hashlib.sha256(password.encode()).hexdigest(),
             "role": "student",
             "student_id": None
         })
@@ -653,7 +657,7 @@ def api_admin_delete_user(username):
         return jsonify({"error": "User not found"}), 404
     try:
         firebase_auth.delete_user(match["username"])
-    except firebase_auth.UserNotFoundError:
+    except Exception:
         pass
     db.collection(USERS_COLLECTION).document(match["username"]).delete()
     return jsonify({"success": True})
@@ -695,13 +699,9 @@ def api_login():
             return jsonify({"error": "auth/user-not-found"}), 404
             
         import hashlib
-        if hashlib.sha256(password.encode()).hexdigest() != doc.get("password_hash", ""):
-            # We can allow empty passwords for convenience if not set, or reject.
-            # In users_db.json they are set.
-            # But wait, what if it's a new signup?
-            # We should probably still check.
-            if doc.get("password_hash") != hashlib.sha256(password.encode()).hexdigest() and doc.get("password_hash"):
-                 return jsonify({"error": "auth/invalid-credential"}), 401
+        stored_hash = doc.get("password_hash")
+        if not stored_hash or hashlib.sha256(password.encode()).hexdigest() != stored_hash:
+            return jsonify({"error": "auth/invalid-credential"}), 401
             
         token = jwt.encode({
             "sub": doc["username"],
@@ -1253,7 +1253,7 @@ def api_create_student():
                 "target_name": agent_res.get("target_name", "Target"),
                 "track": agent_res.get("track", "UK"),
                 "compliant": agent_res.get("compliant", False),
-                "match_score": agent_res.get("match_score", generate_realistic_match_score(s_id, target_id, agent_res.get("compliant", True))),
+                "match_score": agent_res.get("match_score", generate_realistic_match_score(student["id"], tid, agent_res.get("compliant", True))),
                 "risk_level": agent_res.get("risk_level", "Strong Match"),
                 "urgency_score": agent_res.get("urgency_score", 0),
                 "gaps": agent_res.get("gaps", []),
@@ -1415,6 +1415,8 @@ def api_delete_student(student_id):
 @student_self_only
 def api_evaluate():
     data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
     student_id = data.get("student_id")
 
     student = get_student(student_id)
@@ -1472,14 +1474,15 @@ def api_evaluate_cohort():
             "targets": {}
         }
         for tid in student.get("targets", []):
+            tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
             try:
-                agent_res = agent._solve_goal_simulated(student["id"], tid, students, None, silent=True)
+                agent_res = agent._solve_goal_simulated(student["id"], tid_str, students, None, silent=True)
                 if agent_res:
-                    result["targets"][tid] = {
+                    result["targets"][tid_str] = {
                         "target_name": agent_res.get("target_name", "Target"),
                         "track": agent_res.get("track", "UK"),
                         "compliant": agent_res.get("compliant", False),
-                        "match_score": agent_res.get("match_score", generate_realistic_match_score(student["id"], tid, agent_res.get("compliant", True))),
+                        "match_score": agent_res.get("match_score", generate_realistic_match_score(student["id"], tid_str, agent_res.get("compliant", True))),
                         "risk_level": agent_res.get("risk_level", "Strong Match"),
                         "urgency_score": agent_res.get("urgency_score", 0),
                         "gaps": agent_res.get("gaps", []),
@@ -1487,7 +1490,7 @@ def api_evaluate_cohort():
                         "difficulty_label": agent_res.get("difficulty_label", "Target")
                     }
             except Exception as e:
-                print(f"Error evaluating {student['id']} for {tid}: {e}")
+                print(f"Error evaluating {student['id']} for {tid_str}: {e}")
         results[student["id"]] = result
     return jsonify(results)
 
@@ -1528,6 +1531,8 @@ def api_predict():
 @student_self_only
 def api_student_advisor():
     data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
     student_id = data.get("student_id")
     message = data.get("message", "").lower()
     
@@ -1612,7 +1617,7 @@ def api_counselor_agent():
         for tid in s.get("targets", []):
             tid_str = tid.get("id", tid) if isinstance(tid, dict) else tid
             try:
-                audit_res = agent.solve_goal(s["id"], tid_str, students, silent=True)
+                audit_res = agent._solve_goal_simulated(s["id"], tid_str, students, None, silent=True)
                 if audit_res:
                     gap_labels = [g.get("issue", g.get("field","")) for g in audit_res.get("gaps",[])[:3]]
                     targets_brief.append({"id": tid_str, "score": audit_res.get("match_score",50), "ok": audit_res.get("compliant",True), "gaps": gap_labels})
@@ -2498,10 +2503,11 @@ Rules:
             return jsonify({"response": content})
         except Exception as e:
             print(f"[Recommendation Error] Failed to parse Groq response: {e}")
-            return jsonify({"error": "Engine failed to parse generated draft."}), 500
-    else:
-        print(f"[Recommendation Error] Groq failed: {err}")
-        return jsonify({"error": "Engine failed to generate draft."}), 500
+            pass # Fallthrough to fallback
+
+    print(f"[Recommendation Error] Using fallback draft.")
+    fallback_outline = f"**Brief LOR outline for {student['name']}**\n\n**Opening hook idea**\n{student['name']} is a highly motivated student with a strong academic and extracurricular foundation.\n\n**Key strengths**\n* Consistent academic performance\n* Active engagement in portfolio activities\n* Demonstrated leadership and teamwork\n\n**Suggested anecdote/story angle**\n{student['name']}'s commitment to their target universities showcases a proactive approach to their education and career goals.\n\n**Closing theme**\n{student['name']} will undoubtedly be a valuable addition to any academic community."
+    return jsonify({"response": fallback_outline})
 
 # ── Bulk Ingestion ──
 

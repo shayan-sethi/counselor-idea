@@ -1567,10 +1567,14 @@ async function runCounselorAgentCommand() {
 
     // Render markdown to HTML
     let html = data.response
-      .replace(/\#\#\# (.*?)\n/g, '<h4 style="margin: 8px 0 4px; color: var(--amber); font-family: var(--sans);">$1</h4>')
+      .replace(/^#### (.*?)$/gm, '<h5 style="margin: 6px 0 3px; color: var(--text-2); font-family: var(--sans);">$1</h5>')
+      .replace(/^### (.*?)$/gm, '<h4 style="margin: 8px 0 4px; color: var(--amber); font-family: var(--sans);">$1</h4>')
+      .replace(/^## (.*?)$/gm, '<h3 style="margin: 10px 0 5px; color: var(--accent); font-family: var(--sans);">$1</h3>')
+      .replace(/^# (.*?)$/gm, '<h3 style="margin: 12px 0 6px; color: var(--accent); font-family: var(--sans);">$1</h3>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/\- (.*?)\n/g, '<li style="margin-left: 12px; margin-bottom: 4px; font-family: var(--sans);">$1</li>')
+      .replace(/^\d+\. (.*?)$/gm, '<li style="margin-left: 12px; margin-bottom: 4px; font-family: var(--sans); list-style-type: decimal;">$1</li>')
+      .replace(/^- (.*?)$/gm, '<li style="margin-left: 12px; margin-bottom: 4px; font-family: var(--sans);">$1</li>')
       .replace(/\n/g, '<br>');
 
     responseContainer.innerHTML = html;

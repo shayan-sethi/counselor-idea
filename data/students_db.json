@@ -37,7 +37,12 @@
       }
     ],
     "shortlisted_colleges": [
-      "MIT"
+      "MIT",
+      "OXFORD",
+      "STANFORD",
+      "IND_PLAKSHA",
+      "IND_JINDAL",
+      "IND_KREA"
     ]
   },
   {
@@ -123,7 +128,8 @@
       "Oxford",
       "London School of Economics",
       "UCL"
-    ]
+    ],
+    "shortlisted_scholarships": []
   },
   {
     "id": "STU_105",

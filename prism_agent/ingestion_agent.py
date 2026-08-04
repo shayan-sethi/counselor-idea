@@ -125,7 +125,8 @@ Return ONLY a valid JSON object with the following schema:
 
         if not data:
             print("[IngestionAgent Warning] Groq LLM failed or disabled. Using fallback rule engine.")
-        
+            return None
+
         # Convert lists back to dictionaries for subjects
         if "grades" in data:
             if "subjects" in data["grades"] and isinstance(data["grades"]["subjects"], list):
