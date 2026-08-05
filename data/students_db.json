@@ -38,14 +38,14 @@
     ],
     "shortlisted_colleges": [
       "MIT",
-      "OXFORD",
       "STANFORD",
       "IND_PLAKSHA",
       "IND_JINDAL",
       "IND_KREA",
       "US_100830",
       "US_100858",
-      "IMPERIAL"
+      "IMPERIAL",
+      "OXFORD"
     ]
   },
   {
@@ -221,7 +221,8 @@
     ],
     "shortlisted_colleges": [
       "US_211440"
-    ]
+    ],
+    "shortlisted_scholarships": []
   },
   {
     "id": "STU_107",
@@ -269,7 +270,10 @@
     ],
     "shortlisted_colleges": [
       "London School of Economics",
-      "King's College London"
+      "King's College London",
+      "OXFORD",
+      "MIT",
+      "IND_PLAKSHA"
     ]
   },
   {
@@ -508,7 +512,9 @@
       }
     ],
     "shortlisted_colleges": [
-      "US_211440"
+      "US_211440",
+      "OXFORD",
+      "US_100830"
     ]
   },
   {
@@ -563,8 +569,7 @@
       "US_211440"
     ],
     "shortlisted_scholarships": [
-      "schol_pearson_uoft",
-      "schol_tata_cornell"
+      "schol_pearson_uoft"
     ]
   },
   {

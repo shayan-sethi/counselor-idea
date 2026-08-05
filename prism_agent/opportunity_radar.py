@@ -183,91 +183,153 @@ class OpportunityRadar:
         else:
             subjects = student.get("board_subjects", [])
 
-        eligible = [
-            c for c in competitions
-            if c.get("min_class_level", 9) <= class_level <= c.get("max_class_level", 12)
-        ]
+        eligible = []
+        for c in competitions:
+            if not (c.get("min_class_level", 9) <= class_level <= c.get("max_class_level", 12)):
+                continue
+            dl_str = c.get("deadline", "")
+            if dl_str:
+                try:
+                    dl_date = datetime.datetime.strptime(dl_str, "%Y-%m-%d").date()
+                    if dl_date < current_date:
+                        continue
+                except Exception:
+                    pass
+            eligible.append(c)
 
         if not eligible:
             return []
 
-        # Try LLM batch scoring
-        from .llm_scorer import LLMScorer
-        scorer = LLMScorer()
-        llm_results = scorer.score_opportunities(student, eligible)
-
-        if llm_results:
-            comp_map = {c.get("id"): c for c in eligible}
-            matched_list = []
-            for lr in llm_results:
-                comp_id = lr.get("competition_id")
-                comp = comp_map.get(comp_id)
-                if not comp:
-                    continue
-                days_left = None
-                dl_str = comp.get("deadline", "")
-                if dl_str:
-                    try:
-                        dl_date = datetime.datetime.strptime(dl_str, "%Y-%m-%d").date()
-                        days_left = (dl_date - current_date).days
-                    except Exception:
-                        pass
-                comp_tags = [t.lower().strip() for t in comp.get("subject_tags", [])]
-                matching_subjs = [s for s in subjects if s.lower().strip() in comp_tags]
-                matched_list.append({
-                    "competition": comp,
-                    "match_score": int(lr.get("match_score", 50)),
-                    "matching_subjects": matching_subjs,
-                    "why": lr.get("why", "AI-matched opportunity."),
-                    "days_remaining": days_left,
-                    "is_urgent": lr.get("is_urgent", days_left is not None and 0 <= days_left <= 60),
-                })
-            matched_list.sort(key=lambda x: (x["match_score"], -(x["days_remaining"] if x["days_remaining"] is not None else 9999)), reverse=True)
-            return matched_list
-
-        # Deterministic fallback
         return OpportunityRadar._match_deterministic(student, eligible, subjects, current_date)
 
     @staticmethod
     def _match_deterministic(student, eligible, subjects, current_date):
         matched_list = []
         targets = student.get("targets", [])
-        has_elite_target = any(
-            any(kw in t.lower() for kw in ["cambridge", "oxford", "mit", "stanford", "harvard", "imperial", "ucl"])
-            for t in targets
-        )
+        targets_lower = [t.lower() for t in targets]
+        grades_dict = student.get("grades", {}).get("subjects", {})
+        portfolio = student.get("portfolio", [])
+        tests = student.get("standardized_tests", {})
+
+        elite_keywords = ["cambridge", "oxford", "mit", "stanford", "harvard", "imperial", "ucl", "princeton", "yale", "columbia", "caltech", "lse"]
+        has_elite_target = any(any(kw in t for kw in elite_keywords) for t in targets_lower)
+
+        target_fields = OpportunityRadar._infer_target_fields(targets_lower)
+        portfolio_keywords = OpportunityRadar._extract_portfolio_keywords(portfolio)
 
         for comp in eligible:
             comp_tags = [t.lower().strip() for t in comp.get("subject_tags", [])]
             matching_subjs = [s for s in subjects if s.lower().strip() in comp_tags]
+            comp_name_lower = comp.get("name", "").lower()
+            comp_desc_lower = comp.get("description", "").lower()
+            comp_type_lower = comp.get("type", "").lower()
+            comp_tier = comp.get("portfolio_tier", 3)
 
-            if not matching_subjs:
-                base_score = 40
+            score = 0
+            why_parts = []
+
+            # --- 1. Subject overlap (0-30) ---
+            if matching_subjs:
+                overlap_ratio = len(matching_subjs) / max(len(subjects), 1)
+                subject_pts = min(30, int(overlap_ratio * 30) + len(matching_subjs) * 5)
+                score += subject_pts
+                why_parts.append(f"Matches {len(matching_subjs)} of {len(subjects)} subjects ({', '.join(matching_subjs)})")
             else:
-                base_score = 70 + min(20, len(matching_subjs) * 10)
+                score += 5
 
-            if has_elite_target and comp.get("portfolio_tier", 3) <= 2:
-                base_score += 10
+            # --- 2. Grade strength in matching subjects (0-20) ---
+            if matching_subjs and grades_dict:
+                matched_grades = [grades_dict[s] for s in matching_subjs if s in grades_dict]
+                if matched_grades:
+                    avg_grade = sum(matched_grades) / len(matched_grades)
+                    if avg_grade >= 95:
+                        score += 20
+                        why_parts.append(f"Avg {avg_grade:.0f}% in matched subjects — exceptional fit")
+                    elif avg_grade >= 90:
+                        score += 15
+                        why_parts.append(f"Strong grades ({avg_grade:.0f}%) in relevant subjects")
+                    elif avg_grade >= 85:
+                        score += 10
+                    elif avg_grade >= 80:
+                        score += 5
+
+            # --- 3. Target university alignment (0-20) ---
+            target_pts = 0
+            target_reason = None
+            for t in targets_lower:
+                if any(kw in comp_name_lower or kw in comp_desc_lower for kw in t.split() if len(kw) > 3):
+                    target_pts = max(target_pts, 15)
+                    target_reason = f"Directly linked to target: {t.title()}"
+
+            comp_field = OpportunityRadar._classify_comp_field(comp_tags, comp_type_lower, comp_name_lower)
+            if comp_field and comp_field in target_fields:
+                target_pts = max(target_pts, 10)
+                if not target_reason:
+                    target_reason = f"Aligns with {comp_field} focus from target list"
+
+            if has_elite_target and comp_tier == 1:
+                target_pts = max(target_pts, 12)
+                if not target_reason:
+                    target_reason = f"Tier-1 competition strengthens elite university applications"
+
+            score += min(20, target_pts)
+            if target_reason:
+                why_parts.append(target_reason)
+
+            # --- 4. Portfolio relevance (0-15) ---
+            portfolio_pts = 0
+            if portfolio_keywords:
+                relevance_hits = 0
+                for kw in portfolio_keywords:
+                    if kw in comp_name_lower or kw in comp_desc_lower or kw in comp_type_lower:
+                        relevance_hits += 1
+                if relevance_hits >= 3:
+                    portfolio_pts = 15
+                    why_parts.append("Strong synergy with existing extracurriculars")
+                elif relevance_hits >= 1:
+                    portfolio_pts = 8
+                    why_parts.append("Builds on existing portfolio activities")
+
+            if len(portfolio) <= 1:
+                portfolio_pts = max(portfolio_pts, 10)
+                if not any("portfolio" in w.lower() for w in why_parts):
+                    why_parts.append("Student needs more extracurriculars — high portfolio-building value")
+            score += min(15, portfolio_pts)
+
+            # --- 5. Academic profile strength (0-10) ---
+            profile_pts = 0
+            sat = tests.get("SAT", 0)
+            act = tests.get("ACT", 0)
+            if sat >= 1450 or act >= 32:
+                profile_pts += 5
+            elif sat >= 1350 or act >= 29:
+                profile_pts += 3
 
             exp_grade_str = student.get("grades", {}).get("current_expected_board", "85%")
             try:
                 exp_grade = float(exp_grade_str.replace("%", "").strip())
             except:
                 exp_grade = 85.0
+            if exp_grade >= 93:
+                profile_pts += 5
+            elif exp_grade >= 88:
+                profile_pts += 3
+            score += min(10, profile_pts)
 
-            if exp_grade >= 92.0 and comp.get("portfolio_tier", 3) == 1:
-                base_score += 5
+            # --- 6. Competition prestige fit (0-5) ---
+            if comp_tier == 1 and has_elite_target:
+                score += 5
+            elif comp_tier == 2:
+                score += 3
+            elif comp_tier == 1:
+                score += 2
 
-            match_score = min(100, base_score)
+            match_score = min(100, max(10, score))
 
-            why_reasons = []
-            if matching_subjs:
-                why_reasons.append(f"it directly aligns with your board subjects ({', '.join(matching_subjs)})")
-            if has_elite_target and comp.get("portfolio_tier", 3) <= 2:
-                why_reasons.append(f"satisfies the elite extracurricular portfolio requirement (Tier {comp.get('portfolio_tier')}) for your target pathway")
-            else:
-                why_reasons.append(f"offers a strong extracurricular profile boost (Tier {comp.get('portfolio_tier')})")
-            why_expl = "Recommended because " + " and ".join(why_reasons) + "."
+            if not why_parts:
+                why_parts.append(f"Broadens portfolio as a Tier-{comp_tier} opportunity")
+
+            why_expl = ". ".join(why_parts) + "."
 
             days_left = None
             dl_str = comp.get("deadline", "")
@@ -289,3 +351,58 @@ class OpportunityRadar:
 
         matched_list.sort(key=lambda x: (x["match_score"], -(x["days_remaining"] if x["days_remaining"] is not None else 9999)), reverse=True)
         return matched_list
+
+    @staticmethod
+    def _infer_target_fields(targets_lower):
+        fields = set()
+        stem_kw = ["cs", "computer", "engineering", "tech", "data", "ai", "stem", "iit"]
+        science_kw = ["medicine", "medical", "aiims", "bio", "premed", "science"]
+        humanities_kw = ["law", "arts", "literature", "english", "philosophy", "history", "politics"]
+        econ_kw = ["economics", "econ", "finance", "business", "commerce", "srcc", "lse", "management"]
+
+        for t in targets_lower:
+            if any(kw in t for kw in stem_kw):
+                fields.add("stem")
+            if any(kw in t for kw in science_kw):
+                fields.add("science")
+            if any(kw in t for kw in humanities_kw):
+                fields.add("humanities")
+            if any(kw in t for kw in econ_kw):
+                fields.add("economics")
+        return fields
+
+    @staticmethod
+    def _classify_comp_field(comp_tags, comp_type, comp_name):
+        text = " ".join(comp_tags) + " " + comp_type + " " + comp_name
+        if any(kw in text for kw in ["computer", "coding", "programming", "algorithm", "hackathon"]):
+            return "stem"
+        if any(kw in text for kw in ["physics", "chemistry", "biology", "science"]):
+            return "science"
+        if any(kw in text for kw in ["essay", "writing", "literature", "history", "philosophy", "politics", "law"]):
+            return "humanities"
+        if any(kw in text for kw in ["economics", "business", "finance", "accountancy", "commerce"]):
+            return "economics"
+        if any(kw in text for kw in ["math", "mathematics"]):
+            return "stem"
+        return None
+
+    @staticmethod
+    def _extract_portfolio_keywords(portfolio):
+        keywords = set()
+        kw_map = {
+            "science": ["science", "research", "lab", "experiment", "biology", "physics", "chemistry"],
+            "math": ["math", "olympiad", "quiz", "competition"],
+            "writing": ["essay", "writing", "blog", "journalism", "editor", "literary", "debate"],
+            "tech": ["code", "coding", "app", "software", "tech", "robot", "hack", "program", "web", "ai", "ml"],
+            "leadership": ["president", "founder", "lead", "captain", "head"],
+            "mun": ["mun", "model united nations", "delegate"],
+            "social": ["ngo", "volunteer", "community", "teach", "social"],
+            "sport": ["swim", "sport", "athlete", "cricket", "football", "tennis", "chess"],
+            "art": ["art", "music", "dance", "theatre", "drama", "sing", "choir", "photograph"],
+        }
+        for item in portfolio:
+            text = (item.get("activity", "") + " " + item.get("description", "")).lower()
+            for category, kws in kw_map.items():
+                if any(kw in text for kw in kws):
+                    keywords.add(category)
+        return keywords
